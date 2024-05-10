@@ -481,9 +481,11 @@ spr7_y_size2     EQU sprite7_SIZE/(spr_x_size2/8)
 sprf_colors_counter    RS.W 1
 sprf_copy_colors_state RS.W 1
 
+; **** Sprite-Fader-In ****
 sprfi_state            RS.W 1
 sprfi_fader_angle      RS.W 1
 
+; **** Sprite-Fader-Out ****
 sprfo_state            RS.W 1
 sprfo_fader_angle      RS.W 1
 
@@ -505,11 +507,14 @@ init_own_variables
   moveq   #TRUE,d0
   move.w  d0,sprf_copy_colors_state(a3) ;Kopieren der Farben an
 
+; **** Sprite-Fader-In ****
   move.w  d0,sprfi_state(a3) ;Sprite-Fader-In an
+  move.w  #sine_table_length/4,sprfi_fader_angle(a3) ;90 Grad
 
+; **** Sprite-Fader-Out ****
   moveq   #FALSE,d1
   move.w  d1,sprfo_state(a3)
-  move.w  #sine_table_length/4,sprfo_fader_angle(a3)
+  move.w  #sine_table_length/4,sprfo_fader_angle(a3) ;90 Grad
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **

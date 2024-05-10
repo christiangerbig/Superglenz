@@ -1366,21 +1366,6 @@ mgv_skip
   move.w  d0,cl2_extension2_entry+cl2_ext2_COP2LCH+2(a0)
   rts
 
-; ** Zähler kontrollieren **
-; --------------------------
-  CNOP 0,4
-control_counters
-  move.w  mgv_morph_delay_counter(a3),d0
-  bmi.s   mgv_morph_no_delay_counter ;Wenn Zähler negativ -> verzweige
-  subq.w  #1,d0              ;Zähler verringern
-  bpl.s   mgv_morph_save_delay_counter ;Wenn positiv -> verzweige
-mgv_morph_enable
-  clr.w   mgv_morph_state(a3) ;Morphing an
-mgv_morph_save_delay_counter
-  move.w  d0,mgv_morph_delay_counter(a3) ;retten
-mgv_morph_no_delay_counter
-  rts
-
 
 ; ** Sprites einblenden **
 ; ------------------------
@@ -1532,6 +1517,21 @@ sprf_no_copy_color_table
   ENDC
   rts
 
+
+; ** Zähler kontrollieren **
+; --------------------------
+  CNOP 0,4
+control_counters
+  move.w  mgv_morph_delay_counter(a3),d0
+  bmi.s   mgv_morph_no_delay_counter ;Wenn Zähler negativ -> verzweige
+  subq.w  #1,d0              ;Zähler verringern
+  bpl.s   mgv_morph_save_delay_counter ;Wenn positiv -> verzweige
+mgv_morph_enable
+  clr.w   mgv_morph_state(a3) ;Morphing an
+mgv_morph_save_delay_counter
+  move.w  d0,mgv_morph_delay_counter(a3) ;retten
+mgv_morph_no_delay_counter
+  rts
 
 ; ** SOFTINT-Interrupts abfragen **
 ; ---------------------------------

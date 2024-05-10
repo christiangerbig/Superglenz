@@ -9,8 +9,6 @@
 ; # OS:       3.0+             #
 ; ##############################
 
-; 1x48-Flächen-Glenz auf einem 192x192-Screen.
-
   XDEF start_00_intro
   XDEF mouse_handler
   XDEF sine_table
@@ -337,8 +335,6 @@ spbo_y_angle_speed             EQU 2
 ; **** Horiz-Fader ****
 hf_colors_per_colorbank        EQU 16
 hf_colorbanks_number           EQU 240/hf_colors_per_colorbank
-hf1_y_size                     EQU title_image_y_size
-hf2_y_size                     EQU 16
 
 ; **** Effects-Handler ****
 eh_trigger_number_max          EQU 5
@@ -690,20 +686,20 @@ spr7_y_size2         EQU sprite7_SIZE/(spr_pixel_per_datafetch/4)
 
   INCLUDE "variables-offsets.i"
 
-save_a7               RS.L 1
+save_a7                RS.L 1
 
 ; **** Glenz-Vectors ****
-gv_rotation_x_angle   RS.W 1
-gv_rotation_y_angle   RS.W 1
-gv_rotation_z_angle   RS.W 1
+gv_rotation_x_angle    RS.W 1
+gv_rotation_y_angle    RS.W 1
+gv_rotation_z_angle    RS.W 1
 
 ; **** Scroll-Playfield-Bottom-In ****
-spbi_state            RS.W 1
-spbi_y_angle          RS.W 1
+spbi_state             RS.W 1
+spbi_y_angle           RS.W 1
 
 ; **** Scroll-Playfield-Bottom-Out ****
-spbo_state            RS.W 1
-spbo_y_angle          RS.W 1
+spbo_state             RS.W 1
+spbo_y_angle           RS.W 1
 
 ; **** Horiz-Fader ****
 hf1_switch_table_start RS.W 1
@@ -718,12 +714,12 @@ hfo1_state             RS.W 1
 hfo2_state             RS.W 1
 
 ; **** Effects-Handler ****
-eh_trigger_number     RS.W 1
+eh_trigger_number      RS.W 1
 
 ; **** Main ****
-fx_state              RS.W 1
+fx_state               RS.W 1
 
-variables_SIZE        RS.B 0
+variables_SIZE         RS.B 0
 
 
 ; **** Glenz-Vectors ****
@@ -759,11 +755,11 @@ init_own_variables
 ; **** Scroll-Playfield-Bottom-In ****
   moveq   #FALSE,d1
   move.w  d1,spbi_state(a3)
-  move.w  d0,spbi_y_angle(a3)
+  move.w  d0,spbi_y_angle(a3) ;0 Grad
 
 ; **** Scroll-Playfield-Bottom-Out ****
   move.w  d1,spbo_state(a3)
-  move.w  #sine_table_length/4,spbo_y_angle(a3)
+  move.w  #sine_table_length/4,spbo_y_angle(a3) ;90 Grad
 
 ; **** Horiz-Fader ****
   move.w  d0,hf1_switch_table_start(a3)
@@ -1025,7 +1021,6 @@ init_color_registers
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0
-  move.l  a0,$140000
   bsr.s   cl1_init_playfield_registers
   bsr     cl1_init_sprite_pointers
   bsr     cl1_init_bitplane_pointers
@@ -1034,8 +1029,7 @@ init_first_copperlist
   bsr     cl1_reset_pointer
   bsr     cl1_init_copint
   COPLISTEND
-  bsr     cl1_set_sprite_pointers
-  bra     swap_playfield1
+  bra     cl1_set_sprite_pointers
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
 
@@ -1059,7 +1053,7 @@ cl1_init_branches_pointers1
   move.w  #COP2LCL,(a0)+
   move.w  d4,(a0)+
   MOVEF.W cl1_display_y_size1-1,d7 ;Anzahl der Zeilen
-cl1_init_branches1_pointers_loop
+cl1_init_branches_pointers1_loop
   move.l  d0,(a0)+           ;WAIT x,y
   swap    d1                 ;High-Wert
   move.w  #COP1LCH,(a0)+
@@ -1070,7 +1064,7 @@ cl1_init_branches1_pointers_loop
   move.w  d1,(a0)+
   add.l   d3,d1              ;Einsprungadresse CL1 erhöhen
   COPMOVEQ TRUE,COPJMP2
-  dbf     d7,cl1_init_branches1_pointers_loop
+  dbf     d7,cl1_init_branches_pointers1_loop
   rts
 
   CNOP 0,4
@@ -1090,7 +1084,7 @@ cl1_init_branches_pointers2
   move.w  #COP2LCL,(a0)+
   move.w  d4,(a0)+
   MOVEF.W cl1_display_y_size2-1,d7 ;Anzahl der Zeilen
-cl1_init_branches2_pointers_loop
+cl1_init_branches_pointers2_loop
   move.l  d0,(a0)+           ;WAIT x,y
   swap    d1                 ;High-Wert
   move.w  #COP1LCH,(a0)+
@@ -1101,7 +1095,7 @@ cl1_init_branches2_pointers_loop
   move.w  d1,(a0)+
   add.l   d3,d1              ;Einsprungadresse CL1 erhöhen
   COPMOVEQ TRUE,COPJMP2
-  dbf     d7,cl1_init_branches2_pointers_loop
+  dbf     d7,cl1_init_branches_pointers2_loop
   rts
 
   CNOP 0,4
@@ -1188,8 +1182,8 @@ beam_routines
   bsr     gv_draw_lines
   bsr     gv_fill_playfield1
   bsr     gv_rotation
-  bsr     scroll_playfield_buttom_in
-  bsr     scroll_playfield_buttom_out
+  bsr     scroll_playfield_bottom_in
+  bsr     scroll_playfield_bottom_out
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
@@ -1234,9 +1228,10 @@ gv_clear_playfield1_loop
     movem.l d0-d6/a0-a6,-(a7)  ;56 Bytes löschen
   ENDR
   dbf     d7,gv_clear_playfield1_loop
+; Rest 160
   movem.l d0-d6/a0-a6,-(a7)
   movem.l d0-d6/a0-a6,-(a7)
-  movem.l d0-d6/a0-a4,-(a7)        ;48 Bytes löschen
+  movem.l d0-d6/a0-a4,-(a7)
   move.l  variables+save_a7(pc),a7 ;Alter Stackpointer
   movem.l (a7)+,a3-a6
   rts
@@ -1398,12 +1393,12 @@ gv_fill_playfield1
 ; ** Playfield von unten einscrollen **
 ; -------------------------------------
   CNOP 0,4
-scroll_playfield_buttom_in
-  tst.w   spbi_state(a3)     ;Scroll-Playfield-Buttom-In an ?
-  bne.s   no_scroll_playfield_buttom_in ;Nein -> verzweige
+scroll_playfield_bottom_in
+  tst.w   spbi_state(a3)     ;Scroll-Playfield-Bottom-In an ?
+  bne.s   no_scroll_playfield_bottom_in ;Nein -> verzweige
   move.w  spbi_y_angle(a3),d2 ;Y-Winkel holen
   cmp.w   #sine_table_length/4,d2 ;90 Grad ?
-  bge.s   spbi_finished      ;Ja -> verzweige
+  bgt.s   spbi_finished      ;Ja -> verzweige
   lea     sine_table(pc),a0  
   move.w  (a0,d2.w*2),d0     ;sin(w)
   muls.w  #spb_y_radius*2,d0 ;y'=(sin(w)*yr)/2^15
@@ -1413,23 +1408,23 @@ scroll_playfield_buttom_in
   move.w  d2,spbi_y_angle(a3) ;Y-Winkel retten
   MOVEF.W spb_max_VSTOP,d3
   bsr.s   spb_set_display_window
-no_scroll_playfield_buttom_in
+no_scroll_playfield_bottom_in
   rts
   CNOP 0,4
 spbi_finished
   moveq   #FALSE,d0
-  move.w  d0,spbi_state(a3)  ;Scroll-Playfield-Buttom-In aus
+  move.w  d0,spbi_state(a3)  ;Scroll-Playfield-Bottom-In aus
   rts
 
 ; ** Playfield nach unten ausscrollen **
 ; --------------------------------------
   CNOP 0,4
-scroll_playfield_buttom_out
-  tst.w   spbo_state(a3)     ;Vert-Scroll-Playfild-Out an ?
-  bne.s   no_scroll_playfield_buttom_out ;Nein -> verzweige
+scroll_playfield_bottom_out
+  tst.w   spbo_state(a3)     ;Scroll-Playfild-Bottom-Out an ?
+  bne.s   no_scroll_playfield_bottom_out ;Nein -> verzweige
   move.w  spbo_y_angle(a3),d2 ;Y-Winkel holen
   cmp.w   #sine_table_length/2,d2 ;180 Grad ?
-  bge.s   spbo_finished      ;Ja -> verzweige
+  bgt.s   spbo_finished      ;Ja -> verzweige
   lea     sine_table(pc),a0  
   move.w  (a0,d2.w*2),d0     ;cos(w)
   muls.w  #spb_y_radius*2,d0 ;y'=(cos(w)*yr)/2^15
@@ -1439,24 +1434,24 @@ scroll_playfield_buttom_out
   move.w  d2,spbo_y_angle(a3) ;Y-Winkel retten
   MOVEF.W spb_max_VSTOP,d3
   bsr.s   spb_set_display_window
-no_scroll_playfield_buttom_out
+no_scroll_playfield_bottom_out
   rts
   CNOP 0,4
 spbo_finished
   clr.w   fx_state(a3)       ;Effekte beendet
   moveq   #FALSE,d0
-  move.w  d0,spbo_state(a3)  ;Scroll-Playfield-Buttom-Out aus
+  move.w  d0,spbo_state(a3)  ;Scroll-Playfield-Bottom-Out aus
   rts
 
   CNOP 0,4
 spb_set_display_window
+  move.l  cl1_display(a3),a1
   moveq   #spb_min_VSTART,d1
   add.w   d0,d1              ;+ Y-Offset
   cmp.w   d3,d1              ;VSTOP-Maximum erreicht ?
   ble.s   spb_no_max_VSTOP1  ;Nein -> verzweige
   move.w  d3,d1              ;VSTOP korrigieren
 spb_no_max_VSTOP1
-  move.l  cl1_display(a3),a1 ;CL
   move.b  d1,cl1_DIWSTRT+2(a1) ;VSTART V7-V0
   move.w  d1,d2
   add.w   #visible_lines_number,d2 ;VSTOP
@@ -1466,23 +1461,21 @@ spb_no_max_VSTOP1
 spb_no_max_VSTOP2
   move.b  d2,cl1_DIWSTOP+2(a1) ;VSTOP V7-V0
   lsr.w   #8,d1              ;VSTART V8-Bit in richtige Position bringen
-  move.w  cl1_DIWHIGH+2(a1),d0
-  and.w   #~(DIWHIGHF_VSTART8+DIWHIGHF_VSTOP8),d0 ;VSTART&VSTOP V8-Bit ggf. ausmaskieren
   move.b  d1,d2              ;VSTART V8 + VSTOP V8
-  or.w    d2,d0              ;setzen
-  move.w  d0,cl1_DIWHIGH+2(a1) 
+  or.w    #DIWHIGHBITS&(~(DIWHIGHF_VSTART8+DIWHIGHF_VSTOP8)),d2 ;restliche Bits
+  move.w  d2,cl1_DIWHIGH+2(a1)
   rts
 
-; ** Playfield horizontal einfaden **
-; -----------------------------------
+; ** Grafik horizontal einfaden **
+; --------------------------------
   CNOP 0,4
 horiz_fader_in1
-  tst.w   hfi1_state(a3)
-  bne.s   no_horiz_fader_in1
+  tst.w   hfi1_state(a3)     ;Horiz-Fader-In1 an ?
+  bne.s   no_horiz_fader_in1 ;Nein -> vertweige
   move.w  hf1_switch_table_start(a3),d2 ;Startwert in Switchwert-Tabelle
   move.w  d2,d0
   cmp.w   #cl2_display_width1+hf_colorbanks_number-1,d0 ;Tabellenende ?
-  bge.s   hfi1_finished       ;Ja -> verzweige
+  bge.s   hfi1_finished      ;Ja -> verzweige
   addq.w  #1,d2              ;nächster Eintrag
   move.w  d2,hf1_switch_table_start(a3)
   lea     hf_switch_table(pc),a0 ;Zeiger auf Switchwert-Tabelle
@@ -1510,12 +1503,12 @@ hfi1_finished
 ; -----------------------------------
   CNOP 0,4
 horiz_fader_in2
-  tst.w   hfi2_state(a3)
-  bne.s   no_horiz_fader_in2
+  tst.w   hfi2_state(a3)     ;Horiz-Fader-In1 an ?
+  bne.s   no_horiz_fader_in2 ;Nein -> verzweige
   move.w  hf2_switch_table_start(a3),d2 ;Startwert in Switchwert-Tabelle
   move.w  d2,d0
-  cmp.w   #cl2_display_width1+hf_colorbanks_number-1,d0 ;Tabellenende ?
-  bge.s   hfi2_finished       ;Ja -> verzweige
+  cmp.w   #cl2_display_width2+hf_colorbanks_number-1,d0 ;Tabellenende ?
+  bge.s   hfi2_finished      ;Ja -> verzweige
   addq.w  #1,d2              ;nächster Eintrag
   move.w  d2,hf2_switch_table_start(a3)
   lea     hf_switch_table(pc),a0 ;Zeiger auf Switchwert-Tabelle
@@ -1539,15 +1532,15 @@ hfi2_finished
   move.w  d0,hfi2_state(a3)  ;Horiz-Fader-In2 aus
   rts
 
-; ** Playfield horizontal ausfaden **
-; -----------------------------------
+; ** Grafik horizontal ausfaden **
+; --------------------------------
   CNOP 0,4
 horiz_fader_out1
-  tst.w   hfo1_state(a3)      ;Horiz-Fader-Out an ?
+  tst.w   hfo1_state(a3)     ;Horiz-Fader-Out1 an ?
   bne.s   no_horiz_fader_out1 ;Nein ->verzweige
   move.w  hf1_switch_table_start(a3),d2 ;Startwert in Switchwert-Tabelle
   move.w  d2,d0
-  bmi.s   hfo1_finished       ;Wenn Tabellenanfang -> verzweige
+  bmi.s   hfo1_finished      ;Wenn Tabellenanfang -> verzweige
   subq.w  #1,d2              ;vorheriger Eintrag
   move.w  d2,hf1_switch_table_start(a3)
   lea     hf_switch_table(pc),a0 ;Zeiger auf Switchwert-Tabelle
@@ -1575,11 +1568,11 @@ hfo1_finished
 ; -----------------------------------
   CNOP 0,4
 horiz_fader_out2
-  tst.w   hfo2_state(a3)      ;Horiz-Fader-Out an ?
+  tst.w   hfo2_state(a3)     ;Horiz-Fader-Out2 an ?
   bne.s   no_horiz_fader_out2 ;Nein ->verzweige
   move.w  hf2_switch_table_start(a3),d2 ;Startwert in Switchwert-Tabelle
   move.w  d2,d0
-  bmi.s   hfo2_finished       ;Wenn Tabellenanfang -> verzweige
+  bmi.s   hfo2_finished      ;Wenn Tabellenanfang -> verzweige
   subq.w  #1,d2              ;vorheriger Eintrag
   move.w  d2,hf2_switch_table_start(a3)
   lea     hf_switch_table(pc),a0 ;Zeiger auf Switchwert-Tabelle
@@ -1617,7 +1610,7 @@ effects_handler
   bgt.s   no_check_effects_trigger ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen
   subq.w  #1,d0
-  beq.s   eh_start_scroll_playfield_buttom_in
+  beq.s   eh_start_scroll_playfield_bottom_in
   subq.w  #1,d0
   beq.s   eh_start_horiz_fader_in1
   subq.w  #1,d0
@@ -1625,12 +1618,12 @@ effects_handler
   subq.w  #1,d0
   beq.s   eh_start_horiz_fader_out
   subq.w  #1,d0
-  beq.s   eh_start_scroll_playfield_buttom_out
+  beq.s   eh_start_scroll_playfield_bottom_out
 no_check_effects_trigger
   rts
   CNOP 0,4
-eh_start_scroll_playfield_buttom_in
-  clr.w   spbi_state(a3)     :Scroll-Playfield-Buttom-In an
+eh_start_scroll_playfield_bottom_in
+  clr.w   spbi_state(a3)     :Scroll-Playfield-Bottom-In an
   rts
   CNOP 0,4
 eh_start_horiz_fader_in1
@@ -1647,8 +1640,8 @@ eh_start_horiz_fader_out
   move.w  d0,hfo2_state(a3)  ;Horiz-Fader-Out2 an
   rts
   CNOP 0,4
-eh_start_scroll_playfield_buttom_out
-  clr.w   spbo_state(a3)     :Scroll-Playfield-Buttom-Out an
+eh_start_scroll_playfield_bottom_out
+  clr.w   spbo_state(a3)     :Scroll-Playfield-Bottom-Out an
   rts
 
 ; ** Mouse-Handler **

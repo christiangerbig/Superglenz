@@ -257,17 +257,17 @@ mgv_fill_blit_x_size              EQU visible_pixels_number
 mgv_fill_blit_y_size              EQU visible_lines_number
 mgv_fill_blit_depth               EQU pf1_depth3
 
-; **** Scroll-Playfield-Buttom ****
+; **** Scroll-Playfield-Bottom ****
 spb_min_VSTART                    EQU VSTART_256_lines
 spb_max_VSTOP                     EQU VSTOP_OVERSCAN_PAL
 spb_max_visible_lines_number      EQU 283
 spb_y_radius                      EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
 spb_y_centre                      EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
 
-; **** Scroll-Playfield-Buttom-In ****
+; **** Scroll-Playfield-Bottom-In ****
 spbi_y_angle_speed                EQU 4
 
-; **** Scroll-Playfield-Buttom-Out ****
+; **** Scroll-Playfield-Bottom-Out ****
 spbo_y_angle_speed                EQU 5
 
 
@@ -434,11 +434,11 @@ mgv_morph_state                  RS.W 1
 mgv_morph_shapes_table_start     RS.W 1
 mgv_morph_delay_counter          RS.W 1
 
-; **** Scroll-Playfield-Buttom-In ****
+; **** Scroll-Playfield-Bottom-In ****
 spbi_state                       RS.W 1
 spbi_y_angle                     RS.W 1
 
-; **** Scroll-Playfield-Buttom-Out ****
+; **** Scroll-Playfield-Bottom-Out ****
 spbo_state                       RS.W 1
 spbo_y_angle                     RS.W 1
 
@@ -502,14 +502,14 @@ init_own_variables
   moveq   #1,d2
   move.w  d2,mgv_morph_delay_counter(a3)
 
-; **** Scroll-Playfield-Buttom-In ****
+; **** Scroll-Playfield-Bottom-In ****
   move.w  d0,spbi_state(a3)
-  move.w  d0,spbi_y_angle(a3)
+  move.w  d0,spbi_y_angle(a3) ;0 Grad
 
-; **** Scroll-Playfield-Buttom-Out ****
+; **** Scroll-Playfield-Bottom-Out ****
   moveq   #FALSE,d1
   move.w  d1,spbo_state(a3)
-  move.w  #sine_table_length/4,spbo_y_angle(a3)
+  move.w  #sine_table_length/4,spbo_y_angle(a3) ;90 Grad
 
 ; **** Main ****
   move.w  d1,fx_state(a3)
@@ -711,8 +711,8 @@ beam_routines
   bsr     mgv_draw_lines
   bsr     mgv_fill_playfield1
   bsr     mgv_set_second_copperlist_jump
-  bsr     scroll_playfield_buttom_in
-  bsr     scroll_playfield_buttom_out
+  bsr     scroll_playfield_bottom_in
+  bsr     scroll_playfield_bottom_out
   bsr     mgv_control_counters
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
@@ -796,7 +796,7 @@ mgv_clear_playfield1_loop
   movem.l d0-d6/a0-a6,-(a7) 
   movem.l d0-d6/a0-a6,-(a7) 
   movem.l d0-d6/a0-a6,-(a7) 
-  movem.l d0-d6/a0-a4,-(a7)  ;48 Bytes löschen
+  movem.l d0-d6/a0-a4,-(a7)
   move.l  variables+save_a7(pc),a7 ;Alter Stackpointer
   movem.l (a7)+,a3-a6
   rts
@@ -1047,7 +1047,7 @@ mgv_draw_lines_init
   rts
 
 ; ** Playfield füllen **
-; -----------------
+; ----------------------
   CNOP 0,4
 mgv_fill_playfield1
   move.l  pf1_construction1(a3),a0
@@ -1089,9 +1089,9 @@ mgv_skip
 ; ** Playfield von unten einscrollen **
 ; -------------------------------------
   CNOP 0,4
-scroll_playfield_buttom_in
-  tst.w   spbi_state(a3)     ;Scroll-Playfield-Buttom-In an ?
-  bne.s   no_scroll_playfield_buttom_in ;Nein -> verzweige
+scroll_playfield_bottom_in
+  tst.w   spbi_state(a3)     ;Scroll-Playfield-Bottom-In an ?
+  bne.s   no_scroll_playfield_bottom_in ;Nein -> verzweige
   move.w  spbi_y_angle(a3),d2 ;Y-Winkel holen
   cmp.w   #sine_table_length/4,d2 ;90 Grad ?
   bgt.s   spbi_finished      ;Ja -> verzweige
@@ -1104,20 +1104,20 @@ scroll_playfield_buttom_in
   move.w  d2,spbi_y_angle(a3) ;Y-Winkel retten
   MOVEF.W spb_max_VSTOP,d3
   bsr.s   spb_set_display_window
-no_scroll_playfield_buttom_in
+no_scroll_playfield_bottom_in
   rts
   CNOP 0,4
 spbi_finished
   moveq   #FALSE,d0
-  move.w  d0,spbi_state(a3)  ;Scroll-Playfield-Buttom-In aus
+  move.w  d0,spbi_state(a3)  ;Scroll-Playfield-Bottom-In aus
   rts
 
 ; ** Playfield nach unten ausscrollen **
 ; --------------------------------------
   CNOP 0,4
-scroll_playfield_buttom_out
+scroll_playfield_bottom_out
   tst.w   spbo_state(a3)     ;Vert-Scroll-Playfild-Out an ?
-  bne.s   no_scroll_playfield_buttom_out ;Nein -> verzweige
+  bne.s   no_scroll_playfield_bottom_out ;Nein -> verzweige
   move.w  spbo_y_angle(a3),d2 ;Y-Winkel holen
   cmp.w   #sine_table_length/2,d2 ;180 Grad ?
   bgt.s   spbo_finished      ;Ja -> verzweige
@@ -1130,13 +1130,13 @@ scroll_playfield_buttom_out
   move.w  d2,spbo_y_angle(a3) ;Y-Winkel retten
   MOVEF.W spb_max_VSTOP,d3
   bsr.s   spb_set_display_window
-no_scroll_playfield_buttom_out
+no_scroll_playfield_bottom_out
   rts
   CNOP 0,4
 spbo_finished
   clr.w   fx_state(a3)       ;Effekte beendet
   moveq   #FALSE,d0
-  move.w  d0,spbo_state(a3)  ;Scroll-Playfield-Buttom-Out aus
+  move.w  d0,spbo_state(a3)  ;Scroll-Playfield-Bottom-Out aus
   rts
 
   CNOP 0,4
@@ -1175,7 +1175,7 @@ mgv_morph_enable
   clr.w   mgv_morph_state(a3) ;Morphing an
   cmp.w   #mgv_morph_shapes_number-1,mgv_morph_shapes_table_start(a3) ;Ende der Tabelle ?
   bne.s   mgv_morph_save_delay_counter ;Nein -> verzweige
-  clr.w   spbo_state(a3)     ;Scroll-Playfield-Buttom-Out an
+  clr.w   spbo_state(a3)     ;Scroll-Playfield-Bottom-Out an
 mgv_morph_save_delay_counter
   move.w  d0,mgv_morph_delay_counter(a3) ;retten
 mgv_morph_no_delay_counter
