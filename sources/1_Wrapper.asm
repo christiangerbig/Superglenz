@@ -1,7 +1,7 @@
 ; ##############################
-; # Programm: 0_Wrapper.asm    #
+; # Programm: 1_Wrapper.asm    #
 ; # Autor:    Christian Gerbig #
-; # Datum:    06.04.2024       #
+; # Datum:    23.04.2024       #
 ; # Version:  1.0              #
 ; # CPU:      68020+           #
 ; # FASTMEM:  -                #
@@ -14,12 +14,10 @@
   MC68040
 
   XREF COLOR00BITS
-  XREF start_00_intro
-  XREF start_01_wrapper
+  XREF start_10_credits
+  XREF sc_start
 
-  XDEF start_0_pt_replay
-  XDEF sc_start
-
+  XDEF start_1_pt_replay
 
 ; ** Library-Includes V.3.x nachladen **
 ; --------------------------------------
@@ -85,7 +83,7 @@ pt_v3.0b
   ENDC
 pt_mute_volume
 pt_ciatiming               EQU TRUE
-pt_usedfx                  EQU %1101010100010110
+pt_usedfx                  EQU %1101000100000000
 pt_usedefx                 EQU %0000000000000001
 pt_finetune                EQU FALSE
 
@@ -198,8 +196,8 @@ cl1_VSTART                 EQU beam_position&$ff
 
 ; **** Custom Memory ****
 custom_memory_number       EQU 2
-part_0_audio_memory_size1  EQU 29756 ;Song
-part_0_audio_memory_size2  EQU 149020 ;Samples
+part_1_audio_memory_size1  EQU 19516 ;Song
+part_1_audio_memory_size2  EQU 54000 ;Samples
 
 ; **** PT-Replay ****
 pt_fade_out_delay          EQU 2 ;Ticks
@@ -341,7 +339,7 @@ custom_memory_entry_SIZE RS.B 0
 
 ; ## Beginn des Initialisierungsprogramms ##
 ; ------------------------------------------
-start_0_pt_replay
+start_1_pt_replay
   INCLUDE "sys-init.i"
 
 ; ** Custom-Memory-Table initialisieren **
@@ -349,12 +347,12 @@ start_0_pt_replay
   CNOP 0,4
 init_custom_memory_table
   lea     custom_memory_table(pc),a0
-  move.l  #part_0_audio_memory_size1,(a0)+ ;Speichergröße
+  move.l  #part_1_audio_memory_size1,(a0)+ ;Speichergröße
   moveq   #custom_memory_fast,d2
   move.l  d2,(a0)+           ;Speicherart: vorrangig fast-memory
   moveq   #TRUE,d0
   move.l  d0,(a0)+           ;Zeiger auf Speicherbereich = Null
-  move.l  #part_0_audio_memory_size2,(a0)+ ;Speichergröße
+  move.l  #part_1_audio_memory_size2,(a0)+ ;Speichergröße
   move.l  d0,(a0)+           ;Speicherart: chip-memory
   move.l  d0,(a0)            ;Zeiger auf Speicherbereich = Null
   rts
@@ -434,14 +432,14 @@ pt_decrunch_audio_data
   move.l  cme_memory_pointer(a2),a1 ;Ziel: entpackte Daten
   move.l  a1,pt_SongDataPointer(a3)
   movem.l a2-a6,-(a7)
-  bsr     sc_start
+  jsr     sc_start
   movem.l (a7)+,a2-a6
   ADDF.W  custom_memory_entry_size,a2 ;nächster Custom-Memory-Block
   lea     pt_audsmps,a0
   move.l  cme_memory_pointer(a2),a1
   move.l  a1,pt_SamplesDataPointer(a3)
   movem.l a2-a6,-(a7)
-  bsr     sc_start
+  jsr     sc_start
   movem.l (a7)+,a2-a6
   rts
 
@@ -529,12 +527,7 @@ custom_memory_error
 ; a6 ... DMACONR
   CNOP 0,4
 main_routine
-  bsr     start_00_intro
-  tst.l   d0
-  bne.s   no_start_01_wrapper
-  bsr     start_01_wrapper
-no_start_01_wrapper
-  rts
+  jmp     start_10_credits
 
   IFEQ pt_music_fader
 ; ** Mouse-Handler **
@@ -647,212 +640,6 @@ NMI_int_server
 
   INCLUDE "help-routines.i"
 
-;-----------------------------------------------------------------------------
-;- S404 highly optimized data decruncher v1.1 turbo
-;- 27.11.93 by Marcus 'Cozine' Ottosson
-;-----------------------------------------------------------------------------
-;- Based on S404 data_decruncher v0.2
-;- (c) 1993 by Jouni 'Mr.Spiv' Korhonen (SWSW)
-;-----------------------------------------------------------------------------
-;- call with registers: a0 = crunched datas
-;-                      a1 = destination address
-;-----------------------------------------------------------------------------
-;- d0-d7/a0-a6 are trashed
-;-----------------------------------------------------------------------------
-
-  CNOP 0,4
-sc_start
-  addq.w  #8,a0              ;ID string & security length überspringen
-  move.l  a1,a5
-  add.l   (a0)+,a1
-  moveq   #0,d4
-  add.l   (a0),a0
-  moveq   #16,d5
-  movem.w (a0),d2/d6/d7
-  not.w	  d4
-  lea     sc_off6(pc),a3
-  lea     sc_len5a(pc),a4
-  moveq	  #1,d0
-  moveq	  #-1,d3
-  bra.s	  sc_test1
-  CNOP 0,4
-sc_ins
-  subq.w  #8,d7
-  bpl.s	  sc_ins2
-sc_ins1
-  move.w  d7,d1
-  addq.w  #8,d7
-  lsl.l   d7,d6
-  move.w  -(a0),d6
-  neg.w	  d1
-  lsl.l	  d1,d6
-  addq.w  #8,d7
-  swap	  d6
-  move.b  d6,-(a1)
-  swap	  d6
-  cmp.l	  a1,a5
-  dbhs	  d7,sc_main
-  bra.s	  sc_exma
-  CNOP 0,4
-sc_ins2
-  rol.w	  #8,d6
-  move.b  d6,-(a1)
-sc_test1
-  cmp.l	  a1,a5
-  dbhs	  d7,sc_main
-sc_exma
-  bhs.s   sc_exit
-
-sc_main1
-  move.w  -(a0),d6
-  moveq	  #16-1,d7
-sc_main
-  add.w	  d6,d6
-  bcc.s	  sc_ins
-  dbf	  d7,sc_len1
-  move.w  -(a0),d6
-  moveq	  #16-1,d7
-sc_len1
-  add.w   d6,d6
-  bcs.s	  sc_len6
-  dbf	  d7,sc_len2
-  move.w  -(a0),d6
-  moveq	  #16-1,d7
-sc_len2
-  moveq	  #2,d1
-  moveq	  #2,d3
-  add.w	  d6,d6
-  bcs.s	  sc_len5
-  dbf	  d7,sc_len3
-  move.w  -(a0),d6
-  moveq	  #16-1,d7
-sc_len3
-  add.w	  d6,d6
-  bcc.s	  sc_len4
-  moveq	  #4,d1
-  moveq	  #6,d3
-  lea	  sc_len3a(pc),a6
-  bra.s	  sc_bits
-  CNOP 0,4
-sc_len3a
-  add.w	  d1,d3
-  cmp.w	  #15,d1
-  blo.s	  sc_off1
-  moveq	  #5,d1
-  moveq	  #14,d3
-  lea	  sc_len3b(pc),a6
-  bra.s	  sc_bits
-  CNOP 0,4
-sc_len4
-  moveq	  #21,d3
-sc_loop
-  moveq	  #8,d1
-sc_len5
-  move.l  a4,a6
-  bra.s	  sc_bits
-  CNOP 0,4
-sc_len5a
-  add.w	  d1,d3
-  not.b	  d1
-  dbeq	  d7,sc_off2
-  bne.s	  sc_off2a
-  beq.s	  sc_loop
-
-sc_off6
-  add.w	  d1,a2
-  move.b  (a2),-(a1)
-sc_copy
-  move.b  -(a2),-(a1)
-  dbf	  d3,sc_copy
-sc_test
-  cmp.l	  a1,a5
-  dbhs	  d7,sc_main
-  blo.s   sc_main1
-sc_exit
-  CALLEXECQ CacheClearU      ;Caches flushen
-
-  CNOP 0,4
-sc_len6
-  dbf     d7,sc_len7
-  move.w  -(a0),d6
-  moveq	  #16-1,d7
-sc_len7
-  add.w	  d6,d6
-  addx.w  d0,d3
-sc_off1
-  dbf     d7,sc_off2
-sc_off2a
-  move.w  -(a0),d6
-  moveq	  #16-1,d7
-sc_off2
-  add.w	  d6,d6
-  bcs.s	  sc_off3
-  dbf     d7,sc_off4
-  move.w  -(a0),d6
-  moveq	  #16-1,d7
-sc_off4
-  moveq	  #9,d1
-  lea     32(a1),a2
-  add.w	  d6,d6
-  bcc.s	  sc_off5
-  moveq	  #5,d1
-  move.l  a1,a2
-  bra.s	  sc_off5
-  CNOP 0,4
-sc_off3
-  lea     544(a1),a2
-  move.w  d2,d1
-sc_off5
-  move.l  a3,a6
-
-sc_bits
-  and.l	  d4,d6
-  sub.w	  d1,d7
-  bpl.s	  sc_bits2
-  add.w	  d7,d1
-  lsl.l	  d1,d6
-  move.w  d7,d1
-  move.w  -(a0),d6
-  neg.w	  d1
-  add.w	  d5,d7
-sc_bits2
-  lsl.l	  d1,d6
-  move.l  d6,d1
-  swap.w  d1
-  jmp	  (a6)
-  CNOP    0,4
-sc_pins2
-  moveq	  #-1,d3
-  bra.w	  sc_ins2
-  CNOP 0,4
-sc_2ins2
-  rol.w	  #8,d6
-  move.b  d6,-(a1)
-sc_2ins1
-  lsl.l	  d7,d6
-  move.w  -(a0),d6
-  lsl.l	  d1,d6
-  swap	  d6
-  move.b  d6,-(a1)
-  swap	  d6
-  subq.w  #2,d3
-  bgt.s	  sc_2ins2
-  beq.s	  sc_pins2
-  addq.w  #8,d7
-  bra	  sc_test
-  CNOP 0,4
-sc_len3b
-  add.w	  d1,d3
-  move.b  sc_newd1(pc,d7),d1
-  bpl.s	  sc_2ins1
-  subq.w  #8,d7
-  dbf	  d3,sc_2ins2
-  rts                        ;Sicherheitshalber ergänzt
-
-sc_newd1
-  DC.B $08,$07,$06,$05,$04,$03,$02,$01
-  DC.B $88,$87,$86,$85,$84,$83,$82,$81
-
 
 ; ## Speicherstellen für Tabellen und Strukturen ##
 ; -------------------------------------------------
@@ -923,12 +710,12 @@ custom_memory_table
 ; **** PT-Replay ****
   IFEQ pt_split_module
 pt_auddata SECTION pt_audio,DATA
-    INCBIN "Daten:Asm-Sources.AGA/Superglenz/modules/MOD.1989-a number.song.stc"
+    INCBIN "Daten:Asm-Sources.AGA/Superglenz/modules/MOD.altitudes2.song.stc"
 pt_audsmps SECTION pt_audio2,DATA_C
-    INCBIN "Daten:Asm-Sources.AGA/Superglenz/modules/MOD.1989-a number.smps.stc"
+    INCBIN "Daten:Asm-Sources.AGA/Superglenz/modules/MOD.altitudes2.smps.stc"
   ELSE
 pt_auddata SECTION pt_audio,DATA_C
-    INCBIN "Daten:Asm-Sources.AGA/Superglenz/modules/MOD.1989-a number"
+    INCBIN "Daten:Asm-Sources.AGA/Superglenz/modules/MOD.altitudes2"
   ENDC
 
   END

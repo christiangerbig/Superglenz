@@ -1,8 +1,8 @@
 ; ##############################
 ; # Programm: Main.asm         #
 ; # Autor:    Christian Gerbig #
-; # Datum:    06.04.2024       #
-; # Version:  1.0 beta         #
+; # Datum:    28.04.2024       #
+; # Version:  1.1 beta         #
 ; # CPU:      68020+           #
 ; # FASTMEM:  -                #
 ; # Chipset:  AGA              #
@@ -11,6 +11,15 @@
 
 ; V.1.0 Beta
 ; Erstes Release
+
+; V.1.1 Beta
+; Intro: Bugfix, Starterte des horizontal Faders waren dem Wert -1 zugewiesen
+; Glenz-Parts 1-3: Bugfix, Für das 3. Playfield waren immer 100 Zeilen zu wenig angegeben -> Guru
+; Glenz-Part4: Bugfix, Einscrollen jetzt nicht mehr mit Anzeigefehler, Es wurden von der CPU 8 Bytes zu viel gelöscht
+; Glenz-Part5: Morphing-Delay bei 3. Form verkürzt
+; Sub-Wrapper: - Ist jetzt kein Wrapper mehr
+;              - Bugfix, Fehlerabfrage, jetzt wird sofort bei einem Fehler der Glenz-Parts ausgestiegen
+; Alle Module sind jetzt stumm
 
 
   SECTION code_and_variables,CODE
@@ -21,6 +30,7 @@
   XDEF nop_second_copperlist
  
   XREF start_0_pt_replay
+  XREF start_1_pt_replay
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -320,11 +330,11 @@ main_routine
   bsr    start_0_pt_replay
   tst.l  d0                  ;Ist ein Fehler aufgetreten ?
   bne.s  no_start_1_pt_replay ;Ja -> verzweige
-;  jmp    start_1_pt_replay
-  rts
+  jmp    start_1_pt_replay
   CNOP 0,4
 no_start_1_pt_replay
   rts
+
 
 ; ## Interrupt-Routinen ##
 ; ------------------------
@@ -389,7 +399,7 @@ nop_second_copperlist DC.L 0
 
 ; ** Programmversion für Version-Befehl **
 ; ----------------------------------------
-prg_version DC.B "$VER: RSE-Superglenz 1.0 beta (6.4.24)",TRUE
+prg_version DC.B "$VER: RSE-Superglenz 1.1 beta (28.4.24)",TRUE
   EVEN
 
   END

@@ -1,6 +1,6 @@
 Intro
 
-1. Glenz-Objekt wird vom unteren Bildschirmrand eingescrollt.
+1. Glenz-Objekt wird vom unteren Playfieldschirmrand eingescrollt.
 Nur um die Y-Achse rotierendes Diamanten-Glenz-Objekt. Form wie bei Superman-Logo. Darüber der Text "Superglenz" anstatt Superman. Screengröße 192x192.
 
 2. Schriftzug "Superglenz" zusammengesetzt aus 3x64er Sprites über Objekt wird (per Pixelfader) eingeblendet.

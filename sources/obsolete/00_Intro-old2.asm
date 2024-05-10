@@ -1,19 +1,21 @@
 ; ##############################
-; # Programm: 00_Intro.asm     #
+; # Programm: 00_Intro.asm.asm #
 ; # Autor:    Christian Gerbig #
-; # Datum:    07.04.2024       #
-; # Version:  1.0 beta         #
+; # Datum:    12.04.2024       #
+; # Version:  1.0              #
 ; # CPU:      68020+           #
 ; # FASTMEM:  -                #
 ; # Chipset:  AGA              #
 ; # OS:       3.0+             #
 ; ##############################
 
-; 1x40-Flächen-Glenz auf einem 192x192-Screen.
-; Der Copper wartet auf den Blitter. 
-; Beam-Position-Timing wegen flexibler Ausführungszeit der Copperliste.
-; Das Playfield ist auf 64 kB aligned damit Blitter-High-Pointer der
-; Linien-Blits nur 1x initialisiert werden müssen.
+; 1x48-Flächen-Glenz auf einem 192x192-Screen.
+
+  XDEF start_00_intro
+  XDEF mouse_handler
+  XDEF sine_table
+
+  XREF COLOR00BITS
 
   SECTION code_and_variables,CODE
 
@@ -66,27 +68,30 @@ workbench_start                EQU FALSE
 workbench_fade                 EQU FALSE
 text_output                    EQU FALSE
 
-gv_count_lines                 EQU FALSE
+sys_taken_over
+own_display_set_second_copperlist
+pass_global_references
+pass_return_code
 
-DMABITS                        EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_BLITHOG+DMAF_MASTER+DMAF_SETCLR
+DMABITS                        EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 
 INTENABITS                     EQU INTF_SETCLR
 
 CIAAICRBITS                    EQU CIAICRF_SETCLR
 CIABICRBITS                    EQU CIAICRF_SETCLR
 
-COPCONBITS                     EQU COPCONF_CDANG
+COPCONBITS                     EQU TRUE
 
 pf1_x_size1                    EQU 192
-pf1_y_size1                    EQU 192+911
+pf1_y_size1                    EQU 192
 pf1_depth1                     EQU 3
-pf1_x_size2                    EQU 256
-pf1_y_size2                    EQU 192+911
+pf1_x_size2                    EQU 192
+pf1_y_size2                    EQU 192
 pf1_depth2                     EQU 3
-pf1_x_size3                    EQU 256
-pf1_y_size3                    EQU 192+911
+pf1_x_size3                    EQU 192
+pf1_y_size3                    EQU 192
 pf1_depth3                     EQU 3
-pf1_colors_number              EQU 8
+pf1_colors_number              EQU 0 ;8
 
 pf2_x_size1                    EQU 0
 pf2_y_size1                    EQU 0
@@ -106,9 +111,8 @@ extra_pf_number                EQU 0
 spr_number                     EQU 8
 spr_x_size1                    EQU 0
 spr_x_size2                    EQU 64
-spr_y_size2                    EQU 39
 spr_depth                      EQU 2
-spr_colors_number              EQU 16
+spr_colors_number              EQU 0 ;16
 spr_odd_color_table_select     EQU 1
 spr_even_color_table_select    EQU 1
 spr_used_number                EQU 3
@@ -137,7 +141,7 @@ beam_position                  EQU $136
 pixel_per_line                 EQU 192
 visible_pixels_number          EQU 192
 visible_lines_number           EQU 192
-MINROW                         EQU VSTART_192_lines
+MINROW                         EQU VSTOP_OVERSCAN_PAL
 
 pf_pixel_per_datafetch         EQU 64 ;4x
 DDFSTRTBITS                    EQU DDFSTART_192_pixel_4x
@@ -148,7 +152,7 @@ display_window_HSTART          EQU HSTART_192_pixel
 display_window_VSTART          EQU MINROW
 DIWSTRTBITS                    EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
 display_window_HSTOP           EQU HSTOP_192_pixel
-display_window_VSTOP           EQU VSTOP_192_lines
+display_window_VSTOP           EQU VSTOP_256_lines
 DIWSTOPBITS                    EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
 pf1_plane_width                EQU pf1_x_size3/8
@@ -157,22 +161,26 @@ pf1_plane_moduli               EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_wi
 
 BPLCON0BITS                    EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
 BPLCON1BITS                    EQU TRUE
-BPLCON2BITS                    EQU BPLCON2F_PF2P2
+BPLCON2BITS                    EQU TRUE
 BPLCON3BITS1                   EQU BPLCON3F_SPRES0
 BPLCON3BITS2                   EQU BPLCON3BITS1+BPLCON3F_LOCT
 BPLCON4BITS                    EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)+(BPLCON4F_ESPRM4*spr_even_color_table_select)
 DIWHIGHBITS                    EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
 FMODEBITS                      EQU FMODEF_SPR32+FMODEF_SPAGEM+FMODEF_BPL32+FMODEF_BPAGEM
-COLOR00BITS                    EQU $132867
 
-cl2_HSTART                     EQU $00
-cl2_VSTART                     EQU beam_position&$ff
+cl2_display_x_size             EQU 192
+cl2_display_width              EQU cl2_display_x_size/8
+cl2_display_y_size             EQU 39
+cl1_HSTART1                    EQU display_window_HSTART-(4*CMOVE_slot_period)-4
+cl1_VSTART1                    EQU VSTART_192_lines
+cl1_HSTART2                    EQU $00
+cl1_VSTART2                    EQU beam_position&$ff
 
 sine_table_length              EQU 512
 
 ; **** Logo ****
 lg_image_x_position            EQU display_window_HSTART
-lg_image_y_position            EQU display_window_VSTART
+lg_image_y_position            EQU VSTART_192_lines
 lg_image_x_size                EQU 192
 lg_image_width                 EQU lg_image_x_size/8
 lg_image_y_size                EQU 39
@@ -184,7 +192,7 @@ gv_rotation_y_angle_speed      EQU 4
 
 gv_object_edge_points_number   EQU 26
 gv_object_edge_points_per_face EQU 3
-gv_object_faces_number         EQU 40
+gv_object_faces_number         EQU 48
 
 gv_object_face1_color          EQU 2
 gv_object_face1_lines_number   EQU 3
@@ -207,54 +215,52 @@ gv_object_face9_color          EQU 4
 gv_object_face9_lines_number   EQU 3
 gv_object_face10_color         EQU 2
 gv_object_face10_lines_number  EQU 3
-gv_object_face11_color         EQU 2
+gv_object_face11_color         EQU 4
 gv_object_face11_lines_number  EQU 3
-
 gv_object_face12_color         EQU 2
 gv_object_face12_lines_number  EQU 3
-gv_object_face13_color         EQU 4
+
+gv_object_face13_color         EQU 2
 gv_object_face13_lines_number  EQU 3
 gv_object_face14_color         EQU 4
 gv_object_face14_lines_number  EQU 3
-
-gv_object_face15_color         EQU 4
+gv_object_face15_color         EQU 2
 gv_object_face15_lines_number  EQU 3
-gv_object_face16_color         EQU 2
+gv_object_face16_color         EQU 4
 gv_object_face16_lines_number  EQU 3
-gv_object_face17_color         EQU 2
-gv_object_face17_lines_number  EQU 3
 
+gv_object_face17_color         EQU 4
+gv_object_face17_lines_number  EQU 3
 gv_object_face18_color         EQU 2
 gv_object_face18_lines_number  EQU 3
 gv_object_face19_color         EQU 4
 gv_object_face19_lines_number  EQU 3
-gv_object_face20_color         EQU 4
+gv_object_face20_color         EQU 2
 gv_object_face20_lines_number  EQU 3
 
-gv_object_face21_color         EQU 4
+gv_object_face21_color         EQU 2
 gv_object_face21_lines_number  EQU 3
-gv_object_face22_color         EQU 2
+gv_object_face22_color         EQU 4
 gv_object_face22_lines_number  EQU 3
 gv_object_face23_color         EQU 2
 gv_object_face23_lines_number  EQU 3
-
-gv_object_face24_color         EQU 2
+gv_object_face24_color         EQU 4
 gv_object_face24_lines_number  EQU 3
+
 gv_object_face25_color         EQU 4
 gv_object_face25_lines_number  EQU 3
-gv_object_face26_color         EQU 4
+gv_object_face26_color         EQU 2
 gv_object_face26_lines_number  EQU 3
-
 gv_object_face27_color         EQU 4
 gv_object_face27_lines_number  EQU 3
 gv_object_face28_color         EQU 2
 gv_object_face28_lines_number  EQU 3
+
 gv_object_face29_color         EQU 2
 gv_object_face29_lines_number  EQU 3
-
-gv_object_face30_color         EQU 2
+gv_object_face30_color         EQU 4
 gv_object_face30_lines_number  EQU 3
-gv_object_face31_color         EQU 4
+gv_object_face31_color         EQU 2
 gv_object_face31_lines_number  EQU 3
 gv_object_face32_color         EQU 4
 gv_object_face32_lines_number  EQU 3
@@ -267,21 +273,56 @@ gv_object_face35_color         EQU 4
 gv_object_face35_lines_number  EQU 3
 gv_object_face36_color         EQU 2
 gv_object_face36_lines_number  EQU 3
-gv_object_face37_color         EQU 4
+
+gv_object_face37_color         EQU 2
 gv_object_face37_lines_number  EQU 3
-gv_object_face38_color         EQU 2
+gv_object_face38_color         EQU 4
 gv_object_face38_lines_number  EQU 3
-gv_object_face39_color         EQU 4
+gv_object_face39_color         EQU 2
 gv_object_face39_lines_number  EQU 3
-gv_object_face40_color         EQU 2
+gv_object_face40_color         EQU 4
 gv_object_face40_lines_number  EQU 3
 
-gv_max_lines_number            EQU 100
+gv_object_face41_color         EQU 2
+gv_object_face41_lines_number  EQU 3
+gv_object_face42_color         EQU 4
+gv_object_face42_lines_number  EQU 3
+gv_object_face43_color         EQU 2
+gv_object_face43_lines_number  EQU 3
+gv_object_face44_color         EQU 4
+gv_object_face44_lines_number  EQU 3
+gv_object_face45_color         EQU 2
+gv_object_face45_lines_number  EQU 3
+gv_object_face46_color         EQU 4
+gv_object_face46_lines_number  EQU 3
+gv_object_face47_color         EQU 2
+gv_object_face47_lines_number  EQU 3
+gv_object_face48_color         EQU 4
+gv_object_face48_lines_number  EQU 3
 
 ; **** Fill-Blit ****
 gv_fill_blit_x_size            EQU visible_pixels_number
 gv_fill_blit_y_size            EQU visible_lines_number
 gv_fill_blit_depth             EQU pf1_depth3
+
+; **** Scroll-Playfield-Buttom ****
+spb_min_VSTART                 EQU VSTART_192_lines
+spb_max_VSTOP                  EQU VSTOP_OVERSCAN_PAL
+spb_max_visible_lines_number   EQU 283
+spb_y_radius                   EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
+spb_y_centre                   EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
+
+spbi_y_angle_speed             EQU 3
+
+spbo_y_angle_speed             EQU 2
+
+; **** Horiz-Fader ****
+hf_colors_per_colorbank        EQU 16
+hf_colorbanks_number           EQU 240/hf_colors_per_colorbank
+hf_y_size                      EQU lg_image_y_size
+
+; **** Effects-Handler ****
+eh_trigger_number_max          EQU 4
 
 
 ; ## Makrobefehle ##
@@ -312,93 +353,91 @@ gv_fill_blit_depth             EQU pf1_depth3
 ; -----------------------------------------------------------------------
   RSRESET
 
+cl1_subextension1      RS.B 0
+cl1_subext1_WAIT       RS.L 1
+cl1_subext1_COP1LCH    RS.L 1
+cl1_subext1_COP1LCL    RS.L 1
+cl1_subext1_COPJMP2    RS.L 1
+cl1_subextension1_SIZE RS.B 0
+
+  RSRESET
+
+cl1_extension1               RS.B 0
+cl1_ext1_COP2LCH             RS.L 1
+cl1_ext1_COP2LCL             RS.L 1
+cl1_ext1_subextension1_entry RS.B cl1_subextension1_SIZE*cl2_display_y_size
+cl1_extension1_SIZE          RS.B 0
+
+  RSRESET
+
 cl1_begin            RS.B 0
 
   INCLUDE "copperlist1-offsets.i"
 
-cl1_COPJMP2          RS.L 1
+cl1_extension1_entry RS.B cl1_extension1_SIZE
+cl1_WAIT1            RS.L 1
+cl1_WAIT2            RS.L 1
+cl1_INTENA           RS.L 1
+cl1_COP1LCH          RS.L 1
+cl1_COP1LCL          RS.L 1
+
+cl1_end              RS.L 1
 
 copperlist1_SIZE     RS.B 0
 
-
 ; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
 ; ------------------------------------------------------------------------
+
   RSRESET
 
 cl2_extension1      RS.B 0
 
-cl2_ext1_WAITBLIT   RS.L 1
-cl2_ext1_BLTAFWM    RS.L 1
-cl2_ext1_BLTALWM    RS.L 1
-cl2_ext1_BLTCPTH    RS.L 1
-cl2_ext1_BLTDPTH    RS.L 1
-cl2_ext1_BLTCMOD    RS.L 1
-cl2_ext1_BLTDMOD    RS.L 1
-cl2_ext1_BLTBDAT    RS.L 1
-cl2_ext1_BLTADAT    RS.L 1
-cl2_ext1_COP2LCH    RS.L 1
-cl2_ext1_COP2LCL    RS.L 1
-cl2_ext1_COPJMP2    RS.L 1
+cl2_ext1_BPLCON4_1  RS.L 1
+cl2_ext1_BPLCON4_2  RS.L 1
+cl2_ext1_BPLCON4_3  RS.L 1
+cl2_ext1_BPLCON4_4  RS.L 1
+cl2_ext1_BPLCON4_5  RS.L 1
+cl2_ext1_BPLCON4_6  RS.L 1
+cl2_ext1_BPLCON4_7  RS.L 1
+cl2_ext1_BPLCON4_8  RS.L 1
+cl2_ext1_BPLCON4_9  RS.L 1
+cl2_ext1_BPLCON4_10 RS.L 1
+cl2_ext1_BPLCON4_11 RS.L 1
+cl2_ext1_BPLCON4_12 RS.L 1
+cl2_ext1_BPLCON4_13 RS.L 1
+cl2_ext1_BPLCON4_14 RS.L 1
+cl2_ext1_BPLCON4_15 RS.L 1
+cl2_ext1_BPLCON4_16 RS.L 1
+cl2_ext1_BPLCON4_17 RS.L 1
+cl2_ext1_BPLCON4_18 RS.L 1
+cl2_ext1_BPLCON4_19 RS.L 1
+cl2_ext1_BPLCON4_20 RS.L 1
+cl2_ext1_BPLCON4_21 RS.L 1
+cl2_ext1_BPLCON4_22 RS.L 1
+cl2_ext1_BPLCON4_23 RS.L 1
+cl2_ext1_BPLCON4_24 RS.L 1
+cl2_ext1_COPJMP1    RS.L 1
 
 cl2_extension1_SIZE RS.B 0
-
-
-  RSRESET
-
-cl2_extension2      RS.B 0
-
-cl2_ext2_BLTCON0    RS.L 1
-cl2_ext2_BLTCON1    RS.L 1
-cl2_ext2_BLTCPTL    RS.L 1
-cl2_ext2_BLTAPTL    RS.L 1
-cl2_ext2_BLTDPTL    RS.L 1
-cl2_ext2_BLTBMOD    RS.L 1
-cl2_ext2_BLTAMOD    RS.L 1
-cl2_ext2_BLTSIZE    RS.L 1
-cl2_ext2_WAITBLIT   RS.L 1
-
-cl2_extension2_SIZE RS.B 0
-
-  RSRESET
-
-cl2_extension3      RS.B 0
-
-cl2_ext3_BLTCON0    RS.L 1
-cl2_ext3_BLTCON1    RS.L 1
-cl2_ext3_BLTAPTH    RS.L 1
-cl2_ext3_BLTAPTL    RS.L 1
-cl2_ext3_BLTDPTH    RS.L 1
-cl2_ext3_BLTDPTL    RS.L 1
-cl2_ext3_BLTAMOD    RS.L 1
-cl2_ext3_BLTDMOD    RS.L 1
-cl2_ext3_BLTSIZE    RS.L 1
-
-cl2_extension3_SIZE RS.B 0
 
   RSRESET
 
 cl2_begin            RS.B 0
 
 cl2_extension1_entry RS.B cl2_extension1_SIZE
-cl2_extension2_entry RS.B cl2_extension2_SIZE*gv_max_lines_number
-cl2_extension3_entry RS.B cl2_extension3_SIZE
-;cl2_WAIT1            RS.L 1
-;cl2_WAIT2            RS.L 1
-;cl2_INTREQ           RS.L 1
-
-cl2_end              RS.L 1
 
 copperlist2_SIZE     RS.B 0
 
 
 ; ** Konstanten für die größe der Copperlisten **
 ; -----------------------------------------------
-cl1_size1            EQU 0
-cl1_size2            EQU 0
-cl1_size3            EQU copperlist1_SIZE
-cl2_size1            EQU 0
-cl2_size2            EQU copperlist2_SIZE
-cl2_size3            EQU copperlist2_SIZE
+cl1_size1          EQU 0
+cl1_size2          EQU 0
+cl1_size3          EQU copperlist1_SIZE
+cl2_size1          EQU 0
+cl2_size2          EQU 0
+cl2_size3          EQU copperlist2_SIZE
+
 
 ; ** Sprite0-Zusatzstruktur **
 ; ----------------------------
@@ -407,7 +446,7 @@ cl2_size3            EQU copperlist2_SIZE
 spr0_extension1       RS.B 0
 
 spr0_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
-spr0_ext1_planedata   RS.L spr_y_size2*(spr_pixel_per_datafetch/16)
+spr0_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr0_extension1_SIZE  RS.B 0
 
@@ -430,7 +469,7 @@ sprite0_SIZE          RS.B 0
 spr1_extension1       RS.B 0
 
 spr1_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
-spr1_ext1_planedata   RS.L spr_y_size2*(spr_pixel_per_datafetch/16)
+spr1_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr1_extension1_SIZE  RS.B 0
 
@@ -453,7 +492,7 @@ sprite1_SIZE          RS.B 0
 spr2_extension1       RS.B 0
 
 spr2_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
-spr2_ext1_planedata   RS.L spr_y_size2*(spr_pixel_per_datafetch/16)
+spr2_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr2_extension1_SIZE  RS.B 0
 
@@ -561,14 +600,34 @@ spr7_y_size2         EQU sprite7_SIZE/(spr_pixel_per_datafetch/4)
 
   INCLUDE "variables-offsets.i"
 
-save_a7             RS.L 1
+save_a7               RS.L 1
 
 ; **** Glenz-Vectors ****
-gv_rotation_y_angle RS.W 1
+gv_rotation_x_angle   RS.W 1
+gv_rotation_y_angle   RS.W 1
+gv_rotation_z_angle   RS.W 1
 
-gv_lines_counter    RS.W 1
+; **** Scroll-Playfield-Buttom ****
+spbi_state            RS.W 1
+spbi_y_angle          RS.W 1
 
-variables_SIZE      RS.B 0
+spbo_state            RS.W 1
+spbo_y_angle          RS.W 1
+
+; **** Horiz-Fader ****
+hf_switch_table_start RS.W 1
+
+hfi_state             RS.W 1
+
+hfo_state             RS.W 1
+
+; **** Effects-Handler ****
+eh_trigger_number     RS.W 1
+
+; **** Main ****
+fx_state              RS.W 1
+
+variables_SIZE        RS.B 0
 
 
 ; **** Glenz-Vectors ****
@@ -587,7 +646,7 @@ gv_object_info_SIZE         RS.B 0
 
 ; ## Beginn des Initialisierungsprogramms ##
 ; ------------------------------------------
-
+start_00_intro
   INCLUDE "sys-init.i"
 
 ; ** Eigene Variablen initialisieren **
@@ -597,9 +656,31 @@ init_own_variables
 
 ; **** Glenz-Vectors ****
   moveq   #TRUE,d0
+  move.w  d0,gv_rotation_x_angle(a3)
   move.w  d0,gv_rotation_y_angle(a3)
+  move.w  d0,gv_rotation_z_angle(a3)
 
-  move.w  d0,gv_lines_counter(a3)
+; **** Scroll-Playfield-Buttom ****
+  moveq   #FALSE,d1
+  move.w  d1,spbi_state(a3)
+  move.w  d0,spbi_y_angle(a3)
+
+  move.w  d1,spbo_state(a3)
+  move.w  #sine_table_length/4,spbo_y_angle(a3)
+
+; **** Horiz-Fader ****
+  move.w  d1,hf_switch_table_start(a3)
+
+  move.w  d1,hfi_state(a3)
+
+  moveq   #FALSE,d1
+  move.w  d1,hfo_state(a3)
+
+; **** Effects-Handler ****
+  move.w  d0,eh_trigger_number(a3)
+
+; **** Main ****
+  move.w  d1,fx_state(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -609,18 +690,10 @@ init_all
   bsr.s   init_sprites
   bsr     gv_init_object_info_table
   bsr     gv_init_color_table
+  bsr     hf_dim_colors
+  bsr     init_color_registers
   bsr     init_first_copperlist
-  bsr     init_second_copperlist
-  bsr     swap_second_copperlist
-  bsr     swap_playfield1
-  bsr     gv_fill_playfield1
-  bsr     gv_draw_lines
-  bsr     gv_set_second_copperlist_jump
-  bsr     swap_second_copperlist
-  bsr     swap_playfield1
-  bsr     gv_fill_playfield1
-  bsr     gv_draw_lines
-  bra     gv_set_second_copperlist_jump
+  bra     init_second_copperlist
 
 ; ** Sprites initialisieren **
 ; ----------------------------
@@ -711,6 +784,103 @@ gv_init_color_table
   move.l  (a1),5*LONGWORDSIZE(a0) ;COLOR05
   rts
 
+; **** Horiz-Fader ****
+; ** Helligkeit der Farben verringern **
+; --------------------------------------
+  CNOP 0,4
+hf_dim_colors
+  moveq   #1,d3              ;minimale Helligkeit
+  moveq   #hf_colorbanks_number,d4 ;maximale Helligkeit
+  lea     spr_color_table+(hf_colors_per_colorbank*LONGWORDSIZE)+(1*LONGWORDSIZE)(pc),a0
+  MOVEF.W (hf_colorbanks_number-1)-1,d7 ;Anzahl der Colour-Banks
+hf_dim_colors_loop1
+  moveq   #hf_colorbanks_number,d5
+  sub.b   d3,d5              ;Helligkeit umkehren
+  move.l  #COLOR00BITS,d0
+  swap    d0                 ;Rr
+  mulu.w  d5,d0              ;Rotwert dimmen
+  divu.w  d4,d0
+  move.l  #COLOR00BITS,d1
+  lsr.w   #8,d1              ;Gg
+  mulu.w  d5,d1              ;Grünwert dimmen
+  divu.w  d4,d1
+  move.l  #COLOR00BITS,d2
+  and.l   #$0000ff,d2
+  mulu.w  d5,d2              ;Blauwert dimmen
+  divu.w  d4,d2
+  swap    d0                 ;Rr0000
+  lsl.w   #8,d1
+  move.w  d1,d0              ;RrGg00
+  move.b  d2,d0              ;RrGgBb
+  move.l  d0,d5              ;RGB8-Hintergrundfarbe
+  MOVEF.W (hf_colors_per_colorbank-1)-1,d6 ;Anzahl der Farben pro Colour-Bank
+hf_dim_colors_loop2
+  move.l  (a0),d0            ;RGB8-Farbwert
+  moveq   #TRUE,d2
+  move.b  d0,d2              ;Bb
+  lsr.w   #8,d0
+  moveq   #TRUE,d1
+  move.b  d0,d1              ;Gg
+  swap    d0                 ;Rr
+  mulu.w  d3,d0              ;Rotanteil dimmen
+  divu.w  d4,d0
+  mulu.w  d3,d1              ;Grünanteil dimmen
+  divu.w  d4,d1
+  mulu.w  d3,d2              ;Blauanteil dimmen
+  divu.w  d4,d2
+  swap    d0                 ;Rr0000
+  lsl.w   #8,d1
+  move.w  d1,d0              ;RrGg00
+  move.b  d2,d0              ;RrGgBb
+  or.l    d5,d0              ;Hintergrundfarbe
+  move.l  d0,(a0)+           ;gedimmter RGB8-Farbwert
+  dbf     d6,hf_dim_colors_loop2
+  addq.w  #4,a0              ;Hintergrundfarbe überspringen
+  addq.w  #1,d3              ;Helligkeit verringern
+  dbf     d7,hf_dim_colors_loop1
+  rts
+
+; ** Farbregister initialisieren **
+; ---------------------------------
+  CNOP 0,4
+init_color_registers
+  CPU_SELECT_COLORHI_BANK 0
+  CPU_INIT_COLORHI COLOR00,8,pf1_color_table
+  CPU_INIT_COLORHI COLOR16,16,spr_color_table
+  CPU_SELECT_COLORHI_BANK 1
+  CPU_INIT_COLORHI COLOR00,32
+  CPU_SELECT_COLORHI_BANK 2
+  CPU_INIT_COLORHI COLOR00,32
+  CPU_SELECT_COLORHI_BANK 3
+  CPU_INIT_COLORHI COLOR00,32
+  CPU_SELECT_COLORHI_BANK 4
+  CPU_INIT_COLORHI COLOR00,32
+  CPU_SELECT_COLORHI_BANK 5
+  CPU_INIT_COLORHI COLOR00,32
+  CPU_SELECT_COLORHI_BANK 6
+  CPU_INIT_COLORHI COLOR00,32
+  CPU_SELECT_COLORHI_BANK 7
+  CPU_INIT_COLORHI COLOR00,32
+
+  CPU_SELECT_COLORLO_BANK 0
+  CPU_INIT_COLORLO COLOR00,8,pf1_color_table
+  CPU_INIT_COLORLO COLOR16,16,spr_color_table
+  CPU_SELECT_COLORLO_BANK 1
+  CPU_INIT_COLORLO COLOR00,32
+  CPU_SELECT_COLORLO_BANK 2
+  CPU_INIT_COLORLO COLOR00,32
+  CPU_SELECT_COLORLO_BANK 3
+  CPU_INIT_COLORLO COLOR00,32
+  CPU_SELECT_COLORLO_BANK 4
+  CPU_INIT_COLORLO COLOR00,32
+  CPU_SELECT_COLORLO_BANK 5
+  CPU_INIT_COLORLO COLOR00,32
+  CPU_SELECT_COLORLO_BANK 6
+  CPU_INIT_COLORLO COLOR00,32
+  CPU_SELECT_COLORLO_BANK 7
+  CPU_INIT_COLORLO COLOR00,32
+  rts
+
 
 ; ** 1. Copperliste initialisieren **
 ; -----------------------------------
@@ -719,27 +889,63 @@ init_first_copperlist
   move.l  cl1_display(a3),a0
   bsr.s   cl1_init_playfield_registers
   bsr.s   cl1_init_sprite_pointers
-  bsr.s   cl1_init_color_registers
   bsr     cl1_init_bitplane_pointers
-  COPMOVEQ TRUE,COPJMP2
+  bsr     cl1_init_branches_pointers
+  bsr     cl1_init_copint
+  bsr     cl1_reset_pointer
+  COPLISTEND
   bsr     cl1_set_sprite_pointers
-  rts
+  bra     swap_playfield1
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
 
   COP_INIT_SPRITE_POINTERS cl1
 
-  CNOP 0,4
-cl1_init_color_registers
-  COP_INIT_COLORHI COLOR00,8,pf1_color_table
-  COP_INIT_COLORHI COLOR16,16,spr_color_table
+  COP_INIT_BITPLANE_POINTERS cl1
 
-  COP_SELECT_COLORLO_BANK 0
-  COP_INIT_COLORLO COLOR00,8,pf1_color_table
-  COP_INIT_COLORLO COLOR16,16,spr_color_table
+  CNOP 0,4
+cl1_init_branches_pointers
+  move.l  #(((cl1_VSTART1<<24)+(((cl1_HSTART1/4)*2)<<16))|$10000)|$fffe,d0 ;WAIT-Befehl
+  move.l  cl1_display(a3),d1
+  add.l   #cl1_extension1_entry+cl1_ext1_subextension1_entry+cl1_subextension1_SIZE,d1
+  moveq   #1,d2
+  ror.l   #8,d2              ;$01000000 = Additionswert
+  move.l  cl2_display(a3),d4
+  swap    d4                 ;High-Wert
+  move.w  #COP2LCH,(a0)+
+  moveq   #cl1_subextension1_SIZE,d3
+  move.w  d4,(a0)+
+  swap    d4                 ;Low-Wert
+  move.w  #COP2LCL,(a0)+
+  move.w  d4,(a0)+
+  MOVEF.W cl2_display_y_size-1,d7 ;Anzahl der Zeilen
+cl1_init_branches_pointers_loop
+  move.l  d0,(a0)+           ;WAIT x,y
+  swap    d1                 ;High-Wert
+  move.w  #COP1LCH,(a0)+
+  add.l   d2,d0              ;nächste Zeile
+  move.w  d1,(a0)+
+  swap    d1                 ;Low-Wert
+  move.w  #COP1LCL,(a0)+
+  move.w  d1,(a0)+
+  add.l   d3,d1              ;Einsprungadresse CL1 erhöhen
+  COPMOVEQ TRUE,COPJMP2
+  dbf     d7,cl1_init_branches_pointers_loop
+  addq.l  #8,d1              ;COP2LCH + COP2LCL überspringen
   rts
 
-  COP_INIT_BITPLANE_POINTERS cl1
+  COP_INIT_COPINT cl1,cl1_HSTART2,cl1_VSTART2,YWRAP
+
+  CNOP 0,4
+cl1_reset_pointer
+  move.l  cl1_display(a3),d0
+  swap    d0                 ;High-Wert
+  move.w  #COP1LCH,(a0)+
+  move.w  d0,(a0)+
+  swap    d0                 ;Low-Wert
+  move.w  #COP1LCL,(a0)+
+  move.w  d0,(a0)+
+  rts
 
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
@@ -747,62 +953,15 @@ cl1_init_color_registers
 ; -----------------------------------
   CNOP 0,4
 init_second_copperlist
-  move.l  cl2_construction2(a3),a0 ;Aufbau-CL
-  bsr.s   cl2_init_line_blits_steady_registers
-  bsr.s   cl2_init_line_blits
-  bsr     cl2_init_fill_blit
-;  bsr     cl2_init_copint
-  COPLISTEND
-  bra     copy_second_copperlist
-
-  CNOP 0,4
-cl2_init_line_blits_steady_registers
-  COPWAITBLIT
-  COPMOVEQ FALSEW,BLTAFWM ;Keine Ausmaskierung
-  COPMOVEQ FALSEW,BLTALWM
-  COPMOVEQ TRUE,BLTCPTH
-  COPMOVEQ TRUE,BLTDPTH
-  COPMOVEQ pf1_plane_width*pf1_depth3,BLTCMOD ;Moduli für interleaved Bitmap
-  COPMOVEQ pf1_plane_width*pf1_depth3,BLTDMOD
-  COPMOVEQ FALSEW,BLTBDAT    ;Linientextur
-  COPMOVEQ $8000,BLTADAT     ;Linientextur mit MSB beginnen
-  COPMOVEQ TRUE,COP2LCH
-  COPMOVEQ TRUE,COP2LCL
-  COPMOVEQ TRUE,COPJMP2
+  move.l  cl2_display(a3),a0
+cl2_init_BPLCON4_registers
+  move.l  #(BPLCON4<<16)+BPLCON4BITS,d0
+  moveq  #cl2_display_width-1,d7 ;Anzahl der Spalten
+cl2_init_BPLCON4_registers_loop
+  move.l  d0,(a0)+           ;BPLCON4
+  dbf     d7,cl2_init_BPLCON4_registers_loop
+  COPMOVEQ TRUE,COPJMP1
   rts
-
-  CNOP 0,4
-cl2_init_line_blits
-  moveq   #gv_max_lines_number-1,d7
-cl1_init_line_blits_loop
-  COPMOVEQ TRUE,BLTCON0
-  COPMOVEQ TRUE,BLTCON1
-  COPMOVEQ TRUE,BLTCPTL
-  COPMOVEQ TRUE,BLTAPTL
-  COPMOVEQ TRUE,BLTDPTL
-  COPMOVEQ TRUE,BLTBMOD
-  COPMOVEQ TRUE,BLTAMOD
-  COPMOVEQ TRUE,BLTSIZE
-  COPWAITBLIT
-  dbf     d7,cl1_init_line_blits_loop
-  rts
-
-  CNOP 0,4
-cl2_init_fill_blit
-  COPMOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
-  COPMOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ;Füll-Modus, Rückwärts
-  COPMOVEQ TRUE,BLTAPTH
-  COPMOVEQ TRUE,BLTAPTL
-  COPMOVEQ TRUE,BLTDPTH
-  COPMOVEQ TRUE,BLTDPTL
-  COPMOVEQ pf1_plane_width-(visible_pixels_number/8),BLTAMOD
-  COPMOVEQ pf1_plane_width-(visible_pixels_number/8),BLTDMOD
-  COPMOVEQ (gv_fill_blit_y_size*gv_fill_blit_depth*64)+(gv_fill_blit_x_size/16),BLTSIZE
-  rts
-
-;  COP_INIT_COPINT cl2,	cl2_HSTART2,cl2_VSTART2
-
-  COPY_COPPERLIST cl2,2
 
 
 ; ** CIA-Timer starten **
@@ -834,87 +993,64 @@ no_sync_routines
 ; --------------------------
   CNOP 0,4
 beam_routines
-  bsr     wait_beam_position
-  bsr.s   swap_second_copperlist
+  bsr     wait_copint
   bsr.s   swap_playfield1
+  bsr     effects_handler
+  bsr     horiz_fader_in
+  bsr     horiz_fader_out
   bsr     gv_clear_playfield1
-  bsr     gv_rotation
   bsr     gv_draw_lines
   bsr     gv_fill_playfield1
-  bsr     gv_set_second_copperlist_jump
-  btst    #CIAB_GAMEPORT0,CIAPRA(a4) ;Auf linke Maustaste warten
-  bne.s   beam_routines
+  bsr     gv_rotation
+  bsr     scroll_playfield_buttom_in
+  bsr     scroll_playfield_buttom_out
+  bsr     mouse_handler
+  tst.l   d0                 ;Abbruch ?
+  bne.s   fast_exit          ;Ja -> verzweige
+  tst.w   fx_state(a3)       ;Effekte beendet ?
+  bne.s   beam_routines      ;Nein -> verzweige
+fast_exit
+  move.w  custom_error_code(a3),d1
   rts
 
-
-; ** Copperlisten vertauschen **
-; ------------------------------
-  SWAP_COPPERLIST cl2,2
 
 ; ** Playfields vertauschen **
 ; ------------------------
-  CNOP 0,4
-swap_playfield1
-  move.l  pf1_construction1(a3),a0
-  move.l  pf1_construction2(a3),a1
-  move.l  pf1_display(a3),pf1_construction1(a3)
-  move.l  a0,pf1_construction2(a3)
-  move.l  a1,pf1_display(a3)
-  move.l  #ALIGN64KB,d1
-  moveq   #TRUE,d2
-  moveq   #pf1_plane_width,d3
-  move.l  cl1_display(a3),a0
-  ADDF.W  cl1_BPL1PTH+2,a0   ;CL
-  moveq   #pf1_depth3-1,d7   ;Anzahl der Planes
-swap_playfield1_loop
-  move.l  (a1)+,d0
-  add.l   d1,d0              ;64 kByte-Alignment
-  clr.w   d0
-  add.l   d2,d0              ;Offset für Bitplane
-  move.w  d0,4(a0)           ;BPLxPTL
-  swap    d0                 ;High
-  move.w  d0,(a0)            ;BPLxPTH
-  add.l   d3,d2              ;Offset nächste Bitplane
-  addq.w  #8,a0
-  dbf     d7,swap_playfield1_loop
-  rts
+  SWAP_PLAYFIELD pf1,3,pf1_depth3
+
 
 ; ** Playfield löschen **
 ; ------------------
   CNOP 0,4
 gv_clear_playfield1
   movem.l a3-a6,-(a7)
-  move.l  a7,save_a7(a3)     ;Alten Stackpointer retten
+  move.l  a7,save_a7(a3)     ;Stackpointer retten
+  moveq   #TRUE,d0
   moveq   #TRUE,d1
   moveq   #TRUE,d2
   moveq   #TRUE,d3
   moveq   #TRUE,d4
   moveq   #TRUE,d5
   moveq   #TRUE,d6
-  move.l  d1,a0
-  move.l  d1,a1
-  move.l  d1,a2
-  move.l  d1,a4
-  move.l  d1,a5
-  move.l  d1,a6
+  move.l  d0,a0
+  move.l  d0,a1
+  move.l  d0,a2
+  move.l  d0,a4
+  move.l  d0,a5
+  move.l  d0,a6
   move.l  pf1_construction1(a3),a7 ;Zeiger erste Plane
-  move.l  (a7),d0
-  add.l   #ALIGN64KB,d0
-  clr.w   d0
-  move.l  d0,a7
-  ADDF.L  pf1_plane_width*visible_lines_number*pf1_depth3,a7 ;Ende des Playfieldes
-  moveq   #TRUE,d0
+  move.l  (a7),a7
+  ADDF.L  pf1_plane_width*pf1_y_size3*pf1_depth3,a7 ;Ende des Playfieldes
   move.l  d0,a3
-  moveq   #4-1,d7
+  moveq   #4-1,d7            ;Anzahl der Durchläufe
 gv_clear_playfield1_loop
-  REPT ((pf1_plane_width*visible_lines_number*pf1_depth3)/56)/4
-  movem.l d0-d6/a0-a6,-(a7)  ;56 Bytes löschen
+  REPT ((pf1_plane_width*pf1_y_size3*pf1_depth3)/56)/4
+    movem.l d0-d6/a0-a6,-(a7)  ;56 Bytes löschen
   ENDR
   dbf     d7,gv_clear_playfield1_loop
   movem.l d0-d6/a0-a6,-(a7)
   movem.l d0-d6/a0-a6,-(a7)
-  movem.l d0-d6/a0-a6,-(a7)
-  movem.l d0-d3,-(a7)        ;16 Bytes löschen
+  movem.l d0-d6/a0-a4,-(a7)        ;48 Bytes löschen
   move.l  variables+save_a7(pc),a7 ;Alter Stackpointer
   movem.l (a7)+,a3-a6
   rts
@@ -984,27 +1120,22 @@ gv_rotation_loop
 ; -------------------
   CNOP 0,4
 gv_draw_lines
-  movem.l a3-a6,-(a7)
-  bsr     gv_init_draw_lines
+  movem.l a3-a5,-(a7)
+  bsr     gv_draw_lines_init
   lea     gv_object_info_table(pc),a0 ;Zeiger auf Info-Daten zum Objekt
-  lea     gv_rotation_xy_coordinates(pc),a1 ;Zeiger auf XY-Koordinaten
-  move.l  pf1_construction1(a3),a2 ;Plane0
-  move.l  (a2),d0
-  add.l   #ALIGN64KB,d0
-  clr.w   d0
-  move.l  d0,a2
-  sub.l   a4,a4              ;Linienzähler zurücksetzen
-  move.l  cl2_construction2(a3),a6 ;CL
-  ADDF.W  cl2_extension3_entry-cl2_extension2_SIZE+cl2_ext2_BLTCON0+2,a6
+  lea     gv_rotation_xy_coordinates(pc),a1   ;Zeiger auf XY-Koordinaten
+  move.l  pf1_construction2(a3),a2
+  move.l  (a2),a2
   move.l  #((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3
+  move.w  #pf1_plane_width,a4
   moveq   #gv_object_faces_number-1,d7 ;Anzahl der Flächen
 gv_draw_lines_loop1
 ; ** Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen **
   move.l  (a0)+,a5           ;Zeiger auf Startwerte der Punkte
+  swap    d7                 ;Flächenzähler retten
   move.w  (a5),d4            ;P1-Startwert
   move.w  2(a5),d5           ;P2-Startwert
   move.w  4(a5),d6           ;P3-Startwert
-  swap    d7                 ;Flächenzähler retten
   movem.w (a1,d5.w*2),d0-d1  ;P2(x,y)
   movem.w (a1,d6.w*2),d2-d3  ;P3(x,y)
   sub.w   d0,d2              ;xv = xp3-xp2
@@ -1019,100 +1150,259 @@ gv_draw_lines_loop1
   bmi.s   gv_draw_lines_loop2 ;Wenn zn negativ -> verzweige
   lsr.w   #2,d7              ;COLOR02/04 -> COLOR00/01
   beq     gv_draw_lines_no_face ;Wenn COLOR00 -> verzweige
-  cmp.w   #1,d7              ;Hintere Fläche von Object1 ?
-  beq.s   gv_draw_lines_loop2 ;Ja -> verzweige
-  lsr.w   #2,d7              ;COLOR08/16 -> COLOR00/01
-  beq     gv_draw_lines_no_face ;Wenn COLOR00 -> verzweige
 gv_draw_lines_loop2
   move.w  (a5)+,d0           ;Startwerte der Punkte P1,P2
   move.w  (a5),d2
   movem.w (a1,d0.w*2),d0-d1  ;P1(x,y)
   movem.w (a1,d2.w*2),d2-d3  ;P2(x,y)
-  GET_LINE_PARAMETERS gv,AREAFILL,COPPERUSE
+  GET_LINE_PARAMETERS gv,AREAFILL
   add.l   a3,d0              ;restliche BLTCON0 & BLTCON1-Bits setzen
   add.l   a2,d1              ;+ Playfieldadresse
   cmp.w   #1,d7              ;Plane 1 ?
   beq.s   gv_draw_lines_single_line ;Ja -> verzweige
-  moveq   #pf1_plane_width,d5
-  add.l   d5,d1              ;nächste Plane
+  add.l   a4,d1              ;nächste Plane
   cmp.w   #2,d7              ;Plane 2 ?
   beq.s   gv_draw_lines_single_line ;Ja -> verzweige
-  add.l   d5,d1              ;nächste Plane
+  add.l   a4,d1              ;nächste Plane
 gv_draw_lines_single_line
-  move.w  d0,cl2_ext2_BLTCON1-cl2_ext2_BLTCON0(a6) ;BLTCON1
-  swap    d0
-  move.w  d0,(a6)            ;BLTCON0
-  MULUF.W 2,d2               ;2*(2*dx) = 4*dx
-  move.w  d4,cl2_ext2_BLTBMOD-cl2_ext2_BLTCON0(a6) ;4*dy
-  sub.w   d2,d4              ;(4*dy)-(4*dx)
-  move.w  d1,cl2_ext2_BLTCPTL-cl2_ext2_BLTCON0(a6) ;Playfield lesen
-  addq.w  #1,a4              ;Linienzähler erhöhen
-  move.w  d1,cl2_ext2_BLTDPTL-cl2_ext2_BLTCON0(a6) ;Playfield schreiben
-  addq.w  #1*4,d2            ;(4*dx)+(1*4)
-  move.w  d3,cl2_ext2_BLTAPTL-cl2_ext2_BLTCON0(a6) ;(4*dy)-(2*dx)
-  MULUF.W 16,d2              ;((4*dx)+(1*4))*16 = Länge der Linie
-  move.w  d4,cl2_ext2_BLTAMOD-cl2_ext2_BLTCON0(a6) ;4*(dy-dx)
-  addq.w  #2,d2              ;Breite = 1 Wort
-  move.w  d2,cl2_ext2_BLTSIZE-cl2_ext2_BLTCON0(a6)
-  SUBF.W  cl2_extension2_SIZE,a6
+  WAITBLITTER
+  move.l  d0,BLTCON0-DMACONR(a6) ;Bits 31-15: BLTCON0, Bits 16-0: BLTCON1
+  move.l  d1,BLTCPT-DMACONR(a6) ;Playfield lesen
+  move.w  d3,BLTAPTL-DMACONR(a6) ;(4*dy)-(2*dx)
+  move.l  d1,BLTDPT-DMACONR(a6) ;Playfield schreiben
+  move.l  d4,BLTBMOD-DMACONR(a6) ;Bits 31-16: 4*dy, Bits 15-0: 4*(dy-dx)
+  move.w  d2,BLTSIZE-DMACONR(a6) ;Blitter starten
 gv_draw_lines_no_line
   dbf     d6,gv_draw_lines_loop2
 gv_draw_lines_no_face
   swap    d7                 ;Flächenzähler holen
   dbf     d7,gv_draw_lines_loop1
-  lea     variables+gv_lines_counter(pc),a0
-  move.w  a4,(a0)            ;Anzahl der Linien retten
-  movem.l (a7)+,a3-a6
+  movem.l (a7)+,a3-a5
   rts
   CNOP 0,4
-gv_init_draw_lines
-  move.l  pf1_construction1(a3),a0
-  move.l  (a0),d0
-  add.l   #ALIGN64KB,d0
-  clr.w   d0
-  move.l  cl2_construction2(a3),a0
-  swap    d0                 ;High
-  move.w  d0,cl2_extension1_entry+cl2_ext1_BLTCPTH+2(a0) ;Playfield lesen
-  move.w  d0,cl2_extension1_entry+cl2_ext1_BLTDPTH+2(a0) ;Playfield schreiben
+gv_draw_lines_init
+  move.w  #DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6) ;BLTPRI an
+  WAITBLITTER
+  move.l  #$ffff8000,BLTBDAT-DMACONR(a6) ;Bits 31-16: Linientextur, Bits 0-15: Linientextur mit MSB beginnen
+  moveq   #FALSE,d0
+  move.l  d0,BLTAFWM-DMACONR(a6) ;Keine Ausmaskierung
+  moveq   #pf1_plane_width*pf1_depth3,d0 ;Moduli für Interleaved-Bitmaps
+  move.w  d0,BLTCMOD-DMACONR(a6)
+  move.w  d0,BLTDMOD-DMACONR(a6)
   rts
 
 ; ** Playfield füllen **
 ; -----------------
   CNOP 0,4
 gv_fill_playfield1
-  move.l  pf1_construction1(a3),a0      ;Playfield
-  move.l  (a0),d0
-  add.l   #ALIGN64KB,d0
-  clr.w   d0
-  move.l  cl2_construction2(a3),a0
-  ADDF.L  ((pf1_plane_width*visible_lines_number*pf1_depth3)-(pf1_plane_width-(visible_pixels_number/8)))-2,d0 ;Ende des Playfieldes
-  move.w  d0,cl2_extension3_entry+cl2_ext3_BLTAPTL+2(a0) ;Quelle
-  move.w  d0,cl2_extension3_entry+cl2_ext3_BLTDPTL+2(a0) ;Ziel
-  swap    d0
-  move.w  d0,cl2_extension3_entry+cl2_ext3_BLTAPTH+2(a0) ;Quelle
-  move.w  d0,cl2_extension3_entry+cl2_ext3_BLTDPTH+2(a0) ;Ziel
+  move.l  pf1_construction2(a3),a0 ;Playfield
+  WAITBLITTER
+  move.w  #DMAF_BLITHOG,DMACON-DMACONR(a6) ;BLTPRI aus
+  move.l  (a0),a0
+  ADDF.L  (pf1_plane_width*pf1_y_size3*pf1_depth3)-2,a0 ;Ende des Playfieldes
+  move.l  #((BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16)+(BLTCON1F_DESC+BLTCON1F_EFE),BLTCON0-DMACONR(a6) ;Minterm D=A, Füll-Modus, Rückwärts
+  move.l  a0,BLTAPT-DMACONR(a6) ;Quelle
+  move.l  a0,BLTDPT-DMACONR(a6) ;Ziel
+  moveq   #TRUE,d0
+  move.l  d0,BLTAMOD-DMACONR(a6) ;A+D-Mod
+  move.w  #(gv_fill_blit_y_size*gv_fill_blit_depth*64)+(gv_fill_blit_x_size/16),BLTSIZE-DMACONR(a6)
   rts
 
-; ** Einsprung in Blits setzen **
-; -------------------------------
+
+; ** Playfield von unten einscrollen **
+; -------------------------------------
   CNOP 0,4
-gv_set_second_copperlist_jump
-  move.l  cl2_construction2(a3),a0 ;CL
-  move.l  a0,d0
-  ADDF.L  cl2_extension3_entry,d0
-  moveq   #TRUE,d1           ;32-Bit-Zugriff
-  move.w  gv_lines_counter(a3),d1
-  IFEQ gv_count_lines
-    cmp.w   $140000,d1
-    blt.s   gv_skip
-    move.w  d1,$140000
-gv_skip
-  ENDC
-  MULUF.W cl2_extension2_SIZE,d1,d2
-  sub.l   d1,d0
-  move.w  d0,cl2_extension1_entry+cl2_ext1_COP2LCL+2(a0)
+scroll_playfield_buttom_in
+  tst.w   spbi_state(a3)     ;Scroll-Playfield-Buttom-In an ?
+  bne.s   no_scroll_playfield_buttom_in ;Nein -> verzweige
+  move.w  spbi_y_angle(a3),d2 ;Y-Winkel holen
+  cmp.w   #sine_table_length/4,d2 ;90 Grad ?
+  bge.s   spbi_finished      ;Ja -> verzweige
+  lea     sine_table(pc),a0  
+  move.w  (a0,d2.w*2),d0     ;sin(w)
+  muls.w  #spb_y_radius*2,d0 ;y'=(sin(w)*yr)/2^15
   swap    d0
-  move.w  d0,cl2_extension1_entry+cl2_ext1_COP2LCH+2(a0)
+  add.w   #spb_y_centre,d0 ;y' + Y-Mittelpunkt
+  addq.w  #spbi_y_angle_speed,d2 ;nächster Y-Winkel
+  move.w  d2,spbi_y_angle(a3) ;Y-Winkel retten
+  MOVEF.W spb_max_VSTOP,d3
+  bsr.s   spb_set_display_window
+no_scroll_playfield_buttom_in
+  rts
+  CNOP 0,4
+spbi_finished
+  moveq   #FALSE,d0
+  move.w  d0,spbi_state(a3)  ;Scroll-Playfield-Buttom-In aus
+  rts
+
+; ** Playfield nach unten ausscrollen **
+; --------------------------------------
+  CNOP 0,4
+scroll_playfield_buttom_out
+  tst.w   spbo_state(a3)     ;Vert-Scroll-Playfild-Out an ?
+  bne.s   no_scroll_playfield_buttom_out ;Nein -> verzweige
+  move.w  spbo_y_angle(a3),d2 ;Y-Winkel holen
+  cmp.w   #sine_table_length/2,d2 ;180 Grad ?
+  bge.s   spbo_finished      ;Ja -> verzweige
+  lea     sine_table(pc),a0  
+  move.w  (a0,d2.w*2),d0     ;cos(w)
+  muls.w  #spb_y_radius*2,d0 ;y'=(cos(w)*yr)/2^15
+  swap    d0
+  add.w   #spb_y_centre,d0 ;y' + Y-Mittelpunkt
+  addq.w  #spbo_y_angle_speed,d2 ;nächster Y-Winkel
+  move.w  d2,spbo_y_angle(a3) ;Y-Winkel retten
+  MOVEF.W spb_max_VSTOP,d3
+  bsr.s   spb_set_display_window
+no_scroll_playfield_buttom_out
+  rts
+  CNOP 0,4
+spbo_finished
+  clr.w   fx_state(a3)       ;Effekte beendet
+  moveq   #FALSE,d0
+  move.w  d0,spbo_state(a3)  ;Scroll-Playfield-Buttom-Out aus
+  rts
+
+  CNOP 0,4
+spb_set_display_window
+  moveq   #spb_min_VSTART,d1
+  add.w   d0,d1              ;+ Y-Offset
+  cmp.w   d3,d1              ;VSTOP-Maximum erreicht ?
+  ble.s   spb_no_max_VSTOP1  ;Nein -> verzweige
+  move.w  d3,d1              ;VSTOP korrigieren
+spb_no_max_VSTOP1
+  move.l  cl1_display(a3),a1 ;CL
+  move.b  d1,cl1_DIWSTRT+2(a1) ;VSTART V7-V0
+  move.w  d1,d2
+  add.w   #visible_lines_number,d2 ;VSTOP
+  cmp.w   d3,d2              ;VSTOP-Maximum erreicht ?
+  ble.s   spb_no_max_VSTOP2 ;Nein -> verzweige
+  move.w  d3,d2              ;VSTOP korrigieren
+spb_no_max_VSTOP2
+  move.b  d2,cl1_DIWSTOP+2(a1) ;VSTOP V7-V0
+  lsr.w   #8,d1              ;VSTART V8-Bit in richtige Position bringen
+  move.w  cl1_DIWHIGH+2(a1),d0
+  and.w   #~(DIWHIGHF_VSTART8+DIWHIGHF_VSTOP8),d0 ;VSTART&VSTOP V8-Bit ggf. ausmaskieren
+  move.b  d1,d2              ;VSTART V8 + VSTOP V8
+  or.w    d2,d0              ;setzen
+  move.w  d0,cl1_DIWHIGH+2(a1) 
+  rts
+
+; ** Playfield horizontal einfaden **
+; ------------------------------
+  CNOP 0,4
+horiz_fader_in
+  tst.w   hfi_state(a3)
+  bne.s   no_horiz_fader_in
+  move.w  hf_switch_table_start(a3),d2 ;Startwert in Switchwert-Tabelle
+  move.w  d2,d0
+  cmp.w   #cl2_display_width+hf_colorbanks_number-1,d0 ;Tabellenende ?
+  bge.s   hfi_finished       ;Ja -> verzweige
+  addq.w  #1,d2              ;nächster Eintrag
+  move.w  d2,hf_switch_table_start(a3)
+  lea     hf_switch_table(pc),a0 ;Zeiger auf Switchwert-Tabelle
+  lea     (a0,d0.w),a0       ;Offset bestimmen
+  move.l  cl2_display(a3),a1
+  ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_24+3,a1
+  MOVEF.W cl2_display_width-1,d7
+horiz_fader_in_loop
+  move.b  (a0)+,d0
+  move.b  d0,d1              ;Switchwert für gerade und ungerade Sprites
+  lsr.b   #4,d1
+  or.b    d1,d0
+  move.b  d0,(a1)            ;Switchwert kopieren
+  subq.w  #4,a1              ;nächste Spalte in CL
+  dbf     d7,horiz_fader_in_loop
+no_horiz_fader_in
+  rts
+  CNOP 0,4
+hfi_finished
+  moveq   #FALSE,d0
+  move.w  d0,hfi_state(a3)   ;Horiz-Fader-In aus
+  rts
+
+; ** Playfield horizontal ausfaden **
+; ------------------------------
+  CNOP 0,4
+horiz_fader_out
+  tst.w   hfo_state(a3)      ;Horiz-Fader-Out an ?
+  bne.s   no_horiz_fader_out ;Nein ->verzweige
+  move.w  hf_switch_table_start(a3),d2 ;Startwert in Switchwert-Tabelle
+  move.w  d2,d0
+  bmi.s   hfo_finished       ;Wenn Tabellenanfang -> verzweige
+  subq.w  #1,d2              ;vorheriger Eintrag
+  move.w  d2,hf_switch_table_start(a3)
+  lea     hf_switch_table(pc),a0 ;Zeiger auf Switchwert-Tabelle
+  lea     (a0,d0.w),a0       ;Offset bestimmen
+  move.l  cl2_display(a3),a1
+  ADDF.W  cl2_extension1_entry+3,a1
+  MOVEF.W cl2_display_width-1,d7
+horiz_fader_out_loop
+  move.b  (a0)+,d0
+  move.b  d0,d1              ;Switchwert für gerade und ungerade Sprites
+  lsr.b   #4,d1
+  or.b    d1,d0
+  move.b  d0,(a1)            ;Switchwert kopieren
+  addq.w  #4,a1              ;nächste Spalte in CL
+  dbf     d7,horiz_fader_out_loop
+no_horiz_fader_out
+  rts
+  CNOP 0,4
+hfo_finished
+  moveq   #FALSE,d0
+  move.w  d0,hfo_state(a3)   ;Horiz-Fader-Out aus
+  rts
+
+
+; ** SOFTINT-Interrupts abfragen **
+; ---------------------------------
+  CNOP 0,4
+effects_handler
+  moveq   #INTF_SOFTINT,d1
+  and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
+  beq.s   no_check_effects_trigger ;Nein -> verzweige
+  addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
+  bgt.s   no_check_effects_trigger ;Ja -> verzweige
+  move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen
+  subq.w  #1,d0
+  beq.s   eh_start_scroll_playfield_buttom_in
+  subq.w  #1,d0
+  beq.s   eh_start_horiz_fader_in
+  subq.w  #1,d0
+  beq.s   eh_start_horiz_fader_out
+  subq.w  #1,d0
+  beq.s   eh_start_scroll_playfield_buttom_out
+no_check_effects_trigger
+  rts
+  CNOP 0,4
+eh_start_scroll_playfield_buttom_in
+  clr.w   spbi_state(a3)     :Scroll-Playfield-Buttom-In an
+  rts
+  CNOP 0,4
+eh_start_horiz_fader_in
+  clr.w   hfi_state(a3)      ;Horiz-Fader-In an
+  rts
+  CNOP 0,4
+eh_start_horiz_fader_out
+  clr.w   hfo_state(a3)      ;Horiz-Fader-Out an
+  rts
+  CNOP 0,4
+eh_start_scroll_playfield_buttom_out
+  clr.w   spbo_state(a3)     :Scroll-Playfield-Buttom-Out an
+  rts
+
+; ** Mouse-Handler **
+; -------------------
+  CNOP 0,4
+mouse_handler
+  btst    #CIAB_GAMEPORT0,CIAPRA(a4) ;Linke Maustaste gedrückt ?
+  beq.s   mh_quit            ;Ja -> verzweige
+  moveq   #RETURN_OK,d0
+  rts
+  CNOP 0,4
+mh_quit
+  moveq   #RETURN_WARN,d0    ;Abbruch
   rts
 
 
@@ -1155,13 +1445,81 @@ NMI_int_server
 ; ----------------------------------
   CNOP 0,4
 pf1_color_table
-  REPT pf1_colors_number
+  REPT 8 ;pf1_colors_number
     DC.L COLOR00BITS
   ENDR
 
 ; ** Farben der Sprites **
 ; ------------------------
 spr_color_table
+  REPT hf_colors_per_colorbank
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  REPT 8
+    DC.L COLOR00BITS
+  ENDR
   INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
   INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
@@ -1187,67 +1545,39 @@ sine_table
 ; ** Farben der Glenz-Objekte **
   CNOP 0,4
 gv_glenz_color_table
-  INCLUDE "Blitter.AGA:Grafik/1xGlenz-Colorgradient6.ct"
+  INCLUDE "Blitter.AGA:Grafik/1xGlenz-Colorgradient5.ct"
 
 ; ** Objektdaten **
 ; -----------------
   CNOP 0,2
 gv_object_coordinates
-; ** Diamant für 192x192-Screen **
-    DC.W 0,-(36*8),0             ;P0
-    DC.W -(23*8),-(36*8),-(55*8) ;P1
-    DC.W 23*8,-(36*8),-(55*8)    ;P2
-    DC.W 55*8,-(36*8),-(23*8)    ;P3
-    DC.W 55*8,-(36*8),23*8       ;P4
-    DC.W 23*8,-(36*8),55*8       ;P5
-    DC.W -(23*8),-(36*8),55*8    ;P6
-    DC.W -(55*8),-(36*8),23*8    ;P7
-    DC.W -(55*8),-(36*8),-23*8   ;P8
-    DC.W 0,-(11*8),-(75*8)       ;P9
-    DC.W 52*8,-(11*8),-(52*8)    ;P11
-    DC.W 75*8,-(11*8),0          ;P11
-    DC.W 52*8,-(11*8),52*8       ;P12
-    DC.W 0*8,-(11*8),75*8        ;P13
-    DC.W -(52*8),-(11*8),52*8    ;P14
-    DC.W -(75*8),-(11*8),0*8     ;P15
-    DC.W -(52*8),-(11*8),-(52*8) ;P16
-    DC.W -(27*8),-(11*8),-(75*8) ;P17
-    DC.W 27*8,-(11*8),-(75*8)    ;P18
-    DC.W 75*8,-(11*8),-(27*8)    ;P19
-    DC.W 75*8,-(11*8),27*8       ;P20
-    DC.W 27*8,-(11*8),75*8       ;P23
-    DC.W -(27*8),-(11*8),75*8    ;P22
-    DC.W -(75*8),-(11*8),27*8    ;P23
-    DC.W -(75*8),-(11*8),-(27*8) ;P24
-    DC.W 0,48*8,0                ;P25
-
-
-    DC.W 0,-(33*8),0             ;P0
-    DC.W -(21*8),-(33*8),-(50*8) ;P1
-    DC.W 21*8,-(33*8),-(50*8)    ;P2
-    DC.W 50*8,-(33*8),-(21*8)    ;P3
-    DC.W 50*8,-(33*8),21*8       ;P4
-    DC.W 21*8,-(33*8),50*8       ;P5
-    DC.W -(21*8),-(33*8),50*8    ;P6
-    DC.W -(50*8),-(33*8),21*8    ;P7
-    DC.W -(50*8),-(33*8),-21*8   ;P8
-    DC.W 0*8,-(10*8),-(68*8)     ;P9
-    DC.W 47*8,-(10*8),-(47*8)    ;P10
-    DC.W 68*8,-(10*8),0*8        ;P11
-    DC.W 47*8,-(10*8),47*8       ;P12
-    DC.W 0*8,-(10*8),68*8        ;P13
-    DC.W -(47*8),-(10*8),47*8    ;P14
-    DC.W -(68*8),-(10*8),0*8     ;P15
-    DC.W -(47*8),-(10*8),-(47*8) ;P16
-    DC.W -(27*8),-(10*8),-(68*8) ;P17
-    DC.W 27*8,-(10*8),-(68*8)    ;P18
-    DC.W 68*8,-(10*8),-(27*8)    ;P19
-    DC.W 68*8,-(10*8),27*8       ;P20
-    DC.W 27*8,-(10*8),68*8       ;P21
-    DC.W -(27*8),-(10*8),68*8    ;P22
-    DC.W -(68*8),-(10*8),27*8    ;P23
-    DC.W -(68*8),-(10*8),-(27*8) ;P24
-    DC.W 0*8,48*8,0*8            ;P25
+; ** Diamant
+  DC.W 0,-(36*8),0             ;P0
+  DC.W -(19*8),-(36*8),-(48*8) ;P1
+  DC.W 19*8,-(36*8),-(48*8)    ;P2
+  DC.W 48*8,-(36*8),-(19*8)    ;P3
+  DC.W 48*8,-(36*8),19*8       ;P4
+  DC.W 19*8,-(36*8),48*8       ;P5
+  DC.W -(19*8),-(36*8),48*8    ;P6
+  DC.W -(48*8),-(36*8),19*8    ;P7
+  DC.W -(48*8),-(36*8),-(19*8) ;P8
+  DC.W 0,-(24*8),-(58*8)       ;P9
+  DC.W 40*8,-(24*8),-(40*8)    ;P10
+  DC.W 58*8,-(24*8),0          ;P11
+  DC.W 40*8,-(24*8),40*8       ;P12
+  DC.W 0,-(24*8),58*8          ;P13
+  DC.W -(40*8),-(24*8),40*8    ;P14
+  DC.W -(58*8),-(24*8),0       ;P15
+  DC.W -(40*8),-(24*8),-(40*8) ;P16
+  DC.W -(27*8),-(12*8),-(68*8) ;P17
+  DC.W 27*8,-(12*8),-(68*8)    ;P18
+  DC.W 68*8,-(12*8),-(27*8)    ;P19
+  DC.W 68*8,-(12*8),27*8       ;P20
+  DC.W 27*8,-(12*8),68*8       ;P21
+  DC.W -(27*8),-(12*8),68*8    ;P22
+  DC.W -(68*8),-(12*8),27*8    ;P23
+  DC.W -(68*8),-(12*8),-(27*8) ;P24
+  DC.W 0,48*8,0                ;P25
 
 ; ** Information über Objekt **
 ; -----------------------------
@@ -1309,12 +1639,12 @@ gv_object_info_table
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face11_color ;Farbe der Fläche
   DC.W gv_object_face11_lines_number-1 ;Anzahl der Linien
-
 ; ** 12. Fläche **
 ; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face12_color ;Farbe der Fläche
   DC.W gv_object_face12_lines_number-1 ;Anzahl der Linien
+
 ; ** 13. Fläche **
 ; ---------------
   DC.L 0                     ;Zeiger auf Koords
@@ -1325,7 +1655,6 @@ gv_object_info_table
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face14_color ;Farbe der Fläche
   DC.W gv_object_face14_lines_number-1 ;Anzahl der Linien
-
 ; ** 15. Fläche **
 ; ----------------
   DC.L 0                     ;Zeiger auf Koords
@@ -1336,12 +1665,12 @@ gv_object_info_table
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face16_color ;Farbe der Fläche
   DC.W gv_object_face16_lines_number-1 ;Anzahl der Linien
+
 ; ** 17. Fläche **
 ; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face17_color ;Farbe der Fläche
   DC.W gv_object_face17_lines_number-1 ;Anzahl der Linien
-
 ; ** 18. Fläche **
 ; ----------------
   DC.L 0                     ;Zeiger auf Koords
@@ -1373,12 +1702,12 @@ gv_object_info_table
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face23_color ;Farbe der Fläche
   DC.W gv_object_face23_lines_number-1 ;Anzahl der Linien
-
 ; ** 24. Fläche **
 ; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face24_color ;Farbe der Fläche
   DC.W gv_object_face24_lines_number-1 ;Anzahl der Linien
+
 ; ** 25. Fläche **
 ; ---------------
   DC.L 0                     ;Zeiger auf Koords
@@ -1389,7 +1718,6 @@ gv_object_info_table
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face26_color ;Farbe der Fläche
   DC.W gv_object_face26_lines_number-1 ;Anzahl der Linien
-
 ; ** 27. Fläche **
 ; ---------------  
   DC.L 0                     ;Zeiger auf Koords
@@ -1400,12 +1728,12 @@ gv_object_info_table
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face28_color ;Farbe der Fläche
   DC.W gv_object_face28_lines_number-1 ;Anzahl der Linien
+
 ; ** 29. Fläche **
 ; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face29_color ;Farbe der Fläche
   DC.W gv_object_face29_lines_number-1 ;Anzahl der Linien
-
 ; ** 30. Fläche **
 ; ---------------
   DC.L 0                     ;Zeiger auf Koords
@@ -1442,6 +1770,7 @@ gv_object_info_table
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face36_color ;Farbe der Fläche
   DC.W gv_object_face36_lines_number-1 ;Anzahl der Linien
+
 ; ** 37. Fläche **
 ; ---------------
   DC.L 0                     ;Zeiger auf Koords
@@ -1463,65 +1792,137 @@ gv_object_info_table
   DC.W gv_object_face40_color ;Farbe der Fläche
   DC.W gv_object_face40_lines_number-1 ;Anzahl der Linien
 
+; ** 41. Fläche **
+; ---------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W gv_object_face41_color ;Farbe der Fläche
+  DC.W gv_object_face41_lines_number-1 ;Anzahl der Linien
+; ** 42. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W gv_object_face42_color ;Farbe der Fläche
+  DC.W gv_object_face42_lines_number-1 ;Anzahl der Linien
+; ** 43. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W gv_object_face43_color ;Farbe der Fläche
+  DC.W gv_object_face43_lines_number-1 ;Anzahl der Linien
+; ** 44. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W gv_object_face44_color ;Farbe der Fläche
+  DC.W gv_object_face44_lines_number-1 ;Anzahl der Linien
+; ** 45. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W gv_object_face45_color ;Farbe der Fläche
+  DC.W gv_object_face45_lines_number-1 ;Anzahl der Linien
+; ** 46. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W gv_object_face46_color ;Farbe der Fläche
+  DC.W gv_object_face46_lines_number-1 ;Anzahl der Linien
+; ** 47. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W gv_object_face47_color ;Farbe der Fläche
+  DC.W gv_object_face47_lines_number-1 ;Anzahl der Linien
+; ** 48. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W gv_object_face48_color ;Farbe der Fläche
+  DC.W gv_object_face48_lines_number-1 ;Anzahl der Linien
 
+  
 ; ** Eckpunkte der Flächen **
 ; ---------------------------
   CNOP 0,2
 gv_object_edge_table
-  DC.W 0*2,6*2,5*2,0*2       ;Flächen oben
-  DC.W 0*2,5*2,4*2,0*2
-  DC.W 3*2,0*2,4*2,3*2
-  DC.W 0*2,3*2,2*2,0*2
-  DC.W 1*2,0*2,2*2,1*2
-  DC.W 1*2,8*2,0*2,1*2
-  DC.W 8*2,7*2,0*2,8*2
-  DC.W 0*2,7*2,6*2,0*2
+  DC.W 0*2,6*2,5*2,0*2       ;Fläche 5 oben, Dreieck 12 Uhr
+  DC.W 0*2,5*2,4*2,0*2       ;Fläche 4 oben, Dreieck 1,5 Uhr
+  DC.W 3*2,0*2,4*2,3*2       ;Fläche 3 oben, Dreieck 3 Uhr
+  DC.W 0*2,3*2,2*2,0*2       ;Fläche 2 oben, Dreieck 4,5 Uhr
+  DC.W 1*2,0*2,2*2,1*2       ;Fläche 1 oben, Dreieck 6 Uhr
+  DC.W 1*2,8*2,0*2,1*2       ;Fläche 8 oben, Dreieck 7,5 Uhr
+  DC.W 8*2,7*2,0*2,8*2       ;Fläche 7 oben, Dreieck 9 Uhr
+  DC.W 0*2,7*2,6*2,0*2       ;Fläche 6 oben, Dreieck 10,5 Uhr
 
-  DC.W 2*2,9*2,1*2,2*2       ;Flächen mitte
-  DC.W 1*2,9*2,17*2,1*2
-  DC.W 2*2,18*2,9*2,2*2
+  DC.W 2*2,9*2,1*2,2*2       ;Fläche 9 vorne, Dreieck 12 Uhr
+  DC.W 2*2,18*2,9*2,2*2      ;Fläche 12 vorne, Dreieck 3 Uhr
+  DC.W 9*2,18*2,17*2,9*2     ;Fläche 11 vorne, Dreieck 6 Uhr
+  DC.W 1*2,9*2,17*2,1*2      ;Fläche 10 vorne, Dreieck 9 Uhr
 
-  DC.W 3*2,10*2,2*2,3*2
-  DC.W 2*2,10*2,18*2,2*2
-  DC.W 3*2,19*2,10*2,3*2
+  DC.W 3*2,10*2,2*2,3*2      ;Fläche 13 vorne rechts, Dreieck 12 Uhr
+  DC.W 19*2,10*2,3*2,19*2    ;Fläche 16 vorne rechts, Dreieck 3 Uhr
+  DC.W 10*2,19*2,18*2,10*2   ;Fläche 15 vorne rechts, Dreieck 6 Uhr
+  DC.W 2*2,10*2,18*2,2*2     ;Fläche 14 vorne rechts, Dreieck 9 Uhr
 
-  DC.W 4*2,11*2,3*2,4*2
-  DC.W 3*2,11*2,19*2,3*2
-  DC.W 4*2,20*2,11*2,4*2
+  DC.W 4*2,11*2,3*2,4*2      ;Fläche 17 rechts, Dreieck 12 Uhr
+  DC.W 4*2,20*2,11*2,4*2     ;Fläche 20 rechts, Dreieck 3 Uhr
+  DC.W 11*2,20*2,19*2,11*2   ;Fläche 19 rechts, Dreieck 6 Uhr
+  DC.W 3*2,11*2,19*2,3*2     ;Fläche 18 rechts, Dreieck 9 Uhr
 
-  DC.W 5*2,12*2,4*2,5*2
-  DC.W 4*2,12*2,20*2,4*2
-  DC.W 5*2,21*2,12*2,5*2
+  DC.W 5*2,12*2,4*2,5*2      ;Fläche 21 hinten rechts, Dreieck 12 Uhr
+  DC.W 5*2,21*2,12*2,5*2     ;Fläche 24 hinten rechts, Dreieck 3 Uhr
+  DC.W 12*2,21*2,20*2,12*2   ;Fläche 23 hinten rechts, Dreieck 6 Uhr
+  DC.W 12*2,20*2,4*2,12*2    ;Fläche 22 hinten rechts, Dreieck 9 Uhr
 
-  DC.W 6*2,13*2,5*2,6*2
-  DC.W 5*2,13*2,21*2,5*2
-  DC.W 6*2,22*2,13*2,6*2
+  DC.W 6*2,13*2,5*2,6*2      ;Fläche 25 hinten, Dreieck 12 Uhr
+  DC.W 6*2,22*2,13*2,6*2     ;Fläche 28 hinten, Dreieck 3 Uhr
+  DC.W 13*2,22*2,21*2,13*2   ;Fläche 27 hinten, Dreieck 6 Uhr
+  DC.W 5*2,13*2,21*2,5*2     ;Fläche 26 hinten, Dreieck 9 Uhr
 
-  DC.W 7*2,14*2,6*2,7*2
-  DC.W 6*2,14*2,22*2,6*2
-  DC.W 7*2,23*2,14*2,7*2
+  DC.W 7*2,14*2,6*2,7*2      ;Fläche 29 hinten links, Dreieck 12 Uhr
+  DC.W 7*2,23*2,14*2,7*2     ;Fläche 32 hinten links, Dreieck 3 Uhr
+  DC.W 14*2,23*2,22*2,14*2   ;Fläche 31 hinten links, Dreieck 6 Uhr
+  DC.W 6*2,14*2,22*2,6*2     ;Fläche 30 hinten links, Dreieck 9 Uhr
 
-  DC.W 8*2,15*2,7*2,8*2
-  DC.W 7*2,15*2,23*2,7*2
-  DC.W 8*2,24*2,15*2,8*2
+  DC.W 8*2,15*2,7*2,8*2      ;Fläche 33 links, Dreieck 12 Uhr
+  DC.W 8*2,24*2,15*2,8*2     ;Fläche 36 links, Dreieck 3 Uhr
+  DC.W 15*2,24*2,23*2,15*2   ;Fläche 35 links, Dreieck 6 Uhr
+  DC.W 7*2,15*2,23*2,7*2     ;Fläche 34 links, Dreieck 9 Uhr
 
-  DC.W 1*2,16*2,8*2,1*2
-  DC.W 8*2,16*2,24*2,8*2
-  DC.W 1*2,17*2,16*2,1*2
+  DC.W 1*2,16*2,8*2,1*2      ;Fläche 37 vorne links, Dreieck 12 Uhr
+  DC.W 1*2,17*2,16*2,1*2     ;Fläche 40 vorne links, Dreieck 3 Uhr
+  DC.W 16*2,17*2,24*2,16*2   ;Fläche 39 vorne links, Dreieck 6 Uhr
+  DC.W 8*2,16*2,24*2,8*2     ;Fläche 38 vorne links, Dreieck 9 Uhr
 
-  DC.W 25*2,21*2,22*2,25*2   ;Flächen unten
-  DC.W 25*2,20*2,21*2,25*2
-  DC.W 19*2,20*2,25*2,19*2
-  DC.W 18*2,19*2,25*2,18*2
-  DC.W 17*2,18*2,25*2,17*2
-  DC.W 17*2,25*2,24*2,17*2
-  DC.W 24*2,25*2,23*2,24*2
-  DC.W 25*2,22*2,23*2,25*2
+  DC.W 25*2,21*2,22*2,25*2   ;Fläche 45 unten, Dreieck 12 Uhr
+  DC.W 25*2,20*2,21*2,25*2   ;Fläche 44 unten, Dreieck 1,5 Uhr
+  DC.W 19*2,20*2,25*2,19*2   ;Fläche 43 unten, Dreieck 3 Uhr
+  DC.W 18*2,19*2,25*2,18*2   ;Fläche 42 unten, Dreieck 4,5 Uhr
+  DC.W 17*2,18*2,25*2,17*2   ;Fläche 41 unten, Dreieck 6 Uhr
+  DC.W 17*2,25*2,24*2,17*2   ;Fläche 48 unten, Dreieck 7,5 Uhr
+  DC.W 24*2,25*2,23*2,24*2   ;Fläche 47 unten, Dreieck 9 Uhr
+  DC.W 25*2,22*2,23*2,25*2   ;Fläche 46 unten, Dreieck 10,5 Uhr
 
 ; ** Koordinaten der Linien **
 ; ----------------------------
 gv_rotation_xy_coordinates
   DS.W gv_object_edge_points_number*2
+
+; **** Horiz-Fader ****
+; ** Von dunkel nach hell **
+hf_switch_table
+  REPT cl2_display_width
+    DC.B 256-(hf_colors_per_colorbank*15)
+  ENDR
+  DC.B 256-(hf_colors_per_colorbank*14)
+  DC.B 256-(hf_colors_per_colorbank*13)
+  DC.B 256-(hf_colors_per_colorbank*12)
+  DC.B 256-(hf_colors_per_colorbank*11)
+  DC.B 256-(hf_colors_per_colorbank*10)
+  DC.B 256-(hf_colors_per_colorbank*9)
+  DC.B 256-(hf_colors_per_colorbank*8)
+  DC.B 256-(hf_colors_per_colorbank*7)
+  DC.B 256-(hf_colors_per_colorbank*6)
+  DC.B 256-(hf_colors_per_colorbank*5)
+  DC.B 256-(hf_colors_per_colorbank*4)
+  DC.B 256-(hf_colors_per_colorbank*3)
+  DC.B 256-(hf_colors_per_colorbank*2)
+  REPT cl2_display_width
+    DC.B 256-(hf_colors_per_colorbank*1)
+  ENDR
 
 
 ; ## Speicherstellen allgemein ##
@@ -1541,6 +1942,11 @@ gv_rotation_xy_coordinates
 
   INCLUDE "error-texts.i"
 
+; ** Programmversion für Version-Befehl **
+; ----------------------------------------
+prg_version DC.B "$VER: 00_Intro 1.0 (12.4.24)",TRUE
+  EVEN
+
 
 ; ## Grafikdaten nachladen ##
 ; ---------------------------
@@ -1550,31 +1956,3 @@ lg_image_data SECTION lg_gfx,DATA
   INCBIN "Daten:Asm-Sources.AGA/Superglenz/graphics/192x39x4-Superglenz.rawblit"
 
   END
-
-    DC.W 0,-(36*8),0             ;P0
-    DC.W -(23*8),-(36*8),-(55*8) ;P1
-    DC.W 23*8,-(36*8),-(55*8)    ;P2
-    DC.W 55*8,-(36*8),-(23*8)    ;P3
-    DC.W 55*8,-(36*8),23*8       ;P4
-    DC.W 23*8,-(36*8),55*8       ;P5
-    DC.W -(23*8),-(36*8),55*8    ;P6
-    DC.W -(55*8),-(36*8),23*8    ;P7
-    DC.W -(55*8),-(36*8),-23*8   ;P8
-    DC.W 0,-(11*8),-(75*8)       ;P9
-    DC.W 52*8,-(11*8),-(52*8)    ;P11
-    DC.W 75*8,-(11*8),0          ;P11
-    DC.W 52*8,-(11*8),52*8       ;P12
-    DC.W 0*8,-(11*8),75*8        ;P13
-    DC.W -(52*8),-(11*8),52*8    ;P14
-    DC.W -(75*8),-(11*8),0*8     ;P15
-    DC.W -(52*8),-(11*8),-(52*8) ;P16
-    DC.W -(27*8),-(11*8),-(75*8) ;P17
-    DC.W 27*8,-(11*8),-(75*8)    ;P18
-    DC.W 75*8,-(11*8),-(27*8)    ;P19
-    DC.W 75*8,-(11*8),27*8       ;P20
-    DC.W 27*8,-(11*8),75*8       ;P23
-    DC.W -(27*8),-(11*8),75*8    ;P22
-    DC.W -(75*8),-(11*8),27*8    ;P23
-    DC.W -(75*8),-(11*8),-(27*8) ;P24
-    DC.W 0,48*8,0                ;P25
-

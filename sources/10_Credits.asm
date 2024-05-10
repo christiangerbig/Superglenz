@@ -1,7 +1,7 @@
 ; ##############################
 ; # Programm: 10_Credits.asm   #
 ; # Autor:    Christian Gerbig #
-; # Datum:    19.04.2024       #
+; # Datum:    23.04.2024       #
 ; # Version:  1.0              #
 ; # CPU:      68020+           #
 ; # FASTMEM:  -                #
@@ -12,6 +12,13 @@
   SECTION code_and_variables,CODE
 
   MC68040
+
+  XREF COLOR00BITS
+  XREF nop_second_copperlist
+  XREF mouse_handler
+  XREF sine_table
+
+  XDEF start_10_credits 
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -60,10 +67,14 @@ workbench_start                   EQU FALSE
 workbench_fade                    EQU FALSE
 text_output                       EQU FALSE
 
+sys_taken_over
+own_display_set_second_copperlist
+pass_global_references
+pass_return_code
 mgv_count_lines                   EQU FALSE
 mgv_morph_object1                 EQU TRUE
 
-DMABITS                           EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_MASTER+DMAF_SETCLR
+DMABITS                           EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 INTENABITS                        EQU INTF_SETCLR
 
 CIAAICRBITS                       EQU CIAICRF_SETCLR
@@ -74,11 +85,11 @@ COPCONBITS                        EQU COPCONF_CDANG
 pf1_x_size1                       EQU 0
 pf1_y_size1                       EQU 0
 pf1_depth1                        EQU 0
-pf1_x_size2                       EQU 0
-pf1_y_size2                       EQU 0
-pf1_depth2                        EQU 0
-pf1_x_size3                       EQU 192
-pf1_y_size3                       EQU 256
+pf1_x_size2                       EQU 256
+pf1_y_size2                       EQU 256+(8*2)
+pf1_depth2                        EQU 1
+pf1_x_size3                       EQU 256
+pf1_y_size3                       EQU 256+(8*2)
 pf1_depth3                        EQU 1
 pf1_colors_number                 EQU 0 ;2
 
@@ -106,7 +117,6 @@ extra_pf2_depth                   EQU 3
 spr_number                        EQU 8
 spr_x_size1                       EQU 64
 spr_x_size2                       EQU 64
-spr_y_size                        EQU 256
 spr_depth                         EQU 2
 spr_colors_number                 EQU 16
 spr_odd_color_table_select        EQU 1
@@ -133,7 +143,7 @@ CIAA_TB_continuous                EQU FALSE
 CIAB_TA_continuous                EQU FALSE
 CIAB_TB_continuous                EQU FALSE
 
-beam_position                     EQU $136
+beam_position                     EQU $133
 
 pixel_per_line                    EQU 192
 visible_pixels_number             EQU 192
@@ -155,29 +165,49 @@ DIWSTOPBITS                       EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(
 pf1_plane_width                   EQU pf1_x_size3/8
 extra_pf1_plane_width             EQU extra_pf1_x_size/8
 extra_pf2_plane_width             EQU extra_pf2_x_size/8
-data_fetch_x_size                 EQU pf1_x_size3
-data_fetch_width                  EQU data_fetch_x_size/8
+data_fetch_width                  EQU pixel_per_line/8
 pf1_plane_moduli                  EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
 BPLCON0BITS                       EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON1BITS                       EQU TRUE
+BPLCON1BITS                       EQU $4444
 BPLCON2BITS                       EQU TRUE
 BPLCON3BITS1                      EQU BPLCON3F_BRDSPRT+BPLCON3F_SPRES0
 BPLCON3BITS2                      EQU BPLCON3BITS1+BPLCON3F_LOCT
 BPLCON4BITS                       EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)+(BPLCON4F_ESPRM4*spr_even_color_table_select)
 DIWHIGHBITS                       EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
 FMODEBITS                         EQU FMODEF_BPL32+FMODEF_BPAGEM+FMODEF_SPR32+FMODEF_SPAGEM+FMODEF_SSCAN2
-COLOR00BITS                       EQU $23388e
 
 cl2_HSTART                        EQU $00
 cl2_VSTART                        EQU beam_position&$ff
 
 sine_table_length                 EQU 512
 
+; **** Vert-Text-Scroll ****
+vts_image_x_size                  EQU 320
+vts_image_plane_width             EQU vts_image_x_size/8
+vts_image_depth                   EQU 1
+vts_image_colors_number           EQU 2
+
+vts_origin_character_x_size       EQU 8
+vts_origin_character_y_size       EQU 7
+vst_origin_charcter_depth         EQU vts_image_depth
+
+vts_text_character_x_size         EQU 8
+vts_text_character_width          EQU vts_text_character_x_size/8
+vts_text_character_y_size         EQU vts_origin_character_y_size+1
+vts_text_character_depth          EQU vts_image_depth
+
+vts_vert_scroll_speed             EQU 1
+
+vts_text_character_y_restart      EQU visible_lines_number+vts_text_character_y_size
+vts_text_characters_per_line      EQU (pixel_per_line-32)/vts_text_character_x_size
+vts_text_characters_per_column    EQU (visible_lines_number+vts_text_character_y_size)/vts_text_character_y_size
+vts_text_characters_number        EQU vts_text_characters_per_line*vts_text_characters_per_column
+
 ; **** Morph-Glenz-Vectors ****
 mgv_rotation_d                    EQU 512
 mgv_rotation_x_center             EQU extra_pf1_x_size/2
-mgv_rotation_y_center             EQU spr_y_size/2
+mgv_rotation_y_center             EQU visible_lines_number/2
 mgv_rotation_y_angle_speed_radius EQU 10
 mgv_rotation_y_angle_speed_speed  EQU 2
 
@@ -241,19 +271,41 @@ mgv_object_face24_lines_number    EQU 3
 
 mgv_max_lines_number              EQU 54
 
-mgv_morph_shapes_number           EQU 5
-mgv_morph_delay                   EQU 7*PALFPS
+mgv_morph_shapes_number           EQU 4
+mgv_morph_delay                   EQU 4*PALFPS
 mgv_morph_speed                   EQU 8
 
 ; **** Fill-Blit ****
 mgv_fill_blit_x_size              EQU extra_pf1_x_size
-mgv_fill_blit_y_size              EQU spr_y_size
+mgv_fill_blit_y_size              EQU visible_lines_number
 mgv_fill_blit_depth               EQU extra_pf1_depth
 
 ; **** Clear-Blit ****
 mgv_clear_blit_x_size             EQU extra_pf1_x_size
-mgv_clear_blit_y_size             EQU spr_y_size
+mgv_clear_blit_y_size             EQU visible_lines_number
 mgv_clear_blit_depth              EQU extra_pf1_depth
+
+; **** Sprite-Fader ****
+sprf_colors_number                EQU spr_colors_number-1
+
+; **** Sprite-Fader-In ****
+sprfi_fader_speed_max             EQU 4
+sprfi_fader_radius                EQU sprfi_fader_speed_max
+sprfi_fader_center                EQU sprfi_fader_speed_max+1
+sprfi_fader_angle_speed           EQU 2
+
+; **** Sprite-Fader-Out ****
+sprfo_fader_speed_max             EQU 6
+sprfo_fader_radius                EQU sprfo_fader_speed_max
+sprfo_fader_center                EQU sprfo_fader_speed_max+1
+sprfo_fader_angle_speed           EQU 2
+
+; **** Effects-Handler ****
+eh_trigger_number_max             EQU 5
+
+
+pf1_bitplane_x_offset             EQU 0
+pf1_bitplane_y_offset             EQU vts_text_character_y_size
 
 
 ; ## Makrobefehle ##
@@ -393,7 +445,7 @@ cl2_size3        EQU copperlist2_SIZE
 spr0_extension1       RS.B 0
 
 spr0_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
-spr0_ext1_planedata   RS.L 1*(spr_pixel_per_datafetch/16)*spr_y_size
+spr0_ext1_planedata   RS.L 1*(spr_pixel_per_datafetch/16)*visible_lines_number
 
 spr0_extension1_SIZE  RS.B 0
 
@@ -416,7 +468,7 @@ sprite0_SIZE          RS.B 0
 spr1_extension1       RS.B 0
 
 spr1_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
-spr1_ext1_planedata   RS.L 1*(spr_pixel_per_datafetch/16)*spr_y_size
+spr1_ext1_planedata   RS.L 1*(spr_pixel_per_datafetch/16)*visible_lines_number
 
 spr1_extension1_SIZE  RS.B 0
 
@@ -536,6 +588,11 @@ spr7_y_size2     EQU sprite7_SIZE/(spr_x_size2/8)
 
 save_a7                          RS.L 1
 
+; **** Vert-Text-Scroll ****
+vts_image                        RS.L 1
+vts_variable_vert_scroll_speed   RS.W 1
+vts_text_table_start             RS.W 1
+
 ; **** Morph-Glenz-Vectors ****
 mgv_rotation_y_angle             RS.W 1
 mgv_rotation_variable_y_speed    RS.W 1
@@ -546,6 +603,24 @@ mgv_lines_counter                RS.W 1
 mgv_morph_state                  RS.W 1
 mgv_morph_shapes_table_start     RS.W 1
 mgv_morph_delay_counter          RS.W 1
+
+; **** Sprite-Fader ****
+sprf_colors_counter              RS.W 1
+sprf_copy_colors_state           RS.W 1
+
+; **** Sprite-Fader-In ****
+sprfi_state                      RS.W 1
+sprfi_fader_angle                RS.W 1
+
+; **** Sprite-Fader-Out ****
+sprfo_state                      RS.W 1
+sprfo_fader_angle                RS.W 1
+
+; **** Effects-Handler ****
+eh_trigger_number                RS.W 1
+
+; **** Main ****
+fx_state                         RS.W 1
 
 variables_SIZE                   RS.B 0
 
@@ -576,7 +651,7 @@ mgv_morph_shape_SIZE              RS.B 0
 
 ; ## Beginn des Initialisierungsprogramms ##
 ; ------------------------------------------
-
+start_10_credits 
   INCLUDE "sys-init.i"
 
 ; ** Eigene Variablen initialisieren **
@@ -584,8 +659,14 @@ mgv_morph_shape_SIZE              RS.B 0
   CNOP 0,4
 init_own_variables
 
-; **** Morphing-Glenz-Vectors ****
+; **** Vert-Text-Scroll ****
+  lea     vts_image_data,a0
+  move.l  a0,vts_image(a3)
   moveq   #TRUE,d0
+  move.w  d0,vts_variable_vert_scroll_speed(a3)
+  move.w  d0,vts_text_table_start(a3)
+
+; **** Morphing-Glebnz-Vectors ****
   move.w  d0,mgv_rotation_y_angle(a3)
   move.w  d0,mgv_rotation_variable_y_speed(a3)
   move.w  d0,mgv_rotation_y_angle_speed_angle(a3)
@@ -596,22 +677,55 @@ init_own_variables
   move.w  d0,mgv_morph_shapes_table_start(a3)
   moveq   #1,d2
   move.w  d2,mgv_morph_delay_counter(a3)
+
+; **** Sprite-Fader ****
+  move.w  d0,sprf_colors_counter(a3)
+  move.w  d1,sprf_copy_colors_state(a3)
+
+; **** Sprite-Fader-In ****
+  move.w  d1,sprfi_state(a3)
+  move.w  #sine_table_length/4,sprfi_fader_angle(a3)
+
+; **** Sprite-Fader-Out ****
+  move.w  d1,sprfo_state(a3)
+  move.w  #sine_table_length/4,sprfo_fader_angle(a3)
+
+; **** Effects-Handler ****
+  move.w  d0,eh_trigger_number(a3)
+
+; **** Main ****
+  move.w  d1,fx_state(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
 ; ---------------------------------------------
   CNOP 0,4
 init_all
+  bsr     init_color_registers
   bsr.s   init_sprites
+  bsr     vts_init_characters_offsets
+  bsr     vts_init_characters_x_positions
+  bsr     vts_init_characters_y_positions
+  bsr     vts_init_characters_images
   bsr     mgv_init_object_info_table
   bsr     mgv_init_morph_shapes_table
   IFEQ mgv_morph_object1
     bsr     mgv_init_actual_object
   ENDC
   bsr     mgv_init_color_table
-  bsr     init_color_registers
   bsr     init_first_copperlist
   bra     init_second_copperlist
+
+; ** Playfieldfarben initialisieren **
+; ------------------------------------
+  CNOP 0,4
+init_color_registers
+  CPU_SELECT_COLORHI_BANK 0
+  CPU_INIT_COLORHI COLOR00,2,pf1_color_table
+
+  CPU_SELECT_COLORLO_BANK 0
+  CPU_INIT_COLORLO COLOR00,2,pf1_color_table
+  rts
 
 ; ** Sprites initialisieren **
 ; ----------------------------
@@ -630,9 +744,10 @@ init_sprites
   CNOP 0,4
 mgv_init_xy_coordinates
   move.w  #HSTART_320_pixel*4,d0 ;X-Koord.
-  moveq   #display_window_VSTART,d1 ;Y-Koord.
-  move.l  spr_pointers_construction(pc),a0 ;Sprite0-Struktur
-  move.l  spr_pointers_construction+4(pc),a1 ;Sprite1-Struktur
+  MOVEF.W display_window_VSTART,d1 ;Y-Koord.
+  lea     spr_pointers_construction(pc),a2
+  move.l  (a2)+,a0           ;SPR0
+  move.l  (a2),a1            ;SPR1
 
 ; ** init_sprite_header-Routine **
 ; d0 ... X-Koordinate
@@ -640,8 +755,8 @@ mgv_init_xy_coordinates
 ; a0 ... Zeiger auf 1. Sprite-Struktur
 ; a1 ... Zeiger auf 2. Sprite-Struktur
 mgv_init_sprite_header
-  move.w  #spr_y_size,d2 ;Höhe
-  add.w   d1,d2              ;Höhe zu Y dazuaddieren
+  MOVEF.W visible_lines_number,d2 ;Höhe
+  add.w   d1,d2              ;VSTOP
   SET_SPRITE_POSITION d0,d1,d2
   move.w  d1,(a0)            ;SPRxPOS 1. Sprite-Struktur
   move.w  d1,(a1)            ;SPRxPOS 2. Sprite-Struktur
@@ -654,14 +769,22 @@ mgv_init_sprite_header
 ; --------------------------
   COPY_SPRITE_STRUCTURES
 
-  CNOP 0,4
-init_color_registers
-  CPU_SELECT_COLORHI_BANK 0
-  CPU_INIT_COLORHI COLOR00,2,pf1_color_table
+; **** Vert-Text-Scroll ****
+; ** Offsets der Buchstaben im Characters-Pic berechnen **
+; --------------------------------------------------------
+  INIT_CHARACTERS_OFFSETS.W vts
 
-  CPU_SELECT_COLORLO_BANK 0
-  CPU_INIT_COLORLO COLOR00,2,pf1_color_table
-  rts
+; ** X-Positionen der Chars berechnen **
+; --------------------------------------
+  INIT_CHARACTERS_X_POSITIONS vts,LORES,,text_characters_per_line
+
+; ** Y-Positionen der Charss berechnen **
+; ---------------------------------------
+  INIT_CHARACTERS_Y_POSITIONS vts,text_characters_per_column
+
+; ** Laufschrift initialisieren **
+; --------------------------------
+  INIT_CHARACTERS_IMAGES vts
 
 ; **** Morph-Glenz-Vectors ****
 ; ** Object-Info-Tabelle initialisieren **
@@ -697,9 +820,6 @@ mgv_init_morph_shapes_table
   move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
 ; ** Form 4 **
   lea     mgv_object_shape4_coordinates(pc),a0 ;Zeiger auf 4. Form
-  move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
-; ** Form 5 **
-  lea     mgv_object_shape5_coordinates(pc),a0 ;Zeiger auf 5. Form
   move.l  a0,(a1)            ;Zeiger auf Form-Tabelle
   rts
 
@@ -716,7 +836,7 @@ mgv_init_actual_object
 ; --------------------------------
   CNOP 0,4
 mgv_init_color_table
-  lea     spr_color_table(pc),a0 ;Zeiger auf Farbtableelle
+  lea     sprfi_color_table(pc),a0 ;Zeiger auf Farbtableelle
   lea     mgv_glenz_color_table(pc),a1 ;Farben der einzelnen Glenz-Objekte
   move.l  (a1)+,2*LONGWORDSIZE(a0) ;COLOR02
   move.l  (a1)+,3*LONGWORDSIZE(a0) ;COLOR03
@@ -767,16 +887,19 @@ init_second_copperlist
   bsr     cl2_init_fill_blit
   COPLISTEND
   bsr     copy_second_copperlist
-  bsr     swap_extra_playfield
+  bsr     swap_second_copperlist
+  bsr     swap_playfield1
   bsr     mgv_clear_extra_playfield
   bsr     mgv_draw_lines
   bsr     mgv_fill_extra_playfield
   bsr     mgv_set_second_copperlist_jump
   bsr     swap_second_copperlist
+  bsr     swap_playfield1
   bsr     swap_extra_playfield
   bsr     mgv_clear_extra_playfield
   bsr     mgv_draw_lines
-  bra     mgv_fill_extra_playfield
+  bsr     mgv_fill_extra_playfield
+  bra     mgv_set_second_copperlist_jump
 
   CNOP 0,4
 cl2_init_clear_blit
@@ -851,25 +974,16 @@ cl2_init_fill_blit
 ; a6 ... DMACONR
   CNOP 0,4
 main_routine
-  bsr.s   no_sync_routines
-  bra.s   beam_routines
-
-
-; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
-; ----------------------------------------------------------------------
-  CNOP 0,4
-no_sync_routines
-  rts
-
 
 ; ## Rasterstahl-Routinen ##
 ; --------------------------
-  CNOP 0,4
 beam_routines
   bsr     wait_beam_position
   bsr.s   swap_second_copperlist
   bsr.s   spr_swap_structures
-  bsr.s   swap_extra_playfield
+  bsr     swap_playfield1
+  bsr     swap_extra_playfield
+  bsr     effects_handler
   bsr     mgv_clear_extra_playfield
   bsr     mgv_calculate_rotation_y_speed
   bsr     mgv_rotation
@@ -878,10 +992,22 @@ beam_routines
   bsr     mgv_fill_extra_playfield
   bsr     mgv_set_second_copperlist_jump
   bsr     mgv_copy_extra_playfield
+  bsr     vert_text_scroll
   bsr     control_counters
-  btst    #CIAB_GAMEPORT0,CIAPRA(a4) ;Auf linke Maustaste warten
-  bne.s   beam_routines
+  bsr     sprf_copy_color_table
+  bsr     sprite_fader_in
+  bsr     sprite_fader_out
+  jsr     mouse_handler
+  tst.l   d0                 ;Abbruch ?
+  bne.s   fast_exit          ;Ja -> verzweige
+  tst.w   fx_state(a3)       ;Effekte beendet ?
+  bne.s   beam_routines      ;Nein -> verzweige
+fast_exit
+  move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
+  move.w  d0,COPJMP2-DMACONR(a6)
+  move.w  custom_error_code(a3),d1
   rts
+
 
 ; ** Copperlisten vertauschen **
 ; ------------------------------
@@ -890,6 +1016,10 @@ beam_routines
 ; ** Spritestrukturen vertauschen **
 ; ----------------------------------
   SWAP_SPRITES_STRUCTURES spr,spr_swap_number
+
+; ** Playfields vertauschen **
+; ------------------------
+  SWAP_PLAYFIELD pf1,2,pf1_depth3,pf1_bitplane_x_offset,pf1_bitplane_y_offset
 
 ; ** Extra-Playfields vertauschen **
 ; ----------------------------------
@@ -901,11 +1031,64 @@ swap_extra_playfield
   rts
 
 
-; ** Bild löschen **
-; ------------------
+; ** Vertical-Text-Scrolling-Routine **
+; -------------------------------------
+  CNOP 0,4
+vert_text_scroll
+  movem.l a4-a6,-(a7)
+  MOVEF.L vts_text_characters_per_line*4,d3
+  MOVEF.W vts_text_character_y_restart,d4
+  lea     vts_characters_y_positions(pc),a1 ;Y-Koords der Chars
+  lea     vts_characters_image_pointers(pc),a2 ;Zeiger auf Adressen der Char-Images
+  move.l  pf1_construction2(a3),a4
+  move.l  (a4),a4
+  moveq   #vts_text_characters_per_column-1,d7 ;Anzahl der Zeichen pro Spalte
+vert_text_scroll_loop1
+  move.w  (a1),d1            ;Y
+  move.w  d1,d2              ;Y retten
+  MULUF.W pf1_plane_width*pf1_depth3,d1,d0 ;Y-Offset in Playfield
+  lea     vts_characters_x_positions(pc),a0 ;X-Koords der Chars
+  moveq   #vts_text_characters_per_line-1,d6 ;Anzahl der Zeichen pro Zeile
+vert_text_scroll_loop2
+  move.w  (a0)+,d0           ;X
+  lsr.w   #3,d0              ;X/8
+  add.w   d1,d0              ;X+Y-Offset
+  move.l  (a2)+,a5           ;Char
+  lea     (a4,d0.w),a6
+  move.b  (a5),(a6)        ;1 Byte kopieren
+  move.b  vts_image_plane_width*1(a5),pf1_plane_width*1(a6)
+  move.b  vts_image_plane_width*2(a5),pf1_plane_width*2(a6)
+  move.b  vts_image_plane_width*3(a5),pf1_plane_width*3(a6)
+  move.b  vts_image_plane_width*4(a5),pf1_plane_width*4(a6)
+  move.b  vts_image_plane_width*5(a5),pf1_plane_width*5(a6)
+  move.b  vts_image_plane_width*6(a5),pf1_plane_width*6(a6)
+  move.b  vts_image_plane_width*7(a5),pf1_plane_width*7(a6)
+  dbf     d6,vert_text_scroll_loop2
+  sub.w   vts_variable_vert_scroll_speed(a3),d2 ;Y-Position verringern
+  bpl.s   vts_set_characters_y_position ;Wenn Y positiv -> verzweige
+vts_new_characters_images
+  sub.l   d3,a2              ;Zeiger auf Anfang setzen
+  moveq   #vts_text_characters_per_line-1,d5 ;Anzahl der Chars in einer Zeile
+vert_text_scroll_loop3
+  bsr.s   vts_get_new_character_image
+  move.l  d0,(a2)+           ;Neues Bild für Characteracter
+  dbf     d5,vert_text_scroll_loop3
+  add.w   d4,d2              ;Y-Neustart
+vts_set_characters_y_position
+  move.w  d2,(a1)+           ;Y-Pos. retten
+  dbf     d7,vert_text_scroll_loop1
+  movem.l (a7)+,a4-a6
+  rts
+
+; ** Neues Image für Character ermitteln **
+; -----------------------------------------
+  GET_NEW_CHARACTER_IMAGE vts
+
+; ** Playfield löschen **
+; -----------------------
   CNOP 0,4
 mgv_clear_extra_playfield
-  move.l  extra_pf1(a3),a0 ;Bild
+  move.l  extra_pf1(a3),a0
   move.l  (a0),d0
   add.l   #ALIGN64KB,d0
   clr.w   d0
@@ -919,15 +1102,15 @@ mgv_clear_extra_playfield
 ; ---------------------------------------------------
   CNOP 0,4
 mgv_calculate_rotation_y_speed
-  move.w  mgv_rotation_y_angle_speed_angle(a3),d1
-  lea     sine_table(pc),a0
-  move.w  (a0,d1.w*2),d0     ;sin(w)
-  muls.w  #mgv_rotation_y_angle_speed_radius*2,d0 ;y_speed = (r*sin(w))/2^15
+  move.w  mgv_rotation_y_angle_speed_angle(a3),d2
+  lea     sine_table,a0
+  move.w  (a0,d2.w*2),d0     ;sin(w)
+  MULSF.W mgv_rotation_y_angle_speed_radius*2,d0,d1 ;y_speed = (r*sin(w))/2^15
   swap    d0
   move.w  d0,mgv_rotation_variable_y_speed(a3)
-  addq.w  #mgv_rotation_y_angle_speed_speed,d1 ;nächster Y-Winkel
-  and.w   #sine_table_length-1,d1 ;Überlauf entfwernen
-  move.w  d1,mgv_rotation_y_angle_speed_angle(a3)
+  addq.w  #mgv_rotation_y_angle_speed_speed,d2 ;nächster Y-Winkel
+  and.w   #sine_table_length-1,d2 ;Überlauf entfwernen
+  move.w  d2,mgv_rotation_y_angle_speed_angle(a3)
   rts
 
 ; ** 3D-Rotation **
@@ -937,7 +1120,7 @@ mgv_rotation
   movem.l a4-a6,-(a7)
   move.w  mgv_rotation_y_angle(a3),d1 ;Y-Winkel
   move.w  d1,d0              ;retten
-  lea     sine_table(pc),a2  ;Sinus-Tabelle
+  lea     sine_table,a2
   move.w  (a2,d0.w*2),d5     ;sin(b)
   move.w  #sine_table_length/4,a4
   MOVEF.W sine_table_length-1,d3
@@ -1072,7 +1255,7 @@ mgv_draw_lines_loop2
   movem.w (a1,d2.w*2),d2-d3  ;yp1,yp2-Koords
   GET_LINE_PARAMETERS mgv,AREAFILL,COPPERUSE,extra_pf1_plane_width*extra_pf1_depth
   add.l   a3,d0              ;restliche BLTCON0 & BLTCON1-Bits setzen
-  add.l   a2,d1              ;+ Bildadresse
+  add.l   a2,d1              ;+ Playfieldadresse
   cmp.w   #1,d7              ;Plane 1 ?
   beq.s   mgv_draw_lines_single_line ;Ja -> verzweige
   moveq   #extra_pf1_plane_width,d5
@@ -1087,9 +1270,9 @@ mgv_draw_lines_single_line
   MULUF.W 2,d2               ;2*(2*dx) = 4*dx
   move.w  d4,cl2_ext3_BLTBMOD-cl2_ext3_BLTCON0(a6) ;4*dy
   sub.w   d2,d4              ;(4*dy)-(4*dx)
-  move.w  d1,cl2_ext3_BLTCPTL-cl2_ext3_BLTCON0(a6) ;Bild lesen
+  move.w  d1,cl2_ext3_BLTCPTL-cl2_ext3_BLTCON0(a6) ;Playfield lesen
   addq.w  #1,a4              ;Linienzähler erhöhen
-  move.w  d1,cl2_ext3_BLTDPTL-cl2_ext3_BLTCON0(a6) ;Bild schreiben
+  move.w  d1,cl2_ext3_BLTDPTL-cl2_ext3_BLTCON0(a6) ;Playfield schreiben
   addq.w  #1*4,d2            ;(4*dx)+(1*4)
   move.w  d3,cl2_ext3_BLTAPTL-cl2_ext3_BLTCON0(a6) ;(4*dy)-(2*dx)
   MULUF.W 16,d2              ;((4*dx)+(1*4))*16 = Länge der Linie
@@ -1114,12 +1297,12 @@ mgv_draw_lines_init
   clr.w   d0
   move.l  cl2_construction2(a3),a0
   swap    d0                 ;High
-  move.w  d0,cl2_extension2_entry+cl2_ext2_BLTCPTH+2(a0) ;Bild lesen
-  move.w  d0,cl2_extension2_entry+cl2_ext2_BLTDPTH+2(a0) ;Bild schreiben
+  move.w  d0,cl2_extension2_entry+cl2_ext2_BLTCPTH+2(a0) ;Playfield lesen
+  move.w  d0,cl2_extension2_entry+cl2_ext2_BLTDPTH+2(a0) ;Playfield schreiben
   rts
 
-; ** Bild füllen **
-; -----------------
+; ** Playfield füllen **
+; ----------------------
   CNOP 0,4
 mgv_fill_extra_playfield
   move.l  extra_pf1(a3),a0
@@ -1127,7 +1310,7 @@ mgv_fill_extra_playfield
   add.l   #ALIGN64KB,d0
   clr.w   d0
   move.l  cl2_construction2(a3),a0
-  ADDF.L  (extra_pf1_plane_width*spr_y_size*extra_pf1_depth)-2,d0 ;Ende des Bildes
+  ADDF.L  (extra_pf1_plane_width*visible_lines_number*extra_pf1_depth)-2,d0 ;Ende des Playfieldes
   move.w  d0,cl2_extension4_entry+cl2_ext4_BLTAPTL+2(a0) ;Quelle
   move.w  d0,cl2_extension4_entry+cl2_ext4_BLTDPTL+2(a0) ;Ziel
   swap    d0
@@ -1149,7 +1332,7 @@ mgv_copy_extra_playfield
   add.l   #ALIGN64KB,d0
   clr.w   d0
   move.l  d0,a2
-  MOVEF.W spr_y_size-1,d7    ;Höhe des Einzelsprites
+  MOVEF.W visible_lines_number-1,d7 ;Höhe des Einzelsprites
 mgv_copy_extra_playfield_loop
   move.l  (a2)+,(a0)+        ;Plane1 64 Pixel
   move.l  (a2)+,(a0)+
@@ -1196,6 +1379,210 @@ mgv_morph_enable
 mgv_morph_save_delay_counter
   move.w  d0,mgv_morph_delay_counter(a3) ;retten
 mgv_morph_no_delay_counter
+  rts
+
+
+; ** Sprites einblenden **
+; ------------------------
+  CNOP 0,4
+sprite_fader_in
+  tst.w   sprfi_state(a3)    ;Sprite-Fader-In an ?
+  bne.s   no_sprite_fader_in ;Nein -> verzweige
+  movem.l a4-a6,-(a7)
+  move.w  sprfi_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  d2,d0
+  ADDF.W  sprfi_fader_angle_speed,d0 ;nächster Fader-Winkel
+  cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
+  ble.s   sprfi_no_restart_fader_angle ;Ja -> verzweige
+  MOVEF.W sine_table_length/2,d0 ;180 Grad
+sprfi_no_restart_fader_angle
+  move.w  d0,sprfi_fader_angle(a3) ;Fader-Winkel retten
+  MOVEF.W sprf_colors_number*3,d6 ;Zähler
+  lea     sine_table,a0
+  move.w  (a0,d2.w*2),d0     ;sin(w)
+  MULSF.W sprfi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
+  swap    d0
+  ADDF.W  sprfi_fader_center,d0 ;+ Fader-Mittelpunkt
+  lea     spr_color_table+(1*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfi_color_table+(1*LONGWORDSIZE)(pc),a1 ;Sollwerte
+  move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
+  swap    d0                 ;WORDSHIFT
+  clr.w   d0                 ;Bits 0-15 löschen
+  move.l  d0,a2              ;Additions-/Subtraktionswert für Rot
+  lsr.l   #8,d0              ;BYTESHIFT
+  move.l  d0,a4              ;Additions-/Subtraktionswert für Grün
+  MOVEF.W sprf_colors_number-1,d7 ;Anzahl der Farben
+  bsr     sprf_fader_loop
+  movem.l (a7)+,a4-a6
+  move.w  d6,sprf_colors_counter(a3) ;Image-Fader-In fertig ?
+  bne.s   no_sprite_fader_in  ;Nein -> verzweige
+  moveq   #FALSE,d0
+  move.w  d0,sprfi_state(a3) ;Sprite-Fader-In aus
+no_sprite_fader_in
+  rts
+
+; ** Sprites ausblenden **
+; ------------------------
+  CNOP 0,4
+sprite_fader_out
+  tst.w   sprfo_state(a3)    ;Sprite-Fader-Out an ?
+  bne.s   no_sprite_fader_out ;Nein -> verzweige
+  movem.l a4-a6,-(a7)
+  move.w  sprfo_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  d2,d0
+  ADDF.W  sprfo_fader_angle_speed,d0 ;nächster Fader-Winkel
+  cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
+  ble.s   sprfo_no_restart_fader_angle ;Ja -> verzweige
+  MOVEF.W sine_table_length/2,d0 ;180 Grad
+sprfo_no_restart_fader_angle
+  move.w  d0,sprfo_fader_angle(a3) ;Fader-Winkel retten
+  MOVEF.W sprf_colors_number*3,d6 ;Zähler
+  lea     sine_table,a0
+  move.w  (a0,d2.w*2),d0     ;sin(w)
+  MULSF.W sprfo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
+  swap    d0
+  ADDF.W  sprfo_fader_center,d0 ;+ Fader-Mittelpunkt
+  lea     spr_color_table+(1*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfo_color_table+(1*LONGWORDSIZE)(pc),a1 ;Sollwerte
+  move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
+  swap    d0                 ;WORDSHIFT
+  clr.w   d0                 ;Bits 0-15 löschen
+  move.l  d0,a2              ;Additions-/Subtraktionswert für Rot
+  lsr.l   #8,d0              ;BYTESHIFT
+  move.l  d0,a4              ;Additions-/Subtraktionswert für Grün
+  MOVEF.W sprf_colors_number-1,d7 ;Anzahl der Farben
+  bsr     sprf_fader_loop
+  movem.l (a7)+,a4-a6
+  move.w  d6,sprf_colors_counter(a3) ;Image-Fader-Out fertig ?
+  bne.s   no_sprite_fader_out ;Nein -> verzweige
+  moveq   #FALSE,d0
+  move.w  d0,sprfo_state(a3) ;Sprite-Fader-Out aus
+no_sprite_fader_out
+  rts
+
+  COLOR_FADER sprf
+
+; ** Farbwerte in Copperliste kopieren **
+; ---------------------------------------
+  CNOP 0,4
+sprf_copy_color_table
+  IFNE cl1_size2
+    move.l  a4,-(a7)
+  ENDC
+  tst.w   sprf_copy_colors_state(a3)  ;Kopieren der Farbwerte beendet ?
+  bne.s   sprf_no_copy_color_table ;Ja -> verzweige
+  move.w  #$0f0f,d3          ;Maske für RGB-Nibbles
+  IFGT sprf_colors_number-32
+    moveq   #1*8,d4          ;Color-Bank Farbregisterzähler
+  ENDC
+  lea     spr_color_table+(1*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
+  move.l  cl1_display(a3),a1 ;CL
+  ADDF.W  cl1_COLOR17_high1+2,a1
+  IFNE cl1_size1
+    move.l  cl1_construction1(a3),a2 ;CL
+    ADDF.W  cl1_COLOR17_high1+2,a2
+  ENDC
+  IFNE cl1_size2
+    move.l  cl1_construction2(a3),a4 ;CL
+    ADDF.W  cl1_COLOR17_high1+2,a4
+  ENDC
+  MOVEF.W sprf_colors_number-1,d7 ;Anzahl der Farben
+sprf_copy_color_table_loop
+  move.l  (a0)+,d0           ;RGB8-Farbwert
+  move.l  d0,d2              ;retten
+  RGB8_TO_RGB4HI d0,d1,d3
+  move.w  d0,(a1)            ;COLORxx High-Bits
+  IFNE cl1_size1
+    move.w  d0,(a2)          ;COLORxx High-Bits
+  ENDC
+  IFNE cl1_size2
+    move.w  d0,(a4)          ;COLORxx High-Bits
+  ENDC
+  RGB8_TO_RGB4LO d2,d1,d3
+  move.w  d2,cl1_COLOR17_low1-cl1_COLOR17_high1(a1) ;Low-Bits COLORxx
+  addq.w  #4,a1              ;nächstes Farbregister
+  IFNE cl1_size1
+    move.w  d2,cl1_COLOR17_low1-cl1_COLOR17_high1(a2) ;Low-Bits COLORxx
+    addq.w  #4,a2            ;nächstes Farbregister
+  ENDC
+  IFNE cl1_size2
+    move.w  d2,cl1_COLOR17_low1-cl1_COLOR17_high1(a4) ;Low-Bits COLORxx
+    addq.w  #4,a4            ;nächstes Farbregister
+  ENDC
+  IFGT sprf_colors_number-32
+    addq.b  #1*8,d4          ;Farbregister-Zähler erhöhen
+    bne.s   sprf_no_restart_color_bank ;Nein -> verzweige
+    addq.w  #4,a1            ;CMOVE überspringen
+    IFNE cl1_size1
+      addq.w  #4,a2          ;CMOVE überspringen
+    ENDC
+    IFNE cl1_size2
+      addq.w  #4,a4          ;CMOVE überspringen
+    ENDC
+sprf_no_restart_color_bank
+  ENDC
+  dbf     d7,sprf_copy_color_table_loop
+  tst.w   sprf_colors_counter(a3) ;Fading beendet ?
+  bne.s   sprf_no_copy_color_table ;Nein -> verzweige
+  moveq   #FALSE,d0
+  move.w  d0,sprf_copy_colors_state(a3) ;Kopieren beendet
+sprf_no_copy_color_table
+  IFNE cl1_size2
+    move.l  (a7)+,a4
+  ENDC
+  rts
+
+
+; ** SOFTINT-Interrupts abfragen **
+; ---------------------------------
+  CNOP 0,4
+effects_handler
+  moveq   #INTF_SOFTINT,d1
+  and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
+  beq.s   no_effects_handler ;Nein -> verzweige
+  addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
+  bgt.s   no_effects_handler ;Ja -> verzweige
+  move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen
+  subq.w  #1,d0
+  beq.s   eh_start_sprite_fader_in
+  subq.w  #1,d0
+  beq.s   eh_start_vert_text_scroll
+  subq.w  #1,d0
+  beq.s   eh_stop_vert_text_scroll
+  subq.w  #1,d0
+  beq.s   eh_start_sprite_fader_out
+  subq.w  #1,d0
+  beq.s   eh_stop_all
+no_effects_handler
+  rts
+  CNOP 0,4
+eh_start_sprite_fader_in
+  move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
+  moveq   #TRUE,d0
+  move.w  d0,sprfi_state(a3) ;Sprite-Fader-In an
+  move.w  d0,sprf_copy_colors_state(a3) ;Kopieren der Farben an
+  rts
+  CNOP 0,4
+eh_start_vert_text_scroll
+  moveq   #vts_vert_scroll_speed,d0
+  move.w  d0,vts_variable_vert_scroll_speed(a3) ;Geschwindigkeit setzen
+  rts
+  CNOP 0,4
+eh_stop_vert_text_scroll
+  clr.w   vts_variable_vert_scroll_speed(a3) ;Geschwindigkeit = Null
+  rts
+  CNOP 0,4
+eh_start_sprite_fader_out
+  move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
+  moveq   #TRUE,d0
+  move.w  d0,sprfo_state(a3) ;Sprite-Fader-In an
+  move.w  d0,sprf_copy_colors_state(a3) ;Kopieren der Farben an
+  rts
+  CNOP 0,4
+eh_stop_all
+  clr.w   fx_state(a3)       ;Effekte beendet
   rts
 
 
@@ -1255,11 +1642,35 @@ spr_pointers_construction
 spr_pointers_display
   DS.L spr_number
 
-; ** Sinus-Cosinus-Tabelle **
-; ---------------------------
+; **** Vert-Text-Scroll ****
+; ** ASCII-Buchstaben **
+; ----------------------
+vts_ASCII
+  DC.B "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!?-'():\/#*+<> "
+vts_ASCII_end
+  EVEN
+
+; ** Offsets der einzelnen Chars **
+; ---------------------------------
   CNOP 0,2
-sine_table
-  INCLUDE "sine-table-512x16.i"
+vts_characters_offsets
+  DS.W vts_ASCII_end-vts_ASCII
+  
+; ** X-Koordinaten der einzelnen Cgars der Laufschrift **
+; -------------------------------------------------------
+vts_characters_x_positions
+  DS.W vts_text_characters_per_line
+
+; ** Y-Koordinaten der einzelnen Chars der Laufschrift **
+; -------------------------------------------------------
+vts_characters_y_positions
+  DS.W vts_text_characters_per_column
+
+; ** Tabelle für Char-Image-Adressen **
+; -------------------------------------
+  CNOP 0,4
+vts_characters_image_pointers
+  DS.L vts_text_characters_number
 
 ; **** Morph-Glenz-Vectors ****
 ; ** Farben der Glenz-Objekte **
@@ -1296,24 +1707,6 @@ mgv_object_shape1_coordinates
 
 ; ** Form 2 **
 mgv_object_shape2_coordinates
-; ** Quader 2 **
-  DC.W -(10*8),-(110*8),-(10*8) ;P0
-  DC.W 10*8,-(110*8),-(10*8)    ;P1
-  DC.W 10*8,110*8,-(10*8)       ;P2
-  DC.W -(10*8),110*8,-(10*8)    ;P3
-  DC.W -(10*8),-(110*8),10*8    ;P4
-  DC.W 10*8,-(110*8),10*8       ;P5
-  DC.W 10*8,110*8,10*8          ;P6
-  DC.W -(10*8),110*8,10*8       ;P7
-  DC.W 0,0,-(10*8)              ;P8
-  DC.W 0,0,10*8                 ;P9
-  DC.W -(10*8),0,0              ;P10
-  DC.W 10*8,0,0                 ;P11
-  DC.W 0,-(120*8),0             ;P12
-  DC.W 0,120*8,0                ;P13
-
-; ** Form 3 **
-mgv_object_shape3_coordinates
 ; ** Pyramide **
   DC.W -(10*8),-(20*8),-(10*8) ;P0
   DC.W 10*8,-(20*8),-(10*8)    ;P1
@@ -1330,8 +1723,8 @@ mgv_object_shape3_coordinates
   DC.W 0,-(120*8),0            ;P12
   DC.W 0,120*8,0               ;P13
 
-; ** Form 4 **
-mgv_object_shape4_coordinates
+; ** Form 3 **
+mgv_object_shape3_coordinates
 ; ** Keil 1 **
   DC.W -(20*8),-(80*8),-(20*8) ;P0
   DC.W 20*8,-(80*8),-(20*8)    ;P1
@@ -1348,8 +1741,8 @@ mgv_object_shape4_coordinates
   DC.W 0,-(120*8),0            ;P12
   DC.W 0,120*8,0               ;P13
 
-; ** Form 5 **
-mgv_object_shape5_coordinates
+; ** Form 4 **
+mgv_object_shape4_coordinates
 ; ** Keil 2 **
   DC.W -(20*8),-(10*8),-(20*8) ;P0
   DC.W 20*8,-(10*8),-(20*8)    ;P1
@@ -1541,6 +1934,22 @@ mgv_rotation_xy_coordinates
 mgv_morph_shapes_table
   DS.B mgv_morph_shape_SIZE*mgv_morph_shapes_number
 
+; **** Sprite-Fader ****
+; ** Zielfarbwerte für Sprite-Fader-In **
+; ---------------------------------------
+  CNOP 0,4
+sprfi_color_table
+  REPT spr_colors_number
+    DC.L COLOR00BITS
+  ENDR
+
+; ** Zielfarbwerte für Sprite-Fader-Out **
+; ----------------------------------------
+sprfo_color_table
+  REPT spr_colors_number
+    DC.L COLOR00BITS
+  ENDR
+
 
 ; ## Speicherstellen allgemein ##
 ; -------------------------------
@@ -1559,5 +1968,290 @@ mgv_morph_shapes_table
 
   INCLUDE "error-texts.i"
 
+; **** Vert-Textscroll ****
+; ** Text für Laufschrift **
+; --------------------------
+vts_text
+  REPT vts_text_characters_per_column*vts_text_characters_per_line
+    DC.B " "
+  ENDR
+  DC.B "# SUPERGLENZ #      "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "IS OUR CONTRICUTION "
+  DC.B "                    "
+  DC.B "TO NORDLICHT 2025   "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "CODING - DISSIDENT  "
+  DC.B "                    "
+  DC.B "GRAPHICS - NN       "
+  DC.B "                    "
+  DC.B "MUSIC - NN          "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "THE PARTS...        "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "--------------------"
+  DC.B "                    "
+  DC.B "# GLENZ 1 #         "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "FACES:  20          "
+  DC.B "                    "
+  DC.B "SCREEN: 256 X 256   "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "--------------------"
+  DC.B "                    "
+  DC.B "# GLENZ 2 #         "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "FACES:  36          "
+  DC.B "                    "
+  DC.B "SCREEN: 256 X 256   "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "--------------------"
+  DC.B "                    "
+  DC.B "# GLENZ 3 #         "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "FACES:  40          "
+  DC.B "                    "
+  DC.B "SCREEN: 256 X 256   "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "--------------------"
+  DC.B "                    "
+  DC.B "# GLENZ 4 #         "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "FACES:  2 X 24      "
+  DC.B "                    "
+  DC.B "SCREEN: 192 X 192   "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "--------------------"
+  DC.B "                    "
+  DC.B "# GLENZ 5 #         "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "FACES:  3 X 20      "
+  DC.B "                    "
+  DC.B "SCREEN: 144 X 144   "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "ALL PARTS RUNNING   "
+  DC.B "                    "
+  DC.B "IN 50 FPS ON A      "
+  DC.B "                    "
+  DC.B "STOCK AMIGA 1200    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "RESISTANCE IN 2025  "
+  DC.B FALSE
+  EVEN
+
+
+; ## Grafikdaten nachladen ##
+; ---------------------------
+
+; **** Vert-Text-Scroll ****
+vts_image_data SECTION vts_gfx,DATA
+  INCBIN "Daten:Asm-Sources.AGA/Superglenz/fonts/8x7x2-Font.rawblit"
+  DS.B vts_image_plane_width*vts_image_depth ;Leerzeile
 
   END

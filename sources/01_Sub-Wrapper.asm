@@ -1,13 +1,13 @@
-; ##############################
-; # Programm: 01_Wrapper.asm   #
-; # Autor:    Christian Gerbig #
-; # Datum:    13.04.2024       #
-; # Version:  1.0              #
-; # CPU:      68020+           #
-; # FASTMEM:  -                #
-; # Chipset:  AGA              #
-; # OS:       3.0+             #
-; ##############################
+; ################################
+; # Programm: 01_Sub-Wrapper.asm #
+; # Autor:    Christian Gerbig   #
+; # Datum:    13.04.2024         #
+; # Version:  1.0                #
+; # CPU:      68020+             #
+; # FASTMEM:  -                  #
+; # Chipset:  AGA                #
+; # OS:       3.0+               #
+; ################################
 
 ; Zusätzliches Playfield in 16 Farben aus vier attached 64-Pixel-Sprites,
 ; wobei nach 256 Pixeln jedes Sprite wiederholt wird.
@@ -80,7 +80,6 @@ workbench_fade              EQU FALSE
 text_output                 EQU FALSE
 
 sys_taken_over
-wrapper
 own_display_set_second_copperlist
 pass_global_references
 pass_return_code
@@ -181,7 +180,7 @@ bg_image_y_position         EQU MINROW
 ; **** Sprite-Fader ****
 sprf_colors_number          EQU spr_colors_number-1
 
-sprfi_fader_speed_max       EQU 8
+sprfi_fader_speed_max       EQU 4
 sprfi_fader_radius          EQU sprfi_fader_speed_max
 sprfi_fader_center          EQU sprfi_fader_speed_max+1
 sprfi_fader_angle_speed     EQU 2
@@ -606,22 +605,28 @@ main_routine
   movem.l a0/a3-a6,-(a7)
   bsr     start_010_morph_glenz_vectors
   movem.l (a7)+,a0/a3-a6
-
+  tst.l   d0
+  bne.s   exit
   movem.l a0/a3-a6,-(a7)
   bsr     start_011_morph_glenz_vectors
   movem.l (a7)+,a0/a3-a6
-
+  tst.l   d0
+  bne.s   exit
   movem.l a0/a3-a6,-(a7)
   bsr     start_012_morph_glenz_vectors
   movem.l (a7)+,a0/a3-a6
-
+  tst.l   d0
+  bne.s   exit
   movem.l a0/a3-a6,-(a7)
   bsr     start_013_morph_2xglenz_vectors
   movem.l (a7)+,a0/a3-a6
-
+  tst.l   d0
+  bne.s   exit
   movem.l a0/a3-a6,-(a7)
   bsr     start_014_morph_3xglenz_vectors
   movem.l (a7)+,a0/a3-a6
+  tst.l   d0
+  bne.s   exit
 
   move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
   moveq   #TRUE,d0
@@ -644,6 +649,7 @@ beam_routines
   beq.s   beam_routines      ;Ja -> Schleife
 fast_exit
   move.w  custom_error_code(a3),d1
+exit
   rts
 
 ; ** Sprites einblenden **

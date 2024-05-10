@@ -383,16 +383,18 @@ mgv_fill_blit_x_size                EQU visible_pixels_number
 mgv_fill_blit_y_size                EQU visible_lines_number
 mgv_fill_blit_depth                 EQU pf1_depth3
 
-; **** Vert-Scroll-Playfield ****
-vsp_min_VSTART                      EQU VSTART_192_lines
-vsp_max_VSTOP                       EQU VSTOP_OVERSCAN_PAL
-vsp_max_visible_lines_number        EQU 283
-vsp_y_radius                        EQU visible_lines_number+(vsp_max_visible_lines_number-visible_lines_number)
-vsp_y_centre                        EQU visible_lines_number+(vsp_max_visible_lines_number-visible_lines_number)
+; **** Scroll-Playfield-Bottom ****
+spb_min_VSTART                      EQU VSTART_192_lines
+spb_max_VSTOP                       EQU VSTOP_OVERSCAN_PAL
+spb_max_visible_lines_number        EQU 283
+spb_y_radius                        EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
+spb_y_centre                        EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
 
-vspi_y_angle_speed                  EQU 2
+; **** Scroll-Playfield-Bottom-In ****
+spbi_y_angle_speed                  EQU 4
 
-vspo_y_angle_speed                  EQU 5
+; **** Scroll-Playfield-Bottom-Out ****
+spbo_y_angle_speed                  EQU 5
 
 
 ; ## Makrobefehle ##
@@ -563,12 +565,13 @@ mgv_morph_state                       RS.W 1
 mgv_morph_shapes_table_start          RS.W 1
 mgv_morph_delay_counter               RS.W 1
 
-; **** Vert-Scroll-Playfield ****
-vspi_state                            RS.W 1
-vspi_y_angle                          RS.W 1
+; **** Scroll-Playfield-Bottom-In ****
+spbi_state                            RS.W 1
+spbi_y_angle                          RS.W 1
 
-vspo_state                            RS.W 1
-vspo_y_angle                          RS.W 1
+; **** Scroll-Playfield-Bottom-Out ****
+spbo_state                            RS.W 1
+spbo_y_angle                          RS.W 1
 
 ; **** Main ****
 fx_state                              RS.W 1
@@ -648,13 +651,14 @@ init_own_variables
   moveq   #1,d2
   move.w  d2,mgv_morph_delay_counter(a3)
 
-; **** Vert-Scroll-Playfield ****
-  move.w  d0,vspi_state(a3)
-  move.w  d0,vspi_y_angle(a3)
+; **** Scroll-Playfield-Bottom-In ****
+  move.w  d0,spbi_state(a3)
+  move.w  d0,spbi_y_angle(a3)
 
+; **** Scroll-Playfield-Bottom-Out ****
   moveq   #FALSE,d1
-  move.w  d1,vspo_state(a3)
-  move.w  #sine_table_length/4,vspo_y_angle(a3)
+  move.w  d1,spbo_state(a3)
+  move.w  #sine_table_length/4,spbo_y_angle(a3)
 
 ; **** Main ****
   move.w  d1,fx_state(a3)
@@ -936,6 +940,8 @@ init_second_copperlist
   bsr     get_wrapper_view_values
   bsr     cl2_set_bitplane_pointers
   bsr     copy_second_copperlist
+  bsr     swap_second_copperlist
+  bsr     swap_playfield1
   bsr     mgv_fill_playfield1
   bsr     mgv_draw_lines
   bsr     mgv_set_second_copperlist_jump
@@ -1030,20 +1036,9 @@ get_wrapper_view_values
 ; a6 ... DMACONR
   CNOP 0,4
 main_routine
-  bsr.s   no_sync_routines
-  bra.s   beam_routines
-
-
-; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
-; ----------------------------------------------------------------------
-  CNOP 0,4
-no_sync_routines
-  rts
-
 
 ; ## Rasterstahl-Routinen ##
 ; --------------------------
-  CNOP 0,4
 beam_routines
   bsr     wait_beam_position
   bsr.s   swap_second_copperlist
@@ -1054,8 +1049,8 @@ beam_routines
   bsr     mgv_draw_lines
   bsr     mgv_fill_playfield1
   bsr     mgv_set_second_copperlist_jump
-  bsr     vert_scroll_playfield_in
-  bsr     vert_scroll_playfield_out
+  bsr     scroll_playfield_buttom_in
+  bsr     scroll_playfield_buttom_out
   bsr     mgv_control_counters
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
@@ -1073,8 +1068,8 @@ fast_exit
 ; ------------------------------
   SWAP_COPPERLIST cl2,2
 
-; ** Bilder vertauschen **
-; ------------------------
+; ** Playfields vertauschen **
+; ----------------------------
   CNOP 0,4
 swap_playfield1
   move.l  pf1_construction1(a3),a0
@@ -1102,8 +1097,8 @@ swap_playfield1_loop
   rts
 
 
-; ** Bild löschen **
-; ------------------
+; ** Playfield löschen **
+; -----------------------
   CNOP 0,4
 mgv_clear_playfield1
   movem.l a3-a6,-(a7)
@@ -1125,7 +1120,7 @@ mgv_clear_playfield1
   add.l   #ALIGN64KB,d0
   clr.w   d0
   move.l  d0,a7
-  ADDF.L  pf1_plane_width*visible_lines_number*pf1_depth3,a7 ;Ende des Bildes
+  ADDF.L  pf1_plane_width*visible_lines_number*pf1_depth3,a7 ;Ende des Playfieldes
   moveq   #TRUE,d0
   move.l  d0,a3
   moveq   #7-1,d7
@@ -1134,11 +1129,12 @@ mgv_clear_playfield1_loop
   movem.l d0-d6/a0-a6,-(a7)  ;56 Bytes löschen
   ENDR
   dbf     d7,mgv_clear_playfield1_loop
-  movem.l d0-d6/a0-a6,-(a7)  ;56 Bytes löschen
-  movem.l d0-d6/a0-a6,-(a7)  ;56 Bytes löschen
-  movem.l d0-d6/a0-a6,-(a7)  ;56 Bytes löschen
-  movem.l d0-d6/a0-a6,-(a7)  ;56 Bytes löschen
-  movem.l d0-d6/a0-a6,-(a7)  ;56 Bytes löschen
+; Rest 304 Bytes
+  movem.l d0-d6/a0-a6,-(a7)
+  movem.l d0-d6/a0-a6,-(a7)
+  movem.l d0-d6/a0-a6,-(a7)
+  movem.l d0-d6/a0-a6,-(a7)
+  movem.l d0-d6/a0-a6,-(a7)
   movem.l d0-d5,-(a7)        ;24 Bytes löschen
   move.l  variables+save_a7(pc),a7 ;Alter Stackpointer
   movem.l (a7)+,a3-a6
@@ -1344,7 +1340,7 @@ mgv_draw_lines_loop2
   movem.w (a1,d2.w*2),d2-d3  ;P2(x,y)
   GET_LINE_PARAMETERS mgv,AREAFILL,COPPERUSE
   add.l   a3,d0              ;restliche BLTCON0 & BLTCON1-Bits setzen
-  add.l   a2,d1              ;+ Bildadresse
+  add.l   a2,d1              ;+ Playfieldadresse
   cmp.w   #1,d7              ;Plane 1 ?
   beq.s   mgv_draw_lines_single_line ;Ja -> verzweige
   moveq   #pf1_plane_width,d5
@@ -1365,9 +1361,9 @@ mgv_draw_lines_single_line
   MULUF.W 2,d2               ;2*(2*dx) = 4*dx
   move.w  d4,cl2_ext2_BLTBMOD-cl2_ext2_BLTCON0(a6) ;4*dy
   sub.w   d2,d4              ;(4*dy)-(4*dx)
-  move.w  d1,cl2_ext2_BLTCPTL-cl2_ext2_BLTCON0(a6) ;Bild lesen
+  move.w  d1,cl2_ext2_BLTCPTL-cl2_ext2_BLTCON0(a6) ;Playfield lesen
   addq.w  #1,a4              ;Linienzähler erhöhen
-  move.w  d1,cl2_ext2_BLTDPTL-cl2_ext2_BLTCON0(a6) ;Bild schreiben
+  move.w  d1,cl2_ext2_BLTDPTL-cl2_ext2_BLTCON0(a6) ;Playfield schreiben
   addq.w  #1*4,d2            ;(4*dx)+(1*4)
   move.w  d3,cl2_ext2_BLTAPTL-cl2_ext2_BLTCON0(a6) ;(4*dy)-(2*dx)
   MULUF.W 16,d2              ;((4*dx)+(1*4))*16 = Länge der Linie
@@ -1392,20 +1388,20 @@ mgv_draw_lines_init
   clr.w   d0
   move.l  cl2_construction2(a3),a0
   swap    d0                 ;High
-  move.w  d0,cl2_extension1_entry+cl2_ext1_BLTCPTH+2(a0) ;Bild lesen
-  move.w  d0,cl2_extension1_entry+cl2_ext1_BLTDPTH+2(a0) ;Bild schreiben
+  move.w  d0,cl2_extension1_entry+cl2_ext1_BLTCPTH+2(a0) ;Playfield lesen
+  move.w  d0,cl2_extension1_entry+cl2_ext1_BLTDPTH+2(a0) ;Playfield schreiben
   rts
 
-; ** Bild füllen **
-; -----------------
+; ** Playfield füllen **
+; ----------------------
   CNOP 0,4
 mgv_fill_playfield1
-  move.l  pf1_construction1(a3),a0      ;Bild
+  move.l  pf1_construction1(a3),a0
   move.l  (a0),d0
   add.l   #ALIGN64KB,d0
   clr.w   d0
   move.l  cl2_construction2(a3),a0
-  ADDF.L  ((pf1_plane_width*visible_lines_number*pf1_depth3)-(pf1_plane_width-(visible_pixels_number/8)))-2,d0 ;Ende des Bildes
+  ADDF.L  ((pf1_plane_width*visible_lines_number*pf1_depth3)-(pf1_plane_width-(visible_pixels_number/8)))-2,d0 ;Ende des Playfieldes
   move.w  d0,cl2_extension3_entry+cl2_ext3_BLTAPTL+2(a0) ;Quelle
   move.w  d0,cl2_extension3_entry+cl2_ext3_BLTDPTL+2(a0) ;Ziel
   swap    d0
@@ -1439,79 +1435,77 @@ mgv_skip
 ; ** Playfield von unten einscrollen **
 ; -------------------------------------
   CNOP 0,4
-vert_scroll_playfield_in
-  tst.w   vspi_state(a3)     ;Vert-Scroll-Playfield-In an ?
-  bne.s   no_vert_scroll_playfield_in ;Nein -> verzweige
-  move.w  vspi_y_angle(a3),d2 ;Y-Winkel holen
+scroll_playfield_buttom_in
+  tst.w   spbi_state(a3)     ;Scroll-Playfield-Buttom-In an ?
+  bne.s   no_scroll_playfield_buttom_in ;Nein -> verzweige
+  move.w  spbi_y_angle(a3),d2 ;Y-Winkel holen
   cmp.w   #sine_table_length/4,d2 ;90 Grad ?
-  bge.s   vspi_finished      ;Ja -> verzweige
-  lea     sine_table(pc),a0  ;Zeiger auf Sinus-Tabelle
+  bgt.s   spbi_finished      ;Ja -> verzweige
+  lea     sine_table(pc),a0
   move.w  (a0,d2.w*2),d0     ;sin(w)
-  muls.w  #vsp_y_radius*2,d0 ;y'=(sin(w)*yr)/2^15
+  muls.w  #spb_y_radius*2,d0 ;y'=(sin(w)*yr)/2^15
   swap    d0
-  add.w   #vsp_y_centre,d0 ;y' + Y-Mittelpunkt
-  addq.w  #vspi_y_angle_speed,d2 ;nächster Y-Winkel
-  move.w  d2,vspi_y_angle(a3) ;Y-Winkel retten
-  MOVEF.W vsp_max_VSTOP,d3
-  bsr.s   vsp_set_display_window
-no_vert_scroll_playfield_in
+  add.w   #spb_y_centre,d0   ;y' + Y-Mittelpunkt
+  addq.w  #spbi_y_angle_speed,d2 ;nächster Y-Winkel
+  move.w  d2,spbi_y_angle(a3) ;Y-Winkel retten
+  MOVEF.W spb_max_VSTOP,d3
+  bsr.s   spb_set_display_window
+no_scroll_playfield_buttom_in
   rts
   CNOP 0,4
-vspi_finished
+spbi_finished
   moveq   #FALSE,d0
-  move.w  d0,vspi_state(a3)  ;Vert-Scroll-Playfield-In aus
+  move.w  d0,spbi_state(a3)  ;Scroll-Playfield-Buttom-In aus
   rts
 
 ; ** Playfield nach unten ausscrollen **
 ; --------------------------------------
   CNOP 0,4
-vert_scroll_playfield_out
-  tst.w   vspo_state(a3)     ;Vert-Scroll-Playfild-Out an ?
-  bne.s   no_vert_scroll_playfield_out ;Nein -> verzweige
-  move.w  vspo_y_angle(a3),d2 ;Y-Winkel holen
+scroll_playfield_buttom_out
+  tst.w   spbo_state(a3)     ;Vert-Scroll-Playfild-Out an ?
+  bne.s   no_scroll_playfield_buttom_out ;Nein -> verzweige
+  move.w  spbo_y_angle(a3),d2 ;Y-Winkel holen
   cmp.w   #sine_table_length/2,d2 ;180 Grad ?
-  bge.s   vspo_finished      ;Ja -> verzweige
-  lea     sine_table(pc),a0  ;Zeiger auf Sinus-Tabelle
+  bgt.s   spbo_finished      ;Ja -> verzweige
+  lea     sine_table(pc),a0  
   move.w  (a0,d2.w*2),d0     ;cos(w)
-  muls.w  #vsp_y_radius*2,d0 ;y'=(cos(w)*yr)/2^15
+  muls.w  #spb_y_radius*2,d0 ;y'=(cos(w)*yr)/2^15
   swap    d0
-  add.w   #vsp_y_centre,d0 ;y' + Y-Mittelpunkt
-  addq.w  #vspo_y_angle_speed,d2 ;nächster Y-Winkel
-  move.w  d2,vspo_y_angle(a3) ;Y-Winkel retten
-  MOVEF.W vsp_max_VSTOP,d3
-  bsr.s   vsp_set_display_window
-no_vert_scroll_playfield_out
+  add.w   #spb_y_centre,d0   ;y' + Y-Mittelpunkt
+  addq.w  #spbo_y_angle_speed,d2 ;nächster Y-Winkel
+  move.w  d2,spbo_y_angle(a3) ;Y-Winkel retten
+  MOVEF.W spb_max_VSTOP,d3
+  bsr.s   spb_set_display_window
+no_scroll_playfield_buttom_out
   rts
   CNOP 0,4
-vspo_finished
+spbo_finished
   clr.w   fx_state(a3)       ;Effekte beendet
   moveq   #FALSE,d0
-  move.w  d0,vspo_state(a3)  ;Vert-Scroll-Playfield-Out aus
+  move.w  d0,spbo_state(a3)  ;Scroll-Playfield-Buttom-Out aus
   rts
 
   CNOP 0,4
-vsp_set_display_window
-  moveq   #vsp_min_VSTART,d1
+spb_set_display_window
+  move.l  cl2_construction2(a3),a1 ;CL
+  moveq   #spb_min_VSTART,d1
   add.w   d0,d1              ;+ Y-Offset
   cmp.w   d3,d1              ;VSTOP-Maximum erreicht ?
-  ble.s   vsp_no_max_VSTOP1  ;Nein -> verzweige
+  ble.s   spb_no_max_VSTOP1  ;Nein -> verzweige
   move.w  d3,d1              ;VSTOP korrigieren
-vsp_no_max_VSTOP1
-  move.l  cl2_display(a3),a1 ;CL
+spb_no_max_VSTOP1
   move.b  d1,cl2_DIWSTRT+2(a1) ;VSTART V7-V0
-  MOVEF.W visible_lines_number,d2
-  add.w   d1,d2              ;+ Höhe des Displays = VSTOP
+  move.w  d1,d2
+  add.w   #visible_lines_number,d2 ;VSTOP
   cmp.w   d3,d2              ;VSTOP-Maximum erreicht ?
-  ble.s   vsp_no_max_VSTOP2 ;Nein -> verzweige
+  ble.s   spb_no_max_VSTOP2 ;Nein -> verzweige
   move.w  d3,d2              ;VSTOP korrigieren
-vsp_no_max_VSTOP2
+spb_no_max_VSTOP2
   move.b  d2,cl2_DIWSTOP+2(a1) ;VSTOP V7-V0
   lsr.w   #8,d1              ;VSTART V8-Bit in richtige Position bringen
-  move.w  cl2_DIWHIGH+2(a1),d0
-  and.w   #~(DIWHIGHF_VSTART8+DIWHIGHF_VSTOP8),d0 ;VSTART&VSTOP V8-Bit ggf. ausmaskieren
-  move.b  d1,d2              ;V8-Bits
-  or.w    d2,d0              ;VSTART V8 / VSTOP V8 ggf. setzen
-  move.w  d0,cl2_DIWHIGH+2(a1) ;setzen
+  move.b  d1,d2              ;VSTART V8 + VSTOP V8
+  or.w    #DIWHIGHBITS&(~(DIWHIGHF_VSTART8+DIWHIGHF_VSTOP8)),d2 ;restliche Bits
+  move.w  d2,cl2_DIWHIGH+2(a1)
   rts
 
 
@@ -1527,7 +1521,7 @@ mgv_morph_enable
   clr.w   mgv_morph_state(a3) ;Morphing an
   cmp.w   #mgv_morph_shapes_number-1,mgv_morph_shapes_table_start(a3) ;Ende der Tabelle ?
   bne.s   mgv_morph_save_delay_counter ;Nein -> verzweige
-  clr.w   vspo_state(a3)     ;Vert-Scroll-Playfield-Out an
+  clr.w   spbo_state(a3)     ;Scroll-Playfield-Buttom-Out an
 mgv_morph_save_delay_counter
   move.w  d0,mgv_morph_delay_counter(a3) ;retten
 mgv_morph_no_delay_counter

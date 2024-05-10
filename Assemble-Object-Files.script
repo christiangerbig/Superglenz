@@ -1,0 +1,13 @@
+CD Daten:Asm-Sources.AGA/Superglenz/sources
+Programme:Programmieren/OMA_2.05/OMA Main.asm -o RAM:main.obj -c c -m
+Programme:Programmieren/OMA_2.05/OMA 0_Wrapper.asm -o RAM:0.obj -c c -m
+Programme:Programmieren/OMA_2.05/OMA 00_Intro.asm -o RAM:00.obj -c c -m
+Programme:Programmieren/OMA_2.05/OMA 01_Sub-Wrapper.asm -o RAM:01.obj -c c -m
+Programme:Programmieren/OMA_2.05/OMA 010_Morph-Glenz-Vectors.asm -o RAM:010.obj -c c -m
+Programme:Programmieren/OMA_2.05/OMA 011_Morph-Glenz-Vectors.asm -o RAM:011.obj -c c -m
+Programme:Programmieren/OMA_2.05/OMA 012_Morph-Glenz-Vectors.asm -o RAM:012.obj -c c -m
+Programme:Programmieren/OMA_2.05/OMA 013_Morph-2xGlenz-Vectors.asm -o RAM:013.obj -c c -m
+Programme:Programmieren/OMA_2.05/OMA 014_Morph-3xGlenz-Vectors.asm -o RAM:014.obj -c c -m
+Programme:Programmieren/OMA_2.05/OMA 1_Wrapper.asm -o RAM:1.obj -c c -m
+Programme:Programmieren/OMA_2.05/OMA 10_Credits.asm -o RAM:10.obj -c c -m
+CD /
