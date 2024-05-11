@@ -14,6 +14,7 @@
   XDEF sine_table
 
   XREF COLOR00BITS
+  XREF nop_second_copperlist
 
   SECTION code_and_variables,CODE
 
@@ -646,39 +647,39 @@ sprite7_SIZE          RS.B 0
 
 ; ** Konstanten für die Größe der Spritestrukturen **
 ; ---------------------------------------------------
-spr0_x_size1         EQU spr_x_size1
-spr0_y_size1         EQU 0
-spr1_x_size1         EQU spr_x_size1
-spr1_y_size1         EQU 0
-spr2_x_size1         EQU spr_x_size1
-spr2_y_size1         EQU 0
-spr3_x_size1         EQU spr_x_size1
-spr3_y_size1         EQU 0
-spr4_x_size1         EQU spr_x_size1
-spr4_y_size1         EQU 0
-spr5_x_size1         EQU spr_x_size1
-spr5_y_size1         EQU 0
-spr6_x_size1         EQU spr_x_size1
-spr6_y_size1         EQU 0
-spr7_x_size1         EQU spr_x_size1
-spr7_y_size1         EQU 0
+spr0_x_size1     EQU spr_x_size1
+spr0_y_size1     EQU 0
+spr1_x_size1     EQU spr_x_size1
+spr1_y_size1     EQU 0
+spr2_x_size1     EQU spr_x_size1
+spr2_y_size1     EQU 0
+spr3_x_size1     EQU spr_x_size1
+spr3_y_size1     EQU 0
+spr4_x_size1     EQU spr_x_size1
+spr4_y_size1     EQU 0
+spr5_x_size1     EQU spr_x_size1
+spr5_y_size1     EQU 0
+spr6_x_size1     EQU spr_x_size1
+spr6_y_size1     EQU 0
+spr7_x_size1     EQU spr_x_size1
+spr7_y_size1     EQU 0
 
-spr0_x_size2         EQU spr_x_size2
-spr0_y_size2         EQU sprite0_SIZE/(spr_pixel_per_datafetch/4)
-spr1_x_size2         EQU spr_x_size2
-spr1_y_size2         EQU sprite1_SIZE/(spr_pixel_per_datafetch/4)
-spr2_x_size2         EQU spr_x_size2
-spr2_y_size2         EQU sprite2_SIZE/(spr_pixel_per_datafetch/4)
-spr3_x_size2         EQU spr_x_size2
-spr3_y_size2         EQU sprite3_SIZE/(spr_pixel_per_datafetch/4)
-spr4_x_size2         EQU spr_x_size2
-spr4_y_size2         EQU sprite4_SIZE/(spr_pixel_per_datafetch/4)
-spr5_x_size2         EQU spr_x_size2
-spr5_y_size2         EQU sprite5_SIZE/(spr_pixel_per_datafetch/4)
-spr6_x_size2         EQU spr_x_size2
-spr6_y_size2         EQU sprite6_SIZE/(spr_pixel_per_datafetch/4)
-spr7_x_size2         EQU spr_x_size2
-spr7_y_size2         EQU sprite7_SIZE/(spr_pixel_per_datafetch/4)
+spr0_x_size2     EQU spr_x_size2
+spr0_y_size2     EQU sprite0_SIZE/(spr_x_size2/8)
+spr1_x_size2     EQU spr_x_size2
+spr1_y_size2     EQU sprite1_SIZE/(spr_x_size2/8)
+spr2_x_size2     EQU spr_x_size2
+spr2_y_size2     EQU sprite2_SIZE/(spr_x_size2/8)
+spr3_x_size2     EQU spr_x_size2
+spr3_y_size2     EQU sprite3_SIZE/(spr_x_size2/8)
+spr4_x_size2     EQU spr_x_size2
+spr4_y_size2     EQU sprite4_SIZE/(spr_x_size2/8)
+spr5_x_size2     EQU spr_x_size2
+spr5_y_size2     EQU sprite5_SIZE/(spr_x_size2/8)
+spr6_x_size2     EQU spr_x_size2
+spr6_y_size2     EQU sprite6_SIZE/(spr_x_size2/8)
+spr7_x_size2     EQU spr_x_size2
+spr7_y_size2     EQU sprite7_SIZE/(spr_x_size2/8)
 
 
 ; ** Struktur, die alle Variablenoffsets enthält **
@@ -1190,6 +1191,7 @@ beam_routines
   tst.w   fx_state(a3)       ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
+  move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
   move.w  custom_error_code(a3),d1
   rts
 
