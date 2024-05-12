@@ -82,8 +82,10 @@ sys_taken_over
 own_display_set_second_copperlist
 pass_global_references
 pass_return_code
+
 mgv_count_lines                   EQU FALSE
-mgv_morph_object1                 EQU FALSE
+mgv_premorph_start_shape          EQU TRUE
+mgv_morph_loop                    EQU FALSE
 
 DMABITS                           EQU DMAF_BLITTER+DMAF_RASTER++DMAF_SETCLR
 
@@ -248,9 +250,13 @@ mgv_object_face20_lines_number    EQU 3
 
 mgv_max_lines_number              EQU 54
 
+  IFEQ mgv_morph_loop
+mgv_morph_shapes_number           EQU 3
+  ELSE
 mgv_morph_shapes_number           EQU 4
-mgv_morph_delay                   EQU 8*PALFPS
+  ENDC
 mgv_morph_speed                   EQU 8
+mgv_morph_delay                   EQU 8*PALFPS
 
 ; **** Fill-Blit ****
 mgv_fill_blit_x_size              EQU visible_pixels_number
@@ -521,8 +527,8 @@ init_own_variables
 init_all
   bsr.s   mgv_init_object_info_table
   bsr.s   mgv_init_morph_shapes_table
-  IFEQ mgv_morph_object1
-    bsr.s   mgv_init_actual_object
+  IFEQ mgv_premorph_start_shape
+    bsr.s   mgv_init_start_shape
   ENDC
   bsr.s   mgv_init_color_table
   bra     init_second_copperlist
@@ -558,18 +564,22 @@ mgv_init_morph_shapes_table
   move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
 ; ** Form 3 **
   lea     mgv_object_shape3_coordinates(pc),a0 ;Zeiger auf 3. Form
-  move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
+  IFEQ mgv_morph_loop
+    move.l  a0,(a1)          ;Zeiger auf Form-Tabelle
+  ELSE
+    move.l  a0,(a1)+         ;Zeiger auf Form-Tabelle
 ; ** Form 4 **
-  lea     mgv_object_shape4_coordinates(pc),a0 ;Zeiger auf 4. Form
-  move.l  a0,(a1)            ;Zeiger auf Form-Tabelle
+    lea     mgv_object_shape4_coordinates(pc),a0 ;Zeiger auf 4. Form
+    move.l  a0,(a1)          ;Zeiger auf Form-Tabelle
+  ENDC
   rts
 
-  IFEQ mgv_morph_object1
+  IFEQ mgv_premorph_start_shape
     CNOP 0,4
-mgv_init_actual_object
+mgv_init_start_shape
     bsr     mgv_morph_object
     tst.w   mgv_morph_state(a3) ;Morphing beendet?
-    beq.s   mgv_init_actual_object ;Nein -> verzweige
+    beq.s   mgv_init_start_shape ;Nein -> verzweige
     rts
   ENDC
 
@@ -938,8 +948,13 @@ mgv_morph_object_next_coordinate
   bne.s   mgv_no_morph_object ;Nein -> verzweige
   addq.w  #1,d1              ;nächster Eintrag in Objekttablelle
   cmp.w   #mgv_morph_shapes_number,d1 ;Ende der Tabelle ?
-  beq.s   mgv_morph_object_disable ;Ja -> verzweige
-mgv_morph_reset_delay_counter
+  IFEQ mgv_morph_loop
+    bne.s   mgv_save_morph_shapes_table_start ;Nein -> verzweige
+    moveq   #TRUE,d1         ;Neustart
+mgv_save_morph_shapes_table_start
+  ELSE
+    beq.s   mgv_morph_object_disable ;Ja -> verzweige
+  ENDC
   move.w  d1,mgv_morph_shapes_table_start(a3) ;retten
   move.w  #mgv_morph_delay,mgv_morph_delay_counter(a3) ;Zähler zurücksetzen
 mgv_morph_object_disable
@@ -1288,10 +1303,12 @@ mgv_object_shape3_coordinates
   DC.W -(32*8),64*8,32*8    ;P10
   DC.W -(64*8),0,64*8       ;P11
 
+  IFNE mgv_morph_loop
 ; ** Form 4 **
 ; * Zoom-Out *
 mgv_object_shape4_coordinates
-  DS.W mgv_object_edge_points_number*3
+    DS.W mgv_object_edge_points_number*3
+  ENDC
 
 ; ** Information über Objekt **
 ; -----------------------------
@@ -1461,5 +1478,3 @@ mgv_morph_shapes_table
   INCLUDE "error-texts.i"
 
   END
-
-

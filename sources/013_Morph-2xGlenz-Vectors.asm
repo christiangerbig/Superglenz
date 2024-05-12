@@ -82,8 +82,10 @@ sys_taken_over
 own_display_set_second_copperlist
 pass_global_references
 pass_return_code
+
 mgv_count_lines                     EQU FALSE
-mgv_morph_object1                   EQU FALSE
+mgv_premorph_start_shape            EQU TRUE
+mgv_morph_loop                      EQU FALSE
 
 DMABITS                             EQU DMAF_BLITTER+DMAF_RASTER+DMAF_BLITHOG+DMAF_SETCLR
 
@@ -325,9 +327,13 @@ mgv_objects_faces_number            EQU mgv_object1_faces_number+mgv_object2_fac
 
 mgv_max_lines_number                EQU 114
 
+  IFEQ mgv_morph_loop
+mgv_morph_shapes_number             EQU 6
+  ELSE
 mgv_morph_shapes_number             EQU 7
-mgv_morph_delay                     EQU 6*PALFPS
+  ENDC
 mgv_morph_speed                     EQU 8
+mgv_morph_delay                     EQU 6*PALFPS
 ; ** Form 1 **
 mgv_object1_shape1_x_rotation_speed EQU 2
 mgv_object1_shape1_y_rotation_speed EQU 2
@@ -670,6 +676,9 @@ init_own_variables
 init_all
   bsr.s   mgv_init_objects_info_table
   bsr.s   mgv_init_morph_shapes_table
+  IFEQ mgv_premorph_start_shape
+    bsr     mgv_init_start_shape
+  ENDC
   bsr     mgv_init_color_table
   bra     init_second_copperlist
 
@@ -805,25 +814,38 @@ mgv_init_morph_shapes_table
   moveq   #mgv_object2_shape6_y_rotation_speed,d2
   move.w  d2,(a1)+           ;Y-Achse
   moveq   #mgv_object2_shape6_z_rotation_speed,d2
-  move.w  d2,(a1)+           ;Z-Achse
+  IFEQ mgv_morph_loop
+    move.w  d2,(a1)          ;Z-Achse
+  ELSE
+    move.w  d2,(a1)+         ;Z-Achse
 ; ** Form 7 **
-  lea     mgv_object1_shape7_coordinates(pc),a0
-  move.l  a0,(a1)+           ;Zeiger auf Objekt-Tabelle
-  lea     mgv_object2_shape7_coordinates(pc),a0
-  move.l  a0,(a1)+           ;Zeiger auf Koords-Tabelle
-  moveq   #mgv_object1_shape7_x_rotation_speed,d2
-  move.w  d2,(a1)+           ;X-Achse
-  moveq   #mgv_object1_shape7_y_rotation_speed,d2
-  move.w  d2,(a1)+           ;Y-Achse
-  moveq   #mgv_object1_shape7_z_rotation_speed,d2
-  move.w  d2,(a1)+           ;Z-Achse
-  moveq   #mgv_object2_shape7_x_rotation_speed,d2
-  move.w  d2,(a1)+           ;X-Achse
-  moveq   #mgv_object2_shape7_y_rotation_speed,d2
-  move.w  d2,(a1)+           ;Y-Achse
-  moveq   #mgv_object2_shape7_z_rotation_speed,d2
-  move.w  d2,(a1)            ;Z-Achse
+    lea     mgv_object1_shape7_coordinates(pc),a0
+    move.l  a0,(a1)+         ;Zeiger auf Objekt-Tabelle
+    lea     mgv_object2_shape7_coordinates(pc),a0
+    move.l  a0,(a1)+         ;Zeiger auf Koords-Tabelle
+    moveq   #mgv_object1_shape7_x_rotation_speed,d2
+    move.w  d2,(a1)+         ;X-Achse
+    moveq   #mgv_object1_shape7_y_rotation_speed,d2
+    move.w  d2,(a1)+         ;Y-Achse
+    moveq   #mgv_object1_shape7_z_rotation_speed,d2
+    move.w  d2,(a1)+         ;Z-Achse
+    moveq   #mgv_object2_shape7_x_rotation_speed,d2
+    move.w  d2,(a1)+         ;X-Achse
+    moveq   #mgv_object2_shape7_y_rotation_speed,d2
+    move.w  d2,(a1)+         ;Y-Achse
+    moveq   #mgv_object2_shape7_z_rotation_speed,d2
+    move.w  d2,(a1)          ;Z-Achse
+  ENDC
   rts
+
+  IFEQ mgv_premorph_start_shape
+    CNOP 0,4
+mgv_init_start_shape
+    bsr     mgv_morph_objects
+    tst.w   mgv_morph_state(a3) ;Morphing beendet?
+    beq.s   mgv_init_start_shape ;Nein -> verzweige
+    rts
+  ENDC
 
 ; ** Farbtabelle initialisieren **
 ; --------------------------------
@@ -1255,7 +1277,13 @@ mgv_morph_objects
   bne.s   mgv_no_morph_objects ;Nein -> verzweige
   addq.w  #1,d1              ;nächster Eintrag in Objekttablelle
   cmp.w   #mgv_morph_shapes_number,d1 ;Ende der Tabelle ?
-  beq.s   mgv_morph_objects_disable  ;Ja -> verzweige
+  IFEQ mgv_morph_loop
+    bne.s   mgv_save_morph_shapes_table_start ;Nein -> verzweige
+    moveq   #TRUE,d1         ;Neustart
+mgv_save_morph_shapes_table_start
+  ELSE
+    beq.s   mgv_morph_objects_disable ;Ja -> verzweige
+  ENDC
   move.w  d1,mgv_morph_shapes_table_start(a3) ;retten
   move.w  #mgv_morph_delay,mgv_morph_delay_counter(a3) ;Zähler zurücksetzen
   move.l  (a2)+,mgv_object1_variable_x_rotation_speed(a3) ;Neue X,Y,Z-Rotationsgeschwindigkeiten setzen
@@ -1794,13 +1822,15 @@ mgv_object2_shape6_coordinates
   DC.W 0,-(48*8),35*8        ;P26
   DC.W 0,48*8,35*8           ;P27
 
+  IFNE mgv_morph_loop
 ; ** Form 7 **
 mgv_object1_shape7_coordinates
 ; * Zoom-Out *
-  DS.W mgv_object1_edge_points_number*3
+    DS.W mgv_object1_edge_points_number*3
 mgv_object2_shape7_coordinates
 ; * Zoom-Out *
-  DS.W mgv_object2_edge_points_number*3
+    DS.W mgv_object2_edge_points_number*3
+  ENDC
 
 ; ** Information über Objekt **
 ; -----------------------------
