@@ -27,6 +27,7 @@
   MC68040
 
   XDEF COLOR00BITS
+  XDEF nop_first_copperlist
   XDEF nop_second_copperlist
  
   XREF start_0_pt_replay
@@ -296,6 +297,8 @@ init_color_registers
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0
+  lea     nop_first_copperlist(pc),a1
+  move.l  a0,(a1)
   bsr.s   cl1_init_playfield_registers
   COPLISTEND
   rts
@@ -307,9 +310,9 @@ init_first_copperlist
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_display(a3),a0
-  COPLISTEND
   lea     nop_second_copperlist(pc),a1
   move.l  a0,(a1)
+  COPLISTEND
   rts
 
 
@@ -383,6 +386,7 @@ pf1_color_table
 
   INCLUDE "sys-variables.i"
 
+nop_first_copperlist  DC.L 0
 nop_second_copperlist DC.L 0
 
 

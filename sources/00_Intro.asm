@@ -14,6 +14,7 @@
   XDEF sine_table
 
   XREF COLOR00BITS
+  XREF nop_first_copperlist
   XREF nop_second_copperlist
 
   SECTION code_and_variables,CODE
@@ -1192,6 +1193,9 @@ beam_routines
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
+  move.w  d0,COPJMP2-DMACONR(a6)
+  move.l  nop_first_copperlist,COP1LC-DMACONR(a6) ;2. Copperliste deaktivieren
+  move.w  d0,COPJMP1-DMACONR(a6)
   move.w  custom_error_code(a3),d1
   rts
 

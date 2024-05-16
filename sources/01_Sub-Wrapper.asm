@@ -11,6 +11,7 @@
 
 ; Zusätzliches Playfield in 16 Farben aus vier attached 64-Pixel-Sprites,
 ; wobei nach 256 Pixeln jedes Sprite wiederholt wird.
+; Die erste Copperlist gilt für alle Folgeeffekte
 
   SECTION code_and_variables,CODE
 
@@ -22,6 +23,7 @@
   XDEF start_01_wrapper
 
   XREF COLOR00BITS
+  XREF nop_second_copperlist
   XREF start_010_morph_glenz_vectors
   XREF start_011_morph_glenz_vectors
   XREF start_012_morph_glenz_vectors
@@ -606,27 +608,33 @@ main_routine
   move.l  a0,-(a7)
   bsr.s   beam_routines
   move.l  (a7)+,a0
+  tst.l   d0
+  bne     exit
 
   movem.l a0/a3-a6,-(a7)
   bsr     start_010_morph_glenz_vectors
   movem.l (a7)+,a0/a3-a6
   tst.l   d0
   bne.s   exit
+
   movem.l a0/a3-a6,-(a7)
   bsr     start_011_morph_glenz_vectors
   movem.l (a7)+,a0/a3-a6
   tst.l   d0
   bne.s   exit
+
   movem.l a0/a3-a6,-(a7)
   bsr     start_012_morph_glenz_vectors
   movem.l (a7)+,a0/a3-a6
   tst.l   d0
   bne.s   exit
+
   movem.l a0/a3-a6,-(a7)
   bsr     start_013_morph_2xglenz_vectors
   movem.l (a7)+,a0/a3-a6
   tst.l   d0
   bne.s   exit
+
   movem.l a0/a3-a6,-(a7)
   bsr     start_014_morph_3xglenz_vectors
   movem.l (a7)+,a0/a3-a6
@@ -655,6 +663,8 @@ beam_routines
 fast_exit
   move.w  custom_error_code(a3),d1
 exit
+  move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
+  move.w  d0,COPJMP2-DMACONR(a6)
   rts
 
 ; ** Sprites einblenden **
