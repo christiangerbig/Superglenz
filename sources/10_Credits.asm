@@ -14,6 +14,7 @@
   MC68040
 
   XREF COLOR00BITS
+  XREF nop_first_copperlist
   XREF nop_second_copperlist
   XREF mouse_handler
   XREF sine_table
@@ -993,7 +994,7 @@ main_routine
 beam_routines
   bsr     wait_beam_position
   bsr.s   swap_second_copperlist
-  bsr.s   spr_swap_structures
+  bsr     spr_swap_structures
   bsr     swap_playfield1
   bsr     swap_extra_playfield
   bsr     effects_handler
@@ -1018,6 +1019,8 @@ beam_routines
 fast_exit
   move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
   move.w  d0,COPJMP2-DMACONR(a6)
+  move.l  nop_first_copperlist,COP1LC-DMACONR(a6) ;1. Copperliste deaktivieren
+  move.w  d0,COPJMP1-DMACONR(a6)
   move.w  custom_error_code(a3),d1
   rts
 
