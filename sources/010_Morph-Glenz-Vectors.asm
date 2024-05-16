@@ -588,7 +588,7 @@ mgv_init_start_shape
   CNOP 0,4
 mgv_init_color_table
   lea     pf1_color_table(pc),a0 ;Zeiger auf Farbtableelle
-  lea     mgv_glenz_color_table(pc),a1 ;Farben der einzelnen Glenz-Objekte
+  lea     mgv_glenz_color_table1(pc),a1 ;Farben der einzelnen Glenz-Objekte
   move.l  (a1)+,2*LONGWORDSIZE(a0) ;COLOR02
   move.l  (a1)+,3*LONGWORDSIZE(a0) ;COLOR03
   move.l  (a1)+,4*LONGWORDSIZE(a0) ;COLOR04
@@ -730,7 +730,7 @@ beam_routines
   tst.w   fx_state(a3)       ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
-  move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
+  move.l  nop_second_copperlist(pc),COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
   move.w  d0,COPJMP2-DMACONR(a6)
   move.w  custom_error_code(a3),d1
   rts
@@ -1243,7 +1243,7 @@ pf1_color_table
 ; **** Morph-Glenz-Vectors ****
 ; ** Farben der Glenz-Objekte **
   CNOP 0,4
-mgv_glenz_color_table
+mgv_glenz_color_table1
   INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/1xGlenz-Colorgradient1.ct"
 
 ; ** Objektdaten **

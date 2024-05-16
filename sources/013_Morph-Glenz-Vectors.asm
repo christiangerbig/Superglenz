@@ -1,5 +1,5 @@
 ; #########################################
-; # Programm: 011_Morph-Glenz-Vectors.asm #
+; # Programm: 013_Morph-Glenz-Vectors.asm #
 ; # Autor:    Christian Gerbig            #
 ; # Datum:    14.04.2024                  #
 ; # Version:  1.0                         #
@@ -9,13 +9,13 @@
 ; # OS:       3.0+                        #
 ; #########################################
 
-; Morphendes 1x36-Flächen-Glenz auf einem 256x256-Screen.
+; Morphendes 1x40-Flächen-Glenz auf einem 240x240-Screen.
 ; Der Copper wartet auf den Blitter. 
 ; Beam-Position-Timing wegen flexibler Ausführungszeit der Copperliste.
 ; Das Playfield ist auf 64 kB aligned damit Blitter-High-Pointer der
 ; Linien-Blits nur 1x initialisiert werden müssen.
 
-  XDEF start_011_morph_glenz_vectors
+  XDEF start_013_morph_glenz_vectors
 
   XREF v_BPLCON0BITS
   XREF v_BPLCON3BITS1
@@ -97,13 +97,13 @@ CIABICRBITS                       EQU CIAICRF_SETCLR
 COPCONBITS                        EQU COPCONF_CDANG
 
 pf1_x_size1                       EQU 256
-pf1_y_size1                       EQU 256+683
+pf1_y_size1                       EQU 240+683
 pf1_depth1                        EQU 3
 pf1_x_size2                       EQU 256
-pf1_y_size2                       EQU 256+683
+pf1_y_size2                       EQU 240+683
 pf1_depth2                        EQU 3
 pf1_x_size3                       EQU 256
-pf1_y_size3                       EQU 256+683
+pf1_y_size3                       EQU 240+683
 pf1_depth3                        EQU 3
 pf1_colors_number                 EQU 8
 
@@ -150,18 +150,18 @@ CIAB_TB_continuous                EQU FALSE
 beam_position                     EQU $133
 
 pixel_per_line                    EQU 256
-visible_pixels_number             EQU 256
-visible_lines_number              EQU 256
+visible_pixels_number             EQU 240
+visible_lines_number              EQU 240
 MINROW                            EQU VSTOP_OVERSCAN_PAL
 
 pf_pixel_per_datafetch            EQU 64 ;4x
 DDFSTRTBITS                       EQU DDFSTART_320_pixel
 DDFSTOPBITS                       EQU DDFSTOP_256_pixel_left_aligned_4x
 
-display_window_HSTART             EQU HSTART_320_pixel
+display_window_HSTART             EQU HSTART_240_pixel
 display_window_VSTART             EQU MINROW
 DIWSTRTBITS                       EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
-display_window_HSTOP              EQU HSTOP_256_pixel
+display_window_HSTOP              EQU HSTOP_240_pixel
 display_window_VSTOP              EQU VSTOP_OVERSCAN_PAL
 DIWSTOPBITS                       EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
@@ -170,7 +170,7 @@ data_fetch_width                  EQU pixel_per_line/8
 pf1_plane_moduli                  EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
 BPLCON0BITS                       EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON1BITS                       EQU $8800
+BPLCON1BITS                       EQU $8888
 BPLCON2BITS                       EQU TRUE
 BPLCON3BITS1                      EQU TRUE
 BPLCON3BITS2                      EQU BPLCON3BITS1+BPLCON3F_LOCT
@@ -189,88 +189,91 @@ mgv_rotation_xy_center            EQU visible_lines_number/2
 
 mgv_rotation_x_angle_speed_radius EQU 2
 mgv_rotation_x_angle_speed_center EQU 3
-mgv_rotation_x_angle_speed_speed  EQU 2
+mgv_rotation_x_angle_speed_speed  EQU -2
 
-mgv_rotation_y_angle_speed_radius EQU 1
-mgv_rotation_y_angle_speed_center EQU 2
-mgv_rotation_y_angle_speed_speed  EQU 1
+mgv_rotation_y_angle_speed_radius EQU 2
+mgv_rotation_y_angle_speed_center EQU 3
+mgv_rotation_y_angle_speed_speed  EQU -1
 
 mgv_rotation_z_angle_speed_radius EQU 1
 mgv_rotation_z_angle_speed_center EQU 2
-mgv_rotation_z_angle_speed_speed  EQU -2
+mgv_rotation_z_angle_speed_speed  EQU 3
 
-mgv_object_edge_points_number     EQU 20
+mgv_object_edge_points_number     EQU 26
 mgv_object_edge_points_per_face   EQU 3
-mgv_object_faces_number           EQU 36
+mgv_object_faces_number           EQU 48
 
-mgv_object_face1_color            EQU 4
+mgv_object_face1_color            EQU 2
 mgv_object_face1_lines_number     EQU 3
 mgv_object_face2_color            EQU 4
 mgv_object_face2_lines_number     EQU 3
-mgv_object_face3_color            EQU 4
+mgv_object_face3_color            EQU 2
 mgv_object_face3_lines_number     EQU 3
 mgv_object_face4_color            EQU 4
 mgv_object_face4_lines_number     EQU 3
-mgv_object_face5_color            EQU 4
+mgv_object_face5_color            EQU 2
 mgv_object_face5_lines_number     EQU 3
 mgv_object_face6_color            EQU 4
 mgv_object_face6_lines_number     EQU 3
 mgv_object_face7_color            EQU 2
 mgv_object_face7_lines_number     EQU 3
-mgv_object_face8_color            EQU 2
+mgv_object_face8_color            EQU 4
 mgv_object_face8_lines_number     EQU 3
-mgv_object_face9_color            EQU 2
-mgv_object_face9_lines_number     EQU 3
 
+mgv_object_face9_color            EQU 4
+mgv_object_face9_lines_number     EQU 3
 mgv_object_face10_color           EQU 2
 mgv_object_face10_lines_number    EQU 3
-mgv_object_face11_color           EQU 2
+mgv_object_face11_color           EQU 4
 mgv_object_face11_lines_number    EQU 3
 mgv_object_face12_color           EQU 2
 mgv_object_face12_lines_number    EQU 3
+
 mgv_object_face13_color           EQU 2
 mgv_object_face13_lines_number    EQU 3
-mgv_object_face14_color           EQU 2
+mgv_object_face14_color           EQU 4
 mgv_object_face14_lines_number    EQU 3
 mgv_object_face15_color           EQU 2
 mgv_object_face15_lines_number    EQU 3
 mgv_object_face16_color           EQU 4
 mgv_object_face16_lines_number    EQU 3
+
 mgv_object_face17_color           EQU 4
 mgv_object_face17_lines_number    EQU 3
-mgv_object_face18_color           EQU 4
+mgv_object_face18_color           EQU 2
 mgv_object_face18_lines_number    EQU 3
-
 mgv_object_face19_color           EQU 4
 mgv_object_face19_lines_number    EQU 3
 mgv_object_face20_color           EQU 2
 mgv_object_face20_lines_number    EQU 3
-mgv_object_face21_color           EQU 4
+
+mgv_object_face21_color           EQU 2
 mgv_object_face21_lines_number    EQU 3
-mgv_object_face22_color           EQU 2
+mgv_object_face22_color           EQU 4
 mgv_object_face22_lines_number    EQU 3
-mgv_object_face23_color           EQU 4
+mgv_object_face23_color           EQU 2
 mgv_object_face23_lines_number    EQU 3
-mgv_object_face24_color           EQU 2
+mgv_object_face24_color           EQU 4
 mgv_object_face24_lines_number    EQU 3
 
-mgv_object_face25_color           EQU 2
+mgv_object_face25_color           EQU 4
 mgv_object_face25_lines_number    EQU 3
-mgv_object_face26_color           EQU 4
+mgv_object_face26_color           EQU 2
 mgv_object_face26_lines_number    EQU 3
-mgv_object_face27_color           EQU 2
+mgv_object_face27_color           EQU 4
 mgv_object_face27_lines_number    EQU 3
-mgv_object_face28_color           EQU 4
+mgv_object_face28_color           EQU 2
 mgv_object_face28_lines_number    EQU 3
+
 mgv_object_face29_color           EQU 2
 mgv_object_face29_lines_number    EQU 3
 mgv_object_face30_color           EQU 4
 mgv_object_face30_lines_number    EQU 3
-
-mgv_object_face31_color           EQU 4
+mgv_object_face31_color           EQU 2
 mgv_object_face31_lines_number    EQU 3
-mgv_object_face32_color           EQU 2
+mgv_object_face32_color           EQU 4
 mgv_object_face32_lines_number    EQU 3
+
 mgv_object_face33_color           EQU 4
 mgv_object_face33_lines_number    EQU 3
 mgv_object_face34_color           EQU 2
@@ -280,7 +283,34 @@ mgv_object_face35_lines_number    EQU 3
 mgv_object_face36_color           EQU 2
 mgv_object_face36_lines_number    EQU 3
 
-mgv_max_lines_number              EQU 90
+mgv_object_face37_color           EQU 2
+mgv_object_face37_lines_number    EQU 3
+mgv_object_face38_color           EQU 4
+mgv_object_face38_lines_number    EQU 3
+mgv_object_face39_color           EQU 2
+mgv_object_face39_lines_number    EQU 3
+mgv_object_face40_color           EQU 4
+mgv_object_face40_lines_number    EQU 3
+
+mgv_object_face41_color           EQU 2
+mgv_object_face41_lines_number    EQU 3
+mgv_object_face42_color           EQU 4
+mgv_object_face42_lines_number    EQU 3
+mgv_object_face43_color           EQU 2
+mgv_object_face43_lines_number    EQU 3
+mgv_object_face44_color           EQU 4
+mgv_object_face44_lines_number    EQU 3
+mgv_object_face45_color           EQU 2
+mgv_object_face45_lines_number    EQU 3
+mgv_object_face46_color           EQU 4
+mgv_object_face46_lines_number    EQU 3
+mgv_object_face47_color           EQU 2
+mgv_object_face47_lines_number    EQU 3
+mgv_object_face48_color           EQU 4
+mgv_object_face48_lines_number    EQU 3
+
+mgv_max_lines_number              EQU 132
+mgv_glenz_colors_number           EQU 4
 
   IFEQ mgv_morph_loop
 mgv_morph_shapes_number           EQU 3
@@ -296,7 +326,7 @@ mgv_fill_blit_y_size              EQU visible_lines_number
 mgv_fill_blit_depth               EQU pf1_depth3
 
 ; **** Scroll-Playfield-Bottom ****
-spb_min_VSTART                    EQU VSTART_256_lines
+spb_min_VSTART                    EQU VSTART_240_lines
 spb_max_VSTOP                     EQU VSTOP_OVERSCAN_PAL
 spb_max_visible_lines_number      EQU 283
 spb_y_radius                      EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
@@ -512,7 +542,7 @@ mgv_morph_shape_SIZE              RS.B 0
 
 ; ## Beginn des Initialisierungsprogramms ##
 ; ------------------------------------------
-start_011_morph_glenz_vectors
+start_013_morph_glenz_vectors
   INCLUDE "sys-init.i"
 
 ; ** Eigene Variablen initialisieren **
@@ -562,7 +592,7 @@ init_all
   IFEQ mgv_premorph_start_shape
     bsr.s   mgv_init_start_shape
   ENDC
-  bsr     mgv_init_color_table
+  bsr.s   mgv_init_color_table
   bra     init_second_copperlist
 
 ; **** Morph-Glenz-Vectors ****
@@ -620,7 +650,7 @@ mgv_init_start_shape
   CNOP 0,4
 mgv_init_color_table
   lea     pf1_color_table(pc),a0 ;Zeiger auf Farbtableelle
-  lea     mgv_glenz_color_table2(pc),a1 ;Farben der einzelnen Glenz-Objekte
+  lea     mgv_glenz_color_table4(pc),a1 ;Farben des Glenz-Objekts
   move.l  (a1)+,2*LONGWORDSIZE(a0) ;COLOR02
   move.l  (a1)+,3*LONGWORDSIZE(a0) ;COLOR03
   move.l  (a1)+,4*LONGWORDSIZE(a0) ;COLOR04
@@ -684,7 +714,7 @@ cl2_init_line_blits_steady_registers
 
   CNOP 0,4
 cl2_init_line_blits
-  moveq   #mgv_max_lines_number-1,d7
+  MOVEF.W  mgv_max_lines_number-1,d7
 cl1_init_line_blits_loop
   COPMOVEQ TRUE,BLTCON0
   COPMOVEQ TRUE,BLTCON1
@@ -833,12 +863,13 @@ mgv_clear_playfield1_loop
   movem.l d0-d6/a0-a6,-(a7)  ;56 Bytes löschen
   ENDR
   dbf     d7,mgv_clear_playfield1_loop
-; Rest 272 Bytes
+; Rest 304 Bytes
+  movem.l d0-d6/a0-a6,-(a7) 
+  movem.l d0-d6/a0-a6,-(a7) 
+  movem.l d0-d6/a0-a6,-(a7) 
   movem.l d0-d6/a0-a6,-(a7)
   movem.l d0-d6/a0-a6,-(a7) 
-  movem.l d0-d6/a0-a6,-(a7) 
-  movem.l d0-d6/a0-a6,-(a7) 
-  movem.l d0-d6/a0-a4,-(a7)  ;48 Bytes löschen
+  movem.l d0-d5,-(a7)
   move.l  variables+save_a7(pc),a7 ;Alter Stackpointer
   movem.l (a7)+,a3-a6
   rts
@@ -920,7 +951,7 @@ mgv_rotation
   move.w  d1,mgv_rotation_z_angle(a3) ;Z-Winkel retten
   lea     mgv_object_coordinates(pc),a0 ;Koordinaten der Linien
   lea     mgv_rotation_xy_coordinates(pc),a1 ;Koord.-Tab.
-  move.w  #(mgv_rotation_d-100)*8,a4 ;d
+  move.w  #mgv_rotation_d*8,a4 ;d
   move.w  #mgv_rotation_xy_center,a5 ;X+Y-Mittelpunkt
   moveq   #mgv_object_edge_points_number-1,d7 ;Anzahl der Punkte
 mgv_rotate_loop
@@ -1192,7 +1223,7 @@ spb_set_display_window
   moveq   #spb_min_VSTART,d1
   add.w   d0,d1              ;+ Y-Offset
   cmp.w   d3,d1              ;VSTOP-Maximum erreicht ?
-  ble.s   spb_no_max_VSTOP1  ;Nein -> verzweige
+  blt.s   spb_no_max_VSTOP1  ;Nein -> verzweige
   move.w  d3,d1              ;VSTOP korrigieren
 spb_no_max_VSTOP1
   move.b  d1,cl2_DIWSTRT+2(a1) ;VSTART V7-V0
@@ -1275,8 +1306,8 @@ pf1_color_table
 ; **** Morph-Glenz-Vectors ****
 ; ** Farben der Glenz-Objekte **
   CNOP 0,4
-mgv_glenz_color_table2
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/1xGlenz-Colorgradient2.ct"
+mgv_glenz_color_table4
+  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/1xGlenz-Colorgradient4.ct"
 
 ; ** Objektdaten **
 ; -----------------
@@ -1290,74 +1321,92 @@ mgv_object_coordinates
 ; ** Form 1 **
 mgv_object_shape1_coordinates
 ; ** Polygon **
-  DC.W 0,-(66*8),-(22*8)       ;P0
-  DC.W 22*8,-(22*8),-(22*8)    ;P1
-  DC.W 43*8,22*8,-(22*8)       ;P2
-  DC.W 66*8,66*8,-(22*8)       ;P3
-  DC.W 22*8,66*8,-(22*8)       ;P4
-  DC.W -(22*8),66*8,-(22*8)    ;P5
-  DC.W -(66*8),66*8,-(22*8)    ;P6
-  DC.W -(43*8),22*8,-(22*8)    ;P7
-  DC.W -(22*8),-(22*8),-(22*8) ;P8
-  DC.W 0,22*8,-(22*8)          ;P9
-  DC.W 0,-(66*8),22*8          ;P10
-  DC.W 22*8,-(22*8),22*8       ;P11
-  DC.W 43*8,22*8,22*8          ;P12
-  DC.W 66*8,66*8,22*8          ;P13
-  DC.W 22*8,66*8,22*8          ;P14
-  DC.W -(22*8),66*8,22*8       ;P15
-  DC.W -(66*8),66*8,22*8       ;P16
-  DC.W -(43*8),22*8,22*8       ;P17
-  DC.W -(22*8),-(22*8),22*8    ;P18
-  DC.W 0,22*8,22*8             ;P19
+  DC.W 0,-(95*8),0             ;P0
+  DC.W -(40*8),-(40*8),-(95*8) ;P1
+  DC.W 40*8,-40*8,-(95*8)      ;P2
+  DC.W 95*8,-40*8,-(40*8)      ;P3
+  DC.W 95*8,-40*8,40*8         ;P4
+  DC.W 40*8,-40*8,95*8         ;P5
+  DC.W -(40*8),-(40*8),95*8    ;P6
+  DC.W -(95*8),-(40*8),40*8    ;P7
+  DC.W -(95*8),-(40*8),-(40*8) ;P8
+  DC.W 0,0,-(95*8)             ;P9
+  DC.W 66*8,0,-(66*8)          ;P10
+  DC.W 95*8,0,0                ;P11
+  DC.W 66*8,0,66*8             ;P12
+  DC.W 0,0,95*8                ;P13
+  DC.W -(66*8),0,66*8          ;P14
+  DC.W -(95*8),0,0             ;P15
+  DC.W -(66*8),0,-(66*8)       ;P16
+  DC.W -(40*8),40*8,-(95*8)    ;P17
+  DC.W 40*8,40*8,-(95*8)       ;P18
+  DC.W 95*8,40*8,-(40*8)       ;P19
+  DC.W 95*8,40*8,40*8          ;P20
+  DC.W 40*8,40*8,95*8          ;P21
+  DC.W -(40*8),40*8,95*8       ;P22
+  DC.W -(95*8),40*8,40*8       ;P23
+  DC.W -(95*8),40*8,-(40*8)    ;P24
+  DC.W 0,95*8,0                ;P25
 
 ; ** Form 2 **
 mgv_object_shape2_coordinates
-; ** Pyramide **
-  DC.W 0,-(56*8),-(10*8)       ;P0
-  DC.W 18*8,-(18*8),-(26*8)    ;P1
-  DC.W 37*8,18*8,-(42*8)       ;P2
-  DC.W 56*8,56*8,-(56*8)       ;P3
-  DC.W 18*8,56*8,-(56*8)       ;P4
-  DC.W -(18*8),56*8,-(56*8)    ;P5
-  DC.W -(56*8),56*8,-(56*8)    ;P6
-  DC.W -(37*8),18*8,-(42*8)    ;P7
-  DC.W -(18*8),-(18*8),-(26*8) ;P8
-  DC.W 0,18*8,-(42*8)          ;P9
-  DC.W 0,-(56*8),10*8          ;P10
-  DC.W 18*8,-(18*8),26*8       ;P11
-  DC.W 37*8,18*8,42*8          ;P10
-  DC.W 56*8,56*8,56*8          ;P13
-  DC.W 18*8,56*8,56*8          ;P10
-  DC.W -(18*8),56*8,56*8       ;P15
-  DC.W -(56*8),56*8,56*8       ;P16
-  DC.W -(37*8),18*8,42*8       ;P17
-  DC.W -(18*8),-(18*8),26*8    ;P18
-  DC.W 0,18*8,42*8             ;P19
+; ** Polygon2 **
+  DC.W 0,-(48*8),0             ;P0
+  DC.W -(32*8),-(48*8),-(82*8) ;P1
+  DC.W 32*8,-(48*8),-(82*8)    ;P2
+  DC.W 82*8,-(48*8),-(32*8)    ;P3
+  DC.W 82*8,-(48*8),32*8       ;P4
+  DC.W 32*8,-(48*8),82*8       ;P5
+  DC.W -(32*8),-(48*8),82*8    ;P6
+  DC.W -(82*8),-(48*8),32*8    ;P7
+  DC.W -(82*8),-(48*8),-(32*8) ;P8
+  DC.W 0,0,-(82*8)             ;P9
+  DC.W 58*8,0,-(48*8)          ;P10
+  DC.W 82*8,0,0                ;P11
+  DC.W 58*8,0,58*8             ;P12
+  DC.W 0,0,82*8                ;P13
+  DC.W -(58*8),0,58*8          ;P14
+  DC.W -(82*8),0,0             ;P15
+  DC.W -(58*8),0,-58*8         ;P16
+  DC.W -(32*8),48*8,-(82*8)    ;P17
+  DC.W 32*8,48*8,-(82*8)       ;P18
+  DC.W 82*8,48*8,-(32*8)       ;P19
+  DC.W 82*8,48*8,32*8          ;P20
+  DC.W 32*8,48*8,82*8          ;P21
+  DC.W -(32*8),48*8,82*8       ;P22
+  DC.W -(82*8),48*8,32*8       ;P23
+  DC.W -(82*8),48*8,-32*8      ;P24
+  DC.W 0,48*8,0                ;P25
 
 ; ** Form 3 **
 mgv_object_shape3_coordinates
-; ** Keil **
-  DC.W 0,-(53*8),-(53*8)       ;P0
-  DC.W 17*8,-(17*8),-(53*8)    ;P1
-  DC.W 35*8,17*8,-(53*8)       ;P2
-  DC.W 53*8,53*8,-(53*8)       ;P3
-  DC.W 17*8,53*8,-(53*8)       ;P4
-  DC.W -(17*8),53*8,-(53*8)    ;P5
-  DC.W -(53*8),53*8,-(53*8)    ;P6
-  DC.W -(35*8),17*8,-(53*8)    ;P7
-  DC.W -(17*8),-(17*8),-(53*8) ;P8
-  DC.W 0,17*8,-(53*8)          ;P9
-  DC.W 0,-(53*8),53*8          ;P10
-  DC.W 17*8,-(17*8),53*8       ;P11
-  DC.W 35*8,17*8,53*8          ;P12
-  DC.W 53*8,53*8,53*8          ;P13
-  DC.W 17*8,53*8,53*8          ;P12
-  DC.W -(17*8),53*8,53*8       ;P15
-  DC.W -(53*8),53*8,53*8       ;P16
-  DC.W -(35*8),17*8,53*8       ;P17
-  DC.W -(17*8),-(17*8),53*8    ;P18
-  DC.W 0,17*8,53*8             ;P19
+; ** Polygon3 **
+  DC.W 0,-(13*8),0             ;P0
+  DC.W -(13*8),-(13*8),-(31*8) ;P1
+  DC.W 13*8,-13*8,-(31*8)      ;P2
+  DC.W 31*8,-13*8,-(13*8)      ;P3
+  DC.W 31*8,-13*8,13*8         ;P4
+  DC.W 13*8,-13*8,31*8         ;P5
+  DC.W -(13*8),-(13*8),31*8    ;P6
+  DC.W -(31*8),-(13*8),13*8    ;P7
+  DC.W -(31*8),-(13*8),-(13*8) ;P8
+  DC.W 0,0,-(62*8)             ;P9
+  DC.W 43*8,0,-(43*8)          ;P10
+  DC.W 62*8,0,0                ;P13
+  DC.W 43*8,0,43*8             ;P12
+  DC.W 0,0,62*8                ;P13
+  DC.W -(43*8),0,43*8          ;P14
+  DC.W -(62*8),0,0             ;P15
+  DC.W -(43*8),0,-(43*8)       ;P16
+  DC.W -(31*8),31*8,-(84*8)    ;P17
+  DC.W 31*8,31*8,-(84*8)       ;P18
+  DC.W 84*8,31*8,-(31*8)       ;P19
+  DC.W 84*8,31*8,31*8          ;P20
+  DC.W 31*8,31*8,84*8          ;P21
+  DC.W -(31*8),31*8,84*8       ;P22
+  DC.W -(84*8),31*8,31*8       ;P23
+  DC.W -(84*8),31*8,-(31*8)    ;P24
+  DC.W 0,60*8,0                ;P25
 
   IFNE mgv_morph_loop
 ; ** Form 4 **
@@ -1410,99 +1459,98 @@ mgv_object_info_table
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face8_color ;Farbe der Fläche
   DC.W mgv_object_face8_lines_number-1 ;Anzahl der Linien
+
 ; ** 9. Fläche **
 ; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face9_color ;Farbe der Fläche
   DC.W mgv_object_face9_lines_number-1 ;Anzahl der Linien
-
-
 ; ** 10. Fläche **
-; ---------------
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face10_color ;Farbe der Fläche
   DC.W mgv_object_face10_lines_number-1 ;Anzahl der Linien
 ; ** 11. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face11_color ;Farbe der Fläche
   DC.W mgv_object_face11_lines_number-1 ;Anzahl der Linien
 ; ** 12. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face12_color ;Farbe der Fläche
   DC.W mgv_object_face12_lines_number-1 ;Anzahl der Linien
+
 ; ** 13. Fläche **
 ; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face13_color ;Farbe der Fläche
   DC.W mgv_object_face13_lines_number-1 ;Anzahl der Linien
 ; ** 14. Fläche **
-; ---------------
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face14_color ;Farbe der Fläche
   DC.W mgv_object_face14_lines_number-1 ;Anzahl der Linien
 ; ** 15. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face15_color ;Farbe der Fläche
   DC.W mgv_object_face15_lines_number-1 ;Anzahl der Linien
 ; ** 16. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face16_color ;Farbe der Fläche
   DC.W mgv_object_face16_lines_number-1 ;Anzahl der Linien
+
 ; ** 17. Fläche **
 ; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face17_color ;Farbe der Fläche
   DC.W mgv_object_face17_lines_number-1 ;Anzahl der Linien
 ; ** 18. Fläche **
-; ---------------
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face18_color ;Farbe der Fläche
   DC.W mgv_object_face18_lines_number-1 ;Anzahl der Linien
-
-
 ; ** 19. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face19_color ;Farbe der Fläche
   DC.W mgv_object_face19_lines_number-1 ;Anzahl der Linien
 ; ** 20. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face20_color ;Farbe der Fläche
   DC.W mgv_object_face20_lines_number-1 ;Anzahl der Linien
+
 ; ** 21. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face21_color ;Farbe der Fläche
   DC.W mgv_object_face21_lines_number-1 ;Anzahl der Linien
 ; ** 22. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face22_color ;Farbe der Fläche
   DC.W mgv_object_face22_lines_number-1 ;Anzahl der Linien
 ; ** 23. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face23_color ;Farbe der Fläche
   DC.W mgv_object_face23_lines_number-1 ;Anzahl der Linien
 ; ** 24. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face24_color ;Farbe der Fläche
   DC.W mgv_object_face24_lines_number-1 ;Anzahl der Linien
 
-
 ; ** 25. Fläche **
-; ---------------  
+; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face25_color ;Farbe der Fläche
   DC.W mgv_object_face25_lines_number-1 ;Anzahl der Linien
-; ** 27. Fläche **
-; ---------------  
+; ** 26. Fläche **
+; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face26_color ;Farbe der Fläche
   DC.W mgv_object_face26_lines_number-1 ;Anzahl der Linien
@@ -1511,23 +1559,22 @@ mgv_object_info_table
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face27_color ;Farbe der Fläche
   DC.W mgv_object_face27_lines_number-1 ;Anzahl der Linien
-; ** 27. Fläche **
+; ** 28. Fläche **
 ; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face28_color ;Farbe der Fläche
   DC.W mgv_object_face28_lines_number-1 ;Anzahl der Linien
-; ** 27. Fläche **
-; ---------------  
+
+; ** 29. Fläche **
+; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face29_color ;Farbe der Fläche
   DC.W mgv_object_face29_lines_number-1 ;Anzahl der Linien
 ; ** 30. Fläche **
-; ---------------  
+; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face30_color ;Farbe der Fläche
   DC.W mgv_object_face30_lines_number-1 ;Anzahl der Linien
-
-
 ; ** 31. Fläche **
 ; ---------------  
   DC.L 0                     ;Zeiger auf Koords
@@ -1538,72 +1585,151 @@ mgv_object_info_table
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face32_color ;Farbe der Fläche
   DC.W mgv_object_face32_lines_number-1 ;Anzahl der Linien
+
 ; ** 33. Fläche **
-; ---------------  
+; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face33_color ;Farbe der Fläche
   DC.W mgv_object_face33_lines_number-1 ;Anzahl der Linien
 ; ** 34. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face34_color ;Farbe der Fläche
   DC.W mgv_object_face34_lines_number-1 ;Anzahl der Linien
 ; ** 35. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face35_color ;Farbe der Fläche
   DC.W mgv_object_face35_lines_number-1 ;Anzahl der Linien
 ; ** 36. Fläche **
-; ---------------  
+; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face36_color ;Farbe der Fläche
   DC.W mgv_object_face36_lines_number-1 ;Anzahl der Linien
 
+; ** 37. Fläche **
+; ---------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face37_color ;Farbe der Fläche
+  DC.W mgv_object_face37_lines_number-1 ;Anzahl der Linien
+; ** 38. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face38_color ;Farbe der Fläche
+  DC.W mgv_object_face38_lines_number-1 ;Anzahl der Linien
+; ** 39. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face39_color ;Farbe der Fläche
+  DC.W mgv_object_face39_lines_number-1 ;Anzahl der Linien
+; ** 40. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face40_color ;Farbe der Fläche
+  DC.W mgv_object_face40_lines_number-1 ;Anzahl der Linien
 
-; ** Eckpunkte der Flächen **
+; ** 41. Fläche **
+; ---------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face41_color ;Farbe der Fläche
+  DC.W mgv_object_face41_lines_number-1 ;Anzahl der Linien
+; ** 42. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face42_color ;Farbe der Fläche
+  DC.W mgv_object_face42_lines_number-1 ;Anzahl der Linien
+; ** 43. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face43_color ;Farbe der Fläche
+  DC.W mgv_object_face43_lines_number-1 ;Anzahl der Linien
+; ** 44. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face44_color ;Farbe der Fläche
+  DC.W mgv_object_face44_lines_number-1 ;Anzahl der Linien
+; ** 45. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face45_color ;Farbe der Fläche
+  DC.W mgv_object_face45_lines_number-1 ;Anzahl der Linien
+; ** 46. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face46_color ;Farbe der Fläche
+  DC.W mgv_object_face46_lines_number-1 ;Anzahl der Linien
+; ** 47. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face47_color ;Farbe der Fläche
+  DC.W mgv_object_face47_lines_number-1 ;Anzahl der Linien
+; ** 48. Fläche **
+; ----------------
+  DC.L 0                     ;Zeiger auf Koords
+  DC.W mgv_object_face48_color ;Farbe der Fläche
+  DC.W mgv_object_face48_lines_number-1 ;Anzahl der Linien
+
+  ; ** Eckpunkte der Flächen **
 ; ---------------------------
   CNOP 0,2
 mgv_object_edge_table
-  DC.W 0*2,1*2,8*2,0*2       ;Flächen hinten
-  DC.W 1*2,2*2,9*2,1*2
-  DC.W 2*2,3*2,4*2,2*2
-  DC.W 9*2,4*2,5*2,9*2
-  DC.W 7*2,5*2,6*2,7*2
-  DC.W 8*2,9*2,7*2,8*2
-  DC.W 8*2,1*2,9*2,8*2
-  DC.W 9*2,2*2,4*2,9*2
-  DC.W 7*2,9*2,5*2,7*2
+  DC.W 0*2,6*2,5*2,0*2       ;Fläche 5 oben, Dreieck 12 Uhr
+  DC.W 0*2,5*2,4*2,0*2       ;Fläche 4 oben, Dreieck 1,5 Uhr
+  DC.W 3*2,0*2,4*2,3*2       ;Fläche 3 oben, Dreieck 3 Uhr
+  DC.W 0*2,3*2,2*2,0*2       ;Fläche 2 oben, Dreieck 4,5 Uhr
+  DC.W 1*2,0*2,2*2,1*2       ;Fläche 1 oben, Dreieck 6 Uhr
+  DC.W 1*2,8*2,0*2,1*2       ;Fläche 8 oben, Dreieck 7,5 Uhr
+  DC.W 8*2,7*2,0*2,8*2       ;Fläche 7 oben, Dreieck 9 Uhr
+  DC.W 0*2,7*2,6*2,0*2       ;Fläche 6 oben, Dreieck 10,5 Uhr
 
-  DC.W 10*2,18*2,11*2,10*2   ;Flächen vorne
-  DC.W 11*2,19*2,12*2,11*2
-  DC.W 12*2,14*2,13*2,12*2
-  DC.W 19*2,15*2,14*2,19*2
-  DC.W 17*2,16*2,15*2,17*2
-  DC.W 18*2,17*2,19*2,18*2
-  DC.W 18*2,19*2,11*2,18*2
-  DC.W 19*2,14*2,12*2,19*2
-  DC.W 17*2,15*2,19*2,17*2
+  DC.W 2*2,9*2,1*2,2*2       ;Fläche 9 vorne, Dreieck 12 Uhr
+  DC.W 2*2,18*2,9*2,2*2      ;Fläche 12 vorne, Dreieck 3 Uhr
+  DC.W 9*2,18*2,17*2,9*2     ;Fläche 11 vorne, Dreieck 6 Uhr
+  DC.W 1*2,9*2,17*2,1*2      ;Fläche 10 vorne, Dreieck 9 Uhr
 
-  DC.W 0*2,10*2,11*2,0*2     ;Flächen links
-  DC.W 0*2,11*2,1*2,0*2
-  DC.W 1*2,11*2,12*2,1*2
-  DC.W 1*2,12*2,2*2,1*2
-  DC.W 2*2,12*2,13*2,2*2
-  DC.W 2*2,13*2,3*2,2*2
+  DC.W 3*2,10*2,2*2,3*2      ;Fläche 13 vorne rechts, Dreieck 12 Uhr
+  DC.W 19*2,10*2,3*2,19*2    ;Fläche 16 vorne rechts, Dreieck 3 Uhr
+  DC.W 10*2,19*2,18*2,10*2   ;Fläche 15 vorne rechts, Dreieck 6 Uhr
+  DC.W 2*2,10*2,18*2,2*2     ;Fläche 14 vorne rechts, Dreieck 9 Uhr
 
-  DC.W 10*2,0*2,8*2,10*2     ;Flächen rechts
-  DC.W 10*2,8*2,18*2,10*2
-  DC.W 18*2,8*2,7*2,18*2
-  DC.W 18*2,7*2,17*2,18*2
-  DC.W 17*2,7*2,6*2,17*2
-  DC.W 17*2,6*2,16*2,17*2
+  DC.W 4*2,11*2,3*2,4*2      ;Fläche 17 rechts, Dreieck 12 Uhr
+  DC.W 4*2,20*2,11*2,4*2     ;Fläche 20 rechts, Dreieck 3 Uhr
+  DC.W 11*2,20*2,19*2,11*2   ;Fläche 19 rechts, Dreieck 6 Uhr
+  DC.W 3*2,11*2,19*2,3*2     ;Fläche 18 rechts, Dreieck 9 Uhr
 
-  DC.W 13*2,14*2,3*2,13*2    ;Flächen unten
-  DC.W 4*2,3*2,14*2,4*2
-  DC.W 4*2,14*2,15*2,4*2
-  DC.W 5*2,4*2,15*2,5*2
-  DC.W 5*2,15*2,16*2,5*2
-  DC.W 6*2,5*2,16*2,6*2
+  DC.W 5*2,12*2,4*2,5*2      ;Fläche 21 hinten rechts, Dreieck 12 Uhr
+  DC.W 5*2,21*2,12*2,5*2     ;Fläche 24 hinten rechts, Dreieck 3 Uhr
+  DC.W 12*2,21*2,20*2,12*2   ;Fläche 23 hinten rechts, Dreieck 6 Uhr
+  DC.W 12*2,20*2,4*2,12*2    ;Fläche 22 hinten rechts, Dreieck 9 Uhr
+
+  DC.W 6*2,13*2,5*2,6*2      ;Fläche 25 hinten, Dreieck 12 Uhr
+  DC.W 6*2,22*2,13*2,6*2     ;Fläche 28 hinten, Dreieck 3 Uhr
+  DC.W 13*2,22*2,21*2,13*2   ;Fläche 27 hinten, Dreieck 6 Uhr
+  DC.W 5*2,13*2,21*2,5*2     ;Fläche 26 hinten, Dreieck 9 Uhr
+
+  DC.W 7*2,14*2,6*2,7*2      ;Fläche 29 hinten links, Dreieck 12 Uhr
+  DC.W 7*2,23*2,14*2,7*2     ;Fläche 32 hinten links, Dreieck 3 Uhr
+  DC.W 14*2,23*2,22*2,14*2   ;Fläche 31 hinten links, Dreieck 6 Uhr
+  DC.W 6*2,14*2,22*2,6*2     ;Fläche 30 hinten links, Dreieck 9 Uhr
+
+  DC.W 8*2,15*2,7*2,8*2      ;Fläche 33 links, Dreieck 12 Uhr
+  DC.W 8*2,24*2,15*2,8*2     ;Fläche 36 links, Dreieck 3 Uhr
+  DC.W 15*2,24*2,23*2,15*2   ;Fläche 35 links, Dreieck 6 Uhr
+  DC.W 7*2,15*2,23*2,7*2     ;Fläche 34 links, Dreieck 9 Uhr
+
+  DC.W 1*2,16*2,8*2,1*2      ;Fläche 37 vorne links, Dreieck 12 Uhr
+  DC.W 1*2,17*2,16*2,1*2     ;Fläche 40 vorne links, Dreieck 3 Uhr
+  DC.W 16*2,17*2,24*2,16*2   ;Fläche 39 vorne links, Dreieck 6 Uhr
+  DC.W 8*2,16*2,24*2,8*2     ;Fläche 38 vorne links, Dreieck 9 Uhr
+
+  DC.W 25*2,21*2,22*2,25*2   ;Fläche 45 unten, Dreieck 12 Uhr
+  DC.W 25*2,20*2,21*2,25*2   ;Fläche 44 unten, Dreieck 1,5 Uhr
+  DC.W 19*2,20*2,25*2,19*2   ;Fläche 43 unten, Dreieck 3 Uhr
+  DC.W 18*2,19*2,25*2,18*2   ;Fläche 42 unten, Dreieck 4,5 Uhr
+  DC.W 17*2,18*2,25*2,17*2   ;Fläche 41 unten, Dreieck 6 Uhr
+  DC.W 17*2,25*2,24*2,17*2   ;Fläche 48 unten, Dreieck 7,5 Uhr
+  DC.W 24*2,25*2,23*2,24*2   ;Fläche 47 unten, Dreieck 9 Uhr
+  DC.W 25*2,22*2,23*2,25*2   ;Fläche 46 unten, Dreieck 10,5 Uhr
 
 ; ** Koordinaten der Linien **
 ; ----------------------------
