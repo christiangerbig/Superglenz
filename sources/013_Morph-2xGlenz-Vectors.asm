@@ -79,7 +79,7 @@ workbench_fade                      EQU FALSE
 text_output                         EQU FALSE
 
 sys_taken_over
-own_display_set_second_copperlist
+;own_display_set_second_copperlist
 pass_global_references
 pass_return_code
 
