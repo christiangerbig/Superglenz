@@ -191,13 +191,13 @@ mgv_rotation_x_angle_speed_radius EQU 2
 mgv_rotation_x_angle_speed_center EQU 3
 mgv_rotation_x_angle_speed_speed  EQU -2
 
-mgv_rotation_y_angle_speed_radius EQU 2
-mgv_rotation_y_angle_speed_center EQU 3
+mgv_rotation_y_angle_speed_radius EQU 1
+mgv_rotation_y_angle_speed_center EQU 2
 mgv_rotation_y_angle_speed_speed  EQU -1
 
 mgv_rotation_z_angle_speed_radius EQU 1
 mgv_rotation_z_angle_speed_center EQU 2
-mgv_rotation_z_angle_speed_speed  EQU 3
+mgv_rotation_z_angle_speed_speed  EQU -2
 
 mgv_object_edge_points_number     EQU 26
 mgv_object_edge_points_per_face   EQU 3
@@ -1320,6 +1320,36 @@ mgv_object_coordinates
 ; ------------------------
 ; ** Form 1 **
 mgv_object_shape1_coordinates
+; ** Polygon2 **
+  DC.W 0,-(48*8),0             ;P0
+  DC.W -(32*8),-(48*8),-(82*8) ;P1
+  DC.W 32*8,-(48*8),-(82*8)    ;P2
+  DC.W 82*8,-(48*8),-(32*8)    ;P3
+  DC.W 82*8,-(48*8),32*8       ;P4
+  DC.W 32*8,-(48*8),82*8       ;P5
+  DC.W -(32*8),-(48*8),82*8    ;P6
+  DC.W -(82*8),-(48*8),32*8    ;P7
+  DC.W -(82*8),-(48*8),-(32*8) ;P8
+  DC.W 0,0,-(82*8)             ;P9
+  DC.W 58*8,0,-(58*8)          ;P10
+  DC.W 82*8,0,0                ;P11
+  DC.W 58*8,0,58*8             ;P12
+  DC.W 0,0,82*8                ;P13
+  DC.W -(58*8),0,58*8          ;P14
+  DC.W -(82*8),0,0             ;P15
+  DC.W -(58*8),0,-58*8         ;P16
+  DC.W -(32*8),48*8,-(82*8)    ;P17
+  DC.W 32*8,48*8,-(82*8)       ;P18
+  DC.W 82*8,48*8,-(32*8)       ;P19
+  DC.W 82*8,48*8,32*8          ;P20
+  DC.W 32*8,48*8,82*8          ;P21
+  DC.W -(32*8),48*8,82*8       ;P22
+  DC.W -(82*8),48*8,32*8       ;P23
+  DC.W -(82*8),48*8,-32*8      ;P24
+  DC.W 0,48*8,0                ;P25
+
+; ** Form 2 **
+mgv_object_shape2_coordinates
 ; ** Polygon **
   DC.W 0,-(95*8),0             ;P0
   DC.W -(40*8),-(40*8),-(95*8) ;P1
@@ -1348,36 +1378,6 @@ mgv_object_shape1_coordinates
   DC.W -(95*8),40*8,-(40*8)    ;P24
   DC.W 0,95*8,0                ;P25
 
-; ** Form 2 **
-mgv_object_shape2_coordinates
-; ** Polygon2 **
-  DC.W 0,-(48*8),0             ;P0
-  DC.W -(32*8),-(48*8),-(82*8) ;P1
-  DC.W 32*8,-(48*8),-(82*8)    ;P2
-  DC.W 82*8,-(48*8),-(32*8)    ;P3
-  DC.W 82*8,-(48*8),32*8       ;P4
-  DC.W 32*8,-(48*8),82*8       ;P5
-  DC.W -(32*8),-(48*8),82*8    ;P6
-  DC.W -(82*8),-(48*8),32*8    ;P7
-  DC.W -(82*8),-(48*8),-(32*8) ;P8
-  DC.W 0,0,-(82*8)             ;P9
-  DC.W 58*8,0,-(48*8)          ;P10
-  DC.W 82*8,0,0                ;P11
-  DC.W 58*8,0,58*8             ;P12
-  DC.W 0,0,82*8                ;P13
-  DC.W -(58*8),0,58*8          ;P14
-  DC.W -(82*8),0,0             ;P15
-  DC.W -(58*8),0,-58*8         ;P16
-  DC.W -(32*8),48*8,-(82*8)    ;P17
-  DC.W 32*8,48*8,-(82*8)       ;P18
-  DC.W 82*8,48*8,-(32*8)       ;P19
-  DC.W 82*8,48*8,32*8          ;P20
-  DC.W 32*8,48*8,82*8          ;P21
-  DC.W -(32*8),48*8,82*8       ;P22
-  DC.W -(82*8),48*8,32*8       ;P23
-  DC.W -(82*8),48*8,-32*8      ;P24
-  DC.W 0,48*8,0                ;P25
-
 ; ** Form 3 **
 mgv_object_shape3_coordinates
 ; ** Polygon3 **
@@ -1390,14 +1390,14 @@ mgv_object_shape3_coordinates
   DC.W -(13*8),-(13*8),31*8    ;P6
   DC.W -(31*8),-(13*8),13*8    ;P7
   DC.W -(31*8),-(13*8),-(13*8) ;P8
-  DC.W 0,0,-(62*8)             ;P9
-  DC.W 43*8,0,-(43*8)          ;P10
-  DC.W 62*8,0,0                ;P13
-  DC.W 43*8,0,43*8             ;P12
-  DC.W 0,0,62*8                ;P13
-  DC.W -(43*8),0,43*8          ;P14
-  DC.W -(62*8),0,0             ;P15
-  DC.W -(43*8),0,-(43*8)       ;P16
+  DC.W 0,0,-(47*8)             ;P9
+  DC.W 31*8,0,-(31*8)          ;P10
+  DC.W 47*8,0,0                ;P13
+  DC.W 31*8,0,31*8             ;P12
+  DC.W 0,0,47*8                ;P13
+  DC.W -(31*8),0,31*8          ;P14
+  DC.W -(47*8),0,0             ;P15
+  DC.W -(31*8),0,-(31*8)       ;P16
   DC.W -(31*8),31*8,-(84*8)    ;P17
   DC.W 31*8,31*8,-(84*8)       ;P18
   DC.W 84*8,31*8,-(31*8)       ;P19
