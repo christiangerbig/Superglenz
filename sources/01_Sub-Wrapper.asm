@@ -177,7 +177,7 @@ bg_image_x_size             EQU 256
 bg_image_plane_width        EQU bg_image_x_size/8
 bg_image_y_size             EQU 283
 bg_image_depth              EQU 4
-bg_image_x_position         EQU 8
+bg_image_x_position         EQU 16
 bg_image_y_position         EQU MINROW
 
 ; **** Sprite-Fader ****
@@ -525,7 +525,6 @@ init_own_variables
   CNOP 0,4
 init_all
   bsr.s   init_sprites
-  bsr     init_color_registers
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
@@ -543,17 +542,6 @@ init_sprites
 ; ** Spritestrukturen initialisieren **
 ; -------------------------------------
   INIT_ATTACHED_SPRITES_CLUSTER bg,spr_pointers_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
-
-; ** Farbregister initialisieren **
-; ---------------------------------
-  CNOP 0,4
-init_color_registers
-  CPU_SELECT_COLORHI_BANK 0
-  CPU_INIT_COLORHI COLOR00,1,pf1_color_table
-
-  CPU_SELECT_COLORLO_BANK 0
-  CPU_INIT_COLORLO COLOR00,1,pf1_color_table
-  rts
 
 
 ; ** 1. Copperliste initialisieren **
@@ -860,12 +848,6 @@ NMI_int_server
 
   INCLUDE "sys-structures.i"
 
-; ** Farben des ersten Playfields **
-; ----------------------------------
-  CNOP 0,4
-pf1_color_table
-  DC.L COLOR00BITS
-
 ; ** Farben der Sprites **
 ; ------------------------
 spr_color_table
@@ -875,9 +857,6 @@ spr_color_table
 
 ; ** Adressen der Sprites **
 ; --------------------------
-spr_pointers_construction
-  DS.L spr_number
-
 spr_pointers_display
   DS.L spr_number
 

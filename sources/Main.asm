@@ -20,6 +20,10 @@
 ; Sub-Wrapper: - Ist jetzt kein Wrapper mehr
 ;              - Bugfix, Fehlerabfrage, jetzt wird sofort bei einem Fehler der Glenz-Parts ausgestiegen
 ; Alle Module sind jetzt stumm
+; V.1.1 Beta
+; Neuer Glenz-Part: 48-Faces-Glenz
+; Spritefield-Display-Bug rechter Rand: Alle Sprites weitere 8 Pixel n ach rechts (X+16)
+
 
 
   SECTION code_and_variables,CODE
