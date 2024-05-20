@@ -158,7 +158,7 @@ pf_pixel_per_datafetch            EQU 64 ;4x
 DDFSTRTBITS                       EQU DDFSTART_320_pixel
 DDFSTOPBITS                       EQU DDFSTOP_256_pixel_left_aligned_4x
 
-display_window_HSTART             EQU HSTART_320_pixel
+display_window_HSTART             EQU HSTART_256_pixel
 display_window_VSTART             EQU MINROW
 DIWSTRTBITS                       EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
 display_window_HSTOP              EQU HSTOP_256_pixel
