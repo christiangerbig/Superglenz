@@ -181,6 +181,7 @@ bg_image_x_position         EQU 16
 bg_image_y_position         EQU MINROW
 
 ; **** Sprite-Fader ****
+sprf_start_color            EQU 01
 sprf_colors_number          EQU spr_colors_number-1
 
 sprfi_fader_speed_max       EQU 4
@@ -645,9 +646,9 @@ main_routine
 ; --------------------------
 beam_routines
   bsr     wait_beam_position
-  bsr     sprf_copy_color_table
   bsr     sprite_fader_in
   bsr     sprite_fader_out
+  bsr     sprf_copy_color_table
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
@@ -683,8 +684,8 @@ sprfi_no_restart_fader_angle
   MULSF.W sprfi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
   ADDF.W  sprfi_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(1*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfi_color_table+(1*LONGWORDSIZE)(pc),a1 ;Sollwerte
+  lea     spr_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfi_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
@@ -722,8 +723,8 @@ sprfo_no_restart_fader_angle
   MULSF.W sprfo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
   ADDF.W  sprfo_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(1*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfo_color_table+(1*LONGWORDSIZE)(pc),a1 ;Sollwerte
+  lea     spr_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfo_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
@@ -742,75 +743,7 @@ no_sprite_fader_out
 
   COLOR_FADER sprf
 
-; ** Farbwerte in Copperliste kopieren **
-; ---------------------------------------
-  CNOP 0,4
-sprf_copy_color_table
-  IFNE cl1_size2
-    move.l  a4,-(a7)
-  ENDC
-  tst.w   sprf_copy_colors_state(a3)  ;Kopieren der Farbwerte beendet ?
-  bne.s   sprf_no_copy_color_table ;Ja -> verzweige
-  move.w  #$0f0f,d3          ;Maske für RGB-Nibbles
-  IFGT sprf_colors_number-32
-    moveq   #1*8,d4          ;Color-Bank Farbregisterzähler
-  ENDC
-  lea     spr_color_table+(1*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
-  move.l  cl1_display(a3),a1 ;CL
-  ADDF.W  cl1_COLOR01_high5+2,a1
-  IFNE cl1_size1
-    move.l  cl1_construction1(a3),a2 ;CL
-    ADDF.W  cl1_COLOR01_high5+2,a2
-  ENDC
-  IFNE cl1_size2
-    move.l  cl1_construction2(a3),a4 ;CL
-    ADDF.W  cl1_COLOR01_high5+2,a4
-  ENDC
-  MOVEF.W sprf_colors_number-1,d7 ;Anzahl der Farben
-sprf_copy_color_table_loop
-  move.l  (a0)+,d0           ;RGB8-Farbwert
-  move.l  d0,d2              ;retten
-  RGB8_TO_RGB4HI d0,d1,d3
-  move.w  d0,(a1)            ;COLORxx High-Bits
-  IFNE cl1_size1
-    move.w  d0,(a2)          ;COLORxx High-Bits
-  ENDC
-  IFNE cl1_size2
-    move.w  d0,(a4)          ;COLORxx High-Bits
-  ENDC
-  RGB8_TO_RGB4LO d2,d1,d3
-  move.w  d2,cl1_COLOR01_low5-cl1_COLOR01_high5(a1) ;Low-Bits COLORxx
-  addq.w  #4,a1              ;nächstes Farbregister
-  IFNE cl1_size1
-    move.w  d2,cl1_COLOR01_low5-cl1_COLOR01_high5(a2) ;Low-Bits COLORxx
-    addq.w  #4,a2            ;nächstes Farbregister
-  ENDC
-  IFNE cl1_size2
-    move.w  d2,cl1_COLOR01_low5-cl1_COLOR01_high5(a4) ;Low-Bits COLORxx
-    addq.w  #4,a4            ;nächstes Farbregister
-  ENDC
-  IFGT sprf_colors_number-32
-    addq.b  #1*8,d4          ;Farbregister-Zähler erhöhen
-    bne.s   sprf_no_restart_color_bank ;Nein -> verzweige
-    addq.w  #4,a1            ;CMOVE überspringen
-    IFNE cl1_size1
-      addq.w  #4,a2          ;CMOVE überspringen
-    ENDC
-    IFNE cl1_size2
-      addq.w  #4,a4          ;CMOVE überspringen
-    ENDC
-sprf_no_restart_color_bank
-  ENDC
-  dbf     d7,sprf_copy_color_table_loop
-  tst.w   sprf_colors_counter(a3) ;Fading beendet ?
-  bne.s   sprf_no_copy_color_table ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,sprf_copy_colors_state(a3) ;Kopieren beendet
-sprf_no_copy_color_table
-  IFNE cl1_size2
-    move.l  (a7)+,a4
-  ENDC
-  rts
+  COPY_COLOR_TABLE_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR01_high5,cl1_COLOR01_low5
 
 
 ; ## Interrupt-Routinen ##

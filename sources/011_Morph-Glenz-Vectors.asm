@@ -535,10 +535,18 @@ init_own_variables
 
   move.w  d0,mgv_lines_counter(a3)
 
-  move.w  d0,mgv_morph_state(a3)
+  IFEQ mgv_premorph_start_shape
+    move.w  d0,mgv_morph_state(a3)
+  ELSE
+    move.w  dq,mgv_morph_state(a3)
+  ENDC
   move.w  d0,mgv_morph_shapes_table_start(a3)
-  moveq   #1,d2
-  move.w  d2,mgv_morph_delay_counter(a3)
+  IFEQ mgv_premorph_start_shape
+    move.w  d1,mgv_morph_delay_counter(a3) ;Delay-Counter aktivieren
+  ELSE
+    moveq   #1,d2
+    move.w  d2,mgv_morph_delay_counter(a3) ;Delay-Counter aktivieren
+  ENDC
 
 ; **** Scroll-Playfield-Bottom-In ****
   move.w  d0,spbi_state(a3)
