@@ -293,7 +293,8 @@ mgv_clear_blit_y_size             EQU visible_lines_number
 mgv_clear_blit_depth              EQU extra_pf1_depth
 
 ; **** Sprite-Fader ****
-sprf_start_color                  EQU 01
+sprf_start_color                  EQU 1
+sprf_color_table_offset           EQU 1
 sprf_colors_number                EQU spr_colors_number-1
 
 ; **** Sprite-Fader-In ****
@@ -1417,8 +1418,8 @@ sprfi_no_restart_fader_angle
   MULSF.W sprfi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
   ADDF.W  sprfi_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfi_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a1 ;Sollwerte
+  lea     spr_color_table+(sprf_color_table_offset*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfi_color_table+(sprf_color_table_offset*LONGWORDSIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
@@ -1456,8 +1457,8 @@ sprfo_no_restart_fader_angle
   MULSF.W sprfo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
   ADDF.W  sprfo_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfo_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a1 ;Sollwerte
+  lea     spr_color_table+(sprf_color_table_offset*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfo_color_table+(sprf_color_table_offset*LONGWORDSIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
@@ -1476,6 +1477,8 @@ no_sprite_fader_out
 
   COLOR_FADER sprf
 
+; ** Farbwerte in Copperliste kopieren **
+; ---------------------------------------
   COPY_COLOR_TABLE_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR17_high1,cl1_COLOR17_low1
 
 

@@ -1,8 +1,8 @@
 ; ##############################
 ; # Programm: Main.asm         #
 ; # Autor:    Christian Gerbig #
-; # Datum:    28.04.2024       #
-; # Version:  1.1 beta         #
+; # Datum:    02.06.2024       #
+; # Version:  1.2 beta         #
 ; # CPU:      68020+           #
 ; # FASTMEM:  -                #
 ; # Chipset:  AGA              #
@@ -20,11 +20,11 @@
 ; Sub-Wrapper: - Ist jetzt kein Wrapper mehr
 ;              - Bugfix, Fehlerabfrage, jetzt wird sofort bei einem Fehler der Glenz-Parts ausgestiegen
 ; Alle Module sind jetzt stumm
-; V.1.1 Beta
+
+; V.1.2 Beta
 ; Neuer Glenz-Part: 48-Faces-Glenz
 ; Spritefield-Display-Bug rechter Rand: Alle Sprites weitere 8 Pixel n ach rechts (X+16)
-
-
+; Mit überarbeiteten Include-Files
 
   SECTION code_and_variables,CODE
 
@@ -407,7 +407,7 @@ nop_second_copperlist DC.L 0
 
 ; ** Programmversion für Version-Befehl **
 ; ----------------------------------------
-prg_version DC.B "$VER: RSE-Superglenz 1.1 beta (28.4.24)",TRUE
+prg_version DC.B "$VER: RSE-Superglenz 1.2 beta (2.6.24)",TRUE
   EVEN
 
   END
