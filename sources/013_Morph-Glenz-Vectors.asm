@@ -9,7 +9,7 @@
 ; # OS:       3.0+                        #
 ; #########################################
 
-; Morphendes 1x40-Flächen-Glenz auf einem 240x240-Screen.
+; Morphendes 1x48-Flächen-Glenz auf einem 240x240-Screen.
 ; Der Copper wartet auf den Blitter. 
 ; Beam-Position-Timing wegen flexibler Ausführungszeit der Copperliste.
 ; Das Playfield ist auf 64 kB aligned damit Blitter-High-Pointer der
