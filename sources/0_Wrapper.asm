@@ -186,7 +186,7 @@ CIAB_TA_continuous         EQU FALSE
   ENDC
 CIAB_TB_continuous         EQU FALSE
 
-beam_position              EQU $136
+beam_position              EQU $135
 
 BPLCON0BITS                EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
 BPLCON3BITS1               EQU TRUE

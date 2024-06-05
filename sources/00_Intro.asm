@@ -135,7 +135,7 @@ CIAA_TB_continuous             EQU FALSE
 CIAB_TA_continuous             EQU FALSE
 CIAB_TB_continuous             EQU FALSE
 
-beam_position                  EQU $136
+beam_position                  EQU $135
 
 pixel_per_line                 EQU 192
 visible_pixels_number          EQU 192
@@ -1247,7 +1247,7 @@ gv_clear_playfield1_loop
 gv_rotation
   movem.l a4-a5,-(a7)
   move.w  gv_rotation_y_angle(a3),d1 ;Y-Winkel
-  move.w  d1,d0              ;retten
+  move.w  d1,d0              
   lea     sine_table(pc),a2  ;Sinus-Tabelle
   move.w  (a2,d0.w*2),d5     ;sin(b)
   IFEQ sine_table_length-512

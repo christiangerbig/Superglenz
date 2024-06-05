@@ -79,7 +79,6 @@ workbench_fade                    EQU FALSE
 text_output                       EQU FALSE
 
 sys_taken_over
-;own_display_set_second_copperlist
 pass_global_references
 pass_return_code
 
@@ -147,7 +146,7 @@ CIAA_TB_continuous                EQU FALSE
 CIAB_TA_continuous                EQU FALSE
 CIAB_TB_continuous                EQU FALSE
 
-beam_position                     EQU $133
+beam_position                     EQU $135
 
 pixel_per_line                    EQU 256
 visible_pixels_number             EQU 256
@@ -280,7 +279,7 @@ mgv_object_face35_lines_number    EQU 3
 mgv_object_face36_color           EQU 2
 mgv_object_face36_lines_number    EQU 3
 
-mgv_max_lines_number              EQU 90
+mgv_lines_number_max              EQU 90
 
   IFEQ mgv_morph_loop
 mgv_morph_shapes_number           EQU 3
@@ -394,7 +393,7 @@ cl2_begin            RS.B 0
   INCLUDE "copperlist2-offsets.i"
 
 cl2_extension1_entry RS.B cl2_extension1_SIZE
-cl2_extension2_entry RS.B cl2_extension2_SIZE*mgv_max_lines_number
+cl2_extension2_entry RS.B cl2_extension2_SIZE*mgv_lines_number_max
 cl2_extension3_entry RS.B cl2_extension3_SIZE
 
 cl2_end              RS.L 1
@@ -581,7 +580,7 @@ mgv_init_object_info_table
   lea     mgv_object_info_table+mgv_object_info_edge_table(pc),a0 ;Zeiger auf Object-Info-Tabelle
   lea     mgv_object_edge_table(pc),a1 ;Zeiger auf Tebelle mit Eckpunkten
   move.w  #mgv_object_info_SIZE,a2
-  moveq   #mgv_object_faces_number-1,d7 ;Anzahl der Flächen
+  MOVEF.W mgv_object_faces_number-1,d7 ;Anzahl der Flächen
 mgv_init_object1_info_table_loop
   move.w  mgv_object_info_lines_number(a0),d0 
   addq.w  #2,d0              ;Anzahl der Linien + 2 = Anzahl der Eckpunkte
@@ -692,7 +691,7 @@ cl2_init_line_blits_steady_registers
 
   CNOP 0,4
 cl2_init_line_blits
-  moveq   #mgv_max_lines_number-1,d7
+  moveq   #mgv_lines_number_max-1,d7
 cl1_init_line_blits_loop
   COPMOVEQ TRUE,BLTCON0
   COPMOVEQ TRUE,BLTCON1
@@ -793,7 +792,7 @@ swap_playfield1
   moveq   #TRUE,d2
   moveq   #pf1_plane_width,d3
   move.l  cl2_display(a3),a0
-  ADDF.W  cl2_BPL1PTH+2,a0   ;CL
+  ADDF.W  cl2_BPL1PTH+2,a0   
   moveq   #pf1_depth3-1,d7   ;Anzahl der Planes
 swap_playfield1_loop
   move.l  (a1)+,d0
@@ -846,7 +845,7 @@ mgv_clear_playfield1_loop
   movem.l d0-d6/a0-a6,-(a7) 
   movem.l d0-d6/a0-a6,-(a7) 
   movem.l d0-d6/a0-a6,-(a7) 
-  movem.l d0-d6/a0-a4,-(a7)  ;48 Bytes löschen
+  movem.l d0-d6/a0-a4,-(a7)
   move.l  variables+save_a7(pc),a7 ;Alter Stackpointer
   movem.l (a7)+,a3-a6
   rts
@@ -907,7 +906,7 @@ mgv_rotation
   and.w   d3,d1              ;Übertrag entfernen
   move.w  d1,mgv_rotation_x_angle(a3) ;X-Winkel retten
   move.w  mgv_rotation_y_angle(a3),d1 ;Y-Winkel
-  move.w  d1,d0              ;retten
+  move.w  d1,d0              
   move.w  (a2,d0.w*2),d5     ;sin(b)
   add.w   a4,d0              ;+ 90 Grad
   swap    d5                 ;Bits 16-31 = sin(b)
@@ -917,7 +916,7 @@ mgv_rotation
   and.w   d3,d1              ;Übertrag entfernen
   move.w  d1,mgv_rotation_y_angle(a3) ;Y-Winkel retten
   move.w  mgv_rotation_z_angle(a3),d1 ;Z-Winkel
-  move.w  d1,d0              ;retten
+  move.w  d1,d0              
   move.w  (a2,d0.w*2),d6     ;sin(c)
   add.w   a4,d0              ;+ 90 Grad
   swap    d6                 ;Bits 16-31 = sin(c)
@@ -965,7 +964,7 @@ mgv_morph_object
   lea     mgv_object_coordinates(pc),a0 ;Aktuelle Objektdaten
   lea     mgv_morph_shapes_table(pc),a1 ;Tabelle mit Adressen der Formen-Tabellen
   move.l  (a1,d1.w*4),a1     ;Zeiger auf Tabelle holen
-  moveq   #mgv_object_edge_points_number*3-1,d7 ;Anzahl der Koordinaten
+  MOVEF.W mgv_object_edge_points_number*3-1,d7 ;Anzahl der Koordinaten
 mgv_morph_object_loop
   move.w  (a0),d0            ;aktuelle Koordinate lesen
   cmp.w   (a1)+,d0           ;mit Ziel-Koordinate vergleichen
@@ -995,7 +994,7 @@ mgv_save_morph_shapes_table_start
   ELSE
     beq.s   mgv_morph_object_disable ;Ja -> verzweige
   ENDC
-  move.w  d1,mgv_morph_shapes_table_start(a3) ;retten
+  move.w  d1,mgv_morph_shapes_table_start(a3) 
   move.w  #mgv_morph_delay,mgv_morph_delay_counter(a3) ;Zähler zurücksetzen
 mgv_morph_object_disable
   moveq   #FALSE,d0
@@ -1017,10 +1016,10 @@ mgv_draw_lines
   clr.w   d0
   move.l  d0,a2
   sub.l   a4,a4              ;Linienzähler zurücksetzen
-  move.l  cl2_construction2(a3),a6 ;CL
+  move.l  cl2_construction2(a3),a6 
   ADDF.W  cl2_extension3_entry-cl2_extension2_SIZE+cl2_ext2_BLTCON0+2,a6
   move.l  #((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3
-  moveq   #mgv_object_faces_number-1,d7 ;Anzahl der Flächen
+  MOVEF.W mgv_object_faces_number-1,d7 ;Anzahl der Flächen
 mgv_draw_lines_loop1
 
 ; ** Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen **
@@ -1122,7 +1121,7 @@ mgv_fill_playfield1
 ; -------------------------------
   CNOP 0,4
 mgv_set_second_copperlist_jump
-  move.l  cl2_construction2(a3),a0 ;CL
+  move.l  cl2_construction2(a3),a0 
   move.l  a0,d0
   ADDF.L  cl2_extension3_entry,d0
   moveq   #TRUE,d1           ;32-Bit-Zugriff
@@ -1196,7 +1195,7 @@ spbo_finished
 
   CNOP 0,4
 spb_set_display_window
-  move.l  cl2_construction2(a3),a1 ;CL
+  move.l  cl2_construction2(a3),a1 
   moveq   #spb_min_VSTART,d1
   add.w   d0,d1              ;+ Y-Offset
   cmp.w   d3,d1              ;VSTOP-Maximum erreicht ?
@@ -1232,7 +1231,7 @@ mgv_morph_enable
   bne.s   mgv_morph_save_delay_counter ;Nein -> verzweige
   clr.w   spbo_state(a3)     ;Scroll-Playfield-Bottom-Out an
 mgv_morph_save_delay_counter
-  move.w  d0,mgv_morph_delay_counter(a3) ;retten
+  move.w  d0,mgv_morph_delay_counter(a3) 
 mgv_morph_no_delay_counter
   rts
 

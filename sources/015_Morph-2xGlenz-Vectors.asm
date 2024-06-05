@@ -15,7 +15,7 @@
 ; Das Playfield ist auf 64 kB aligned damit Blitter-High-Pointer der
 ; Linien-Blits nur 1x initialisiert werden müssen.
 
-  XDEF start_014_morph_2xglenz_vectors
+  XDEF start_015_morph_2xglenz_vectors
 
   XREF v_BPLCON0BITS
   XREF v_BPLCON3BITS1
@@ -79,7 +79,6 @@ workbench_fade                      EQU FALSE
 text_output                         EQU FALSE
 
 sys_taken_over
-;own_display_set_second_copperlist
 pass_global_references
 pass_return_code
 
@@ -147,7 +146,7 @@ CIAA_TB_continuous                  EQU FALSE
 CIAB_TA_continuous                  EQU FALSE
 CIAB_TB_continuous                  EQU FALSE
 
-beam_position                       EQU $133
+beam_position                       EQU $135
 
 pixel_per_line                      EQU 192
 visible_pixels_number               EQU 192
@@ -325,7 +324,7 @@ mgv_objects_z_rotation_angle_speed  EQU 1
 mgv_objects_edge_points_number      EQU mgv_object1_edge_points_number+mgv_object2_edge_points_number
 mgv_objects_faces_number            EQU mgv_object1_faces_number+mgv_object2_faces_number
 
-mgv_max_lines_number                EQU 114
+mgv_lines_number_max                EQU 114
 
   IFEQ mgv_morph_loop
 mgv_morph_shapes_number             EQU 6
@@ -488,7 +487,7 @@ cl2_begin            RS.B 0
   INCLUDE "copperlist2-offsets.i"
 
 cl2_extension1_entry RS.B cl2_extension1_SIZE
-cl2_extension2_entry RS.B cl2_extension2_SIZE*mgv_max_lines_number
+cl2_extension2_entry RS.B cl2_extension2_SIZE*mgv_lines_number_max
 cl2_extension3_entry RS.B cl2_extension3_SIZE
 
 cl2_end              RS.L 1
@@ -618,7 +617,7 @@ mgv_morph_shape_SIZE                     RS.B 0
 
 ; ## Beginn des Initialisierungsprogramms ##
 ; ------------------------------------------
-start_014_morph_2xglenz_vectors
+start_015_morph_2xglenz_vectors
   INCLUDE "sys-init.i"
 
 ; ** Eigene Variablen initialisieren **
@@ -1011,7 +1010,7 @@ cl2_init_line_blits_steady_registers
 
   CNOP 0,4
 cl2_init_line_blits
-  moveq   #mgv_max_lines_number-1,d7
+  moveq   #mgv_lines_number_max-1,d7
 cl1_init_line_blits_loop
   COPMOVEQ TRUE,BLTCON0
   COPMOVEQ TRUE,BLTCON1
@@ -1082,7 +1081,7 @@ beam_routines
   bsr     scroll_playfield_bottom_in
   bsr     scroll_playfield_bottom_out
   bsr     mgv_control_counters
-  bsr     mouse_handler
+  jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
   tst.w   fx_state(a3)       ;Effekte beendet ?
@@ -1111,7 +1110,7 @@ swap_playfield1
   moveq   #TRUE,d2
   moveq   #pf1_plane_width,d3
   move.l  cl2_display(a3),a0
-  ADDF.W  cl2_BPL1PTH+2,a0   ;CL
+  ADDF.W  cl2_BPL1PTH+2,a0   
   moveq   #pf1_depth3-1,d7   ;Anzahl der Planes
 swap_playfield1_loop
   move.l  (a1)+,d0
@@ -1201,8 +1200,8 @@ mgv_rotate_objects
   CNOP 0,4
 mgv_rotation
   move.w  (a5),d1            ;X-Winkel
-  move.w  d1,d0              ;retten
-  lea     sine_table(pc),a2  ;Sinus-Tabelle
+  move.w  d1,d0              
+  lea     sine_table,a2  ;Sinus-Tabelle
   move.w  (a2,d0.w*2),d4     ;sin(a)
   move.w  #sine_table_length/4,a4
   MOVEF.W sine_table_length-1,d3
@@ -1214,7 +1213,7 @@ mgv_rotation
   and.w   d3,d1              ;Übertrag entfernen
   move.w  d1,(a5)+           ;X-Winkel retten
   move.w  (a5),d1            ;Y-Winkel
-  move.w  d1,d0              ;retten
+  move.w  d1,d0              
   move.w  (a2,d0.w*2),d5     ;sin(b)
   add.w   a4,d0              ;+ 90 Grad
   swap    d5                 ;Bits 16-31 = sin(b)
@@ -1224,7 +1223,7 @@ mgv_rotation
   and.w   d3,d1              ;Übertrag entfernen
   move.w  d1,(a5)+           ;Y-Winkel retten
   move.w  (a5),d1            ;Z-Winkel
-  move.w  d1,d0              ;retten
+  move.w  d1,d0              
   move.w  (a2,d0.w*2),d6     ;sin(c)
   add.w   a4,d0              ;+ 90 Grad
   swap    d6                 ;Bits 16-31 = sin(c)
@@ -1273,12 +1272,12 @@ mgv_morph_objects
 ; ** Object 1 **
   lea     mgv_object1_coordinates(pc),a0 ;Aktuelle Objektdaten
   move.l  (a2)+,a1           ;Zeiger auf Tabelle holen
-  moveq   #(mgv_object1_edge_points_number*3)-1,d7 ;Anzahl der Koordinaten
+  MOVEF.W (mgv_object1_edge_points_number*3)-1,d7 ;Anzahl der Koordinaten
   bsr.s   mgv_morph_objects_loop
 ; ** Object 2 **
   lea     mgv_object2_coordinates(pc),a0 ;Aktuelle Objektdaten
   move.l  (a2)+,a1           ;Zeiger auf Tabelle holen
-  moveq   #(mgv_object2_edge_points_number*3)-1,d7 ;Anzahl der Koordinaten
+  MOVEF.W (mgv_object2_edge_points_number*3)-1,d7 ;Anzahl der Koordinaten
   bsr.s   mgv_morph_objects_loop
 
   tst.w   d2                 ;Morhing beendet?
@@ -1292,7 +1291,7 @@ mgv_save_morph_shapes_table_start
   ELSE
     beq.s   mgv_morph_objects_disable ;Ja -> verzweige
   ENDC
-  move.w  d1,mgv_morph_shapes_table_start(a3) ;retten
+  move.w  d1,mgv_morph_shapes_table_start(a3) 
   move.w  #mgv_morph_delay,mgv_morph_delay_counter(a3) ;Zähler zurücksetzen
   move.l  (a2)+,mgv_object1_variable_x_rotation_speed(a3) ;Neue X,Y,Z-Rotationsgeschwindigkeiten setzen
   move.l  (a2)+,mgv_object1_variable_z_rotation_speed(a3)
@@ -1340,10 +1339,10 @@ mgv_draw_lines
   clr.w   d0
   move.l  d0,a2
   sub.l   a4,a4              ;Linienzähler zurücksetzen
-  move.l  cl2_construction2(a3),a6 ;CL
+  move.l  cl2_construction2(a3),a6 
   ADDF.W  cl2_extension3_entry-cl2_extension2_SIZE+cl2_ext2_BLTCON0+2,a6
   move.l  #((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3
-  moveq   #mgv_objects_faces_number-1,d7 ;Anzahl der Flächen
+  MOVEF.W mgv_objects_faces_number-1,d7 ;Anzahl der Flächen
 mgv_draw_lines_loop1
 ; ** Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen **
   move.l  (a0)+,a5           ;Zeiger auf Startwerte der Punkte
@@ -1449,7 +1448,7 @@ mgv_fill_playfield1
 ; -------------------------------
   CNOP 0,4
 mgv_set_second_copperlist_jump
-  move.l  cl2_construction2(a3),a0 ;CL
+  move.l  cl2_construction2(a3),a0 
   move.l  a0,d0
   ADDF.L  cl2_extension3_entry,d0
   moveq   #TRUE,d1           ;32-Bit-Zugriff
@@ -1477,7 +1476,7 @@ scroll_playfield_bottom_in
   move.w  spbi_y_angle(a3),d2 ;Y-Winkel holen
   cmp.w   #sine_table_length/4,d2 ;90 Grad ?
   bgt.s   spbi_finished      ;Ja -> verzweige
-  lea     sine_table(pc),a0
+  lea     sine_table,a0
   move.w  (a0,d2.w*2),d0     ;sin(w)
   muls.w  #spb_y_radius*2,d0 ;y'=(sin(w)*yr)/2^15
   swap    d0
@@ -1503,7 +1502,7 @@ scroll_playfield_bottom_out
   move.w  spbo_y_angle(a3),d2 ;Y-Winkel holen
   cmp.w   #sine_table_length/2,d2 ;180 Grad ?
   bgt.s   spbo_finished      ;Ja -> verzweige
-  lea     sine_table(pc),a0  
+  lea     sine_table,a0  
   move.w  (a0,d2.w*2),d0     ;cos(w)
   muls.w  #spb_y_radius*2,d0 ;y'=(cos(w)*yr)/2^15
   swap    d0
@@ -1523,7 +1522,7 @@ spbo_finished
 
   CNOP 0,4
 spb_set_display_window
-  move.l  cl2_construction2(a3),a1 ;CL
+  move.l  cl2_construction2(a3),a1 
   moveq   #spb_min_VSTART,d1
   add.w   d0,d1              ;+ Y-Offset
   cmp.w   d3,d1              ;VSTOP-Maximum erreicht ?
@@ -1559,7 +1558,7 @@ mgv_morph_enable
   bne.s   mgv_morph_save_delay_counter ;Nein -> verzweige
   clr.w   spbo_state(a3)     ;Scroll-Playfield-Bottom-Out an
 mgv_morph_save_delay_counter
-  move.w  d0,mgv_morph_delay_counter(a3) ;retten
+  move.w  d0,mgv_morph_delay_counter(a3) 
 mgv_morph_no_delay_counter
   rts
 

@@ -336,7 +336,7 @@ spb_set_display_window
   ble.s   spb_no_max_VSTOP1  ;Nein -> verzweige
   move.w  d3,d1              ;VSTOP korrigieren
 spb_no_max_VSTOP1
-;  move.l  cl2_display(a3),a1 ;CL
+;  move.l  cl2_display(a3),a1 
 ;  move.b  d1,cl2_DIWSTRT+2(a1) ;VSTART V7-V0
   move.w  d1,(a4)+
   move.w  #visible_lines_number,d2

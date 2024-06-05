@@ -69,7 +69,6 @@ workbench_fade                    EQU FALSE
 text_output                       EQU FALSE
 
 sys_taken_over
-;own_display_set_second_copperlist
 pass_global_references
 pass_return_code
 
@@ -146,7 +145,7 @@ CIAA_TB_continuous                EQU FALSE
 CIAB_TA_continuous                EQU FALSE
 CIAB_TB_continuous                EQU FALSE
 
-beam_position                     EQU $133
+beam_position                     EQU $135
 
 pixel_per_line                    EQU 192
 visible_pixels_number             EQU 192
@@ -272,7 +271,7 @@ mgv_object_face23_lines_number    EQU 3
 mgv_object_face24_color           EQU 2
 mgv_object_face24_lines_number    EQU 3
 
-mgv_max_lines_number              EQU 54
+mgv_lines_number_max              EQU 54
 
   IFEQ mgv_morph_loop
 mgv_morph_shapes_number           EQU 4
@@ -429,7 +428,7 @@ cl2_begin            RS.B 0
 
 cl2_extension1_entry RS.B cl2_extension1_SIZE
 cl2_extension2_entry RS.B cl2_extension2_SIZE
-cl2_extension3_entry RS.B cl2_extension3_SIZE*mgv_max_lines_number
+cl2_extension3_entry RS.B cl2_extension3_SIZE*mgv_lines_number_max
 cl2_extension4_entry RS.B cl2_extension4_SIZE
 
 cl2_end              RS.L 1
@@ -811,7 +810,7 @@ mgv_init_object_info_table
   lea     mgv_object_info_table+mgv_object_info_edge_table(pc),a0 ;Zeiger auf Object-Info-Tabelle
   lea     mgv_object_edge_table(pc),a1 ;Zeiger auf Tebelle mit Eckpunkten
   move.w  #mgv_object_info_SIZE,a2
-  moveq   #mgv_object_faces_number-1,d7 ;Anzahl der Flächen
+  MOVEF.W mgv_object_faces_number-1,d7 ;Anzahl der Flächen
 mgv_init_object1_info_table_loop
   move.w  mgv_object_info_lines_number(a0),d0 
   addq.w  #2,d0              ;Anzahl der Linien + 2 = Anzahl der Eckpunkte
@@ -954,7 +953,7 @@ cl2_init_line_blits_steady_registers
 
   CNOP 0,4
 cl2_init_line_blits
-  MOVEF.W  mgv_max_lines_number-1,d7
+  MOVEF.W  mgv_lines_number_max-1,d7
 cl1_init_line_blits_loop
   COPMOVEQ TRUE,BLTCON0
   COPMOVEQ TRUE,BLTCON1
@@ -1145,7 +1144,7 @@ mgv_calculate_rotation_y_speed
 mgv_rotation
   movem.l a4-a6,-(a7)
   move.w  mgv_rotation_y_angle(a3),d1 ;Y-Winkel
-  move.w  d1,d0              ;retten
+  move.w  d1,d0              
   lea     sine_table,a2
   move.w  (a2,d0.w*2),d5     ;sin(b)
   move.w  #sine_table_length/4,a4
@@ -1195,7 +1194,7 @@ mgv_morph_object
   lea     mgv_object_coordinates(pc),a0 ;Aktuelle Objektdaten
   lea     mgv_morph_shapes_table(pc),a1 ;Tabelle mit Adressen der Formen-Tabellen
   move.l  (a1,d1.w*4),a1     ;Zeiger auf Tabelle holen
-  moveq   #mgv_object_edge_points_number*3-1,d7 ;Anzahl der Koordinaten
+  MOVEF.W mgv_object_edge_points_number*3-1,d7 ;Anzahl der Koordinaten
 mgv_morph_object_loop
   move.w  (a0),d0            ;aktuelle Koordinate lesen
   cmp.w   (a1)+,d0           ;mit Ziel-Koordinate vergleichen
@@ -1225,7 +1224,7 @@ mgv_save_morph_shapes_table_start
   ELSE
     beq.s   mgv_morph_object_disable ;Ja -> verzweige
   ENDC
-  move.w  d1,mgv_morph_shapes_table_start(a3) ;retten
+  move.w  d1,mgv_morph_shapes_table_start(a3) 
   move.w  #mgv_morph_delay,mgv_morph_delay_counter(a3) ;Zähler zurücksetzen
 mgv_morph_object_disable
   moveq   #FALSE,d0
@@ -1247,10 +1246,10 @@ mgv_draw_lines
   clr.w   d0
   move.l  d0,a2
   sub.l   a4,a4              ;Linienzähler zurücksetzen
-  move.l  cl2_construction2(a3),a6 ;CL
+  move.l  cl2_construction2(a3),a6 
   ADDF.W  cl2_extension4_entry-cl2_extension3_SIZE+cl2_ext3_BLTCON0+2,a6
   move.l  #((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3
-  moveq   #mgv_object_faces_number-1,d7 ;Anzahl der Flächen
+  MOVEF.W mgv_object_faces_number-1,d7 ;Anzahl der Flächen
 mgv_draw_lines_loop1
 
 ; ** Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen **
@@ -1378,7 +1377,7 @@ mgv_copy_extra_playfield_loop
 ; -------------------------------
   CNOP 0,4
 mgv_set_second_copperlist_jump
-  move.l  cl2_construction2(a3),a0 ;CL
+  move.l  cl2_construction2(a3),a0 
   move.l  a0,d0
   ADDF.L  cl2_extension4_entry,d0
   moveq   #TRUE,d1           ;32-Bit-Zugriff
@@ -1493,7 +1492,7 @@ control_counters
 mgv_morph_enable
   clr.w   mgv_morph_state(a3) ;Morphing an
 mgv_morph_save_delay_counter
-  move.w  d0,mgv_morph_delay_counter(a3) ;retten
+  move.w  d0,mgv_morph_delay_counter(a3) 
 mgv_morph_no_delay_counter
   rts
 
@@ -1997,11 +1996,7 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
   DC.B "THE PARTS...        "
-  DC.B "                    "
-  DC.B "                    "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2028,10 +2023,7 @@ vts_text
   DC.B "                    "
   DC.B "SCREEN: 256 X 256   "
   DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
+  DC.B "PLANES: 3           "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2052,10 +2044,7 @@ vts_text
   DC.B "                    "
   DC.B "SCREEN: 256 X 256   "
   DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
+  DC.B "PLANES: 3           "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2076,10 +2065,7 @@ vts_text
   DC.B "                    "
   DC.B "SCREEN: 256 X 256   "
   DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
+  DC.B "PLANES: 3           "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2100,10 +2086,7 @@ vts_text
   DC.B "                    "
   DC.B "SCREEN: 240 X 240   "
   DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
+  DC.B "PLANES: 3           "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2120,14 +2103,11 @@ vts_text
   DC.B "# GLENZ 5 #         "
   DC.B "                    "
   DC.B "                    "
-  DC.B "FACES:  2 X 24      "
+  DC.B "FACES:  128         "
   DC.B "                    "
-  DC.B "SCREEN: 192 X 192   "
+  DC.B "SCREEN: 160 X 160   "
   DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
+  DC.B "PLANES: 3           "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2144,14 +2124,32 @@ vts_text
   DC.B "# GLENZ 6 #         "
   DC.B "                    "
   DC.B "                    "
+  DC.B "FACES:  2 X 24      "
+  DC.B "                    "
+  DC.B "SCREEN: 192 X 192   "
+  DC.B "                    "
+  DC.B "PLANES: 5           "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "--------------------"
+  DC.B "                    "
+  DC.B "# GLENZ 7 #         "
+  DC.B "                    "
+  DC.B "                    "
   DC.B "FACES:  3 X 20      "
   DC.B "                    "
   DC.B "SCREEN: 144 X 144   "
   DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
-  DC.B "                    "
+  DC.B "PLANES: 7           "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2212,7 +2210,9 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B "                    "
   DC.B "RESISTANCE IN 2025  "
+  DC.B "                    "
   DC.B FALSE
   EVEN
 
