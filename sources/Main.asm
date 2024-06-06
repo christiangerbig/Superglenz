@@ -2,7 +2,7 @@
 ; # Programm: Main.asm         #
 ; # Autor:    Christian Gerbig #
 ; # Datum:    06.06.2024       #
-; # Version:  1.2 beta         #
+; # Version:  1.3 beta         #
 ; # CPU:      68020+           #
 ; # FASTMEM:  -                #
 ; # Chipset:  AGA              #
@@ -25,10 +25,13 @@
 ; Bugfix Spritefield-Display-Bug rechter Rand: Alle Sprites weitere 8 Pixel
 ; nach rechts (X+16).
 ; Neue Glenz-Parts: 48-Faces-Glenz + 128-Faces-Glenz.
+; Mit überarbeiteten Include-Files
+
+; V.1.3 Beta
 ; Bugfix: Intro-Part Y-Wrap-Befehl wurde nicht berücksichtigt -> Random-Speicherfehler.
 ; Alle Morphingsequenzen gekürzt und geändert.
 ; End-Part: Dual-Playfield mit Schatten für Abspann-Text.
-; Mit überarbeiteten Include-Files
+
 
   SECTION code_and_variables,CODE
 
@@ -411,7 +414,7 @@ nop_second_copperlist DC.L 0
 
 ; ** Programmversion für Version-Befehl **
 ; ----------------------------------------
-prg_version DC.B "$VER: RSE-Superglenz 1.2 beta (6.6.24)",TRUE
+prg_version DC.B "$VER: RSE-Superglenz 1.3 beta (6.6.24)",TRUE
   EVEN
 
   END
