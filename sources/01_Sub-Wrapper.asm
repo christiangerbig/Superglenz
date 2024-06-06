@@ -150,7 +150,7 @@ CIAA_TB_continuous          EQU FALSE
 CIAB_TA_continuous          EQU FALSE
 CIAB_TB_continuous          EQU FALSE
 
-beam_position               EQU $135
+beam_position               EQU $133
 
 MINROW                      EQU VSTART_OVERSCAN_PAL
 
@@ -191,7 +191,7 @@ sprfi_fader_radius          EQU sprfi_fader_speed_max
 sprfi_fader_center          EQU sprfi_fader_speed_max+1
 sprfi_fader_angle_speed     EQU 2
 
-sprfo_fader_speed_max       EQU 4
+sprfo_fader_speed_max       EQU 8
 sprfo_fader_radius          EQU sprfo_fader_speed_max
 sprfo_fader_center          EQU sprfo_fader_speed_max+1
 sprfo_fader_angle_speed     EQU 2

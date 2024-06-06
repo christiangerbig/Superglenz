@@ -103,8 +103,8 @@ pf2_y_size2                       EQU 0
 pf2_depth2                        EQU 0
 pf2_x_size3                       EQU 0
 pf2_y_size3                       EQU 0
-pf2_depth3                        EQU 0
-pf2_colors_number                 EQU 0
+pf2_depth3                        EQU 1
+pf2_colors_number                 EQU 0 ;2
 pf_colors_number                  EQU pf1_colors_number+pf2_colors_number
 pf_depth                          EQU pf1_depth3+pf2_depth3
 
@@ -145,7 +145,7 @@ CIAA_TB_continuous                EQU FALSE
 CIAB_TA_continuous                EQU FALSE
 CIAB_TB_continuous                EQU FALSE
 
-beam_position                     EQU $135
+beam_position                     EQU $133
 
 pixel_per_line                    EQU 192
 visible_pixels_number             EQU 192
@@ -169,11 +169,12 @@ extra_pf1_plane_width             EQU extra_pf1_x_size/8
 extra_pf2_plane_width             EQU extra_pf2_x_size/8
 data_fetch_width                  EQU pixel_per_line/8
 pf1_plane_moduli                  EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
+pf2_plane_moduli                  EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
-BPLCON0BITS                       EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON1BITS                       EQU $4444
+BPLCON0BITS                       EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+BPLCON0F_DPF+((pf_depth&$07)*BPLCON0F_BPU0)
+BPLCON1BITS                       EQU $4454
 BPLCON2BITS                       EQU TRUE
-BPLCON3BITS1                      EQU BPLCON3F_BRDSPRT+BPLCON3F_SPRES0
+BPLCON3BITS1                      EQU BPLCON3F_BRDSPRT+BPLCON3F_SPRES0+BPLCON3F_PF2OF0
 BPLCON3BITS2                      EQU BPLCON3BITS1+BPLCON3F_LOCT
 BPLCON4BITS                       EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)+(BPLCON4F_ESPRM4*spr_even_color_table_select)
 DIWHIGHBITS                       EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
@@ -314,6 +315,9 @@ eh_trigger_number_max             EQU 5
 
 pf1_bitplane_x_offset             EQU 0
 pf1_bitplane_y_offset             EQU vts_text_character_y_size
+
+pf2_bitplane_x_offset             EQU 0
+pf2_bitplane_y_offset             EQU vts_text_character_y_size-1
 
 
 ; ## Makrobefehle ##
@@ -738,9 +742,11 @@ init_all
 init_color_registers
   CPU_SELECT_COLORHI_BANK 0
   CPU_INIT_COLORHI COLOR00,2,pf1_color_table
+  CPU_INIT_COLORHI COLOR02,2,pf2_color_table
 
   CPU_SELECT_COLORLO_BANK 0
   CPU_INIT_COLORLO COLOR00,2,pf1_color_table
+  CPU_INIT_COLORLO COLOR02,2,pf2_color_table
   rts
 
 ; ** Sprites initialisieren **
@@ -897,7 +903,30 @@ cl1_init_color_registers
 
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
-  COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
+  CNOP 0,4
+cl1_set_bitplane_pointers
+  move.l  cl1_display(a3),a0
+  lea     cl1_BPL2PTH+2(a0),a1
+  ADDF.W  cl1_BPL1PTH+2,a0
+  move.l  pf1_display(a3),a2 ;Zeiger auf erste Plane
+
+; ** Zeiger auf Playfield 1 eintragen **
+  moveq   #pf1_depth3-1,d7    ;Anzahl der Bitplanes
+cl1_set_bitplane_pointers_loop1
+  move.w  (a2)+,(a0)         ;BPLxPTH
+  ADDF.W  16,a0              ;übernächter Playfieldzeiger
+  move.w  (a2)+,4-16(a0)     ;BPLxPTL
+  dbf     d7,cl1_set_bitplane_pointers_loop1
+
+; ** Zeiger auf Playfield 2 eintragen **
+  move.l  pf1_display(a3),a2 ;Zeiger auf erste Plane
+  moveq   #pf2_depth3-1,d7    ;Anzahl der Bitplanes
+cl1_set_bitplane_pointers_loop2
+  move.w  (a2)+,(a1)         ;BPLxPTH
+  ADDF.W  16,a1              ;übernächter Playfieldzeiger
+  move.w  (a2)+,4-16(a1)     ;BPLxPTL
+  dbf     d7,cl1_set_bitplane_pointers_loop2
+  rts
 
 ; ** 2. Copperliste initialisieren **
 ; -----------------------------------
@@ -911,13 +940,13 @@ init_second_copperlist
   COPLISTEND
   bsr     copy_second_copperlist
   bsr     swap_second_copperlist
-  bsr     swap_playfield1
+  bsr     swap_playfields
   bsr     mgv_clear_extra_playfield
   bsr     mgv_draw_lines
   bsr     mgv_fill_extra_playfield
   bsr     mgv_set_second_copperlist_jump
   bsr     swap_second_copperlist
-  bsr     swap_playfield1
+  bsr     swap_playfields
   bsr     swap_extra_playfield
   bsr     mgv_clear_extra_playfield
   bsr     mgv_draw_lines
@@ -1004,7 +1033,7 @@ beam_routines
   bsr     wait_beam_position
   bsr.s   swap_second_copperlist
   bsr     spr_swap_structures
-  bsr     swap_playfield1
+  bsr     swap_playfields
   bsr     swap_extra_playfield
   bsr     effects_handler
   bsr     mgv_clear_extra_playfield
@@ -1043,8 +1072,39 @@ fast_exit
   SWAP_SPRITES_STRUCTURES spr,spr_swap_number
 
 ; ** Playfields vertauschen **
-; ------------------------
-  SWAP_PLAYFIELD pf1,2,pf1_depth3,pf1_bitplane_x_offset,pf1_bitplane_y_offset
+; ----------------------------
+  CNOP 0,4
+swap_playfields
+  move.l  cl1_display(a3),a0
+  move.l  pf1_construction2(a3),a1
+  ADDF.W  cl1_BPL1PTH+2,a0
+  move.l  pf1_display(a3),pf1_construction2(a3)
+  MOVEF.L (pf1_bitplane_x_offset/8)+(pf1_bitplane_y_offset*pf1_plane_width*pf1_depth3),d1
+  move.l  a1,pf1_display(a3)
+  move.l  a1,a2
+  moveq   #pf1_depth3-1,d7   ;Anzahl der Planes
+swap_playfield1_loop
+  move.l  (a1)+,d0
+  add.l   d1,d0
+  move.w  d0,4(a0)           ;BPLxPTL
+  swap    d0                 ;High
+  move.w  d0,(a0)            ;BPLxPTH
+  ADDF.W  16,a0
+  dbf     d7,swap_playfield1_loop
+
+  MOVEF.L (pf2_bitplane_x_offset/8)+(pf2_bitplane_y_offset*pf1_plane_width*pf1_depth3),d1
+  move.l  cl1_display(a3),a0
+  ADDF.W  cl1_BPL2PTH+2,a0
+  moveq   #pf2_depth3-1,d7   ;Anzahl der Planes
+swap_playfield2_loop
+  move.l  (a2)+,d0
+  add.l   d1,d0
+  move.w  d0,4(a0)           ;BPLxPTL
+  swap    d0                 ;High
+  move.w  d0,(a0)            ;BPLxPTH
+  ADDF.W  16,a0
+  dbf     d7,swap_playfield2_loop
+  rts
 
 ; ** Extra-Playfields vertauschen **
 ; ----------------------------------
@@ -1589,6 +1649,12 @@ NMI_int_server
   CNOP 0,4
 pf1_color_table
   DC.L COLOR00BITS,$f7e954
+
+; ** Farben des zweiten Playfields **
+; -----------------------------------
+  CNOP 0,4
+pf2_color_table
+  DC.L COLOR00BITS,$000000
 
 ; ** Farben der Sprites **
 ; ------------------------
@@ -2174,10 +2240,10 @@ vts_text
   DC.B "                    "
   DC.B "IN 50 FPS ON A      "
   DC.B "                    "
-  DC.B "STOCK AMIGA 1200    "
+  DC.B "STOCK AMIGA 1200!   "
   DC.B "                    "
   DC.B "                    "
-  DC.B "                    "
+  DC.B "#VANILLAMIGA RULEZ# "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "

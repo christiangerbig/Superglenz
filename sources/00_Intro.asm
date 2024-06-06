@@ -135,7 +135,7 @@ CIAA_TB_continuous             EQU FALSE
 CIAB_TA_continuous             EQU FALSE
 CIAB_TB_continuous             EQU FALSE
 
-beam_position                  EQU $135
+beam_position                  EQU $136
 
 pixel_per_line                 EQU 192
 visible_pixels_number          EQU 192
@@ -402,8 +402,9 @@ cl1_extension1_entry RS.B cl1_extension1_SIZE
 cl1_extension2_entry RS.B cl1_extension2_SIZE
 cl1_COP1LCH          RS.L 1
 cl1_COP1LCL          RS.L 1
-cl1_WAIT             RS.L 1
-cl1_INTENA           RS.L 1
+cl1_WAIT1            RS.L 1
+cl1_WAIT2            RS.L 1
+cl1_INTREQ           RS.L 1
 
 cl1_end              RS.L 1
 

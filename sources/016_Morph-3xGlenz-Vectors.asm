@@ -146,7 +146,7 @@ CIAA_TB_continuous                  EQU FALSE
 CIAB_TA_continuous                  EQU FALSE
 CIAB_TB_continuous                  EQU FALSE
 
-beam_position                       EQU $135
+beam_position                       EQU $133
 
 pixel_per_line                      EQU 192
 visible_pixels_number               EQU 144
@@ -394,19 +394,19 @@ mgv_object2_shape4_z_rotation_speed EQU 0
 mgv_object3_shape4_x_rotation_speed EQU 0
 mgv_object3_shape4_y_rotation_speed EQU 0
 mgv_object3_shape4_z_rotation_speed EQU 0
-mgv_morph_shape4_delay              EQU 8*PALFPS
+mgv_morph_shape4_delay              EQU 6*PALFPS
 
 ; ** Form 5 **
 mgv_object1_shape5_x_rotation_speed EQU 0
-mgv_object1_shape5_y_rotation_speed EQU -4
+mgv_object1_shape5_y_rotation_speed EQU -5
 mgv_object1_shape5_z_rotation_speed EQU 0
 mgv_object2_shape5_x_rotation_speed EQU 0
-mgv_object2_shape5_y_rotation_speed EQU -5
+mgv_object2_shape5_y_rotation_speed EQU -6
 mgv_object2_shape5_z_rotation_speed EQU 0
 mgv_object3_shape5_x_rotation_speed EQU 0
-mgv_object3_shape5_y_rotation_speed EQU -6
+mgv_object3_shape5_y_rotation_speed EQU -7
 mgv_object3_shape5_z_rotation_speed EQU 0
-mgv_morph_shape5_delay              EQU 7*PALFPS
+mgv_morph_shape5_delay              EQU 6*PALFPS
 
 ; ** Form 6 **
 mgv_object1_shape6_x_rotation_speed EQU 0
@@ -418,7 +418,7 @@ mgv_object2_shape6_z_rotation_speed EQU 4
 mgv_object3_shape6_x_rotation_speed EQU 0
 mgv_object3_shape6_y_rotation_speed EQU 0
 mgv_object3_shape6_z_rotation_speed EQU -4
-mgv_morph_shape6_delay              EQU 9*PALFPS
+mgv_morph_shape6_delay              EQU 6*PALFPS
 
 ; ** Form 7 **
 mgv_object1_shape7_x_rotation_speed EQU 0

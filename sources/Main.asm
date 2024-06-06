@@ -1,7 +1,7 @@
 ; ##############################
 ; # Programm: Main.asm         #
 ; # Autor:    Christian Gerbig #
-; # Datum:    02.06.2024       #
+; # Datum:    06.06.2024       #
 ; # Version:  1.2 beta         #
 ; # CPU:      68020+           #
 ; # FASTMEM:  -                #
@@ -22,8 +22,12 @@
 ; Alle Module sind jetzt stumm
 
 ; V.1.2 Beta
-; Neuer Glenz-Part: 48-Faces-Glenz
-; Spritefield-Display-Bug rechter Rand: Alle Sprites weitere 8 Pixel n ach rechts (X+16)
+; Bugfix Spritefield-Display-Bug rechter Rand: Alle Sprites weitere 8 Pixel
+; nach rechts (X+16).
+; Neue Glenz-Parts: 48-Faces-Glenz + 128-Faces-Glenz.
+; Bugfix: Intro-Part Y-Wrap-Befehl wurde nicht berücksichtigt -> Random-Speicherfehler.
+; Alle Morphingsequenzen gekürzt und geändert.
+; End-Part: Dual-Playfield mit Schatten für Abspann-Text.
 ; Mit überarbeiteten Include-Files
 
   SECTION code_and_variables,CODE
@@ -149,7 +153,7 @@ CIAA_TB_continuous         EQU FALSE
 CIAB_TA_continuous         EQU FALSE
 CIAB_TB_continuous         EQU FALSE
 
-beam_position              EQU $135
+beam_position              EQU $136
 
 BPLCON0BITS                EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
 BPLCON3BITS1               EQU TRUE
@@ -407,7 +411,7 @@ nop_second_copperlist DC.L 0
 
 ; ** Programmversion für Version-Befehl **
 ; ----------------------------------------
-prg_version DC.B "$VER: RSE-Superglenz 1.2 beta (2.6.24)",TRUE
+prg_version DC.B "$VER: RSE-Superglenz 1.2 beta (6.6.24)",TRUE
   EVEN
 
   END

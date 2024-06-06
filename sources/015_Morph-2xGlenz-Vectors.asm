@@ -146,7 +146,7 @@ CIAA_TB_continuous                  EQU FALSE
 CIAB_TA_continuous                  EQU FALSE
 CIAB_TB_continuous                  EQU FALSE
 
-beam_position                       EQU $135
+beam_position                       EQU $133
 
 pixel_per_line                      EQU 192
 visible_pixels_number               EQU 192

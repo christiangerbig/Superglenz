@@ -146,7 +146,7 @@ CIAA_TB_continuous                EQU FALSE
 CIAB_TA_continuous                EQU FALSE
 CIAB_TB_continuous                EQU FALSE
 
-beam_position                     EQU $135
+beam_position                     EQU $133
 
 pixel_per_line                    EQU 192
 visible_pixels_number             EQU 160
@@ -518,7 +518,7 @@ mgv_morph_shapes_number           EQU 3
 mgv_morph_shapes_number           EQU 4
   ENDC
 mgv_morph_speed                   EQU 8
-mgv_morph_delay                   EQU 8*PALFPS
+mgv_morph_delay                   EQU 6*PALFPS
 
 ; **** Fill-Blit ****
 mgv_fill_blit_x_size              EQU visible_pixels_number
