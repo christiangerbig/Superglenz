@@ -1,0 +1,6 @@
+Copy RAM:#?.obj TO Daten:Asm-Sources.AGA/Superglenz/linker >NIL:
+CD Daten:Asm-Sources.AGA/Superglenz/linker
+
+dlink main.obj 0.obj 00.obj 01.obj 010.obj 011.obj 012.obj 013.obj 014.obj 015.obj 016.obj 1.obj 10.obj TO Programme:RSE-Superglenz VER ram:linker-output.asc NOCASE
+
+CD /
