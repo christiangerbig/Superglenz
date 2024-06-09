@@ -280,7 +280,7 @@ loop
 scroll_playfield_buttom_in
   tst.w   spbi_state(a3)     ;Scroll-Playfield-Buttom-In an ?
   bne.s   no_scroll_playfield_buttom_in ;Nein -> verzweige
-  move.w  spbi_y_angle(a3),d2 ;Y-Winkel holen
+  move.w  spbi_y_angle(a3),d2 ;Y-Winkel
   cmp.w   #sine_table_length/4,d2 ;90 Grad ?
   bge.s   spbi_finished      ;Ja -> verzweige
   lea     sine_table(pc),a0  
@@ -289,7 +289,7 @@ scroll_playfield_buttom_in
   swap    d0
   add.w   #spb_y_centre,d0 ;y' + Y-Mittelpunkt
   addq.w  #spbi_y_angle_speed,d2 ;nächster Y-Winkel
-  move.w  d2,spbi_y_angle(a3) ;Y-Winkel retten
+  move.w  d2,spbi_y_angle(a3) 
   move.w  #spb_max_VSTOP,d3
   bsr.s   spb_set_display_window
 no_scroll_playfield_buttom_in
@@ -307,7 +307,7 @@ spbi_finished
 scroll_playfield_buttom_out
   tst.w   spbo_state(a3)     ;Vert-Scroll-Playfild-Out an ?
   bne.s   no_scroll_playfield_buttom_out ;Nein -> verzweige
-  move.w  spbo_y_angle(a3),d2 ;Y-Winkel holen
+  move.w  spbo_y_angle(a3),d2 ;Y-Winkel
   cmp.w   #sine_table_length/2,d2 ;180 Grad ?
   bge.s   spbo_finished      ;Ja -> verzweige
   lea     sine_table(pc),a0  
@@ -316,7 +316,7 @@ scroll_playfield_buttom_out
   swap    d0
   add.w   #spb_y_centre,d0 ;y' + Y-Mittelpunkt
   addq.w  #spbo_y_angle_speed,d2 ;nächster Y-Winkel
-  move.w  d2,spbo_y_angle(a3) ;Y-Winkel retten
+  move.w  d2,spbo_y_angle(a3) 
   move.w  #spb_max_VSTOP,d3
   bsr.s   spb_set_display_window
 no_scroll_playfield_buttom_out

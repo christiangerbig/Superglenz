@@ -1210,7 +1210,7 @@ fast_exit
   CNOP 0,4
 gv_clear_playfield1
   movem.l a3-a6,-(a7)
-  move.l  a7,save_a7(a3)     ;Stackpointer retten
+  move.l  a7,save_a7(a3)     
   moveq   #TRUE,d0
   moveq   #TRUE,d1
   moveq   #TRUE,d2
@@ -1249,7 +1249,7 @@ gv_rotation
   movem.l a4-a5,-(a7)
   move.w  gv_rotation_y_angle(a3),d1 ;Y-Winkel
   move.w  d1,d0              
-  lea     sine_table(pc),a2  ;Sinus-Tabelle
+  lea     sine_table(pc),a2  
   move.w  (a2,d0.w*2),d5     ;sin(b)
   IFEQ sine_table_length-512
     MOVEF.W sine_table_length-1,d3
@@ -1276,7 +1276,7 @@ gv_rotation_no_y_angle_restart1
     sub.w   d3,d1            ;Neustart
 gv_rotation_no_y_angle_restart2
   ENDC
-  move.w  d1,gv_rotation_y_angle(a3) ;Y-Winkel retten
+  move.w  d1,gv_rotation_y_angle(a3) 
   lea     gv_object_coordinates(pc),a0 ;Koordinaten der Linien
   lea     gv_rotation_xy_coordinates(pc),a1 ;Koord.-Tab.
   move.w  #gv_rotation_d*8,a4 ;d
@@ -1284,7 +1284,7 @@ gv_rotation_no_y_angle_restart2
   moveq   #gv_object_edge_points_number-1,d7 ;Anzahl der Punkte
 gv_rotation_loop
   move.w  (a0)+,d0           ;X-Koord.
-  move.l  d7,a2              ;Schleifenzähler retten
+  move.l  d7,a2              
   move.w  (a0)+,d1           ;Y-Koord.
   move.w  (a0)+,d2           ;Z-Koord.
   ROTATE_Y_AXIS
@@ -1296,7 +1296,7 @@ gv_rotation_loop
   add.w   a5,d0              ;x' + X-Mittelpunkt
   move.w  d0,(a1)+           ;X-Pos.
   divs.w  d2,d1              ;y' = (y*d)/(z+d)
-  move.l  a2,d7              ;Schleifenzähler holen
+  move.l  a2,d7              ;Schleifenzähler 
   add.w   a5,d1              ;y' + Y-Mittelpunkt
   move.w  d1,(a1)+           ;Y-Pos.
   dbf     d7,gv_rotation_loop
@@ -1362,7 +1362,7 @@ gv_draw_lines_single_line
 gv_draw_lines_no_line
   dbf     d6,gv_draw_lines_loop2
 gv_draw_lines_no_face
-  swap    d7                 ;Flächenzähler holen
+  swap    d7                 ;Flächenzähler 
   dbf     d7,gv_draw_lines_loop1
   movem.l (a7)+,a3-a5
   rts
@@ -1402,7 +1402,7 @@ gv_fill_playfield1
 scroll_playfield_bottom_in
   tst.w   spbi_state(a3)     ;Scroll-Playfield-Bottom-In an ?
   bne.s   no_scroll_playfield_bottom_in ;Nein -> verzweige
-  move.w  spbi_y_angle(a3),d2 ;Y-Winkel holen
+  move.w  spbi_y_angle(a3),d2 ;Y-Winkel
   cmp.w   #sine_table_length/4,d2 ;90 Grad ?
   bgt.s   spbi_finished      ;Ja -> verzweige
   lea     sine_table(pc),a0  
@@ -1411,7 +1411,7 @@ scroll_playfield_bottom_in
   swap    d0
   add.w   #spb_y_centre,d0 ;y' + Y-Mittelpunkt
   addq.w  #spbi_y_angle_speed,d2 ;nächster Y-Winkel
-  move.w  d2,spbi_y_angle(a3) ;Y-Winkel retten
+  move.w  d2,spbi_y_angle(a3) 
   MOVEF.W spb_max_VSTOP,d3
   bsr.s   spb_set_display_window
 no_scroll_playfield_bottom_in
@@ -1428,7 +1428,7 @@ spbi_finished
 scroll_playfield_bottom_out
   tst.w   spbo_state(a3)     ;Scroll-Playfild-Bottom-Out an ?
   bne.s   no_scroll_playfield_bottom_out ;Nein -> verzweige
-  move.w  spbo_y_angle(a3),d2 ;Y-Winkel holen
+  move.w  spbo_y_angle(a3),d2 ;Y-Winkel
   cmp.w   #sine_table_length/2,d2 ;180 Grad ?
   bgt.s   spbo_finished      ;Ja -> verzweige
   lea     sine_table(pc),a0  
@@ -1437,7 +1437,7 @@ scroll_playfield_bottom_out
   swap    d0
   add.w   #spb_y_centre,d0 ;y' + Y-Mittelpunkt
   addq.w  #spbo_y_angle_speed,d2 ;nächster Y-Winkel
-  move.w  d2,spbo_y_angle(a3) ;Y-Winkel retten
+  move.w  d2,spbo_y_angle(a3) 
   MOVEF.W spb_max_VSTOP,d3
   bsr.s   spb_set_display_window
 no_scroll_playfield_bottom_out
@@ -1611,7 +1611,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_check_effects_trigger ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_check_effects_trigger ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

@@ -1211,7 +1211,7 @@ mgv_rotation
   move.w  (a2,d0.w*2),d5     ;Bits  0-15 = cos(b)
   add.w   mgv_rotation_variable_y_speed(a3),d1 ;nächster Y-Winkel
   and.w   d3,d1              ;Übertrag entfernen
-  move.w  d1,mgv_rotation_y_angle(a3) ;Y-Winkel retten
+  move.w  d1,mgv_rotation_y_angle(a3) 
   lea     mgv_object_coordinates(pc),a0 ;Koordinaten der Linien
   lea     mgv_rotation_xy_coordinates(pc),a1 ;Koord.-Tab.
   move.w  #mgv_rotation_d*8,a4 ;d
@@ -1220,7 +1220,7 @@ mgv_rotation
   moveq   #mgv_object_edge_points_number-1,d7 ;Anzahl der Punkte
 mgv_rotate_loop
   move.w  (a0)+,d0           ;X-Koord.
-  move.l  d7,a2              ;Schleifenzähler retten
+  move.l  d7,a2              
   move.w  (a0)+,d1           ;Y-Koord.
   move.w  (a0)+,d2           ;Z-Koord.
   ROTATE_Y_AXIS
@@ -1232,7 +1232,7 @@ mgv_rotate_loop
   add.w   a5,d0              ;x' + X-Mittelpunkt
   move.w  d0,(a1)+           ;X-Pos.
   divs.w  d2,d1              ;y'= (y*d)/(z+d)
-  move.l  a2,d7              ;Schleifenzähler holen
+  move.l  a2,d7              ;Schleifenzähler 
   add.w   a6,d1              ;y' + Y-Mittelpunkt
   move.w  d1,(a1)+           ;Y-Pos.
   dbf     d7,mgv_rotate_loop
@@ -1249,7 +1249,7 @@ mgv_morph_object
   moveq   #TRUE,d2           ;Koordinatenzähler
   lea     mgv_object_coordinates(pc),a0 ;Aktuelle Objektdaten
   lea     mgv_morph_shapes_table(pc),a1 ;Tabelle mit Adressen der Formen-Tabellen
-  move.l  (a1,d1.w*4),a1     ;Zeiger auf Tabelle holen
+  move.l  (a1,d1.w*4),a1     ;Zeiger auf Tabelle 
   MOVEF.W mgv_object_edge_points_number*3-1,d7 ;Anzahl der Koordinaten
 mgv_morph_object_loop
   move.w  (a0),d0            ;aktuelle Koordinate lesen
@@ -1263,7 +1263,7 @@ mgv_morph_object_reduce_size
 mgv_morph_object_zoom_size
   subq.w  #mgv_morph_speed,d0 ;aktuelle Koordinate verringern
 mgv_morph_object_save_coordinate
-  move.w  d0,(a0)            ;und retten
+  move.w  d0,(a0)            
   addq.w  #1,d2              ;Koordinatenzähler erhöhen
 mgv_morph_object_next_coordinate
   addq.w  #2,a0              ;Nächste Koordinate
@@ -1368,7 +1368,7 @@ mgv_draw_lines_single_line
 mgv_draw_lines_no_line
   dbf     d6,mgv_draw_lines_loop2
 mgv_draw_lines_no_face
-  swap    d7                 ;Flächenzähler holen
+  swap    d7                 ;Flächenzähler 
   dbf     d7,mgv_draw_lines_loop1
   lea     variables+mgv_lines_counter(pc),a0
   move.w  a4,(a0)            ;Anzahl der Linien retten
@@ -1459,7 +1459,7 @@ colors_fader_cross
   tst.w   cfc_state(a3)      ;Colors-Fader-Cross an ?
   bne.s   no_colors_fader_cross ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  cfc_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  cfc_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
   ADDF.W  cfc_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
@@ -1620,7 +1620,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_effects_handler ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_effects_handler ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

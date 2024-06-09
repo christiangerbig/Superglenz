@@ -1631,7 +1631,7 @@ mgv_no_pre_rotate_objects
 mgv_pre_rotation
   move.w  (a5),d1            ;X-Winkel
   move.w  d1,d0              
-  lea     sine_table,a2  ;Sinus-Tabelle
+  lea     sine_table,a2  
   move.w  (a2,d0.w*2),d4     ;sin(a)
   MOVEF.W sine_table_length-1,d3
   add.w   #sine_table_length/4,d0 ;+ 90 Grad
@@ -1640,7 +1640,7 @@ mgv_pre_rotation
   move.w  (a2,d0.w*2),d4     ;Bits  0-15 = cos(a)
   add.w   (a6)+,d1           ;nächster X-Winkel
   and.w   d3,d1              ;Übertrag entfernen
-  move.w  d1,(a5)+           ;X-Winkel retten
+  move.w  d1,(a5)+           
   move.w  (a5),d1            ;Y-Winkel
   move.w  d1,d0              
   move.w  (a2,d0.w*2),d5     ;sin(b)
@@ -1650,7 +1650,7 @@ mgv_pre_rotation
   move.w  (a2,d0.w*2),d5     ;Bits  0-15 = cos(b)
   add.w   (a6)+,d1           ;nächster Y-Winkel
   and.w   d3,d1              ;Übertrag entfernen
-  move.w  d1,(a5)+           ;Y-Winkel retten
+  move.w  d1,(a5)+           
   move.w  (a5),d1            ;Z-Winkel
   move.w  d1,d0              
   move.w  (a2,d0.w*2),d6     ;sin(c)
@@ -1660,10 +1660,10 @@ mgv_pre_rotation
   move.w  (a2,d0.w*2),d6     ;Bits  0-15 = cos(c)
   add.w   (a6),d1            ;nächster Z-Winkel
   and.w   d3,d1              ;Übertrag entfernen
-  move.w  d1,(a5)            ;Y-Winkel retten
+  move.w  d1,(a5)            
 mgv_pre_rotation_loop
   move.w  (a0)+,d0           ;X-Koord.
-  move.l  d7,a2              ;Schleifenzähler retten
+  move.l  d7,a2              
   move.w  (a0)+,d1           ;Y-Koord.
   move.w  (a0)+,d2           ;Z-Koord.
   ROTATE_X_AXIS
@@ -1675,7 +1675,7 @@ mgv_pre_rotation_loop
   and.b   d3,d1
   move.w  d1,(a1)+           ;Y-Pos.
   and.b   d3,d2
-  move.l  a2,d7              ;Schleifenzähler holen
+  move.l  a2,d7              ;Schleifenzähler 
   move.w  d2,(a1)+           ;Z-Pos.
   dbf     d7,mgv_pre_rotation_loop
   rts
@@ -1686,8 +1686,8 @@ mgv_pre_rotation_loop
 mgv_rotate_objects
   movem.l a4-a5,-(a7)
   move.w  mgv_rotation_x_angle(a3),d1 ;X-Winkel
-  move.w  d1,d0              ;X-Winkel -> d7
-  lea     sine_table,a2  ;Sinus-Tabelle
+  move.w  d1,d0              
+  lea     sine_table,a2  
   move.w  (a2,d0.w*2),d4     ;sin(a)
   move.w  #sine_table_length/4,a4
   MOVEF.W sine_table_length-1,d3
@@ -1697,7 +1697,7 @@ mgv_rotate_objects
   move.w  (a2,d0.w*2),d4     ;Bits  0-15 = cos(a)
   addq.w  #mgv_rotation_x_angle_speed,d1 ;nächster X-Winkel
   and.w   d3,d1              ;Übertrag entfernen
-  move.w  d1,mgv_rotation_x_angle(a3) ;X-Winkel retten
+  move.w  d1,mgv_rotation_x_angle(a3) 
   move.w  mgv_rotation_y_angle(a3),d1 ;Y-Winkel
   move.w  d1,d0              
   move.w  (a2,d0.w*2),d5     ;sin(b)
@@ -1707,7 +1707,7 @@ mgv_rotate_objects
   move.w  (a2,d0.w*2),d5     ;Bits  0-15 = cos(b)
   addq.w  #mgv_rotation_y_angle_speed,d1 ;nächster Y-Winkel
   and.w   d3,d1              ;Übertrag entfernen
-  move.w  d1,mgv_rotation_y_angle(a3) ;Y-Winkel retten
+  move.w  d1,mgv_rotation_y_angle(a3) 
   move.w  mgv_rotation_z_angle(a3),d1 ;Z-Winkel
   move.w  d1,d0              
   move.w  (a2,d0.w*2),d6     ;sin(c)
@@ -1717,7 +1717,7 @@ mgv_rotate_objects
   move.w  (a2,d0.w*2),d6     ;Bits  0-15 = cos(c)
   addq.w  #mgv_rotation_z_angle_speed,d1 ;nächster Z-Winkel
   and.w   d3,d1              ;Übertrag entfernen
-  move.w  d1,mgv_rotation_z_angle(a3) ;Z-Winkel retten
+  move.w  d1,mgv_rotation_z_angle(a3) 
 ; ** Objekt 1 **
   lea     mgv_object1_coordinates(pc),a0 ;Koordinaten der Linien
   lea     mgv_rotation_xy_coordinates(pc),a1 ;Koord.-Tab.
@@ -1742,7 +1742,7 @@ mgv_rotation
   move.w  #mgv_rotation_xy_center,a5 ;X+Y-Mittelpunkt
 mgv_rotation_loop
   move.w  (a0)+,d0           ;X-Koord.
-  move.l  d7,a2              ;Schleifenzähler retten
+  move.l  d7,a2              
   move.w  (a0)+,d1           ;Y-Koord.
   move.w  (a0)+,d2           ;Z-Koord.
   ROTATE_X_AXIS
@@ -1756,7 +1756,7 @@ mgv_rotation_loop
   add.w   a5,d0              ;x' + X-Mittelpunkt
   move.w  d0,(a1)+           ;X-Pos.
   divs.w  d2,d1              ;y' = (y*d)/(z+d)
-  move.l  a2,d7              ;Schleifenzähler holen
+  move.l  a2,d7              ;Schleifenzähler 
   add.w   a5,d1              ;y' + Y-Mittelpunkt
   move.w  d1,(a1)+           ;Y-Pos.
   dbf     d7,mgv_rotation_loop
@@ -1785,17 +1785,17 @@ mgv_no_restart_morph_shapes_table_start
   add.l   d3,a2              ;Offset in Morph-Shapes-Tabelle
 ; ** Object 1 **
   lea     mgv_object1_coordinates(pc),a0 ;Aktuelle Objektdaten
-  move.l  (a2)+,a1           ;Zeiger auf Tabelle holen
+  move.l  (a2)+,a1           ;Zeiger auf Tabelle 
   MOVEF.W (mgv_object1_edge_points_number*3)-1,d7 ;Anzahl der Koordinaten
   bsr.s   mgv_morph_objects_loop
 ; ** Object 2 **
   lea     mgv_object2_coordinates(pc),a0 ;Aktuelle Objektdaten
-  move.l  (a2)+,a1           ;Zeiger auf Tabelle holen
+  move.l  (a2)+,a1           ;Zeiger auf Tabelle 
   MOVEF.W (mgv_object2_edge_points_number*3)-1,d7 ;Anzahl der Koordinaten
   bsr.s   mgv_morph_objects_loop
 ; ** Object 3 **
   lea     mgv_object3_coordinates(pc),a0 ;Aktuelle Objektdaten
-  move.l  (a2)+,a1           ;Zeiger auf Tabelle holen
+  move.l  (a2)+,a1           ;Zeiger auf Tabelle 
   moveq   #(mgv_object3_edge_points_number*3)-1,d7 ;Anzahl der Koordinaten
   bsr.s   mgv_morph_objects_loop
 
@@ -1838,7 +1838,7 @@ mgv_morph_objects_reduce_size
 mgv_morph_objects_zoom_size
   subq.w  #mgv_morph_speed,d0 ;aktuelle Koordinate verringern
 mgv_morph_objects_save_coordinate
-  move.w  d0,(a0)            ;und retten
+  move.w  d0,(a0)            
   addq.w  #1,d2              ;Koordinatenzähler erhöhen
 mgv_morph_objects_next_coordinate
   addq.w  #2,a0              ;Nächste Koordinate
@@ -1939,7 +1939,7 @@ mgv_draw_lines_single_line
 mgv_draw_lines_no_line
   dbf     d6,mgv_draw_lines_loop2
 mgv_draw_lines_no_face
-  swap    d7                 ;Flächenzähler holen
+  swap    d7                 ;Flächenzähler 
   dbf     d7,mgv_draw_lines_loop1
   lea     variables+mgv_lines_counter(pc),a0
   move.w  a4,(a0)            ;Anzahl der Linien retten
@@ -2003,7 +2003,7 @@ mgv_skip
 scroll_playfield_bottom_in
   tst.w   spbi_state(a3)     ;Scroll-Playfield-Bottom-In an ?
   bne.s   no_scroll_playfield_bottom_in ;Nein -> verzweige
-  move.w  spbi_y_angle(a3),d2 ;Y-Winkel holen
+  move.w  spbi_y_angle(a3),d2 ;Y-Winkel
   cmp.w   #sine_table_length/4,d2 ;90 Grad ?
   bgt.s   spbi_finished      ;Ja -> verzweige
   lea     sine_table,a0  
@@ -2012,7 +2012,7 @@ scroll_playfield_bottom_in
   swap    d0
   add.w   #spb_y_centre,d0   ;y' + Y-Mittelpunkt
   addq.w  #spbi_y_angle_speed,d2 ;nächster Y-Winkel
-  move.w  d2,spbi_y_angle(a3) ;Y-Winkel retten
+  move.w  d2,spbi_y_angle(a3) 
   MOVEF.W spb_max_VSTOP,d3
   bsr.s   spb_set_display_window
 no_scroll_playfield_bottom_in
@@ -2029,7 +2029,7 @@ spbi_finished
 scroll_playfield_bottom_out
   tst.w   spbo_state(a3)     ;Vert-Scroll-Playfild-Out an ?
   bne.s   no_scroll_playfield_bottom_out ;Nein -> verzweige
-  move.w  spbo_y_angle(a3),d2 ;Y-Winkel holen
+  move.w  spbo_y_angle(a3),d2 ;Y-Winkel
   cmp.w   #sine_table_length/2,d2 ;180 Grad ?
   bgt.s   spbo_finished      ;Ja -> verzweige
   lea     sine_table,a0  
@@ -2038,7 +2038,7 @@ scroll_playfield_bottom_out
   swap    d0
   add.w   #spb_y_centre,d0   ;y' + Y-Mittelpunkt
   addq.w  #spbo_y_angle_speed,d2 ;nächster Y-Winkel
-  move.w  d2,spbo_y_angle(a3) ;Y-Winkel retten
+  move.w  d2,spbo_y_angle(a3) 
   MOVEF.W spb_max_VSTOP,d3
   bsr.s   spb_set_display_window
 no_scroll_playfield_bottom_out
