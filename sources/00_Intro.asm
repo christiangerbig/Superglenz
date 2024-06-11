@@ -1713,73 +1713,73 @@ spr_color_table
   REPT hf_colors_per_colorbank
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
   REPT 8
     DC.L COLOR00BITS
   ENDR
@@ -2211,10 +2211,10 @@ prg_version DC.B "$VER: 00_Intro 1.0 (12.4.24)",TRUE
 
 ; **** Title ****
 title_image_data SECTION title_gfx,DATA
-  INCBIN "Daten:Asm-Sources.AGA/Superglenz/graphics/192x39x4-Superglenz.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/graphics/192x39x4-Superglenz.rawblit"
 
 ; **** Logo ****
 logo_image_data SECTION logo_gfx,DATA
-  INCBIN "Daten:Asm-Sources.AGA/Superglenz/graphics/3x64x16x4-RSE.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/graphics/3x64x16x4-RSE.rawblit"
 
   END

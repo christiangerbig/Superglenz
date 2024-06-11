@@ -1,4 +1,4 @@
-CD Daten:Asm-Sources.AGA/Superglenz/sources
+CD Daten:Asm-Sources.AGA/projects/Superglenz/sources
 Programme:Programmieren/OMA_2.05/OMA Main.asm -o RAM:main.obj -c c -m
 Programme:Programmieren/OMA_2.05/OMA 0_Wrapper.asm -o RAM:0.obj -c c -m
 Programme:Programmieren/OMA_2.05/OMA 00_Intro.asm -o RAM:00.obj -c c -m

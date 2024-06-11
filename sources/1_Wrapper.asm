@@ -86,7 +86,6 @@ pt_ciatiming               EQU TRUE
 pt_usedfx                  EQU %1101000100000000
 pt_usedefx                 EQU %0000000000000001
 pt_finetune                EQU FALSE
-
   IFD pt_v3.0b
 pt_metronome               EQU FALSE
   ENDC
@@ -710,12 +709,12 @@ custom_memory_table
 ; **** PT-Replay ****
   IFEQ pt_split_module
 pt_auddata SECTION pt_audio,DATA
-    INCBIN "Daten:Asm-Sources.AGA/Superglenz/modules/MOD.altitudes2.song.stc"
+    INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.altitudes2.song.stc"
 pt_audsmps SECTION pt_audio2,DATA_C
-    INCBIN "Daten:Asm-Sources.AGA/Superglenz/modules/MOD.altitudes2.smps.stc"
+    INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.altitudes2.smps.stc"
   ELSE
 pt_auddata SECTION pt_audio,DATA_C
-    INCBIN "Daten:Asm-Sources.AGA/Superglenz/modules/MOD.altitudes2"
+    INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.altitudes2"
   ENDC
 
   END

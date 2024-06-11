@@ -808,7 +808,7 @@ spr_pointers_display
 ; ---------------------------------------
   CNOP 0,4
 sprfi_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/256x283x16-Skyline.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/256x283x16-Skyline.ct"
 
 ; ** Zielfarbwerte für Sprite-Fader-Out **
 ; ----------------------------------------
@@ -841,6 +841,6 @@ sprfo_color_table
 
 ; **** Hintergrundbild ****
 bg_image_data SECTION gfx1,DATA
-  INCBIN "Daten:Asm-Sources.AGA/Superglenz/graphics/256x283x16-Skyline.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/graphics/256x283x16-Skyline.rawblit"
 
   END

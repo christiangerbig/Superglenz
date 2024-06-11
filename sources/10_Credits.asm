@@ -2037,7 +2037,7 @@ cfc_color_table
   REPT 2
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/Colortables/1xGlenz-Colorgradient1.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/Colortables/1xGlenz-Colorgradient1.ct"
   REPT 2
     DC.L COLOR00BITS
   ENDR
@@ -2045,7 +2045,7 @@ cfc_color_table
   REPT 2
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/Colortables/1xGlenz-Colorgradient5.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/Colortables/1xGlenz-Colorgradient5.ct"
   REPT 2
     DC.L COLOR00BITS
   ENDR
@@ -2053,7 +2053,7 @@ cfc_color_table
   REPT 2
     DC.L COLOR00BITS
   ENDR
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/Colortables/1xGlenz-Colorgradient4.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/Colortables/1xGlenz-Colorgradient4.ct"
   REPT 2
     DC.L COLOR00BITS
   ENDR
@@ -2360,7 +2360,7 @@ vts_text
 
 ; **** Vert-Text-Scroll ****
 vts_image_data SECTION vts_gfx,DATA
-  INCBIN "Daten:Asm-Sources.AGA/Superglenz/fonts/8x7x2-Font.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/fonts/8x7x2-Font.rawblit"
   DS.B vts_image_plane_width*vts_image_depth ;Leerzeile
 
   END

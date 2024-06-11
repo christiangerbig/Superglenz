@@ -1610,7 +1610,7 @@ pf1_color_table
 ; ** Farben der Glenz-Objekte **
   CNOP 0,4
 mgv_glenz_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/Superglenz/colortables/2xGlenz-Colorgradient.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/2xGlenz-Colorgradient.ct"
 
 ; ** Objektdaten **
 ; -----------------
