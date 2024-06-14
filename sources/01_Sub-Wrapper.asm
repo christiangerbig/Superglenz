@@ -79,9 +79,9 @@ requires_68060              EQU FALSE
 requires_fast_memory        EQU FALSE
 requires_multiscan_monitor  EQU FALSE
 
-workbench_start             EQU FALSE
-workbench_fade              EQU FALSE
-text_output                 EQU FALSE
+workbench_start_enabled     EQU FALSE
+workbench_fade_enabled      EQU FALSE
+text_output_enabled         EQU FALSE
 
 sys_taken_over
 own_display_set_second_copperlist
@@ -94,7 +94,7 @@ INTENABITS                  EQU INTF_SETCLR
 CIAAICRBITS                 EQU CIAICRF_SETCLR
 CIABICRBITS                 EQU CIAICRF_SETCLR
 
-COPCONBITS                  EQU TRUE
+COPCONBITS                  EQU 0
 
 pf1_x_size1                 EQU 0
 pf1_y_size1                 EQU 0
@@ -141,14 +141,14 @@ chip_memory_size            EQU 0
 
 AGA_OS_Version              EQU 39
 
-CIAA_TA_value               EQU 0
-CIAA_TB_value               EQU 0
-CIAB_TA_value               EQU 0
-CIAB_TB_value               EQU 0
-CIAA_TA_continuous          EQU FALSE
-CIAA_TB_continuous          EQU FALSE
-CIAB_TA_continuous          EQU FALSE
-CIAB_TB_continuous          EQU FALSE
+CIAA_TA_time                EQU 0
+CIAA_TB_time                EQU 0
+CIAB_TA_time                EQU 0
+CIAB_TB_time                EQU 0
+CIAA_TA_continuous_enabled  EQU FALSE
+CIAA_TB_continuous_enabled  EQU FALSE
+CIAB_TA_continuous_enabled  EQU FALSE
+CIAB_TB_continuous_enabled  EQU FALSE
 
 beam_position               EQU $133
 
@@ -485,14 +485,14 @@ spr7_y_size2     EQU sprite7_SIZE/(spr_x_size2/8)
 
 ; **** Sprite-Fader ****
 sprf_colors_counter    RS.W 1
-sprf_copy_colors_state RS.W 1
+sprf_copy_colors_active RS.W 1
 
 ; **** Sprite-Fader-In ****
-sprfi_state            RS.W 1
+sprfi_active           RS.W 1
 sprfi_fader_angle      RS.W 1
 
 ; **** Sprite-Fader-Out ****
-sprfo_state            RS.W 1
+sprfo_active           RS.W 1
 sprfo_fader_angle      RS.W 1
 
 variables_SIZE         RS.B 0
@@ -510,16 +510,16 @@ init_own_variables
 
 ; **** Sprite-Fader ****
   move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
-  moveq   #TRUE,d0
-  move.w  d0,sprf_copy_colors_state(a3) ;Kopieren der Farben an
+  moveq   #0,d0
+  move.w  d0,sprf_copy_colors_active(a3) ;Kopieren der Farben an
 
 ; **** Sprite-Fader-In ****
-  move.w  d0,sprfi_state(a3) ;Sprite-Fader-In an
+  move.w  d0,sprfi_active(a3) ;Sprite-Fader-In an
   move.w  #sine_table_length/4,sprfi_fader_angle(a3) ;90 Grad
 
 ; **** Sprite-Fader-Out ****
   moveq   #FALSE,d1
-  move.w  d1,sprfo_state(a3)
+  move.w  d1,sprfo_active(a3)
   move.w  #sine_table_length/4,sprfo_fader_angle(a3) ;90 Grad
   rts
 
@@ -646,9 +646,9 @@ main_routine
   bne.s   exit
 
   move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
-  moveq   #TRUE,d0
-  move.w  d0,sprf_copy_colors_state(a3) ;Kopieren der Farben an
-  move.w  d0,sprfo_state(a3) ;Sprite-Fader-Out an
+  moveq   #0,d0
+  move.w  d0,sprf_copy_colors_active(a3) ;Kopieren der Farben an
+  move.w  d0,sprfo_active(a3) ;Sprite-Fader-Out an
 
 ; ## Rasterstahl-Routinen ##
 ; --------------------------
@@ -660,9 +660,9 @@ beam_routines
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   sprfi_state(a3)    ;Sprite-Fader-In an ?
+  tst.w   sprfi_active(a3)   ;Sprite-Fader-In an ?
   beq.s   beam_routines      ;Ja -> Schleife
-  tst.w   sprfo_state(a3)    ;Sprite-Fader-Out an ?
+  tst.w   sprfo_active(a3)   ;Sprite-Fader-Out an ?
   beq.s   beam_routines      ;Ja -> Schleife
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -675,7 +675,7 @@ exit
 ; ------------------------
   CNOP 0,4
 sprite_fader_in
-  tst.w   sprfi_state(a3)    ;Sprite-Fader-In an ?
+  tst.w   sprfi_active(a3)   ;Sprite-Fader-In an ?
   bne.s   no_sprite_fader_in ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  sprfi_fader_angle(a3),d2 ;Fader-Winkel 
@@ -706,7 +706,7 @@ sprfi_no_restart_fader_angle
   move.w  d6,sprf_colors_counter(a3) ;Image-Fader-In fertig ?
   bne.s   no_sprite_fader_in  ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,sprfi_state(a3) ;Sprite-Fader-In aus
+  move.w  d0,sprfi_active(a3) ;Sprite-Fader-In aus
 no_sprite_fader_in
   rts
 
@@ -714,7 +714,7 @@ no_sprite_fader_in
 ; ------------------------
   CNOP 0,4
 sprite_fader_out
-  tst.w   sprfo_state(a3)    ;Sprite-Fader-Out an ?
+  tst.w   sprfo_active(a3)   ;Sprite-Fader-Out an ?
   bne.s   no_sprite_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  sprfo_fader_angle(a3),d2 ;Fader-Winkel 
@@ -745,7 +745,7 @@ sprfo_no_restart_fader_angle
   move.w  d6,sprf_colors_counter(a3) ;Image-Fader-Out fertig ?
   bne.s   no_sprite_fader_out ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,sprfo_state(a3) ;Sprite-Fader-Out aus
+  move.w  d0,sprfo_active(a3) ;Sprite-Fader-Out aus
 no_sprite_fader_out
   rts
 

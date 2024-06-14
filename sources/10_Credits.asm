@@ -63,19 +63,19 @@ requires_68060                    EQU FALSE
 requires_fast_memory              EQU FALSE
 requires_multiscan_monitor        EQU FALSE
 
-workbench_start                   EQU FALSE
-workbench_fade                    EQU FALSE
-text_output                       EQU FALSE
+workbench_start_enabled           EQU FALSE
+workbench_fade_enabled            EQU FALSE
+text_output_enabled               EQU FALSE
 
 sys_taken_over
 pass_global_references
 pass_return_code
 
 mgv_count_lines                   EQU FALSE
-mgv_premorph_start_shape          EQU TRUE
-mgv_morph_loop                    EQU TRUE
+mgv_premorph_enabled          EQU TRUE
+mgv_morph_loop_enabled                    EQU TRUE
 
-cfc_prefade                       EQU FALSE
+cfc_prefade_enabled               EQU FALSE
 
 DMABITS                           EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 INTENABITS                        EQU INTF_SETCLR
@@ -137,14 +137,14 @@ chip_memory_size                  EQU 0
 
 AGA_OS_Version                    EQU 39
 
-CIAA_TA_value                     EQU 0
-CIAA_TB_value                     EQU 0
-CIAB_TA_value                     EQU 0
-CIAB_TB_value                     EQU 0
-CIAA_TA_continuous                EQU FALSE
-CIAA_TB_continuous                EQU FALSE
-CIAB_TA_continuous                EQU FALSE
-CIAB_TB_continuous                EQU FALSE
+CIAA_TA_time                      EQU 0
+CIAA_TB_time                      EQU 0
+CIAB_TA_time                      EQU 0
+CIAB_TB_time                      EQU 0
+CIAA_TA_continuous_enabled        EQU FALSE
+CIAA_TB_continuous_enabled        EQU FALSE
+CIAB_TA_continuous_enabled        EQU FALSE
+CIAB_TB_continuous_enabled        EQU FALSE
 
 beam_position                     EQU $133
 
@@ -174,7 +174,7 @@ pf2_plane_moduli                  EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane
 
 BPLCON0BITS                       EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+BPLCON0F_DPF+((pf_depth&$07)*BPLCON0F_BPU0)
 BPLCON1BITS                       EQU $4454
-BPLCON2BITS                       EQU TRUE
+BPLCON2BITS                       EQU 0
 BPLCON3BITS1                      EQU BPLCON3F_BRDSPRT+BPLCON3F_SPRES0+BPLCON3F_PF2OF0
 BPLCON3BITS2                      EQU BPLCON3BITS1+BPLCON3F_LOCT
 BPLCON4BITS                       EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)+(BPLCON4F_ESPRM4*spr_even_color_table_select)
@@ -275,7 +275,7 @@ mgv_object_face24_lines_number    EQU 3
 
 mgv_lines_number_max              EQU 54
 
-  IFEQ mgv_morph_loop
+  IFEQ mgv_morph_loop_enabled
 mgv_morph_shapes_number           EQU 4
   ELSE
 mgv_morph_shapes_number           EQU 5
@@ -607,23 +607,23 @@ mgv_rotation_y_angle_speed_angle RS.W 1
 
 mgv_lines_counter                RS.W 1
 
-mgv_morph_state                  RS.W 1
+mgv_morph_active                 RS.W 1
 mgv_morph_shapes_table_start     RS.W 1
 mgv_morph_delay_counter          RS.W 1
 
 ; **** Colors-Fader-Cross ****
-cfc_state                        RS.W 1
+cfc_active                       RS.W 1
 cfc_fader_angle                  RS.W 1
 cfc_fader_delay_counter          RS.W 1
 cfc_color_table_start            RS.W 1
 cfc_colors_counter               RS.W 1
-cfc_copy_colors_state            RS.W 1
+cfc_copy_colors_active           RS.W 1
 
 ; **** Effects-Handler ****
 eh_trigger_number                RS.W 1
 
 ; **** Main ****
-fx_state                         RS.W 1
+fx_active                        RS.W 1
 
 variables_SIZE                   RS.B 0
 
@@ -665,7 +665,7 @@ init_own_variables
 ; **** Vert-Text-Scroll ****
   lea     vts_image_data,a0
   move.l  a0,vts_image(a3)
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.w  d0,vts_variable_vert_scroll_speed(a3)
   move.w  d0,vts_text_table_start(a3)
 
@@ -677,13 +677,13 @@ init_own_variables
   move.w  d0,mgv_lines_counter(a3)
 
   moveq   #FALSE,d1
-  IFEQ mgv_premorph_start_shape
-    move.w  d0,mgv_morph_state(a3)
+  IFEQ mgv_premorph_enabled
+    move.w  d0,mgv_morph_active(a3)
   ELSE
-    move.w  d1,mgv_morph_state(a3)
+    move.w  d1,mgv_morph_active(a3)
   ENDC
   move.w  d0,mgv_morph_shapes_table_start(a3)
-  IFEQ mgv_premorph_start_shape
+  IFEQ mgv_premorph_enabled
     move.w  d1,mgv_morph_delay_counter(a3) ;Delay-Counter deaktivieren
   ELSE
     moveq   #1,d2
@@ -691,14 +691,14 @@ init_own_variables
   ENDC
 
 ; **** Colors-Fader-Cross ****
-  IFEQ cfc_prefade
-    move.w  d0,cfc_state(a3)
+  IFEQ cfc_prefade_enabled
+    move.w  d0,cfc_active(a3)
     move.w  #cfc_colors_number*3,cfc_colors_counter(a3)
-    move.w  d0,cfc_copy_colors_state(a3)
+    move.w  d0,cfc_copy_colors_active(a3)
   ELSE
-    move.w  d1,cfc_state(a3)
+    move.w  d1,cfc_active(a3)
     move.w  d0,cfc_colors_counter(a3)
-    move.w  d1,cfc_copy_colors_state(a3)
+    move.w  d1,cfc_copy_colors_active(a3)
   ENDC
   move.w  #sine_table_length/4,cfc_fader_angle(a3) ;90 Grad
   moveq   #1,d2
@@ -709,7 +709,7 @@ init_own_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_state(a3)
+  move.w  d1,fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -724,7 +724,7 @@ init_all
   bsr     vts_init_characters_images
   bsr     mgv_init_object_info_table
   bsr     mgv_init_morph_shapes_table
-  IFEQ mgv_premorph_start_shape
+  IFEQ mgv_premorph_enabled
     bsr     mgv_init_start_shape
   ENDC
   bsr     init_first_copperlist
@@ -836,7 +836,7 @@ mgv_init_morph_shapes_table
   move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
 ; ** Form 4 **
   lea     mgv_object_shape4_coordinates(pc),a0 ;Zeiger auf 4. Form
-  IFEQ mgv_morph_loop
+  IFEQ mgv_morph_loop_enabled
     move.l  a0,(a1)         ;Zeiger auf Form-Tabelle
   ELSE
     move.l  a0,(a1)+        ;Zeiger auf Form-Tabelle
@@ -846,11 +846,11 @@ mgv_init_morph_shapes_table
   ENDC
   rts
 
-  IFEQ mgv_premorph_start_shape
+  IFEQ mgv_premorph_enabled
     CNOP 0,4
 mgv_init_start_shape
     bsr     mgv_morph_object
-    tst.w   mgv_morph_state(a3) ;Morphing beendet?
+    tst.w   mgv_morph_active(a3) ;Morphing beendet?
     beq.s   mgv_init_start_shape ;Nein -> verzweige
     rts
   ENDC
@@ -1016,7 +1016,7 @@ main_routine
 ; ----------------------------------------------------------------------
   CNOP 0,4
 no_sync_routines
-  IFEQ cfc_prefade
+  IFEQ cfc_prefade_enabled
     bra     cfc_init_start_colors
   ELSE
     rts
@@ -1048,7 +1048,7 @@ beam_routines
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_state(a3)       ;Effekte beendet ?
+  tst.w   fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
@@ -1243,7 +1243,7 @@ mgv_rotate_loop
 ; -----------------------------
   CNOP 0,4
 mgv_morph_object
-  tst.w   mgv_morph_state(a3) ;Morphing an ?
+  tst.w   mgv_morph_active(a3) ;Morphing an ?
   bne.s   mgv_no_morph_object ;Nein -> verzweige
   move.w  mgv_morph_shapes_table_start(a3),d1 ;Startwert
   moveq   #TRUE,d2           ;Koordinatenzähler
@@ -1273,7 +1273,7 @@ mgv_morph_object_next_coordinate
   bne.s   mgv_no_morph_object ;Nein -> verzweige
   addq.w  #1,d1              ;nächster Eintrag in Objekttablelle
   cmp.w   #mgv_morph_shapes_number,d1 ;Ende der Tabelle ?
-  IFEQ mgv_morph_loop
+  IFEQ mgv_morph_loop_enabled
     bne.s   mgv_save_morph_shapes_table_start ;Nein -> verzweige
     moveq   #TRUE,d1         ;Neustart
 mgv_save_morph_shapes_table_start
@@ -1284,7 +1284,7 @@ mgv_save_morph_shapes_table_start
   move.w  #mgv_morph_delay,mgv_morph_delay_counter(a3) ;Zähler zurücksetzen
 mgv_morph_object_disable
   moveq   #FALSE,d0
-  move.w  d0,mgv_morph_state(a3) ;Morhing aus
+  move.w  d0,mgv_morph_active(a3) ;Morhing aus
 mgv_no_morph_object
   rts
 
@@ -1456,7 +1456,7 @@ mgv_skip
 ; ------------------------
   CNOP 0,4
 colors_fader_cross
-  tst.w   cfc_state(a3)      ;Colors-Fader-Cross an ?
+  tst.w   cfc_active(a3)     ;Colors-Fader-Cross an ?
   bne.s   no_colors_fader_cross ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  cfc_fader_angle(a3),d2 ;Fader-Winkel 
@@ -1490,7 +1490,7 @@ cfc_save_fader_angle
   move.w  d6,cfc_colors_counter(a3) ;Color-Fader-Cross fertig ?
   bne.s   no_colors_fader_cross ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,cfc_state(a3)   ;Color-Fader-Cross aus
+  move.w  d0,cfc_active(a3)  ;Color-Fader-Cross aus
 no_colors_fader_cross
   rts
 
@@ -1503,7 +1503,7 @@ cfc_copy_color_table
   IFNE cl1_size2
     move.l  a4,-(a7)
   ENDC
-  tst.w   cfc_copy_colors_state(a3)  ;Kopieren der Farbwerte beendet ?
+  tst.w   cfc_copy_colors_active(a3) ;Kopieren der Farbwerte beendet ?
   bne.s   cfc_no_copy_color_table ;Ja -> verzweige
   move.w  #$0f0f,d3          ;Maske für RGB-Nibbles
   IFGT cfc_colors_number-32
@@ -1560,7 +1560,7 @@ cfc_no_restart_color_bank
   bne.s   cfc_no_copy_color_table ;Nein -> verzweige
 cfc_disable_copy_color_table
   moveq   #FALSE,d0
-  move.w  d0,cfc_copy_colors_state(a3) ;Kopieren beendet
+  move.w  d0,cfc_copy_colors_active(a3) ;Kopieren beendet
 cfc_next_entry
   move.w  #cfc_fader_delay,cfc_fader_delay_counter(a3) ;Zähler zurücksetzen
   move.w  cfc_color_table_start(a3),d0
@@ -1568,7 +1568,7 @@ cfc_next_entry
   beq.s   cfc_stop_colors_fader_cross ;Wenn Null -> verzweige
   cmp.w   #cfc_color_tables_number,d0 ;Ende der Farbtabelle?
   blt.s   cfc_save_color_table_start ;Nein -> verzweige
-  moveq   #TRUE,d0           ;Neustart
+  moveq   #0,d0           ;Neustart
 cfc_save_color_table_start
   move.w  d0,cfc_color_table_start(a3)
 cfc_no_copy_color_table
@@ -1592,7 +1592,7 @@ control_counters
   subq.w  #1,d0              ;Zähler verringern
   bpl.s   mgv_morph_save_delay_counter ;Wenn positiv -> verzweige
 mgv_morph_enable
-  clr.w   mgv_morph_state(a3) ;Morphing an
+  clr.w   mgv_morph_active(a3) ;Morphing an
 mgv_morph_save_delay_counter
   move.w  d0,mgv_morph_delay_counter(a3) 
 mgv_morph_no_delay_counter
@@ -1604,9 +1604,9 @@ mgv_morph_no_delay_counter
 cfc_fader_enable
   move.w  #cfc_colors_number*3,cfc_colors_counter(a3)
   moveq   #TRUE,d1
-  move.w  d1,cfc_state(a3)
+  move.w  d1,cfc_active(a3)
   move.w  #sine_table_length/4,cfc_fader_angle(a3) ;90 Grad
-  move.w  d1,cfc_copy_colors_state(a3)
+  move.w  d1,cfc_copy_colors_active(a3)
 cfc_save_fader_delay_counter
   move.w  d0,cfc_fader_delay_counter(a3) 
 cfc_no_fader_delay_counter
@@ -1639,9 +1639,9 @@ no_effects_handler
   CNOP 0,4
 eh_start_colors_fader_cross
   move.w  #cfc_colors_number*3,cfc_colors_counter(a3)
-  moveq   #TRUE,d0
-  move.w  d0,cfc_state(a3)
-  move.w  d0,cfc_copy_colors_state(a3)
+  moveq   #0,d0
+  move.w  d0,cfc_active(a3)
+  move.w  d0,cfc_copy_colors_active(a3)
   rts
   CNOP 0,4
 eh_start_vert_text_scroll
@@ -1656,7 +1656,7 @@ eh_stop_vert_text_scroll
 eh_stop_colors_fader_cross
   moveq   #-1,d0
   move.w  d0,cfc_color_table_start(a3) ;Startwert für Farbtabelle "Ausblenden"
-  tst.w   cfc_state(a3)      ;Colors-Fader-Cross bereits aktiv ?
+  tst.w   cfc_active(a3)     ;Colors-Fader-Cross bereits aktiv ?
   beq.s   eh_no_activate_delay_counter ;Ja -> verzweige
   moveq   #1,d0
   move.w  d0,cfc_fader_delay_counter(a3) ;Zähler aktivieren
@@ -1664,7 +1664,7 @@ eh_no_activate_delay_counter
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_state(a3)       ;Effekte beendet
+  clr.w   fx_active(a3)      ;Effekte beendet
   rts
 
 
@@ -1842,7 +1842,7 @@ mgv_object_shape4_coordinates
   DC.W 0,-(60*8),0             ;P12
   DC.W 0,60*8,0                ;P13
 
-  IFNE mgv_morph_loop
+  IFNE mgv_morph_loop_enabled
 ; ** Form 5 **
 mgv_object_shape5_coordinates
 ; * Zoom-Out *

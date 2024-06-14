@@ -74,17 +74,17 @@ requires_68060                    EQU FALSE
 requires_fast_memory              EQU FALSE
 requires_multiscan_monitor        EQU FALSE
 
-workbench_start                   EQU FALSE
-workbench_fade                    EQU FALSE
-text_output                       EQU FALSE
+workbench_start_enabled           EQU FALSE
+workbench_fade_enabled            EQU FALSE
+text_output_enabled               EQU FALSE
 
 sys_taken_over
 pass_global_references
 pass_return_code
 
 mgv_count_lines                   EQU FALSE
-mgv_premorph_start_shape          EQU TRUE
-mgv_morph_loop                    EQU FALSE
+mgv_premorph_enabled              EQU TRUE
+mgv_morph_loop_enabled            EQU FALSE
 
 DMABITS                           EQU DMAF_BLITTER+DMAF_RASTER+DMAF_BLITHOG+DMAF_SETCLR
 
@@ -137,14 +137,14 @@ chip_memory_size                  EQU 0
 
 AGA_OS_Version                    EQU 39
 
-CIAA_TA_value                     EQU 0
-CIAA_TB_value                     EQU 0
-CIAB_TA_value                     EQU 0
-CIAB_TB_value                     EQU 0
-CIAA_TA_continuous                EQU FALSE
-CIAA_TB_continuous                EQU FALSE
-CIAB_TA_continuous                EQU FALSE
-CIAB_TB_continuous                EQU FALSE
+CIAA_TA_time                      EQU 0
+CIAA_TB_time                      EQU 0
+CIAB_TA_time                      EQU 0
+CIAB_TB_time                      EQU 0
+CIAA_TA_continuous_enabled        EQU FALSE
+CIAA_TB_continuous_enabled        EQU FALSE
+CIAB_TA_continuous_enabled        EQU FALSE
+CIAB_TB_continuous_enabled        EQU FALSE
 
 beam_position                     EQU $133
 
@@ -170,10 +170,10 @@ pf1_plane_moduli                  EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane
 
 BPLCON0BITS                       EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
 BPLCON1BITS                       EQU $8888
-BPLCON2BITS                       EQU TRUE
-BPLCON3BITS1                      EQU TRUE
+BPLCON2BITS                       EQU 0
+BPLCON3BITS1                      EQU 0
 BPLCON3BITS2                      EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON4BITS                       EQU TRUE
+BPLCON4BITS                       EQU 0
 DIWHIGHBITS                       EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
 FMODEBITS                         EQU FMODEF_BPL32+FMODEF_BPAGEM
 
@@ -311,7 +311,7 @@ mgv_object_face48_lines_number    EQU 3
 mgv_lines_number_max              EQU 132
 mgv_glenz_colors_number           EQU 4
 
-  IFEQ mgv_morph_loop
+  IFEQ mgv_morph_loop_enabled
 mgv_morph_shapes_number           EQU 3
   ELSE
 mgv_morph_shapes_number           EQU 4
@@ -497,20 +497,20 @@ mgv_rotation_z_angle_speed_angle RS.W 1
 
 mgv_lines_counter                RS.W 1
 
-mgv_morph_state                  RS.W 1
+mgv_morph_active                 RS.W 1
 mgv_morph_shapes_table_start     RS.W 1
 mgv_morph_delay_counter          RS.W 1
 
 ; **** Scroll-Playfield-Bottom-In ****
-spbi_state                       RS.W 1
+spbi_active                      RS.W 1
 spbi_y_angle                     RS.W 1
 
 ; **** Scroll-Playfield-Bottom-Out ****
-spbo_state                       RS.W 1
+spbo_active                      RS.W 1
 spbo_y_angle                     RS.W 1
 
 ; **** Main ****
-fx_state                         RS.W 1
+fx_active                        RS.W 1
 
 variables_SIZE                   RS.B 0
 
@@ -550,7 +550,7 @@ start_013_morph_glenz_vectors
 init_own_variables
 
 ; **** Morphing-Glenz-Vectors ****
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.w  d0,mgv_rotation_x_angle(a3)
   move.w  d0,mgv_rotation_y_angle(a3)
   move.w  d0,mgv_rotation_z_angle(a3)
@@ -564,13 +564,13 @@ init_own_variables
 
   move.w  d0,mgv_lines_counter(a3)
 
-  IFEQ mgv_premorph_start_shape
-    move.w  d0,mgv_morph_state(a3)
+  IFEQ mgv_premorph_enabled
+    move.w  d0,mgv_morph_active(a3)
   ELSE
-    move.w  dq,mgv_morph_state(a3)
+    move.w  dq,mgv_morph_active(a3)
   ENDC
   move.w  d0,mgv_morph_shapes_table_start(a3)
-  IFEQ mgv_premorph_start_shape
+  IFEQ mgv_premorph_enabled
     move.w  d1,mgv_morph_delay_counter(a3) ;Delay-Counter aktivieren
   ELSE
     moveq   #1,d2
@@ -578,16 +578,16 @@ init_own_variables
   ENDC
 
 ; **** Scroll-Playfield-Bottom-In ****
-  move.w  d0,spbi_state(a3)
+  move.w  d0,spbi_active(a3)
   move.w  d0,spbi_y_angle(a3) ;0 Grad
 
 ; **** Scroll-Playfield-Bottom-Out ****
   moveq   #FALSE,d1
-  move.w  d1,spbo_state(a3)
+  move.w  d1,spbo_active(a3)
   move.w  #sine_table_length/4,spbo_y_angle(a3) ;90 Grad
 
 ; **** Main ****
-  move.w  d1,fx_state(a3)
+  move.w  d1,fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -596,7 +596,7 @@ init_own_variables
 init_all
   bsr.s   mgv_init_object_info_table
   bsr.s   mgv_init_morph_shapes_table
-  IFEQ mgv_premorph_start_shape
+  IFEQ mgv_premorph_enabled
     bsr.s   mgv_init_start_shape
   ENDC
   bsr.s   mgv_init_color_table
@@ -633,7 +633,7 @@ mgv_init_morph_shapes_table
   move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
 ; ** Form 3 **
   lea     mgv_object_shape3_coordinates(pc),a0 ;Zeiger auf 3. Form
-  IFEQ mgv_morph_loop
+  IFEQ mgv_morph_loop_enabled
     move.l  a0,(a1)          ;Zeiger auf Form-Tabelle
   ELSE
     move.l  a0,(a1)+         ;Zeiger auf Form-Tabelle
@@ -643,11 +643,11 @@ mgv_init_morph_shapes_table
   ENDC
   rts
 
-  IFEQ mgv_premorph_start_shape
+  IFEQ mgv_premorph_enabled
     CNOP 0,4
 mgv_init_start_shape
     bsr     mgv_morph_object
-    tst.w   mgv_morph_state(a3) ;Morphing beendet?
+    tst.w   mgv_morph_active(a3) ;Morphing beendet?
     beq.s   mgv_init_start_shape ;Nein -> verzweige
     rts
   ENDC
@@ -796,7 +796,7 @@ beam_routines
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_state(a3)       ;Effekte beendet ?
+  tst.w   fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.l  nop_second_copperlist(pc),COP2LC-DMACONR(a6) ;2. Copperliaste deaktivieren
@@ -862,7 +862,7 @@ mgv_clear_playfield1
   clr.w   d0
   move.l  d0,a7
   ADDF.L  pf1_plane_width*visible_lines_number*pf1_depth3,a7 ;Ende des Playfieldes
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.l  d0,a3
   moveq   #7-1,d7
 mgv_clear_playfield1_loop
@@ -988,7 +988,7 @@ mgv_rotate_loop
 ; -----------------------------
   CNOP 0,4
 mgv_morph_object
-  tst.w   mgv_morph_state(a3) ;Morphing an ?
+  tst.w   mgv_morph_active(a3) ;Morphing an ?
   bne.s   mgv_no_morph_object ;Nein -> verzweige
   move.w  mgv_morph_shapes_table_start(a3),d1 ;Startwert
   moveq   #TRUE,d2           ;Koordinatenzähler
@@ -1018,7 +1018,7 @@ mgv_morph_object_next_coordinate
   bne.s   mgv_no_morph_object ;Nein -> verzweige
   addq.w  #1,d1              ;nächster Eintrag in Objekttablelle
   cmp.w   #mgv_morph_shapes_number,d1 ;Ende der Tabelle ?
-  IFEQ mgv_morph_loop
+  IFEQ mgv_morph_loop_enabled
     bne.s   mgv_save_morph_shapes_table_start ;Nein -> verzweige
     moveq   #TRUE,d1         ;Neustart
 mgv_save_morph_shapes_table_start
@@ -1029,7 +1029,7 @@ mgv_save_morph_shapes_table_start
   move.w  #mgv_morph_delay,mgv_morph_delay_counter(a3) ;Zähler zurücksetzen
 mgv_morph_object_disable
   moveq   #FALSE,d0
-  move.w  d0,mgv_morph_state(a3) ;Morhing aus
+  move.w  d0,mgv_morph_active(a3) ;Morhing aus
 mgv_no_morph_object
   rts
 
@@ -1175,7 +1175,7 @@ mgv_skip
 ; -------------------------------------
   CNOP 0,4
 scroll_playfield_bottom_in
-  tst.w   spbi_state(a3)     ;Scroll-Playfield-Bottom-In an ?
+  tst.w   spbi_active(a3)    ;Scroll-Playfield-Bottom-In an ?
   bne.s   no_scroll_playfield_bottom_in ;Nein -> verzweige
   move.w  spbi_y_angle(a3),d2 ;Y-Winkel
   cmp.w   #sine_table_length/4,d2 ;90 Grad ?
@@ -1194,14 +1194,14 @@ no_scroll_playfield_bottom_in
   CNOP 0,4
 spbi_finished
   moveq   #FALSE,d0
-  move.w  d0,spbi_state(a3)  ;Scroll-Playfield-Bottom-In aus
+  move.w  d0,spbi_active(a3) ;Scroll-Playfield-Bottom-In aus
   rts
 
 ; ** Playfield nach unten ausscrollen **
 ; --------------------------------------
   CNOP 0,4
 scroll_playfield_bottom_out
-  tst.w   spbo_state(a3)     ;Vert-Scroll-Playfild-Out an ?
+  tst.w   spbo_active(a3)    ;Vert-Scroll-Playfild-Out an ?
   bne.s   no_scroll_playfield_bottom_out ;Nein -> verzweige
   move.w  spbo_y_angle(a3),d2 ;Y-Winkel
   cmp.w   #sine_table_length/2,d2 ;180 Grad ?
@@ -1219,9 +1219,9 @@ no_scroll_playfield_bottom_out
   rts
   CNOP 0,4
 spbo_finished
-  clr.w   fx_state(a3)       ;Effekte beendet
+  clr.w   fx_active(a3)      ;Effekte beendet
   moveq   #FALSE,d0
-  move.w  d0,spbo_state(a3)  ;Scroll-Playfield-Bottom-Out aus
+  move.w  d0,spbo_active(a3) ;Scroll-Playfield-Bottom-Out aus
   rts
 
   CNOP 0,4
@@ -1257,10 +1257,10 @@ mgv_control_counters
   subq.w  #1,d0              ;Zähler verringern
   bpl.s   mgv_morph_save_delay_counter ;Wenn positiv -> verzweige
 mgv_morph_enable
-  clr.w   mgv_morph_state(a3) ;Morphing an
+  clr.w   mgv_morph_active(a3) ;Morphing an
   cmp.w   #mgv_morph_shapes_number-1,mgv_morph_shapes_table_start(a3) ;Ende der Tabelle ?
   bne.s   mgv_morph_save_delay_counter ;Nein -> verzweige
-  clr.w   spbo_state(a3)     ;Scroll-Playfield-Bottom-Out an
+  clr.w   spbo_active(a3)    ;Scroll-Playfield-Bottom-Out an
 mgv_morph_save_delay_counter
   move.w  d0,mgv_morph_delay_counter(a3) 
 mgv_morph_no_delay_counter
@@ -1415,7 +1415,7 @@ mgv_object_shape3_coordinates
   DC.W -(82*8),48*8,-32*8      ;P24
   DC.W 0,48*8,0                ;P25
 
-  IFNE mgv_morph_loop
+  IFNE mgv_morph_loop_enabled
 ; ** Form 4 **
 ; * Zoom-Out *
 mgv_object_shape4_coordinates

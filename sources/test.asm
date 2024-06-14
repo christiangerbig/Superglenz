@@ -247,10 +247,10 @@ spbo_y_angle_speed                  EQU 5
 ; **** Scroll-Playfield-Buttom ****
   RSRESET
 
-spbi_state                            RS.W 1
+spbi_active                           RS.W 1
 spbi_y_angle                          RS.W 1
 
-spbo_state                            RS.W 1
+spbo_active                           RS.W 1
 spbo_y_angle                          RS.W 1
 
 variables_SIZE                        RS.B 0
@@ -259,18 +259,18 @@ variables_SIZE                        RS.B 0
 ; **** Scroll-Playfield-Buttom ****
 start
   lea     variables(pc),a3
-  moveq   #TRUE,d0
-  move.w  d0,spbi_state(a3)
+  moveq   #0,d0
+  move.w  d0,spbi_active(a3)
   move.w  d0,spbi_y_angle(a3)
 
   moveq   #FALSE,d1
-  move.w  d1,spbo_state(a3)
+  move.w  d1,spbo_active(a3)
   move.w  #sine_table_length/4,spbo_y_angle(a3)
 
   lea     $140000,a4
 loop
   bsr.s   scroll_playfield_buttom_in
-  tst.w   spbi_state(a3)     ;Scroll-Playfield-Buttom-In an ?
+  tst.w   spbi_active(a3)    ;Scroll-Playfield-Buttom-In an ?
   beq.s   loop
   rts
 
@@ -278,7 +278,7 @@ loop
 ; -------------------------------------
   CNOP 0,4
 scroll_playfield_buttom_in
-  tst.w   spbi_state(a3)     ;Scroll-Playfield-Buttom-In an ?
+  tst.w   spbi_active(a3)    ;Scroll-Playfield-Buttom-In an ?
   bne.s   no_scroll_playfield_buttom_in ;Nein -> verzweige
   move.w  spbi_y_angle(a3),d2 ;Y-Winkel
   cmp.w   #sine_table_length/4,d2 ;90 Grad ?
@@ -297,7 +297,7 @@ no_scroll_playfield_buttom_in
   CNOP 0,4
 spbi_finished
   moveq   #FALSE,d0
-  move.w  d0,spbi_state(a3)  ;Scroll-Playfield-Buttom-In aus
+  move.w  d0,spbi_active(a3) ;Scroll-Playfield-Buttom-In aus
   rts
 
 
@@ -305,7 +305,7 @@ spbi_finished
 ; --------------------------------------
   CNOP 0,4
 scroll_playfield_buttom_out
-  tst.w   spbo_state(a3)     ;Vert-Scroll-Playfild-Out an ?
+  tst.w   spbo_active(a3)    ;Vert-Scroll-Playfild-Out an ?
   bne.s   no_scroll_playfield_buttom_out ;Nein -> verzweige
   move.w  spbo_y_angle(a3),d2 ;Y-Winkel
   cmp.w   #sine_table_length/2,d2 ;180 Grad ?
@@ -323,9 +323,9 @@ no_scroll_playfield_buttom_out
   rts
   CNOP 0,4
 spbo_finished
-;  clr.w   fx_state(a3)       ;Effekte beendet
+;  clr.w   fx_active(a3)      ;Effekte beendet
   moveq   #FALSE,d0
-  move.w  d0,spbo_state(a3)  ;Scroll-Playfield-Buttom-Out aus
+  move.w  d0,spbo_active(a3) ;Scroll-Playfield-Buttom-Out aus
   rts
 
   CNOP 0,4
