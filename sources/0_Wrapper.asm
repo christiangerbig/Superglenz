@@ -85,8 +85,6 @@ pt_v3.0b
   ENDC
 pt_mute_enabled
 pt_ciatiming_enabled       EQU TRUE
-pt_usedfx                  EQU %1101010100010110
-pt_usedefx                 EQU %0000000000000001
 pt_finetune_enabled        EQU FALSE
   IFD pt_v3.0b
 pt_metronome_enabled       EQU FALSE
@@ -95,6 +93,8 @@ pt_track_volumes_enabled   EQU FALSE
 pt_track_periods_enabled   EQU FALSE
 pt_music_fader_enabled     EQU FALSE
 pt_split_module_enabled    EQU TRUE
+pt_usedfx                  EQU %1101010100010110
+pt_usedefx                 EQU %0000000000000001
 
 DMABITS                    EQU DMAF_COPPER+DMAF_SETCLR
 
@@ -159,9 +159,6 @@ disk_memory_size           EQU 0
 extra_memory_size          EQU 0
 
 chip_memory_size           EQU 0
-
-AGA_OS_Version             EQU 39
-
   IFEQ pt_ciatiming_enabled
 CIABCRABITS                EQU CIACRBF_LOAD
   ENDC

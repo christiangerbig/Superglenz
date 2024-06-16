@@ -72,8 +72,8 @@ pass_global_references
 pass_return_code
 
 mgv_count_lines                   EQU FALSE
-mgv_premorph_enabled          EQU TRUE
-mgv_morph_loop_enabled                    EQU TRUE
+mgv_premorph_enabled              EQU TRUE
+mgv_morph_loop_enabled            EQU TRUE
 
 cfc_prefade_enabled               EQU FALSE
 
@@ -134,9 +134,6 @@ disk_memory_size                  EQU 0
 extra_memory_size                 EQU 0
 
 chip_memory_size                  EQU 0
-
-AGA_OS_Version                    EQU 39
-
 CIAA_TA_time                      EQU 0
 CIAA_TB_time                      EQU 0
 CIAB_TA_time                      EQU 0
