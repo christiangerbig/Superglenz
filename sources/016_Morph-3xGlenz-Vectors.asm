@@ -680,10 +680,9 @@ mgv_morph_shape_delay                    RS.W 1
 mgv_morph_shape_SIZE                     RS.B 0
 
 
-; ## Beginn des Initialisierungsprogramms ##
-; ------------------------------------------
 start_016_morph_3xglenz_vectors
-  INCLUDE "sys-init.i"
+
+  INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
 ; -------------------------------------
@@ -1461,12 +1460,6 @@ get_wrapper_view_values
   COPY_COPPERLIST cl2,2
 
 
-; ** CIA-Timer starten **
-; -----------------------
-
-  INCLUDE "continuous-timers-start.i"
-
-
 ; ## Hauptprogramm ##
 ; -------------------
 ; a3 ... Basisadresse aller Variablen
@@ -2102,18 +2095,6 @@ mgv_morph_no_delay_counter
   CNOP 0,4
 NMI_int_server
   rts
-
-
-; ** Timer stoppen **
-; -------------------
-
-  INCLUDE "continuous-timers-stop.i"
-
-
-; ## System wieder in Ausganszustand zurücksetzen ##
-; --------------------------------------------------
-
-  INCLUDE "sys-return.i"
 
 
 ; ## Hilfsroutinen ##

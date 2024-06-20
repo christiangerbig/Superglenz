@@ -735,10 +735,9 @@ gv_object_info_lines_number RS.W 1
 gv_object_info_SIZE         RS.B 0
 
 
-; ## Beginn des Initialisierungsprogramms ##
-; ------------------------------------------
 start_00_intro
-  INCLUDE "sys-init.i"
+
+  INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
 ; -------------------------------------
@@ -1139,12 +1138,6 @@ cl2_init_BPLCON4_registers2_loop
   dbf     d7,cl2_init_BPLCON4_registers2_loop
   COPMOVEQ TRUE,COPJMP1
   rts
-
-
-; ** CIA-Timer starten **
-; -----------------------
-
-  INCLUDE "continuous-timers-start.i"
 
 
 ; ## Hauptprogramm ##
@@ -1671,18 +1664,6 @@ mh_quit
   CNOP 0,4
 NMI_int_server
   rts
-
-
-; ** Timer stoppen **
-; -------------------
-
-  INCLUDE "continuous-timers-stop.i"
-
-
-; ## System wieder in Ausganszustand zurücksetzen ##
-; --------------------------------------------------
-
-  INCLUDE "sys-return.i"
 
 
 ; ## Hilfsroutinen ##
