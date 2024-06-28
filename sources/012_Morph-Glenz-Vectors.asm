@@ -17,12 +17,12 @@
 
   XDEF start_012_morph_glenz_vectors
 
-  XREF v_BPLCON0BITS
-  XREF v_BPLCON3BITS1
-  XREF v_BPLCON3BITS2
-  XREF v_BPLCON4BITS
-  XREF v_FMODEBITS
-  XREF COLOR00BITS
+  XREF v_bplcon0_bits
+  XREF v_bplcon3_bits1
+  XREF v_bplcon3_bits2
+  XREF v_bplcon4_bits
+  XREF v_fmode_bits
+  XREF color00_bits
   XREF nop_second_copperlist
   XREF mouse_handler
   XREF sine_table
@@ -75,18 +75,18 @@ sys_taken_over
 pass_global_references
 pass_return_code
 
-mgv_count_lines                   EQU FALSE
+mgv_count_LINES                   EQU FALSE
 mgv_premorph_enabled              EQU TRUE
 mgv_morph_loop_enabled            EQU FALSE
 
-DMABITS                           EQU DMAF_BLITTER+DMAF_RASTER+DMAF_BLITHOG+DMAF_SETCLR
+dma_bits                          EQU DMAF_BLITTER+DMAF_RASTER+DMAF_BLITHOG+DMAF_SETCLR
 
-INTENABITS                        EQU INTF_SETCLR
+intena_bits                       EQU INTF_SETCLR
 
-CIAAICRBITS                       EQU CIAICRF_SETCLR
-CIABICRBITS                       EQU CIAICRF_SETCLR
+ciaa_icr_bits                     EQU CIAICRF_SETCLR
+ciab_icr_bits                     EQU CIAICRF_SETCLR
 
-COPCONBITS                        EQU COPCONF_CDANG
+copcon_bits                       EQU COPCONF_CDANG
 
 pf1_x_size1                       EQU 256
 pf1_y_size1                       EQU 256+683
@@ -127,14 +127,14 @@ disk_memory_size                  EQU 0
 extra_memory_size                 EQU 0
 
 chip_memory_size                  EQU 0
-CIAA_TA_time                      EQU 0
-CIAA_TB_time                      EQU 0
-CIAB_TA_time                      EQU 0
-CIAB_TB_time                      EQU 0
-CIAA_TA_continuous_enabled        EQU FALSE
-CIAA_TB_continuous_enabled        EQU FALSE
-CIAB_TA_continuous_enabled        EQU FALSE
-CIAB_TB_continuous_enabled        EQU FALSE
+ciaa_ta_time                      EQU 0
+ciaa_tb_time                      EQU 0
+ciab_ta_time                      EQU 0
+ciab_tb_time                      EQU 0
+ciaa_ta_continuous_enabled        EQU FALSE
+ciaa_tb_continuous_enabled        EQU FALSE
+ciab_ta_continuous_enabled        EQU FALSE
+ciab_tb_continuous_enabled        EQU FALSE
 
 beam_position                     EQU $133
 
@@ -144,31 +144,31 @@ visible_lines_number              EQU 256
 MINROW                            EQU VSTOP_OVERSCAN_PAL
 
 pf_pixel_per_datafetch            EQU 64 ;4x
-DDFSTRTBITS                       EQU DDFSTART_320_pixel
-DDFSTOPBITS                       EQU DDFSTOP_256_pixel_left_aligned_4x
+DDFSTRT_bits                      EQU DDFSTART_320_pixel
+DDFSTOP_bits                      EQU DDFSTOP_256_PIXEL_LEFT_ALIGNED_4X
 
-display_window_HSTART             EQU HSTART_256_pixel
-display_window_VSTART             EQU MINROW
-DIWSTRTBITS                       EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
-display_window_HSTOP              EQU HSTOP_256_pixel
-display_window_VSTOP              EQU VSTOP_OVERSCAN_PAL
-DIWSTOPBITS                       EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
+display_window_hstart             EQU HSTART_256_PIXEL
+display_window_vstart             EQU MINROW
+diwstrt_bits                      EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
+display_window_hstop              EQU HSTOP_256_pixel
+display_window_vstop              EQU VSTOP_OVERSCAN_PAL
+diwstop_bits                      EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
 pf1_plane_width                   EQU pf1_x_size3/8
 data_fetch_width                  EQU pixel_per_line/8
 pf1_plane_moduli                  EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
-BPLCON0BITS                       EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON1BITS                       EQU $8800
-BPLCON2BITS                       EQU 0
-BPLCON3BITS1                      EQU 0
-BPLCON3BITS2                      EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON4BITS                       EQU 0
-DIWHIGHBITS                       EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
-FMODEBITS                         EQU FMODEF_BPL32+FMODEF_BPAGEM
+bplcon0_bits                      EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
+bplcon1_bits                      EQU $8800
+bplcon2_bits                      EQU 0
+bplcon3_bits1                     EQU 0
+bplcon3_bits2                     EQU bplcon3_bits1+BPLCON3F_LOCT
+bplcon4_bits                      EQU 0
+diwhigh_bits                   EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
+fmode_bits                        EQU FMODEF_BPL32+FMODEF_BPAGEM
 
-cl2_HSTART                        EQU $00
-cl2_VSTART                        EQU beam_position&$ff
+cl2_hstart                        EQU $00
+cl2_vstart                        EQU beam_position&$ff
 
 sine_table_length                 EQU 512
 
@@ -290,7 +290,7 @@ mgv_morph_shapes_number           EQU 3
 mgv_morph_shapes_number           EQU 4
   ENDC
 mgv_morph_speed                   EQU 8
-mgv_morph_delay                   EQU 6*PALFPS
+mgv_morph_delay                   EQU 6*PAL_FPS
 
 ; **** Fill-Blit ****
 mgv_fill_blit_x_size              EQU visible_pixels_number
@@ -298,8 +298,8 @@ mgv_fill_blit_y_size              EQU visible_lines_number
 mgv_fill_blit_depth               EQU pf1_depth3
 
 ; **** Scroll-Playfield-Bottom ****
-spb_min_VSTART                    EQU VSTART_256_lines
-spb_max_VSTOP                     EQU VSTOP_OVERSCAN_PAL
+spb_min_vstart                    EQU VSTART_256_LINES
+spb_max_vstop                     EQU VSTOP_OVERSCAN_PAL
 spb_max_visible_lines_number      EQU 283
 spb_y_radius                      EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
 spb_y_centre                      EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
@@ -354,7 +354,7 @@ cl2_ext1_COP2LCH    RS.L 1
 cl2_ext1_COP2LCL    RS.L 1
 cl2_ext1_COPJMP2    RS.L 1
 
-cl2_extension1_SIZE RS.B 0
+cl2_extension1_size RS.B 0
 
 
   RSRESET
@@ -387,7 +387,7 @@ cl2_ext3_BLTAMOD    RS.L 1
 cl2_ext3_BLTDMOD    RS.L 1
 cl2_ext3_BLTSIZE    RS.L 1
 
-cl2_extension3_SIZE RS.B 0
+cl2_extension3_size RS.B 0
 
   RSRESET
 
@@ -395,9 +395,9 @@ cl2_begin            RS.B 0
 
   INCLUDE "copperlist2-offsets.i"
 
-cl2_extension1_entry RS.B cl2_extension1_SIZE
+cl2_extension1_entry RS.B cl2_extension1_size
 cl2_extension2_entry RS.B cl2_extension2_SIZE*mgv_lines_number_max
-cl2_extension3_entry RS.B cl2_extension3_SIZE
+cl2_extension3_entry RS.B cl2_extension3_size
 
 cl2_end              RS.L 1
 
@@ -630,10 +630,10 @@ mgv_init_start_shape
 mgv_init_color_table
   lea     pf1_color_table(pc),a0 ;Zeiger auf Farbtableelle
   lea     mgv_glenz_color_table3(pc),a1 ;Farben der einzelnen Glenz-Objekte
-  move.l  (a1)+,2*LONGWORDSIZE(a0) ;COLOR02
-  move.l  (a1)+,3*LONGWORDSIZE(a0) ;COLOR03
-  move.l  (a1)+,4*LONGWORDSIZE(a0) ;COLOR04
-  move.l  (a1),5*LONGWORDSIZE(a0) ;COLOR05
+  move.l  (a1)+,2*LONGWORD_SIZE(a0) ;COLOR02
+  move.l  (a1)+,3*LONGWORD_SIZE(a0) ;COLOR03
+  move.l  (a1)+,4*LONGWORD_SIZE(a0) ;COLOR04
+  move.l  (a1),5*LONGWORD_SIZE(a0) ;COLOR05
   rts
 
 
@@ -648,7 +648,7 @@ init_second_copperlist
   bsr     cl2_init_line_blits_steady_registers
   bsr     cl2_init_line_blits
   bsr     cl2_init_fill_blit
-  COPLISTEND
+  COP_LIST_END
   bsr     get_wrapper_view_values
   bsr     cl2_set_bitplane_pointers
   bsr     copy_second_copperlist
@@ -667,66 +667,66 @@ init_second_copperlist
 
   CNOP 0,4
 cl2_init_color_registers
-  COP_INIT_COLORHI COLOR00,8,pf1_color_table
+  COP_INIT_COLOR_HIGH COLOR00,8,pf1_color_table
 
-  COP_SELECT_COLORLO_BANK 0,v_BPLCON3BITS2
-  COP_INIT_COLORLO COLOR00,8,pf1_color_table
+  COP_SELECT_COLOR_LOW_BANK 0,v_bplcon3_bits2
+  COP_INIT_COLOR_LOW COLOR00,8,pf1_color_table
   rts
 
   COP_INIT_BITPLANE_POINTERS cl2
 
   CNOP 0,4
 cl2_init_line_blits_steady_registers
-  COPWAITBLIT
-  COPMOVEQ FALSEW,BLTAFWM    ;Keine Ausmaskierung
-  COPMOVEQ FALSEW,BLTALWM
-  COPMOVEQ TRUE,BLTCPTH
-  COPMOVEQ TRUE,BLTDPTH
-  COPMOVEQ pf1_plane_width*pf1_depth3,BLTCMOD ;Moduli für interleaved Bitmaps
-  COPMOVEQ pf1_plane_width*pf1_depth3,BLTDMOD
-  COPMOVEQ FALSEW,BLTBDAT    ;Linientextur
-  COPMOVEQ $8000,BLTADAT     ;Linientextur beginnt ab MSB
-  COPMOVEQ TRUE,COP2LCH
-  COPMOVEQ TRUE,COP2LCL
-  COPMOVEQ TRUE,COPJMP2
+  COP_WAIT_BLITTER
+  COP_MOVE_QUICK FALSE_WORD,BLTAFWM    ;Keine Ausmaskierung
+  COP_MOVE_QUICK FALSE_WORD,BLTALWM
+  COP_MOVE_QUICK TRUE,BLTCPTH
+  COP_MOVE_QUICK TRUE,BLTDPTH
+  COP_MOVE_QUICK pf1_plane_width*pf1_depth3,BLTCMOD ;Moduli für interleaved Bitmaps
+  COP_MOVE_QUICK pf1_plane_width*pf1_depth3,BLTDMOD
+  COP_MOVE_QUICK FALSE_WORD,BLTBDAT    ;Linientextur
+  COP_MOVE_QUICK $8000,BLTADAT     ;Linientextur beginnt ab MSB
+  COP_MOVE_QUICK TRUE,COP2LCH
+  COP_MOVE_QUICK TRUE,COP2LCL
+  COP_MOVE_QUICK TRUE,COPJMP2
   rts
 
   CNOP 0,4
 cl2_init_line_blits
   moveq   #mgv_lines_number_max-1,d7
 cl1_init_line_blits_loop
-  COPMOVEQ TRUE,BLTCON0
-  COPMOVEQ TRUE,BLTCON1
-  COPMOVEQ TRUE,BLTCPTL
-  COPMOVEQ TRUE,BLTAPTL
-  COPMOVEQ TRUE,BLTDPTL
-  COPMOVEQ TRUE,BLTBMOD
-  COPMOVEQ TRUE,BLTAMOD
-  COPMOVEQ TRUE,BLTSIZE
-  COPWAITBLIT
+  COP_MOVE_QUICK TRUE,BLTCON0
+  COP_MOVE_QUICK TRUE,BLTCON1
+  COP_MOVE_QUICK TRUE,BLTCPTL
+  COP_MOVE_QUICK TRUE,BLTAPTL
+  COP_MOVE_QUICK TRUE,BLTDPTL
+  COP_MOVE_QUICK TRUE,BLTBMOD
+  COP_MOVE_QUICK TRUE,BLTAMOD
+  COP_MOVE_QUICK TRUE,BLTSIZE
+  COP_WAIT_BLITTER
   dbf     d7,cl1_init_line_blits_loop
   rts
 
   CNOP 0,4
 cl2_init_fill_blit
-  COPMOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
-  COPMOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ;Füll-Modus, Rückwärts
-  COPMOVEQ TRUE,BLTAPTH
-  COPMOVEQ TRUE,BLTAPTL
-  COPMOVEQ TRUE,BLTDPTH
-  COPMOVEQ TRUE,BLTDPTL
-  COPMOVEQ pf1_plane_width-(visible_pixels_number/8),BLTAMOD
-  COPMOVEQ pf1_plane_width-(visible_pixels_number/8),BLTDMOD
-  COPMOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/16),BLTSIZE
+  COP_MOVE_QUICK BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
+  COP_MOVE_QUICK BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ;Füll-Modus, Rückwärts
+  COP_MOVE_QUICK TRUE,BLTAPTH
+  COP_MOVE_QUICK TRUE,BLTAPTL
+  COP_MOVE_QUICK TRUE,BLTDPTH
+  COP_MOVE_QUICK TRUE,BLTDPTL
+  COP_MOVE_QUICK pf1_plane_width-(visible_pixels_number/8),BLTAMOD
+  COP_MOVE_QUICK pf1_plane_width-(visible_pixels_number/8),BLTDMOD
+  COP_MOVE_QUICK (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/16),BLTSIZE
   rts
 
   CNOP 0,4
 get_wrapper_view_values
   move.l  cl2_construction2(a3),a0
-  or.w    #v_BPLCON0BITS,cl2_BPLCON0+2(a0)
-  or.w    #v_BPLCON3BITS1,cl2_BPLCON3_1+2(a0)
-  or.w    #v_BPLCON4BITS,cl2_BPLCON4+2(a0)
-  or.w    #v_FMODEBITS,cl2_FMODE+2(a0)
+  or.w    #v_bplcon0_bits,cl2_BPLCON0+2(a0)
+  or.w    #v_bplcon3_bits1,cl2_BPLCON3_1+2(a0)
+  or.w    #v_bplcon4_bits,cl2_BPLCON4+2(a0)
+  or.w    #v_fmode_bits,cl2_FMODE+2(a0)
   rts
 
   COP_SET_BITPLANE_POINTERS cl2,construction2,pf1_depth3
@@ -784,7 +784,7 @@ swap_playfield1
   move.l  pf1_display(a3),pf1_construction1(a3)
   move.l  a0,pf1_construction2(a3)
   move.l  a1,pf1_display(a3)
-  move.l  #ALIGN64KB,d1
+  move.l  #ALIGN_64KB,d1
   moveq   #TRUE,d2
   moveq   #pf1_plane_width,d3
   move.l  cl2_display(a3),a0
@@ -824,7 +824,7 @@ mgv_clear_playfield1
   move.l  d1,a6
   move.l  pf1_construction1(a3),a7 ;Zeiger erste Plane
   move.l  (a7),d0
-  add.l   #ALIGN64KB,d0
+  add.l   #ALIGN_64KB,d0
   clr.w   d0
   move.l  d0,a7
   ADDF.L  pf1_plane_width*visible_lines_number*pf1_depth3,a7 ;Ende des Playfieldes
@@ -1008,7 +1008,7 @@ mgv_draw_lines
   lea     mgv_rotation_xy_coordinates(pc),a1 ;Zeiger auf XY-Koordinaten
   move.l  pf1_construction1(a3),a2 ;Plane0
   move.l  (a2),d0
-  add.l   #ALIGN64KB,d0
+  add.l   #ALIGN_64KB,d0
   clr.w   d0
   move.l  d0,a2
   sub.l   a4,a4              ;Linienzähler zurücksetzen
@@ -1088,7 +1088,7 @@ mgv_draw_lines_no_face
 mgv_draw_lines_init
   move.l  pf1_construction1(a3),a0
   move.l  (a0),d0
-  add.l   #ALIGN64KB,d0
+  add.l   #ALIGN_64KB,d0
   clr.w   d0
   move.l  cl2_construction2(a3),a0
   swap    d0                 ;High
@@ -1102,7 +1102,7 @@ mgv_draw_lines_init
 mgv_fill_playfield1
   move.l  pf1_construction1(a3),a0
   move.l  (a0),d0
-  add.l   #ALIGN64KB,d0
+  add.l   #ALIGN_64KB,d0
   clr.w   d0
   move.l  cl2_construction2(a3),a0
   ADDF.L  ((pf1_plane_width*visible_lines_number*pf1_depth3)-(pf1_plane_width-(visible_pixels_number/8)))-2,d0 ;Ende des Playfieldes
@@ -1208,7 +1208,7 @@ spb_no_max_VSTOP2
   move.b  d2,cl2_DIWSTOP+2(a1) ;VSTOP V7-V0
   lsr.w   #8,d1              ;VSTART V8-Bit in richtige Position bringen
   move.b  d1,d2              ;VSTART V8 + VSTOP V8
-  or.w    #DIWHIGHBITS&(~(DIWHIGHF_VSTART8+DIWHIGHF_VSTOP8)),d2 ;restliche Bits
+  or.w    #diwhigh_bits&(~(DIWHIGHF_VSTART8+DIWHIGHF_VSTOP8)),d2 ;restliche Bits
   move.w  d2,cl2_DIWHIGH+2(a1)
   rts
 
@@ -1260,7 +1260,7 @@ NMI_int_server
   CNOP 0,4
 pf1_color_table
   REPT pf1_colors_number
-    DC.L COLOR00BITS
+    DC.L color00_bits
   ENDR
 
 ; **** Morph-Glenz-Vectors ****

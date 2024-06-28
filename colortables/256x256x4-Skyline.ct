@@ -1,2 +1,2 @@
 
-		dc.l	COLOR00BITS,$00fafcfd,$005582c0,$00315092
+		dc.l	color00_bits,$00fafcfd,$005582c0,$00315092

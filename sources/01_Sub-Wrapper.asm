@@ -15,14 +15,14 @@
 
   SECTION code_and_variables,CODE
 
-  XDEF v_BPLCON0BITS
-  XDEF v_BPLCON3BITS1
-  XDEF v_BPLCON3BITS2
-  XDEF v_BPLCON4BITS
-  XDEF v_FMODEBITS
+  XDEF v_bplcon0_bits
+  XDEF v_bplcon3_bits1
+  XDEF v_bplcon3_bits2
+  XDEF v_bplcon4_bits
+  XDEF v_fmode_bits
   XDEF start_01_wrapper
 
-  XREF COLOR00BITS
+  XREF color00_bits
   XREF nop_second_copperlist
   XREF start_010_morph_glenz_vectors
   XREF start_011_morph_glenz_vectors
@@ -81,13 +81,13 @@ own_display_set_second_copperlist
 pass_global_references
 pass_return_code
 
-DMABITS                     EQU DMAF_SPRITE+DMAF_COPPER+DMAF_SETCLR
-INTENABITS                  EQU INTF_SETCLR
+dma_bits                    EQU DMAF_SPRITE+DMAF_COPPER+DMAF_SETCLR
+intena_bits                 EQU INTF_SETCLR
 
-CIAAICRBITS                 EQU CIAICRF_SETCLR
-CIABICRBITS                 EQU CIAICRF_SETCLR
+ciaa_icr_bits               EQU CIAICRF_SETCLR
+ciab_icr_bits               EQU CIAICRF_SETCLR
 
-COPCONBITS                  EQU 0
+copcon_bits                 EQU 0
 
 pf1_x_size1                 EQU 0
 pf1_y_size1                 EQU 0
@@ -131,14 +131,14 @@ disk_memory_size            EQU 0
 extra_memory_size           EQU 0
 
 chip_memory_size            EQU 0
-CIAA_TA_time                EQU 0
-CIAA_TB_time                EQU 0
-CIAB_TA_time                EQU 0
-CIAB_TB_time                EQU 0
-CIAA_TA_continuous_enabled  EQU FALSE
-CIAA_TB_continuous_enabled  EQU FALSE
-CIAB_TA_continuous_enabled  EQU FALSE
-CIAB_TB_continuous_enabled  EQU FALSE
+ciaa_ta_time                EQU 0
+ciaa_tb_time                EQU 0
+ciab_ta_time                EQU 0
+ciab_tb_time                EQU 0
+ciaa_ta_continuous_enabled  EQU FALSE
+ciaa_tb_continuous_enabled  EQU FALSE
+ciab_ta_continuous_enabled  EQU FALSE
+ciab_tb_continuous_enabled  EQU FALSE
 
 beam_position               EQU $133
 
@@ -146,20 +146,20 @@ MINROW                      EQU VSTART_OVERSCAN_PAL
 
 spr_pixel_per_datafetch     EQU 64 ;4x
 
-BPLCON0BITS                 EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON3BITS1                EQU BPLCON3F_BRDSPRT+BPLCON3F_SPRES0
-BPLCON3BITS2                EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON4BITS                 EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)+(BPLCON4F_ESPRM4*spr_even_color_table_select)
-FMODEBITS                   EQU FMODEF_SPR32+FMODEF_SPAGEM+FMODEF_SSCAN2
+bplcon0_bits                EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
+bplcon3_bits1               EQU BPLCON3F_BRDSPRT+BPLCON3F_SPRES0
+bplcon3_bits2               EQU bplcon3_bits1+BPLCON3F_LOCT
+bplcon4_bits                EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)+(BPLCON4F_ESPRM4*spr_even_color_table_select)
+fmode_bits                  EQU FMODEF_SPR32+FMODEF_SPAGEM+FMODEF_SSCAN2
 
-v_BPLCON0BITS               EQU BPLCON0BITS
-v_BPLCON3BITS1              EQU BPLCON3BITS1
-v_BPLCON3BITS2              EQU BPLCON3BITS2
-v_BPLCON4BITS               EQU BPLCON4BITS
-v_FMODEBITS                 EQU FMODEBITS
+v_bplcon0_bits              EQU bplcon0_bits
+v_bplcon3_bits1             EQU bplcon3_bits1
+v_bplcon3_bits2             EQU bplcon3_bits2
+v_bplcon4_bits              EQU bplcon4_bits
+v_fmode_bits                EQU fmode_bits
 
-cl2_HSTART                  EQU $00
-cl2_VSTART                  EQU beam_position&cl_y_wrap
+cl2_hstart                  EQU $00
+cl2_vstart                  EQU beam_position&CL_Y_WRAP
 
 sine_table_length           EQU 512
 
@@ -255,7 +255,7 @@ spr0_extension1       RS.B 0
 spr0_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr0_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
-spr0_extension1_SIZE  RS.B 0
+spr0_extension1_size  RS.B 0
 
 ; ** Sprite0-Hauptstruktur **
 ; ---------------------------
@@ -263,7 +263,7 @@ spr0_extension1_SIZE  RS.B 0
 
 spr0_begin            RS.B 0
 
-spr0_extension1_entry RS.B spr0_extension1_SIZE
+spr0_extension1_entry RS.B spr0_extension1_size
 
 spr0_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
@@ -278,7 +278,7 @@ spr1_extension1       RS.B 0
 spr1_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr1_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
-spr1_extension1_SIZE  RS.B 0
+spr1_extension1_size  RS.B 0
 
 ; ** Sprite1-Hauptstruktur **
 ; ---------------------------
@@ -286,7 +286,7 @@ spr1_extension1_SIZE  RS.B 0
 
 spr1_begin            RS.B 0
 
-spr1_extension1_entry RS.B spr1_extension1_SIZE
+spr1_extension1_entry RS.B spr1_extension1_size
 
 spr1_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
@@ -301,7 +301,7 @@ spr2_extension1       RS.B 0
 spr2_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr2_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
-spr2_extension1_SIZE  RS.B 0
+spr2_extension1_size  RS.B 0
 
 ; ** Sprite2-Hauptstruktur **
 ; ---------------------------
@@ -309,7 +309,7 @@ spr2_extension1_SIZE  RS.B 0
 
 spr2_begin            RS.B 0
 
-spr2_extension1_entry RS.B spr2_extension1_SIZE
+spr2_extension1_entry RS.B spr2_extension1_size
 
 spr2_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
@@ -324,7 +324,7 @@ spr3_extension1       RS.B 0
 spr3_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr3_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
-spr3_extension1_SIZE  RS.B 0
+spr3_extension1_size  RS.B 0
 
 ; ** Sprite3-Hauptstruktur **
 ; ---------------------------
@@ -332,7 +332,7 @@ spr3_extension1_SIZE  RS.B 0
 
 spr3_begin            RS.B 0
 
-spr3_extension1_entry RS.B spr3_extension1_SIZE
+spr3_extension1_entry RS.B spr3_extension1_size
 
 spr3_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
@@ -347,7 +347,7 @@ spr4_extension1       RS.B 0
 spr4_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr4_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
-spr4_extension1_SIZE  RS.B 0
+spr4_extension1_size  RS.B 0
 
 ; ** Sprite4-Hauptstruktur **
 ; ---------------------------
@@ -355,7 +355,7 @@ spr4_extension1_SIZE  RS.B 0
 
 spr4_begin            RS.B 0
 
-spr4_extension1_entry RS.B spr4_extension1_SIZE
+spr4_extension1_entry RS.B spr4_extension1_size
 
 spr4_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
@@ -370,7 +370,7 @@ spr5_extension1       RS.B 0
 spr5_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr5_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
-spr5_extension1_SIZE  RS.B 0
+spr5_extension1_size  RS.B 0
 
 ; ** Sprite5-Hauptstruktur **
 ; ---------------------------
@@ -378,7 +378,7 @@ spr5_extension1_SIZE  RS.B 0
 
 spr5_begin            RS.B 0
 
-spr5_extension1_entry RS.B spr5_extension1_SIZE
+spr5_extension1_entry RS.B spr5_extension1_size
 
 spr5_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
@@ -393,7 +393,7 @@ spr6_extension1       RS.B 0
 spr6_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr6_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
-spr6_extension1_SIZE  RS.B 0
+spr6_extension1_size  RS.B 0
 
 ; ** Sprite6-Hauptstruktur **
 ; ---------------------------
@@ -401,7 +401,7 @@ spr6_extension1_SIZE  RS.B 0
 
 spr6_begin            RS.B 0
 
-spr6_extension1_entry RS.B spr6_extension1_SIZE
+spr6_extension1_entry RS.B spr6_extension1_size
 
 spr6_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
@@ -416,7 +416,7 @@ spr7_extension1       RS.B 0
 spr7_ext1_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr7_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
-spr7_extension1_SIZE  RS.B 0
+spr7_extension1_size  RS.B 0
 
 ; ** Sprite7-Hauptstruktur **
 ; ---------------------------
@@ -424,7 +424,7 @@ spr7_extension1_SIZE  RS.B 0
 
 spr7_begin            RS.B 0
 
-spr7_extension1_entry RS.B spr7_extension1_SIZE
+spr7_extension1_entry RS.B spr7_extension1_size
 
 spr7_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
@@ -544,7 +544,7 @@ init_first_copperlist
   bsr.s   cl1_init_playfield_registers
   bsr.s   cl1_init_sprite_pointers
   bsr     cl1_init_color_registers
-  COPMOVEQ TRUE,COPJMP2
+  COP_MOVE_QUICK TRUE,COPJMP2
   bra     cl1_set_sprite_pointers
 
   COP_INIT_PLAYFIELD_REGISTERS cl1,BLANKSPR
@@ -553,11 +553,11 @@ init_first_copperlist
 
   CNOP 0,4
 cl1_init_color_registers
-  COP_SELECT_COLORHI_BANK 4
-  COP_INIT_COLORHI COLOR00,16,spr_color_table
+  COP_SELECT_COLOR_HIGH_BANK 4
+  COP_INIT_COLOR_HIGH COLOR00,16,spr_color_table
 
-  COP_SELECT_COLORLO_BANK 4
-  COP_INIT_COLORLO COLOR00,16,spr_color_table
+  COP_SELECT_COLOR_LOW_BANK 4
+  COP_INIT_COLOR_LOW COLOR00,16,spr_color_table
   rts
 
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
@@ -568,7 +568,7 @@ cl1_init_color_registers
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_display(a3),a0
-  COPLISTEND
+  COP_LIST_END
   rts
 
 
@@ -675,8 +675,8 @@ sprfi_no_restart_fader_angle
   MULSF.W sprfi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
   ADDF.W  sprfi_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(sprf_color_table_offset*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfi_color_table+(sprf_color_table_offset*LONGWORDSIZE)(pc),a1 ;Sollwerte
+  lea     spr_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfi_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
@@ -714,8 +714,8 @@ sprfo_no_restart_fader_angle
   MULSF.W sprfo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
   ADDF.W  sprfo_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(sprf_color_table_offset*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfo_color_table+(sprf_color_table_offset*LONGWORDSIZE)(pc),a1 ;Sollwerte
+  lea     spr_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfo_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
@@ -766,7 +766,7 @@ NMI_int_server
 ; ------------------------
 spr_color_table
   REPT spr_colors_number
-    DC.L COLOR00BITS
+    DC.L color00_bits
   ENDR
 
 ; ** Adressen der Sprites **
@@ -785,7 +785,7 @@ sprfi_color_table
 ; ----------------------------------------
 sprfo_color_table
   REPT spr_colors_number
-    DC.L COLOR00BITS
+    DC.L color00_bits
   ENDR
 
 
