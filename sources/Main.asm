@@ -98,8 +98,8 @@ workbench_fade_enabled     EQU FALSE
 text_output_enabled        EQU FALSE
 
 own_display_set_second_copperlist
-pass_global_references
-pass_return_code
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
 
 dma_bits                   EQU DMAF_COPPER+DMAF_MASTER+DMAF_SETCLR
 intena_bits                EQU INTF_INTEN+INTF_SETCLR
@@ -272,7 +272,7 @@ spr7_y_size2       EQU 0
 ; ** Relative offsets for variables **
 ; ------------------------------------
 
-variables_SIZE RS.B 0
+variables_size RS.B 0
 
 
   INCLUDE "sys-wrapper.i"
@@ -311,7 +311,7 @@ init_first_copperlist
   lea     nop_first_copperlist(pc),a1
   move.l  a0,(a1)
   bsr.s   cl1_init_playfield_registers
-  COP_LIST_END
+  COP_LISTEND
   rts
 
   COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
@@ -323,7 +323,7 @@ init_second_copperlist
   move.l  cl2_display(a3),a0
   lea     nop_second_copperlist(pc),a1
   move.l  a0,(a1)
-  COP_LIST_END
+  COP_LISTEND
   rts
 
 

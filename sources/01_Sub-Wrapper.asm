@@ -20,7 +20,7 @@
   XDEF v_bplcon3_bits2
   XDEF v_bplcon4_bits
   XDEF v_fmode_bits
-  XDEF start_01_wrapper
+  XDEF start_01_LINKER_WRAPPER
 
   XREF color00_bits
   XREF nop_second_copperlist
@@ -76,10 +76,10 @@ workbench_start_enabled     EQU FALSE
 workbench_fade_enabled      EQU FALSE
 text_output_enabled         EQU FALSE
 
-sys_taken_over
+LINKER_SYS_TAKEN_OVER
 own_display_set_second_copperlist
-pass_global_references
-pass_return_code
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
 
 dma_bits                    EQU DMAF_SPRITE+DMAF_COPPER+DMAF_SETCLR
 intena_bits                 EQU INTF_SETCLR
@@ -485,10 +485,10 @@ sprfi_fader_angle      RS.W 1
 sprfo_active           RS.W 1
 sprfo_fader_angle      RS.W 1
 
-variables_SIZE         RS.B 0
+variables_size         RS.B 0
 
 
-start_01_wrapper
+start_01_LINKER_WRAPPER
 
   INCLUDE "sys-wrapper.i"
 
@@ -544,7 +544,7 @@ init_first_copperlist
   bsr.s   cl1_init_playfield_registers
   bsr.s   cl1_init_sprite_pointers
   bsr     cl1_init_color_registers
-  COP_MOVE_QUICK TRUE,COPJMP2
+  COP_MOVEQ TRUE,COPJMP2
   bra     cl1_set_sprite_pointers
 
   COP_INIT_PLAYFIELD_REGISTERS cl1,BLANKSPR
@@ -568,7 +568,7 @@ cl1_init_color_registers
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_display(a3),a0
-  COP_LIST_END
+  COP_LISTEND
   rts
 
 

@@ -60,9 +60,9 @@ workbench_start_enabled           EQU FALSE
 workbench_fade_enabled            EQU FALSE
 text_output_enabled               EQU FALSE
 
-sys_taken_over
-pass_global_references
-pass_return_code
+LINKER_SYS_TAKEN_OVER
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
 
 mgv_count_LINES                   EQU FALSE
 mgv_premorph_enabled              EQU TRUE
@@ -615,7 +615,7 @@ eh_trigger_number                RS.W 1
 ; **** Main ****
 fx_active                        RS.W 1
 
-variables_SIZE                   RS.B 0
+variables_size                   RS.B 0
 
 
 ; **** Morph-Glenz-Vectors ****
@@ -854,7 +854,7 @@ init_first_copperlist
   bsr     cl1_init_sprite_pointers
   bsr     cl1_init_color_registers
   bsr     cl1_init_bitplane_pointers
-  COP_MOVE_QUICK TRUE,COPJMP2
+  COP_MOVEQ TRUE,COPJMP2
   bsr     cl1_set_sprite_pointers
   bra     cl1_set_bitplane_pointers
 
@@ -908,7 +908,7 @@ init_second_copperlist
   bsr.s   cl2_init_line_blits_steady_registers
   bsr     cl2_init_line_blits
   bsr     cl2_init_fill_blit
-  COP_LIST_END
+  COP_LISTEND
   bsr     copy_second_copperlist
   bsr     swap_second_copperlist
   bsr     SWAP_PLAYFIELDs
@@ -926,58 +926,58 @@ init_second_copperlist
 
   CNOP 0,4
 cl2_init_clear_blit
-  COP_WAIT_BLITTER
-  COP_MOVE_QUICK BC0F_DEST,BLTCON0 ;Minterm Löschen
-  COP_MOVE_QUICK TRUE,BLTCON1
-  COP_MOVE_QUICK TRUE,BLTDPTH
-  COP_MOVE_QUICK TRUE,BLTDPTL
-  COP_MOVE_QUICK TRUE,BLTDMOD
-  COP_MOVE_QUICK (mgv_clear_blit_y_size*mgv_clear_blit_depth*64)+(mgv_clear_blit_x_size/16),BLTSIZE
+  COP_WAITBLT
+  COP_MOVEQ BC0F_DEST,BLTCON0 ;Minterm Löschen
+  COP_MOVEQ TRUE,BLTCON1
+  COP_MOVEQ TRUE,BLTDPTH
+  COP_MOVEQ TRUE,BLTDPTL
+  COP_MOVEQ TRUE,BLTDMOD
+  COP_MOVEQ (mgv_clear_blit_y_size*mgv_clear_blit_depth*64)+(mgv_clear_blit_x_size/16),BLTSIZE
   rts
 
   CNOP 0,4
 cl2_init_line_blits_steady_registers
-  COP_WAIT_BLITTER
-  COP_MOVE_QUICK FALSE_WORD,BLTAFWM    ;Keine Ausmaskierung
-  COP_MOVE_QUICK FALSE_WORD,BLTALWM
-  COP_MOVE_QUICK TRUE,BLTCPTH
-  COP_MOVE_QUICK TRUE,BLTDPTH
-  COP_MOVE_QUICK extra_pf1_plane_width*extra_pf1_depth,BLTCMOD ;Moduli für interleaved Bitmap
-  COP_MOVE_QUICK extra_pf1_plane_width*extra_pf1_depth,BLTDMOD
-  COP_MOVE_QUICK FALSE_WORD,BLTBDAT    ;Linientextur
-  COP_MOVE_QUICK $8000,BLTADAT     ;Linientextur mit MSB beginnen
-  COP_MOVE_QUICK TRUE,COP2LCH
-  COP_MOVE_QUICK TRUE,COP2LCL
-  COP_MOVE_QUICK TRUE,COPJMP2
+  COP_WAITBLT
+  COP_MOVEQ FALSE_WORD,BLTAFWM    ;Keine Ausmaskierung
+  COP_MOVEQ FALSE_WORD,BLTALWM
+  COP_MOVEQ TRUE,BLTCPTH
+  COP_MOVEQ TRUE,BLTDPTH
+  COP_MOVEQ extra_pf1_plane_width*extra_pf1_depth,BLTCMOD ;Moduli für interleaved Bitmap
+  COP_MOVEQ extra_pf1_plane_width*extra_pf1_depth,BLTDMOD
+  COP_MOVEQ FALSE_WORD,BLTBDAT    ;Linientextur
+  COP_MOVEQ $8000,BLTADAT     ;Linientextur mit MSB beginnen
+  COP_MOVEQ TRUE,COP2LCH
+  COP_MOVEQ TRUE,COP2LCL
+  COP_MOVEQ TRUE,COPJMP2
   rts
 
   CNOP 0,4
 cl2_init_line_blits
   MOVEF.W  mgv_lines_number_max-1,d7
 cl1_init_line_blits_loop
-  COP_MOVE_QUICK TRUE,BLTCON0
-  COP_MOVE_QUICK TRUE,BLTCON1
-  COP_MOVE_QUICK TRUE,BLTCPTL
-  COP_MOVE_QUICK TRUE,BLTAPTL
-  COP_MOVE_QUICK TRUE,BLTDPTL
-  COP_MOVE_QUICK TRUE,BLTBMOD
-  COP_MOVE_QUICK TRUE,BLTAMOD
-  COP_MOVE_QUICK TRUE,BLTSIZE
-  COP_WAIT_BLITTER
+  COP_MOVEQ TRUE,BLTCON0
+  COP_MOVEQ TRUE,BLTCON1
+  COP_MOVEQ TRUE,BLTCPTL
+  COP_MOVEQ TRUE,BLTAPTL
+  COP_MOVEQ TRUE,BLTDPTL
+  COP_MOVEQ TRUE,BLTBMOD
+  COP_MOVEQ TRUE,BLTAMOD
+  COP_MOVEQ TRUE,BLTSIZE
+  COP_WAITBLT
   dbf     d7,cl1_init_line_blits_loop
   rts
 
   CNOP 0,4
 cl2_init_fill_blit
-  COP_MOVE_QUICK BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
-  COP_MOVE_QUICK BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ;Füll-Modus, Rückwärts
-  COP_MOVE_QUICK TRUE,BLTAPTH
-  COP_MOVE_QUICK TRUE,BLTAPTL
-  COP_MOVE_QUICK TRUE,BLTDPTH
-  COP_MOVE_QUICK TRUE,BLTDPTL
-  COP_MOVE_QUICK TRUE,BLTAMOD
-  COP_MOVE_QUICK TRUE,BLTDMOD
-  COP_MOVE_QUICK (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/16),BLTSIZE
+  COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
+  COP_MOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ;Füll-Modus, Rückwärts
+  COP_MOVEQ TRUE,BLTAPTH
+  COP_MOVEQ TRUE,BLTAPTL
+  COP_MOVEQ TRUE,BLTDPTH
+  COP_MOVEQ TRUE,BLTDPTL
+  COP_MOVEQ TRUE,BLTAMOD
+  COP_MOVEQ TRUE,BLTDMOD
+  COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/16),BLTSIZE
   rts
 
   COPY_COPPERLIST cl2,2

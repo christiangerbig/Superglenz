@@ -15,7 +15,7 @@
 
   XREF color00_bits
   XREF start_00_intro
-  XREF start_01_wrapper
+  XREF start_01_LINKER_WRAPPER
 
   XDEF start_0_pt_replay
   XDEF sc_start
@@ -60,14 +60,14 @@ workbench_start_enabled    EQU FALSE
 workbench_fade_enabled     EQU FALSE
 text_output_enabled        EQU FALSE
 
-sys_taken_over
-wrapper
+LINKER_SYS_TAKEN_OVER
+LINKER_WRAPPER
 own_display_set_second_copperlist
-pass_global_references
-pass_return_code
-custom_memory_used
-custom_memory_chip         EQU $00000000
-custom_memory_fast         EQU $00000001
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
+CUSTOM_MEMORY_USED
+CUSTOM_MEMORY_CHIP         EQU $00000000
+CUSTOM_MEMORY_FAST         EQU $00000001
 
 pt_v3.0b
   IFD pt_v2.3a
@@ -303,7 +303,7 @@ spr7_y_size2       EQU 0
     INCLUDE "music-tracker/pt3-variables-offsets.i"
   ENDC
 
-variables_SIZE RS.B 0
+variables_size RS.B 0
 
 
 ; **** PT-Replay ****
@@ -338,7 +338,7 @@ start_0_pt_replay
 init_custom_memory_table
   lea     custom_memory_table(pc),a0
   move.l  #part_0_audio_memory_size1,(a0)+ ;Speichergröße
-  moveq   #custom_memory_fast,d2
+  moveq   #CUSTOM_MEMORY_FAST,d2
   move.l  d2,(a0)+           ;Speicherart: vorrangig fast-memory
   moveq   #0,d0
   move.l  d0,(a0)+           ;Zeiger auf Speicherbereich = Null
@@ -458,7 +458,7 @@ init_CIA_timers
 init_first_copperlist
   move.l  cl1_display(a3),a0
   bsr.s   cl1_init_playfield_registers
-  COP_LIST_END
+  COP_LISTEND
   rts
 
   COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
@@ -468,7 +468,7 @@ init_first_copperlist
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_display(a3),a0
-  COP_LIST_END
+  COP_LISTEND
   rts
 
 ; ** Custom-Memory belegen **
@@ -513,9 +513,9 @@ custom_memory_error
 main_routine
   bsr     start_00_intro
   tst.l   d0
-  bne.s   no_start_01_wrapper
-  bsr     start_01_wrapper
-no_start_01_wrapper
+  bne.s   no_start_01_LINKER_WRAPPER
+  bsr     start_01_LINKER_WRAPPER
+no_start_01_LINKER_WRAPPER
   rts
 
   IFEQ pt_music_fader_enabled

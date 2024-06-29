@@ -61,9 +61,9 @@ workbench_start_enabled        EQU FALSE
 workbench_fade_enabled         EQU FALSE
 text_output_enabled            EQU FALSE
 
-sys_taken_over
-pass_global_references
-pass_return_code
+LINKER_SYS_TAKEN_OVER
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
 
 dma_bits                       EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 
@@ -711,7 +711,7 @@ eh_trigger_number      RS.W 1
 ; **** Main ****
 fx_active              RS.W 1
 
-variables_SIZE         RS.B 0
+variables_size         RS.B 0
 
 
 ; **** Glenz-Vectors ****
@@ -1019,7 +1019,7 @@ init_first_copperlist
   bsr     cl1_init_branches_pointers2
   bsr     cl1_reset_pointer
   bsr     cl1_init_copper_interrupt
-  COP_LIST_END
+  COP_LISTEND
   bra     cl1_set_sprite_pointers
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -1054,7 +1054,7 @@ cl1_init_branches_pointers1_loop
   move.w  #COP1LCL,(a0)+
   move.w  d1,(a0)+
   add.l   d3,d1              ;Einsprungadresse CL1 erhöhen
-  COP_MOVE_QUICK TRUE,COPJMP2
+  COP_MOVEQ TRUE,COPJMP2
   dbf     d7,cl1_init_branches_pointers1_loop
   rts
 
@@ -1085,7 +1085,7 @@ cl1_init_branches_pointers2_loop
   move.w  #COP1LCL,(a0)+
   move.w  d1,(a0)+
   add.l   d3,d1              ;Einsprungadresse CL1 erhöhen
-  COP_MOVE_QUICK TRUE,COPJMP2
+  COP_MOVEQ TRUE,COPJMP2
   dbf     d7,cl1_init_branches_pointers2_loop
   rts
 
@@ -1100,7 +1100,7 @@ cl1_reset_pointer
   move.w  d0,(a0)+
   rts
 
-  COP_INIT_COPPER_INTERRUPT cl1,cl1_HSTART3,cl1_vstart3,YWRAP
+  COP_INIT_COPINT cl1,cl1_HSTART3,cl1_vstart3,YWRAP
 
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
@@ -1119,7 +1119,7 @@ cl2_init_bplcon4_registers1
 cl2_init_bplcon4_registers1_loop
   move.l  d0,(a0)+           ;BPLCON4
   dbf     d7,cl2_init_bplcon4_registers1_loop
-  COP_MOVE_QUICK TRUE,COPJMP1
+  COP_MOVEQ TRUE,COPJMP1
   rts
 
   CNOP 0,4
@@ -1129,7 +1129,7 @@ cl2_init_bplcon4_registers2
 cl2_init_bplcon4_registers2_loop
   move.l  d0,(a0)+           ;BPLCON4
   dbf     d7,cl2_init_bplcon4_registers2_loop
-  COP_MOVE_QUICK TRUE,COPJMP1
+  COP_MOVEQ TRUE,COPJMP1
   rts
 
 

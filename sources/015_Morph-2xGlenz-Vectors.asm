@@ -71,9 +71,9 @@ workbench_start_enabled             EQU FALSE
 workbench_fade_enabled              EQU FALSE
 text_output_enabled EQU FALSE
 
-sys_taken_over
-pass_global_references
-pass_return_code
+LINKER_SYS_TAKEN_OVER
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
 
 mgv_count_LINES                     EQU FALSE
 mgv_premorph_enabled                EQU TRUE
@@ -571,7 +571,7 @@ spbo_y_angle                          RS.W 1
 ; **** Main ****
 fx_active                             RS.W 1
 
-variables_SIZE                        RS.B 0
+variables_size                        RS.B 0
 
 
 ; **** Morph-Glenz-Vectors ****
@@ -954,8 +954,8 @@ init_second_copperlist
   bsr     cl2_init_line_blits_steady_registers
   bsr     cl2_init_line_blits
   bsr     cl2_init_fill_blit
-  COP_LIST_END
-  bsr     get_wrapper_view_values
+  COP_LISTEND
+  bsr     get_LINKER_WRAPPER_view_values
   bsr     cl2_set_bitplane_pointers
   bsr     copy_second_copperlist
   bsr     swap_second_copperlist
@@ -983,51 +983,51 @@ cl2_init_color_registers
 
   CNOP 0,4
 cl2_init_line_blits_steady_registers
-  COP_WAIT_BLITTER
-  COP_MOVE_QUICK FALSE_WORD,BLTAFWM    ;Keine Ausmaskierung
-  COP_MOVE_QUICK FALSE_WORD,BLTALWM
-  COP_MOVE_QUICK TRUE,BLTCPTH
-  COP_MOVE_QUICK TRUE,BLTDPTH
-  COP_MOVE_QUICK pf1_plane_width*pf1_depth3,BLTCMOD ;Moduli für interleaved Bitmaps
-  COP_MOVE_QUICK pf1_plane_width*pf1_depth3,BLTDMOD
-  COP_MOVE_QUICK FALSE_WORD,BLTBDAT    ;Linientextur
-  COP_MOVE_QUICK $8000,BLTADAT     ;Linientextur beginnt ab MSB
-  COP_MOVE_QUICK TRUE,COP2LCH
-  COP_MOVE_QUICK TRUE,COP2LCL
-  COP_MOVE_QUICK TRUE,COPJMP2
+  COP_WAITBLT
+  COP_MOVEQ FALSE_WORD,BLTAFWM    ;Keine Ausmaskierung
+  COP_MOVEQ FALSE_WORD,BLTALWM
+  COP_MOVEQ TRUE,BLTCPTH
+  COP_MOVEQ TRUE,BLTDPTH
+  COP_MOVEQ pf1_plane_width*pf1_depth3,BLTCMOD ;Moduli für interleaved Bitmaps
+  COP_MOVEQ pf1_plane_width*pf1_depth3,BLTDMOD
+  COP_MOVEQ FALSE_WORD,BLTBDAT    ;Linientextur
+  COP_MOVEQ $8000,BLTADAT     ;Linientextur beginnt ab MSB
+  COP_MOVEQ TRUE,COP2LCH
+  COP_MOVEQ TRUE,COP2LCL
+  COP_MOVEQ TRUE,COPJMP2
   rts
 
   CNOP 0,4
 cl2_init_line_blits
   moveq   #mgv_lines_number_max-1,d7
 cl1_init_line_blits_loop
-  COP_MOVE_QUICK TRUE,BLTCON0
-  COP_MOVE_QUICK TRUE,BLTCON1
-  COP_MOVE_QUICK TRUE,BLTCPTL
-  COP_MOVE_QUICK TRUE,BLTAPTL
-  COP_MOVE_QUICK TRUE,BLTDPTL
-  COP_MOVE_QUICK TRUE,BLTBMOD
-  COP_MOVE_QUICK TRUE,BLTAMOD
-  COP_MOVE_QUICK TRUE,BLTSIZE
-  COP_WAIT_BLITTER
+  COP_MOVEQ TRUE,BLTCON0
+  COP_MOVEQ TRUE,BLTCON1
+  COP_MOVEQ TRUE,BLTCPTL
+  COP_MOVEQ TRUE,BLTAPTL
+  COP_MOVEQ TRUE,BLTDPTL
+  COP_MOVEQ TRUE,BLTBMOD
+  COP_MOVEQ TRUE,BLTAMOD
+  COP_MOVEQ TRUE,BLTSIZE
+  COP_WAITBLT
   dbf     d7,cl1_init_line_blits_loop
   rts
 
   CNOP 0,4
 cl2_init_fill_blit
-  COP_MOVE_QUICK BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
-  COP_MOVE_QUICK BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ;Füll-Modus, Rückwärts
-  COP_MOVE_QUICK TRUE,BLTAPTH
-  COP_MOVE_QUICK TRUE,BLTAPTL
-  COP_MOVE_QUICK TRUE,BLTDPTH
-  COP_MOVE_QUICK TRUE,BLTDPTL
-  COP_MOVE_QUICK pf1_plane_width-(visible_pixels_number/8),BLTAMOD
-  COP_MOVE_QUICK pf1_plane_width-(visible_pixels_number/8),BLTDMOD
-  COP_MOVE_QUICK (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/16),BLTSIZE
+  COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
+  COP_MOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ;Füll-Modus, Rückwärts
+  COP_MOVEQ TRUE,BLTAPTH
+  COP_MOVEQ TRUE,BLTAPTL
+  COP_MOVEQ TRUE,BLTDPTH
+  COP_MOVEQ TRUE,BLTDPTL
+  COP_MOVEQ pf1_plane_width-(visible_pixels_number/8),BLTAMOD
+  COP_MOVEQ pf1_plane_width-(visible_pixels_number/8),BLTDMOD
+  COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/16),BLTSIZE
   rts
 
   CNOP 0,4
-get_wrapper_view_values
+get_LINKER_WRAPPER_view_values
   move.l  cl2_construction2(a3),a0
   or.w    #v_bplcon0_bits,cl2_BPLCON0+2(a0)
   or.w    #v_bplcon3_bits1,cl2_BPLCON3_1+2(a0)

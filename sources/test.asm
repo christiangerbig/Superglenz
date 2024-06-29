@@ -253,7 +253,7 @@ spbi_y_angle                          RS.W 1
 spbo_active                           RS.W 1
 spbo_y_angle                          RS.W 1
 
-variables_SIZE                        RS.B 0
+variables_size                        RS.B 0
 
 
 ; **** Scroll-Playfield-Buttom ****
@@ -410,6 +410,6 @@ sine_table
   DC.W $12C7,$1139,$0FAA,$0E1B,$0C8B,$0AFA,$096A,$07D8,$0647,$04B5
   DC.W $0323,$0191
 
-variables DS.B variables_SIZE
+variables DS.B variables_size
 
   END
