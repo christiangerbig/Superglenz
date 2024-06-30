@@ -5,7 +5,6 @@
   MC68020
 
 ; ** Konstanten **
-; ----------------
 
 ; **** Main ****
 TRUE                                EQU 0
@@ -223,7 +222,6 @@ DDFSTOP_OVERSCAN_16_PIXEL_MIN       EQU $38
 DDFSTOP_OVERSCAN_32_PIXEL_MIN       EQU $30
 DDFSTOP_OVERSCAN_48_PIXEL_MIN       EQU $28
 DDFSTOP_OVERSCAN_64_PIXEL_MIN       EQU $20
-; ---------------------
 
 pixel_per_line                      EQU 192
 visible_pixels_number               EQU 192
@@ -275,7 +273,6 @@ loop
   rts
 
 ; ** Playfield von unten einscrollen **
-; -------------------------------------
   CNOP 0,4
 scroll_playfield_buttom_in
   tst.w   spbi_active(a3)    ;Scroll-Playfield-Buttom-In an ?
@@ -302,7 +299,6 @@ spbi_finished
 
 
 ; ** Playfield nach unten ausscrollen **
-; --------------------------------------
   CNOP 0,4
 scroll_playfield_buttom_out
   tst.w   spbo_active(a3)    ;Vert-Scroll-Playfild-Out an ?

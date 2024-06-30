@@ -22,7 +22,6 @@
   XDEF start_10_credits
 
 ; ** Library-Includes V.3.x nachladen **
-; --------------------------------------
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -46,8 +45,6 @@
 
 
 ; ** Konstanten **
-; ----------------
-
   INCLUDE "equals.i"
 
 requires_68030                    EQU FALSE
@@ -64,7 +61,7 @@ LINKER_SYS_TAKEN_OVER
 LINKER_PASS_GLOBAL_REFERENCES
 LINKER_PASS_RETURN_CODE
 
-mgv_count_LINES                   EQU FALSE
+mgv_count_lines                   EQU FALSE
 mgv_premorph_enabled              EQU TRUE
 mgv_morph_loop_enabled            EQU TRUE
 
@@ -306,31 +303,23 @@ pf2_bitplane_y_offset             EQU vts_text_character_y_size-1
 
 
 ; ## Makrobefehle ##
-; ------------------
-
   INCLUDE "macros.i"
 
 
 ; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
-; -----------------------------------------------------------
-
   INCLUDE "except-vectors-offsets.i"
 
 
 ; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
-; -------------------------------------------------------------------
-
   INCLUDE "extra-pf-attributes-structure.i"
 
 
 ; ** Struktur, die alle Eigenschaften der Sprites enthält **
-; ----------------------------------------------------------
-
   INCLUDE "sprite-attributes-structure.i"
 
 
 ; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
-; -----------------------------------------------------------------------
+
   RSRESET
 
 cl1_begin            RS.B 0
@@ -339,11 +328,11 @@ cl1_begin            RS.B 0
 
 cl1_COPJMP2          RS.L 1
 
-copperlist1_SIZE     RS.B 0
+copperlist1_size     RS.B 0
 
 
 ; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
-; ------------------------------------------------------------------------
+
   RSRESET
 
 cl2_extension1      RS.B 0
@@ -376,7 +365,7 @@ cl2_ext2_COP2LCH    RS.L 1
 cl2_ext2_COP2LCL    RS.L 1
 cl2_ext2_COPJMP2    RS.L 1
 
-cl2_extension2_SIZE RS.B 0
+cl2_extension2_size RS.B 0
 
 
   RSRESET
@@ -416,27 +405,25 @@ cl2_extension4_size RS.B 0
 cl2_begin            RS.B 0
 
 cl2_extension1_entry RS.B cl2_extension1_size
-cl2_extension2_entry RS.B cl2_extension2_SIZE
+cl2_extension2_entry RS.B cl2_extension2_size
 cl2_extension3_entry RS.B cl2_extension3_size*mgv_lines_number_max
 cl2_extension4_entry RS.B cl2_extension4_size
 
 cl2_end              RS.L 1
 
-copperlist2_SIZE     RS.B 0
+copperlist2_size     RS.B 0
 
 
 ; ** Konstanten für die größe der Copperlisten **
-; -----------------------------------------------
 cl1_size1        EQU 0
 cl1_size2        EQU 0
-cl1_size3        EQU copperlist1_SIZE
+cl1_size3        EQU copperlist1_size
 cl2_size1        EQU 0
-cl2_size2        EQU copperlist2_SIZE
-cl2_size3        EQU copperlist2_SIZE
+cl2_size2        EQU copperlist2_size
+cl2_size3        EQU copperlist2_size
 
 
 ; ** Sprite0-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr0_extension1       RS.B 0
@@ -447,7 +434,6 @@ spr0_ext1_planedata   RS.L 1*(spr_pixel_per_datafetch/16)*visible_lines_number
 spr0_extension1_size  RS.B 0
 
 ; ** Sprite0-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr0_begin            RS.B 0
@@ -456,10 +442,9 @@ spr0_extension1_entry RS.B spr0_extension1_size
 
 spr0_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite0_SIZE          RS.B 0
+sprite0_size          RS.B 0
 
 ; ** Sprite1-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr1_extension1       RS.B 0
@@ -470,7 +455,6 @@ spr1_ext1_planedata   RS.L 1*(spr_pixel_per_datafetch/16)*visible_lines_number
 spr1_extension1_size  RS.B 0
 
 ; ** Sprite1-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr1_begin            RS.B 0
@@ -479,108 +463,99 @@ spr1_extension1_entry RS.B spr1_extension1_size
 
 spr1_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite1_SIZE          RS.B 0
+sprite1_size          RS.B 0
 
 ; ** Sprite2-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr2_begin       RS.B 0
 
 spr2_end         RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite2_SIZE     RS.B 0
+sprite2_size     RS.B 0
 
 ; ** Sprite3-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr3_begin       RS.B 0
 
 spr3_end         RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite3_SIZE     RS.B 0
+sprite3_size     RS.B 0
 
 ; ** Sprite4-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr4_begin       RS.B 0
 
 spr4_end         RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite4_SIZE     RS.B 0
+sprite4_size     RS.B 0
 
 ; ** Sprite5-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr5_begin       RS.B 0
 
 spr5_end         RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite5_SIZE     RS.B 0
+sprite5_size     RS.B 0
 
 ; ** Sprite6-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr6_begin       RS.B 0
 
 spr6_end         RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite6_SIZE     RS.B 0
+sprite6_size     RS.B 0
 
 ; ** Sprite7-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr7_begin       RS.B 0
 
 spr7_end         RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite7_SIZE     RS.B 0
+sprite7_size     RS.B 0
 
 ; ** Konstanten für die Größe der Spritestrukturen **
-; ---------------------------------------------------
 spr0_x_size1     EQU spr_x_size1
-spr0_y_size1     EQU sprite0_SIZE/(spr_x_size1/8)
+spr0_y_size1     EQU sprite0_size/(spr_x_size1/8)
 spr1_x_size1     EQU spr_x_size1
-spr1_y_size1     EQU sprite1_SIZE/(spr_x_size1/8)
+spr1_y_size1     EQU sprite1_size/(spr_x_size1/8)
 spr2_x_size1     EQU spr_x_size1
-spr2_y_size1     EQU sprite2_SIZE/(spr_x_size1/8)
+spr2_y_size1     EQU sprite2_size/(spr_x_size1/8)
 spr3_x_size1     EQU spr_x_size1
-spr3_y_size1     EQU sprite3_SIZE/(spr_x_size1/8)
+spr3_y_size1     EQU sprite3_size/(spr_x_size1/8)
 spr4_x_size1     EQU spr_x_size1
-spr4_y_size1     EQU sprite4_SIZE/(spr_x_size1/8)
+spr4_y_size1     EQU sprite4_size/(spr_x_size1/8)
 spr5_x_size1     EQU spr_x_size1
-spr5_y_size1     EQU sprite5_SIZE/(spr_x_size1/8)
+spr5_y_size1     EQU sprite5_size/(spr_x_size1/8)
 spr6_x_size1     EQU spr_x_size1
-spr6_y_size1     EQU sprite6_SIZE/(spr_x_size1/8)
+spr6_y_size1     EQU sprite6_size/(spr_x_size1/8)
 spr7_x_size1     EQU spr_x_size1
-spr7_y_size1     EQU sprite7_SIZE/(spr_x_size1/8)
+spr7_y_size1     EQU sprite7_size/(spr_x_size1/8)
 
 spr0_x_size2     EQU spr_x_size2
-spr0_y_size2     EQU sprite0_SIZE/(spr_x_size2/8)
+spr0_y_size2     EQU sprite0_size/(spr_x_size2/8)
 spr1_x_size2     EQU spr_x_size2
-spr1_y_size2     EQU sprite1_SIZE/(spr_x_size2/8)
+spr1_y_size2     EQU sprite1_size/(spr_x_size2/8)
 spr2_x_size2     EQU spr_x_size2
-spr2_y_size2     EQU sprite2_SIZE/(spr_x_size2/8)
+spr2_y_size2     EQU sprite2_size/(spr_x_size2/8)
 spr3_x_size2     EQU spr_x_size2
-spr3_y_size2     EQU sprite3_SIZE/(spr_x_size2/8)
+spr3_y_size2     EQU sprite3_size/(spr_x_size2/8)
 spr4_x_size2     EQU spr_x_size2
-spr4_y_size2     EQU sprite4_SIZE/(spr_x_size2/8)
+spr4_y_size2     EQU sprite4_size/(spr_x_size2/8)
 spr5_x_size2     EQU spr_x_size2
-spr5_y_size2     EQU sprite5_SIZE/(spr_x_size2/8)
+spr5_y_size2     EQU sprite5_size/(spr_x_size2/8)
 spr6_x_size2     EQU spr_x_size2
-spr6_y_size2     EQU sprite6_SIZE/(spr_x_size2/8)
+spr6_y_size2     EQU sprite6_size/(spr_x_size2/8)
 spr7_x_size2     EQU spr_x_size2
-spr7_y_size2     EQU sprite7_SIZE/(spr_x_size2/8)
+spr7_y_size2     EQU sprite7_size/(spr_x_size2/8)
 
 
 ; ** Struktur, die alle Variablenoffsets enthält **
-; -------------------------------------------------
-
   INCLUDE "variables-offsets.i"
 
 save_a7                          RS.L 1
@@ -620,7 +595,6 @@ variables_size                   RS.B 0
 
 ; **** Morph-Glenz-Vectors ****
 ; ** Objekt-Info-Struktur **
-; --------------------------
   RSRESET
 
 mgv_object_info              RS.B 0
@@ -629,17 +603,16 @@ mgv_object_info_edge_table   RS.L 1
 mgv_object_info_face_color   RS.W 1
 mgv_object_info_lines_number RS.W 1
 
-mgv_object_info_SIZE         RS.B 0
+mgv_object_info_size         RS.B 0
 
 ; ** Morph-Shape-Struktur **
-; --------------------------
   RSRESET
 
 mgv_morph_shape                   RS.B 0
 
 mgv_morph_shape_object_edge_table RS.L 1
 
-mgv_morph_shape_SIZE              RS.B 0
+mgv_morph_shape_size              RS.B 0
 
 
 start_10_credits 
@@ -647,7 +620,6 @@ start_10_credits
   INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
-; -------------------------------------
   CNOP 0,4
 init_own_variables
 
@@ -702,7 +674,6 @@ init_own_variables
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
-; ---------------------------------------------
   CNOP 0,4
 init_all
   bsr     init_color_registers
@@ -720,7 +691,6 @@ init_all
   bra     init_second_copperlist
 
 ; ** Playfieldfarben initialisieren **
-; ------------------------------------
   CNOP 0,4
 init_color_registers
   CPU_SELECT_COLOR_HIGH_BANK 0
@@ -733,7 +703,6 @@ init_color_registers
   rts
 
 ; ** Sprites initialisieren **
-; ----------------------------
   CNOP 0,4
 init_sprites
   bsr.s   spr_init_pointers_table
@@ -745,7 +714,6 @@ init_sprites
   INIT_SPRITE_POINTERS_TABLE
 
 ; ** Sprite-Koordinaten initialisieren **
-; ---------------------------------------
   CNOP 0,4
 mgv_init_xy_coordinates
   move.w  #HSTART_320_PIXEL*4,d0 ;X-Koord.
@@ -771,34 +739,28 @@ mgv_init_sprite_header
   rts
 
 ; ** Spritedaten kopieren **
-; --------------------------
   COPY_SPRITE_STRUCTURES
 
 ; **** Vert-Text-Scroll ****
 ; ** Offsets der Buchstaben im Characters-Pic berechnen **
-; --------------------------------------------------------
   INIT_CHARACTERS_OFFSETS.W vts
 
 ; ** X-Positionen der Chars berechnen **
-; --------------------------------------
   INIT_CHARACTERS_X_POSITIONS vts,LORES,,text_characters_per_line
 
 ; ** Y-Positionen der Charss berechnen **
-; ---------------------------------------
   INIT_CHARACTERS_Y_POSITIONS vts,text_characters_per_column
 
 ; ** Laufschrift initialisieren **
-; --------------------------------
   INIT_CHARACTERS_IMAGES vts
 
 ; **** Morph-Glenz-Vectors ****
 ; ** Object-Info-Tabelle initialisieren **
-; ----------------------------------------
   CNOP 0,4
 mgv_init_object_info_table
   lea     mgv_object_info_table+mgv_object_info_edge_table(pc),a0 ;Zeiger auf Object-Info-Tabelle
   lea     mgv_object_edge_table(pc),a1 ;Zeiger auf Tebelle mit Eckpunkten
-  move.w  #mgv_object_info_SIZE,a2
+  move.w  #mgv_object_info_size,a2
   MOVEF.W mgv_object_faces_number-1,d7 ;Anzahl der Flächen
 mgv_init_object1_info_table_loop
   move.w  mgv_object_info_lines_number(a0),d0 
@@ -810,7 +772,6 @@ mgv_init_object1_info_table_loop
   rts
 
 ; ** Object-Tabelle initialisieren **
-; -----------------------------------
   CNOP 0,4
 mgv_init_morph_shapes_table
 ; ** Form 1 **
@@ -846,7 +807,6 @@ mgv_init_start_shape
 
 
 ; ** 1. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0
@@ -900,7 +860,6 @@ cl1_set_bitplane_pointers_loop2
   rts
 
 ; ** 2. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction2(a3),a0
@@ -984,7 +943,6 @@ cl2_init_fill_blit
 
 
 ; ## Hauptprogramm ##
-; -------------------
 ; a3 ... Basisadresse aller Variablen
 ; a4 ... CIA-A-Base
 ; a5 ... CIA-B-Base
@@ -996,7 +954,6 @@ main_routine
 
 
 ; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
-; ----------------------------------------------------------------------
   CNOP 0,4
 no_sync_routines
   IFEQ cfc_prefade_enabled
@@ -1007,7 +964,6 @@ no_sync_routines
 
 
 ; ## Rasterstahl-Routinen ##
-; --------------------------
   CNOP 0,4
 beam_routines
   bsr     wait_beam_position
@@ -1043,15 +999,12 @@ fast_exit
 
 
 ; ** Copperlisten vertauschen **
-; ------------------------------
   SWAP_COPPERLIST cl2,2
 
 ; ** Spritestrukturen vertauschen **
-; ----------------------------------
   SWAP_SPRITES_STRUCTURES spr,spr_swap_number
 
 ; ** Playfields vertauschen **
-; ----------------------------
   CNOP 0,4
 SWAP_PLAYFIELDs
   move.l  cl1_display(a3),a0
@@ -1086,7 +1039,6 @@ swap_playfield2_loop
   rts
 
 ; ** Extra-Playfields vertauschen **
-; ----------------------------------
   CNOP 0,4
 swap_extra_playfield
   move.l  extra_pf1(a3),a0
@@ -1096,7 +1048,6 @@ swap_extra_playfield
 
 
 ; ** Vertical-Text-Scrolling-Routine **
-; -------------------------------------
   CNOP 0,4
 vert_text_scroll
   movem.l a4-a6,-(a7)
@@ -1144,11 +1095,9 @@ vts_set_characters_y_position
   rts
 
 ; ** Neues Image für Character ermitteln **
-; -----------------------------------------
   GET_NEW_CHARACTER_IMAGE.W vts
 
 ; ** Playfield löschen **
-; -----------------------
   CNOP 0,4
 mgv_clear_extra_playfield
   move.l  extra_pf1(a3),a0
@@ -1162,7 +1111,6 @@ mgv_clear_extra_playfield
   rts
 
 ; ** Rotationsgeschwindigkeit um Y-Achse berechnen **
-; ---------------------------------------------------
   CNOP 0,4
 mgv_calculate_rotation_y_speed
   move.w  mgv_rotation_y_angle_speed_angle(a3),d2
@@ -1177,7 +1125,6 @@ mgv_calculate_rotation_y_speed
   rts
 
 ; ** 3D-Rotation **
-; -----------------
   CNOP 0,4
 mgv_rotation
   movem.l a4-a6,-(a7)
@@ -1222,7 +1169,6 @@ mgv_rotate_loop
   rts
 
 ; ** Form des Objekts ändern **
-; -----------------------------
   CNOP 0,4
 mgv_morph_object
   tst.w   mgv_morph_active(a3) ;Morphing an ?
@@ -1271,7 +1217,6 @@ mgv_no_morph_object
   rts
 
 ; ** Linien ziehen **
-; -------------------
   CNOP 0,4
 mgv_draw_lines
   movem.l a3-a6,-(a7)
@@ -1291,7 +1236,6 @@ mgv_draw_lines
 mgv_draw_lines_loop1
 
 ; ** Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen **
-; -----------------------------------------------------------------------
   move.l  (a0)+,a5           ;Zeiger auf Startwerte der Punkte
   move.w  (a5),d4            ;P1-Startwert
   move.w  2(a5),d5           ;P2-Startwert
@@ -1369,7 +1313,6 @@ mgv_draw_lines_init
   rts
 
 ; ** Playfield füllen **
-; ----------------------
   CNOP 0,4
 mgv_fill_extra_playfield
   move.l  extra_pf1(a3),a0
@@ -1386,7 +1329,6 @@ mgv_fill_extra_playfield
   rts
 
 ; ** Puffer in Sprite-Strukturen kopieren **
-; ------------------------------------------
   CNOP 0,4
 mgv_copy_extra_playfield
   lea     spr_pointers_construction(pc),a2 ;Zeiger auf Sprites
@@ -1412,7 +1354,6 @@ mgv_copy_extra_playfield_loop
   rts
 
 ; ** Einsprung in Blits setzen **
-; -------------------------------
   CNOP 0,4
 mgv_set_second_copperlist_jump
   move.l  cl2_construction2(a3),a0 
@@ -1435,7 +1376,6 @@ mgv_skip
 
 
 ; ** Farben überblenden **
-; ------------------------
   CNOP 0,4
 colors_fader_cross
   tst.w   cfc_active(a3)     ;Colors-Fader-Cross an ?
@@ -1479,7 +1419,6 @@ no_colors_fader_cross
   COLOR_FADER cfc
 
 ; ** Farbwerte in Copperliste kopieren **
-; ---------------------------------------
   CNOP 0,4
 cfc_copy_color_table
   IFNE cl1_size2
@@ -1566,7 +1505,6 @@ cfc_stop_colors_fader_cross
 
 
 ; ** Zähler kontrollieren **
-; --------------------------
   CNOP 0,4
 control_counters
   move.w  mgv_morph_delay_counter(a3),d0
@@ -1595,7 +1533,6 @@ cfc_no_fader_delay_counter
   rts
 
 ; ** SOFTINT-Interrupts abfragen **
-; ---------------------------------
   CNOP 0,4
 effects_handler
   moveq   #INTF_SOFTINT,d1
@@ -1651,49 +1588,38 @@ eh_stop_all
 
 
 ; ## Interrupt-Routinen ##
-; ------------------------
-  
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
-; ------------------------------
   CNOP 0,4
 NMI_int_server
   rts
 
 
 ; ## Hilfsroutinen ##
-; -------------------
-
   INCLUDE "help-routines.i"
 
 
 ; ## Speicherstellen für Tabellen und Strukturen ##
-; -------------------------------------------------
-
   INCLUDE "sys-structures.i"
 
 ; ** Farben des ersten Playfields **
-; ----------------------------------
   CNOP 0,4
 pf1_color_table
   DC.L color00_bits,$f7e954
 
 ; ** Farben des zweiten Playfields **
-; -----------------------------------
   CNOP 0,4
 pf2_color_table
   DC.L color00_bits,$000000
 
 ; ** Farben der Sprites **
-; ------------------------
 spr_color_table
   REPT spr_colors_number
     DC.L color00_bits
   ENDR
 
 ; ** Adressen der Sprites **
-; --------------------------
 spr_pointers_construction
   DS.L spr_number
 
@@ -1702,44 +1628,37 @@ spr_pointers_display
 
 ; **** Vert-Text-Scroll ****
 ; ** ASCII-Buchstaben **
-; ----------------------
 vts_ascii
   DC.B "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!?-'():\/#*+<> "
 vts_ascii_end
   EVEN
 
 ; ** Offsets der einzelnen Chars **
-; ---------------------------------
   CNOP 0,2
 vts_characters_offsets
   DS.W vts_ascii_end-vts_ascii
   
 ; ** X-Koordinaten der einzelnen Cgars der Laufschrift **
-; -------------------------------------------------------
 vts_characters_x_positions
   DS.W vts_text_characters_per_line
 
 ; ** Y-Koordinaten der einzelnen Chars der Laufschrift **
-; -------------------------------------------------------
 vts_characters_y_positions
   DS.W vts_text_characters_per_column
 
 ; ** Tabelle für Char-Image-Adressen **
-; -------------------------------------
   CNOP 0,4
 vts_characters_image_pointers
   DS.L vts_text_characters_number
 
 ; **** Morph-Glenz-Vectors ****
 ; ** Objektdaten **
-; -----------------
   CNOP 0,2
 mgv_object_coordinates
 ; * Zoom-In *
   DS.W mgv_object_edge_points_number*3
 
 ; ** Formen des Objekts **
-; ------------------------
 ; ** Form 1 **
 mgv_object_shape1_coordinates
 ; ** Quader 1 **
@@ -1820,137 +1739,111 @@ mgv_object_shape5_coordinates
   ENDC
 
 ; ** Information über Objekt **
-; -----------------------------
   CNOP 0,4
 mgv_object_info_table
 ; ** 1. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face1_color ;Farbe der Fläche
   DC.W mgv_object_face1_lines_number-1 ;Anzahl der Linien
 ; ** 2. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face2_color ;Farbe der Fläche
   DC.W mgv_object_face2_lines_number-1 ;Anzahl der Linien
 ; ** 3. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face3_color ;Farbe der Fläche
   DC.W mgv_object_face3_lines_number-1 ;Anzahl der Linien
 
 ; ** 4. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face4_color ;Farbe der Fläche
   DC.W mgv_object_face4_lines_number-1 ;Anzahl der Linien
 ; ** 5. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face5_color ;Farbe der Fläche
   DC.W mgv_object_face5_lines_number-1 ;Anzahl der Linien
 ; ** 6. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face6_color ;Farbe der Fläche
   DC.W mgv_object_face6_lines_number-1 ;Anzahl der Linien
 ; ** 7. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face7_color ;Farbe der Fläche
   DC.W mgv_object_face7_lines_number-1 ;Anzahl der Linien
 ; ** 8. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face8_color ;Farbe der Fläche
   DC.W mgv_object_face8_lines_number-1 ;Anzahl der Linien
 
 ; ** 9. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face9_color ;Farbe der Fläche
   DC.W mgv_object_face9_lines_number-1 ;Anzahl der Linien
 ; ** 10. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face10_color ;Farbe der Fläche
   DC.W mgv_object_face10_lines_number-1 ;Anzahl der Linien
 ; ** 11. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face11_color ;Farbe der Fläche
   DC.W mgv_object_face11_lines_number-1 ;Anzahl der Linien
 ; ** 12. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face12_color ;Farbe der Fläche
   DC.W mgv_object_face12_lines_number-1 ;Anzahl der Linien
 
 ; ** 13. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face13_color ;Farbe der Fläche
   DC.W mgv_object_face13_lines_number-1 ;Anzahl der Linien
 ; ** 14. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face14_color ;Farbe der Fläche
   DC.W mgv_object_face14_lines_number-1 ;Anzahl der Linien
 ; ** 15. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face15_color ;Farbe der Fläche
   DC.W mgv_object_face15_lines_number-1 ;Anzahl der Linien
 ; ** 16. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face16_color ;Farbe der Fläche
   DC.W mgv_object_face16_lines_number-1 ;Anzahl der Linien
 
 ; ** 17. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face17_color ;Farbe der Fläche
   DC.W mgv_object_face17_lines_number-1 ;Anzahl der Linien
 ; ** 18. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face18_color ;Farbe der Fläche
   DC.W mgv_object_face18_lines_number-1 ;Anzahl der Linien
 ; ** 19. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face19_color ;Farbe der Fläche
   DC.W mgv_object_face19_lines_number-1 ;Anzahl der Linien
 ; ** 20. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face20_color ;Farbe der Fläche
   DC.W mgv_object_face20_lines_number-1 ;Anzahl der Linien
 
 ; ** 21. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face21_color ;Farbe der Fläche
   DC.W mgv_object_face21_lines_number-1 ;Anzahl der Linien
 ; ** 22. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face22_color ;Farbe der Fläche
   DC.W mgv_object_face22_lines_number-1 ;Anzahl der Linien
 ; ** 23. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face23_color ;Farbe der Fläche
   DC.W mgv_object_face23_lines_number-1 ;Anzahl der Linien
 ; ** 24. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W mgv_object_face24_color ;Farbe der Fläche
   DC.W mgv_object_face24_lines_number-1 ;Anzahl der Linien
 
 ; ** Eckpunkte der Flächen **
-; ---------------------------
   CNOP 0,2
 mgv_object_edge_table
   DC.W 0*2,1*2,8*2,0*2       ;Fläche vorne, Dreieck 12 Uhr
@@ -1984,19 +1877,16 @@ mgv_object_edge_table
   DC.W 7*2,3*2,13*2,7*2      ;Fläche unten, Dreieck 9 Uhr
 
 ; ** Koordinaten der Linien **
-; ----------------------------
 mgv_rotation_xy_coordinates
   DS.W mgv_object_edge_points_number*2
 
 ; ** Tabelle mit Adressen der Objekttabellen **
-; ---------------------------------------------
   CNOP 0,4
 mgv_morph_shapes_table
-  DS.B mgv_morph_shape_SIZE*mgv_morph_shapes_number
+  DS.B mgv_morph_shape_size*mgv_morph_shapes_number
 
 ; **** Color-Fader-Cross ****
 ; ** Zielfarbwerte für Color-Fader-Cross **
-; -----------------------------------------
   CNOP 0,4
 cfc_color_table_fade_out
   REPT 8
@@ -2030,25 +1920,18 @@ cfc_color_table
 
 
 ; ## Speicherstellen allgemein ##
-; -------------------------------
-
   INCLUDE "sys-variables.i"
 
 
 ; ## Speicherstellen für Namen ##
-; -------------------------------
-
   INCLUDE "sys-names.i"
 
 
 ; ## Speicherstellen für Texte ##
-; -------------------------------
-
   INCLUDE "error-texts.i"
 
 ; **** Vert-Textscroll ****
 ; ** Text für Laufschrift **
-; --------------------------
 vts_text
   REPT vts_text_characters_per_column*vts_text_characters_per_line
     DC.B " "
@@ -2326,7 +2209,6 @@ vts_text
 
 
 ; ## Grafikdaten nachladen ##
-; ---------------------------
 
 ; **** Vert-Text-Scroll ****
 vts_image_data SECTION vts_gfx,DATA

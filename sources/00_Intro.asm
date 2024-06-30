@@ -23,7 +23,6 @@
 
 
 ; ** Library-Includes V.3.x nachladen **
-; --------------------------------------
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -47,8 +46,6 @@
 
 
 ; ** Konstanten **
-; ----------------
-
   INCLUDE "equals.i"
 
 requires_68030                 EQU FALSE
@@ -332,31 +329,23 @@ eh_trigger_number_max          EQU 5
 
 
 ; ## Makrobefehle ##
-; ------------------
-
   INCLUDE "macros.i"
 
 
 ; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
-; -----------------------------------------------------------
-
   INCLUDE "except-vectors-offsets.i"
 
 
 ; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
-; -------------------------------------------------------------------
-
   INCLUDE "extra-pf-attributes-structure.i"
 
 
 ; ** Struktur, die alle Eigenschaften der Sprites enthält **
-; ----------------------------------------------------------
-
   INCLUDE "sprite-attributes-structure.i"
 
 
 ; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
-; -----------------------------------------------------------------------
+
   RSRESET
 
 cl1_subextension1      RS.B 0
@@ -380,7 +369,7 @@ cl1_extension2               RS.B 0
 cl1_ext2_COP2LCH             RS.L 1
 cl1_ext2_COP2LCL             RS.L 1
 cl1_ext2_subextension1_entry RS.B cl1_subextension1_size*cl1_display_y_size2
-cl1_extension2_SIZE          RS.B 0
+cl1_extension2_size          RS.B 0
 
   RSRESET
 
@@ -389,7 +378,7 @@ cl1_begin            RS.B 0
   INCLUDE "copperlist1-offsets.i"
 
 cl1_extension1_entry RS.B cl1_extension1_size
-cl1_extension2_entry RS.B cl1_extension2_SIZE
+cl1_extension2_entry RS.B cl1_extension2_size
 cl1_COP1LCH          RS.L 1
 cl1_COP1LCL          RS.L 1
 cl1_WAIT1            RS.L 1
@@ -398,11 +387,9 @@ cl1_INTREQ           RS.L 1
 
 cl1_end              RS.L 1
 
-copperlist1_SIZE     RS.B 0
+copperlist1_size     RS.B 0
 
 ; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
-; ------------------------------------------------------------------------
-
   RSRESET
 
 cl2_extension1      RS.B 0
@@ -465,30 +452,28 @@ cl2_ext2_BPLCON4_23 RS.L 1
 cl2_ext2_BPLCON4_24 RS.L 1
 cl2_ext2_COPJMP1    RS.L 1
 
-cl2_extension2_SIZE RS.B 0
+cl2_extension2_size RS.B 0
 
   RSRESET
 
 cl2_begin            RS.B 0
 
 cl2_extension1_entry RS.B cl2_extension1_size
-cl2_extension2_entry RS.B cl2_extension2_SIZE
+cl2_extension2_entry RS.B cl2_extension2_size
 
-copperlist2_SIZE     RS.B 0
+copperlist2_size     RS.B 0
 
 
 ; ** Konstanten für die größe der Copperlisten **
-; -----------------------------------------------
 cl1_size1          EQU 0
 cl1_size2          EQU 0
-cl1_size3          EQU copperlist1_SIZE
+cl1_size3          EQU copperlist1_size
 cl2_size1          EQU 0
 cl2_size2          EQU 0
-cl2_size3          EQU copperlist2_SIZE
+cl2_size3          EQU copperlist2_size
 
 
 ; ** Sprite0-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr0_extension1       RS.B 0
@@ -505,23 +490,21 @@ spr0_extension2       RS.B 0
 spr0_ext2_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr0_ext2_planedata   RS.L (spr_pixel_per_datafetch/16)*logo_image_y_size
 
-spr0_extension2_SIZE  RS.B 0
+spr0_extension2_size  RS.B 0
 
 ; ** Sprite0-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr0_begin            RS.B 0
 
 spr0_extension1_entry RS.B spr0_extension1_size
-spr0_extension2_entry RS.B spr0_extension2_SIZE
+spr0_extension2_entry RS.B spr0_extension2_size
 
 spr0_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite0_SIZE          RS.B 0
+sprite0_size          RS.B 0
 
 ; ** Sprite1-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr1_extension1       RS.B 0
@@ -538,23 +521,21 @@ spr1_extension2       RS.B 0
 spr1_ext2_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr1_ext2_planedata   RS.L (spr_pixel_per_datafetch/16)*logo_image_y_size
 
-spr1_extension2_SIZE  RS.B 0
+spr1_extension2_size  RS.B 0
 
 ; ** Sprite1-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr1_begin            RS.B 0
 
 spr1_extension1_entry RS.B spr1_extension1_size
-spr1_extension2_entry RS.B spr1_extension2_SIZE
+spr1_extension2_entry RS.B spr1_extension2_size
 
 spr1_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite1_SIZE          RS.B 0
+sprite1_size          RS.B 0
 
 ; ** Sprite2-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr2_extension1       RS.B 0
@@ -571,73 +552,66 @@ spr2_extension2       RS.B 0
 spr2_ext2_header      RS.L 1*(spr_pixel_per_datafetch/16)
 spr2_ext2_planedata   RS.L (spr_pixel_per_datafetch/16)*logo_image_y_size
 
-spr2_extension2_SIZE  RS.B 0
+spr2_extension2_size  RS.B 0
 
 ; ** Sprite2-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr2_begin            RS.B 0
 
 spr2_extension1_entry RS.B spr2_extension1_size
-spr2_extension2_entry RS.B spr2_extension2_SIZE
+spr2_extension2_entry RS.B spr2_extension2_size
 
 spr2_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite2_SIZE          RS.B 0
+sprite2_size          RS.B 0
 
 ; ** Sprite3-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr3_begin            RS.B 0
 
 spr3_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite3_SIZE          RS.B 0
+sprite3_size          RS.B 0
 
 ; ** Sprite4-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr4_begin            RS.B 0
 
 spr4_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite4_SIZE          RS.B 0
+sprite4_size          RS.B 0
 
 ; ** Sprite5-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr5_begin            RS.B 0
 
 spr5_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite5_SIZE          RS.B 0
+sprite5_size          RS.B 0
 
 ; ** Sprite6-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr6_begin            RS.B 0
 
 spr6_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite6_SIZE          RS.B 0
+sprite6_size          RS.B 0
 
 ; ** Sprite7-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr7_begin            RS.B 0
 
 spr7_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite7_SIZE          RS.B 0
+sprite7_size          RS.B 0
 
 ; ** Konstanten für die Größe der Spritestrukturen **
-; ---------------------------------------------------
 spr0_x_size1     EQU spr_x_size1
 spr0_y_size1     EQU 0
 spr1_x_size1     EQU spr_x_size1
@@ -656,26 +630,24 @@ spr7_x_size1     EQU spr_x_size1
 spr7_y_size1     EQU 0
 
 spr0_x_size2     EQU spr_x_size2
-spr0_y_size2     EQU sprite0_SIZE/(spr_x_size2/8)
+spr0_y_size2     EQU sprite0_size/(spr_x_size2/8)
 spr1_x_size2     EQU spr_x_size2
-spr1_y_size2     EQU sprite1_SIZE/(spr_x_size2/8)
+spr1_y_size2     EQU sprite1_size/(spr_x_size2/8)
 spr2_x_size2     EQU spr_x_size2
-spr2_y_size2     EQU sprite2_SIZE/(spr_x_size2/8)
+spr2_y_size2     EQU sprite2_size/(spr_x_size2/8)
 spr3_x_size2     EQU spr_x_size2
-spr3_y_size2     EQU sprite3_SIZE/(spr_x_size2/8)
+spr3_y_size2     EQU sprite3_size/(spr_x_size2/8)
 spr4_x_size2     EQU spr_x_size2
-spr4_y_size2     EQU sprite4_SIZE/(spr_x_size2/8)
+spr4_y_size2     EQU sprite4_size/(spr_x_size2/8)
 spr5_x_size2     EQU spr_x_size2
-spr5_y_size2     EQU sprite5_SIZE/(spr_x_size2/8)
+spr5_y_size2     EQU sprite5_size/(spr_x_size2/8)
 spr6_x_size2     EQU spr_x_size2
-spr6_y_size2     EQU sprite6_SIZE/(spr_x_size2/8)
+spr6_y_size2     EQU sprite6_size/(spr_x_size2/8)
 spr7_x_size2     EQU spr_x_size2
-spr7_y_size2     EQU sprite7_SIZE/(spr_x_size2/8)
+spr7_y_size2     EQU sprite7_size/(spr_x_size2/8)
 
 
 ; ** Struktur, die alle Variablenoffsets enthält **
-; -------------------------------------------------
-
   INCLUDE "variables-offsets.i"
 
 save_a7                RS.L 1
@@ -716,7 +688,6 @@ variables_size         RS.B 0
 
 ; **** Glenz-Vectors ****
 ; ** Objekt-Info-Struktur **
-; --------------------------
   RSRESET
 
 gv_object_info              RS.B 0
@@ -725,7 +696,7 @@ gv_object_info_edge_table   RS.L 1
 gv_object_info_face_color   RS.W 1
 gv_object_info_lines_number RS.W 1
 
-gv_object_info_SIZE         RS.B 0
+gv_object_info_size         RS.B 0
 
 
 start_00_intro
@@ -733,7 +704,6 @@ start_00_intro
   INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
-; -------------------------------------
   CNOP 0,4
 init_own_variables
 
@@ -772,7 +742,6 @@ init_own_variables
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
-; ---------------------------------------------
   CNOP 0,4
 init_all
   bsr.s   init_sprites
@@ -784,7 +753,6 @@ init_all
   bra     init_second_copperlist
 
 ; ** Sprites initialisieren **
-; ----------------------------
   CNOP 0,4
 init_sprites
   bsr.s   spr_init_pointers_table
@@ -881,12 +849,11 @@ copy_sprite_bitplanes_loop
 
 ; **** Glenz-Vectors ****
 ; ** Object-Info-Tabelle initialisieren **
-; ----------------------------------------
   CNOP 0,4
 gv_init_object_info_table
   lea     gv_object_info_table+gv_object_info_edge_table(pc),a0 ;Zeiger auf Object-Info-Tabelle
   lea     gv_object_edge_table(pc),a1 ;Zeiger auf Tebelle mit Eckpunkten
-  move.w  #gv_object_info_SIZE,a2
+  move.w  #gv_object_info_size,a2
   moveq   #gv_object_faces_number-1,d7 ;Anzahl der Flächen
 gv_init_object_info_table_loop
   move.w  gv_object_info_lines_number(a0),d0 
@@ -898,7 +865,6 @@ gv_init_object_info_table_loop
   rts
 
 ; ** Farbtablelle initialisieren **
-; ---------------------------------
   CNOP 0,4
 gv_init_color_table
   lea     pf1_color_table(pc),a0 ;Zeiger auf Farbtableelle
@@ -911,7 +877,6 @@ gv_init_color_table
 
 ; **** Horiz-Fader ****
 ; ** Helligkeit der Farben verringern **
-; --------------------------------------
   CNOP 0,4
 hf_dim_colors
   moveq   #1,d3              ;minimale Helligkeit
@@ -966,7 +931,6 @@ hf_dim_colors_loop2
   rts
 
 ; ** Farbregister initialisieren **
-; ---------------------------------
   CNOP 0,4
 init_color_registers
   CPU_SELECT_COLOR_HIGH_BANK 0
@@ -1008,7 +972,6 @@ init_color_registers
 
 
 ; ** 1. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0
@@ -1105,7 +1068,6 @@ cl1_reset_pointer
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
 ; ** 2. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_display(a3),a0
@@ -1134,7 +1096,6 @@ cl2_init_bplcon4_registers2_loop
 
 
 ; ## Hauptprogramm ##
-; -------------------
 ; a3 ... Basisadresse aller Variablen
 ; a4 ... CIA-A-Base
 ; a5 ... CIA-B-Base
@@ -1146,14 +1107,12 @@ main_routine
 
 
 ; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
-; ----------------------------------------------------------------------
   CNOP 0,4
 no_sync_routines
   rts
 
 
 ; ## Rasterstahl-Routinen ##
-; --------------------------
   CNOP 0,4
 beam_routines
   bsr     wait_copint
@@ -1184,12 +1143,10 @@ fast_exit
 
 
 ; ** Playfields vertauschen **
-; ------------------------
   SWAP_PLAYFIELD pf1,3,pf1_depth3
 
 
 ; ** Playfield löschen **
-; ------------------
   CNOP 0,4
 gv_clear_playfield1
   movem.l a3-a6,-(a7)
@@ -1226,7 +1183,6 @@ gv_clear_playfield1_loop
   rts
 
 ; ** 3D-Rotation **
-; -----------------
   CNOP 0,4
 gv_rotation
   movem.l a4-a5,-(a7)
@@ -1287,7 +1243,6 @@ gv_rotation_loop
   rts
 
 ; ** Linien ziehen **
-; -------------------
   CNOP 0,4
 gv_draw_lines
   movem.l a3-a5,-(a7)
@@ -1362,7 +1317,6 @@ gv_draw_lines_init
   rts
 
 ; ** Playfield füllen **
-; -----------------
   CNOP 0,4
 gv_fill_playfield1
   move.l  pf1_construction2(a3),a0 ;Playfield
@@ -1380,7 +1334,6 @@ gv_fill_playfield1
 
 
 ; ** Playfield von unten einscrollen **
-; -------------------------------------
   CNOP 0,4
 scroll_playfield_bottom_in
   tst.w   spbi_active(a3)    ;Scroll-Playfield-Bottom-In an ?
@@ -1406,7 +1359,6 @@ spbi_finished
   rts
 
 ; ** Playfield nach unten ausscrollen **
-; --------------------------------------
   CNOP 0,4
 scroll_playfield_bottom_out
   tst.w   spbo_active(a3)    ;Scroll-Playfild-Bottom-Out an ?
@@ -1456,7 +1408,6 @@ spb_no_max_VSTOP2
   rts
 
 ; ** Grafik horizontal einfaden **
-; --------------------------------
   CNOP 0,4
 horiz_fader_in1
   tst.w   hfi1_active(a3)    ;Horiz-Fader-In1 an ?
@@ -1489,7 +1440,6 @@ hfi1_finished
   rts
 
 ; ** Playfield horizontal einfaden **
-; -----------------------------------
   CNOP 0,4
 horiz_fader_in2
   tst.w   hfi2_active(a3)    ;Horiz-Fader-In1 an ?
@@ -1522,7 +1472,6 @@ hfi2_finished
   rts
 
 ; ** Grafik horizontal ausfaden **
-; --------------------------------
   CNOP 0,4
 horiz_fader_out1
   tst.w   hfo1_active(a3)    ;Horiz-Fader-Out1 an ?
@@ -1554,7 +1503,6 @@ hfo1_finished
   rts
 
 ; ** Playfield horizontal ausfaden **
-; -----------------------------------
   CNOP 0,4
 horiz_fader_out2
   tst.w   hfo2_active(a3)    ;Horiz-Fader-Out2 an ?
@@ -1587,7 +1535,6 @@ hfo2_finished
 
 
 ; ** SOFTINT-Interrupts abfragen **
-; ---------------------------------
   CNOP 0,4
 effects_handler
   moveq   #INTF_SOFTINT,d1
@@ -1634,7 +1581,6 @@ eh_start_scroll_playfield_bottom_out
   rts
 
 ; ** Mouse-Handler **
-; -------------------
   CNOP 0,4
 mouse_handler
   btst    #CIAB_GAMEPORT0,CIAPRA(a4) ;Linke Maustaste gedrückt ?
@@ -1648,30 +1594,24 @@ mh_quit
 
 
 ; ## Interrupt-Routinen ##
-; ------------------------
+  
 
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
-; ------------------------------
   CNOP 0,4
 NMI_int_server
   rts
 
 
 ; ## Hilfsroutinen ##
-; -------------------
-
   INCLUDE "help-routines.i"
 
 
 ; ## Speicherstellen für Tabellen und Strukturen ##
-; -------------------------------------------------
-
   INCLUDE "sys-structures.i"
 
 ; ** Farben des ersten Playfields **
-; ----------------------------------
   CNOP 0,4
 pf1_color_table
   REPT 8 ;pf1_colors_number
@@ -1679,7 +1619,6 @@ pf1_color_table
   ENDR
 
 ; ** Farben der Sprites **
-; ------------------------
 spr_color_table
   REPT hf_colors_per_colorbank
     DC.L color00_bits
@@ -1756,12 +1695,10 @@ spr_color_table
   ENDR
 
 ; ** Adressen der Sprites **
-; --------------------------
 spr_pointers_display
   DS.L spr_number
 
 ; ** Sinus / Cosinustabelle **
-; ----------------------------
   CNOP 0,2
 sine_table
   IFEQ sine_table_length-512
@@ -1777,7 +1714,6 @@ gv_glenz_color_table
   INCLUDE "Blitter.AGA:Grafik/1xGlenz-Colorgradient5.ct"
 
 ; ** Objektdaten **
-; -----------------
   CNOP 0,2
 gv_object_coordinates
 ; ** Diamant
@@ -1809,262 +1745,212 @@ gv_object_coordinates
   DC.W 0,48*8,0                ;P25
 
 ; ** Information über Objekt **
-; -----------------------------
   CNOP 0,4
 gv_object_info_table
 ; ** 1. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face1_color ;Farbe der Fläche
   DC.W gv_object_face1_lines_number-1 ;Anzahl der Linien
 ; ** 2. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face2_color ;Farbe der Fläche
   DC.W gv_object_face2_lines_number-1 ;Anzahl der Linien
 ; ** 3. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face3_color ;Farbe der Fläche
   DC.W gv_object_face3_lines_number-1 ;Anzahl der Linien
 ; ** 4. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face4_color ;Farbe der Fläche
   DC.W gv_object_face4_lines_number-1 ;Anzahl der Linien
 ; ** 5. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face5_color ;Farbe der Fläche
   DC.W gv_object_face5_lines_number-1 ;Anzahl der Linien
 ; ** 6. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face6_color ;Farbe der Fläche
   DC.W gv_object_face6_lines_number-1 ;Anzahl der Linien
 ; ** 7. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face7_color ;Farbe der Fläche
   DC.W gv_object_face7_lines_number-1 ;Anzahl der Linien
 ; ** 8. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face8_color ;Farbe der Fläche
   DC.W gv_object_face8_lines_number-1 ;Anzahl der Linien
 
 ; ** 9. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face9_color ;Farbe der Fläche
   DC.W gv_object_face9_lines_number-1 ;Anzahl der Linien
 ; ** 10. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face10_color ;Farbe der Fläche
   DC.W gv_object_face10_lines_number-1 ;Anzahl der Linien
 ; ** 11. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face11_color ;Farbe der Fläche
   DC.W gv_object_face11_lines_number-1 ;Anzahl der Linien
 ; ** 12. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face12_color ;Farbe der Fläche
   DC.W gv_object_face12_lines_number-1 ;Anzahl der Linien
 
 ; ** 13. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face13_color ;Farbe der Fläche
   DC.W gv_object_face13_lines_number-1 ;Anzahl der Linien
 ; ** 14. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face14_color ;Farbe der Fläche
   DC.W gv_object_face14_lines_number-1 ;Anzahl der Linien
 ; ** 15. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face15_color ;Farbe der Fläche
   DC.W gv_object_face15_lines_number-1 ;Anzahl der Linien
 ; ** 16. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face16_color ;Farbe der Fläche
   DC.W gv_object_face16_lines_number-1 ;Anzahl der Linien
 
 ; ** 17. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face17_color ;Farbe der Fläche
   DC.W gv_object_face17_lines_number-1 ;Anzahl der Linien
 ; ** 18. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face18_color ;Farbe der Fläche
   DC.W gv_object_face18_lines_number-1 ;Anzahl der Linien
 ; ** 19. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face19_color ;Farbe der Fläche
   DC.W gv_object_face19_lines_number-1 ;Anzahl der Linien
 ; ** 20. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face20_color ;Farbe der Fläche
   DC.W gv_object_face20_lines_number-1 ;Anzahl der Linien
 
 ; ** 21. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face21_color ;Farbe der Fläche
   DC.W gv_object_face21_lines_number-1 ;Anzahl der Linien
 ; ** 22. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face22_color ;Farbe der Fläche
   DC.W gv_object_face22_lines_number-1 ;Anzahl der Linien
 ; ** 23. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face23_color ;Farbe der Fläche
   DC.W gv_object_face23_lines_number-1 ;Anzahl der Linien
 ; ** 24. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face24_color ;Farbe der Fläche
   DC.W gv_object_face24_lines_number-1 ;Anzahl der Linien
 
 ; ** 25. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face25_color ;Farbe der Fläche
   DC.W gv_object_face25_lines_number-1 ;Anzahl der Linien
 ; ** 26. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face26_color ;Farbe der Fläche
   DC.W gv_object_face26_lines_number-1 ;Anzahl der Linien
 ; ** 27. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face27_color ;Farbe der Fläche
   DC.W gv_object_face27_lines_number-1 ;Anzahl der Linien
 ; ** 28. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face28_color ;Farbe der Fläche
   DC.W gv_object_face28_lines_number-1 ;Anzahl der Linien
 
 ; ** 29. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face29_color ;Farbe der Fläche
   DC.W gv_object_face29_lines_number-1 ;Anzahl der Linien
 ; ** 30. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face30_color ;Farbe der Fläche
   DC.W gv_object_face30_lines_number-1 ;Anzahl der Linien
 ; ** 31. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face31_color ;Farbe der Fläche
   DC.W gv_object_face31_lines_number-1 ;Anzahl der Linien
 ; ** 32. Fläche **
-; ---------------  
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face32_color ;Farbe der Fläche
   DC.W gv_object_face32_lines_number-1 ;Anzahl der Linien
 
 ; ** 33. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face33_color ;Farbe der Fläche
   DC.W gv_object_face33_lines_number-1 ;Anzahl der Linien
 ; ** 34. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face34_color ;Farbe der Fläche
   DC.W gv_object_face34_lines_number-1 ;Anzahl der Linien
 ; ** 35. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face35_color ;Farbe der Fläche
   DC.W gv_object_face35_lines_number-1 ;Anzahl der Linien
 ; ** 36. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face36_color ;Farbe der Fläche
   DC.W gv_object_face36_lines_number-1 ;Anzahl der Linien
 
 ; ** 37. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face37_color ;Farbe der Fläche
   DC.W gv_object_face37_lines_number-1 ;Anzahl der Linien
 ; ** 38. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face38_color ;Farbe der Fläche
   DC.W gv_object_face38_lines_number-1 ;Anzahl der Linien
 ; ** 39. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face39_color ;Farbe der Fläche
   DC.W gv_object_face39_lines_number-1 ;Anzahl der Linien
 ; ** 40. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face40_color ;Farbe der Fläche
   DC.W gv_object_face40_lines_number-1 ;Anzahl der Linien
 
 ; ** 41. Fläche **
-; ---------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face41_color ;Farbe der Fläche
   DC.W gv_object_face41_lines_number-1 ;Anzahl der Linien
 ; ** 42. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face42_color ;Farbe der Fläche
   DC.W gv_object_face42_lines_number-1 ;Anzahl der Linien
 ; ** 43. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face43_color ;Farbe der Fläche
   DC.W gv_object_face43_lines_number-1 ;Anzahl der Linien
 ; ** 44. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face44_color ;Farbe der Fläche
   DC.W gv_object_face44_lines_number-1 ;Anzahl der Linien
 ; ** 45. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face45_color ;Farbe der Fläche
   DC.W gv_object_face45_lines_number-1 ;Anzahl der Linien
 ; ** 46. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face46_color ;Farbe der Fläche
   DC.W gv_object_face46_lines_number-1 ;Anzahl der Linien
 ; ** 47. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face47_color ;Farbe der Fläche
   DC.W gv_object_face47_lines_number-1 ;Anzahl der Linien
 ; ** 48. Fläche **
-; ----------------
   DC.L 0                     ;Zeiger auf Koords
   DC.W gv_object_face48_color ;Farbe der Fläche
   DC.W gv_object_face48_lines_number-1 ;Anzahl der Linien
 
   
 ; ** Eckpunkte der Flächen **
-; ---------------------------
   CNOP 0,2
 gv_object_edge_table
   DC.W 0*2,6*2,5*2,0*2       ;Fläche 5 oben, Dreieck 12 Uhr
@@ -2126,7 +2012,6 @@ gv_object_edge_table
   DC.W 25*2,22*2,23*2,25*2   ;Fläche 46 unten, Dreieck 10,5 Uhr
 
 ; ** Koordinaten der Linien **
-; ----------------------------
 gv_rotation_xy_coordinates
   DS.W gv_object_edge_points_number*2
 
@@ -2155,30 +2040,21 @@ hf_switch_table
 
 
 ; ## Speicherstellen allgemein ##
-; -------------------------------
-
   INCLUDE "sys-variables.i"
 
 
 ; ## Speicherstellen für Namen ##
-; -------------------------------
-
   INCLUDE "sys-names.i"
 
 
 ; ## Speicherstellen für Texte ##
-; -------------------------------
-
   INCLUDE "error-texts.i"
 
-; ** Programmversion für Version-Befehl **
-; ----------------------------------------
-program_version DC.B "$VER: 00_Intro 1.0 (12.4.24)",TRUE
+program_version DC.B "$VER: 00_Intro 1.0 (12.4.24)",0
   EVEN
 
 
 ; ## Grafikdaten nachladen ##
-; ---------------------------
 
 ; **** Title ****
 title_image_data SECTION title_gfx,DATA
