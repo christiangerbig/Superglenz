@@ -720,7 +720,7 @@ init_own_variables
   IFEQ mgv_premorph_enabled
     move.w  d0,mgv_morph_active(a3)
   ELSE
-    move.w  dq,mgv_morph_active(a3)
+    move.w  d1,mgv_morph_active(a3)
   ENDC
   move.w  d0,mgv_morph_shapes_table_start(a3)
   IFEQ mgv_premorph_enabled
