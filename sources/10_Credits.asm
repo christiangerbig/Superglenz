@@ -885,7 +885,7 @@ init_second_copperlist
 
   CNOP 0,4
 cl2_init_clear_blit
-  COP_WAITBLT
+  COP_WAITBLIT
   COP_MOVEQ BC0F_DEST,BLTCON0 ;Minterm Löschen
   COP_MOVEQ TRUE,BLTCON1
   COP_MOVEQ TRUE,BLTDPTH
@@ -896,7 +896,7 @@ cl2_init_clear_blit
 
   CNOP 0,4
 cl2_init_line_blits_steady_registers
-  COP_WAITBLT
+  COP_WAITBLIT
   COP_MOVEQ FALSE_WORD,BLTAFWM    ;Keine Ausmaskierung
   COP_MOVEQ FALSE_WORD,BLTALWM
   COP_MOVEQ TRUE,BLTCPTH
@@ -922,7 +922,7 @@ cl1_init_line_blits_loop
   COP_MOVEQ TRUE,BLTBMOD
   COP_MOVEQ TRUE,BLTAMOD
   COP_MOVEQ TRUE,BLTSIZE
-  COP_WAITBLT
+  COP_WAITBLIT
   dbf     d7,cl1_init_line_blits_loop
   rts
 

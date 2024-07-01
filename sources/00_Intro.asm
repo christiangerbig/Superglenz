@@ -1290,7 +1290,7 @@ gv_draw_lines_loop2
   beq.s   gv_draw_lines_single_line ;Ja -> verzweige
   add.l   a4,d1              ;nächste Plane
 gv_draw_lines_single_line
-  WAIT_BLITTER
+  WAITBLIT
   move.l  d0,BLTCON0-DMACONR(a6) ;Bits 31-15: BLTCON0, Bits 16-0: BLTCON1
   move.l  d1,BLTCPT-DMACONR(a6) ;Playfield lesen
   move.w  d3,BLTAPTL-DMACONR(a6) ;(4*dy)-(2*dx)
@@ -1307,7 +1307,7 @@ gv_draw_lines_no_face
   CNOP 0,4
 gv_draw_lines_init
   move.w  #DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6) ;BLTPRI an
-  WAIT_BLITTER
+  WAITBLIT
   move.l  #$ffff8000,BLTBDAT-DMACONR(a6) ;Bits 31-16: Linientextur, Bits 0-15: Linientextur mit MSB beginnen
   moveq   #FALSE,d0
   move.l  d0,BLTAFWM-DMACONR(a6) ;Keine Ausmaskierung
@@ -1320,7 +1320,7 @@ gv_draw_lines_init
   CNOP 0,4
 gv_fill_playfield1
   move.l  pf1_construction2(a3),a0 ;Playfield
-  WAIT_BLITTER
+  WAITBLIT
   move.w  #DMAF_BLITHOG,DMACON-DMACONR(a6) ;BLTPRI aus
   move.l  (a0),a0
   ADDF.L  (pf1_plane_width*pf1_y_size3*pf1_depth3)-2,a0 ;Ende des Playfieldes
