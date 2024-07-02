@@ -15,6 +15,11 @@
 ; Das Playfield ist auf 64 kB aligned damit Blitter-High-Pointer der
 ; Linien-Blits nur 1x initialisiert werden müssen.
 
+  SECTION code_and_variables,CODE
+
+  MC68040
+
+
   XDEF start_012_morph_glenz_vectors
 
   XREF v_bplcon0_bits
@@ -27,9 +32,10 @@
   XREF mouse_handler
   XREF sine_table
 
-  SECTION code_and_variables,CODE
 
-  MC68040
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -68,11 +74,7 @@ workbench_start_enabled           EQU FALSE
 workbench_fade_enabled            EQU FALSE
 text_output_enabled               EQU FALSE
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-
-mgv_count_lines                   EQU FALSE
+mgv_count_lines_enabled           EQU FALSE
 mgv_premorph_enabled              EQU TRUE
 mgv_morph_loop_enabled            EQU FALSE
 
@@ -1088,7 +1090,7 @@ mgv_set_second_copperlist_jump
   ADDF.L  cl2_extension3_entry,d0
   moveq   #TRUE,d1           ;32-Bit-Zugriff
   move.w  mgv_lines_counter(a3),d1
-  IFEQ mgv_count_lines
+  IFEQ mgv_count_lines_enabled
     cmp.w   $140000,d1
     blt.s   mgv_skip
     move.w  d1,$140000

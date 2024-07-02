@@ -9,6 +9,11 @@
 ; # OS:       3.0+             #
 ; ##############################
 
+  SECTION code_and_variables,CODE
+
+  MC68040
+
+
   XDEF start_00_intro
   XDEF mouse_handler
   XDEF sine_table
@@ -17,9 +22,10 @@
   XREF nop_first_copperlist
   XREF nop_second_copperlist
 
-  SECTION code_and_variables,CODE
 
-  MC68040
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -57,10 +63,6 @@ requires_multiscan_monitor     EQU FALSE
 workbench_start_enabled        EQU FALSE
 workbench_fade_enabled         EQU FALSE
 text_output_enabled            EQU FALSE
-
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
 
 dma_bits                       EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 

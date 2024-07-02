@@ -15,6 +15,9 @@
 
   SECTION code_and_variables,CODE
 
+  MC68040
+
+
   XDEF v_bplcon0_bits
   XDEF v_bplcon3_bits1
   XDEF v_bplcon3_bits2
@@ -34,7 +37,11 @@
   XREF mouse_handler
   XREF sine_table
 
-  MC68040
+
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
+DEF_SET_SECOND_COPPERLIST
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -72,11 +79,6 @@ requires_multiscan_monitor  EQU FALSE
 workbench_start_enabled     EQU FALSE
 workbench_fade_enabled      EQU FALSE
 text_output_enabled         EQU FALSE
-
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-DEF_SET_SECOND_COPPERLIST
 
 dma_bits                    EQU DMAF_SPRITE+DMAF_COPPER+DMAF_SETCLR
 intena_bits                 EQU INTF_SETCLR

@@ -37,10 +37,10 @@
 ; Mit überarbeiteten Include-Files (COPCON)
 
 
-
   SECTION code_and_variables,CODE
 
   MC68040
+
 
   XDEF color00_bits
   XDEF nop_first_copperlist
@@ -48,6 +48,11 @@
  
   XREF start_0_pt_replay
   XREF start_1_pt_replay
+
+
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
+DEF_SET_SECOND_COPPERLIST
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -93,10 +98,6 @@ requires_multiscan_monitor EQU FALSE
 workbench_start_enabled    EQU FALSE
 workbench_fade_enabled     EQU FALSE
 text_output_enabled        EQU FALSE
-
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-DEF_SET_SECOND_COPPERLIST
 
 dma_bits                   EQU DMAF_COPPER+DMAF_MASTER+DMAF_SETCLR
 intena_bits                EQU INTF_INTEN+INTF_SETCLR

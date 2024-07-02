@@ -13,12 +13,21 @@
 
   MC68040
 
+
   XREF color00_bits
   XREF start_00_intro
   XREF start_01_DEF_WRAPPER
 
   XDEF start_0_pt_replay
   XDEF sc_start
+
+
+DEF_SYS_TAKEN_OVER
+DEF_WRAPPER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
+DEF_SET_SECOND_COPPERLIST
+DEF_CUSTOM_MEMORY_USED
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -57,25 +66,19 @@ workbench_start_enabled    EQU FALSE
 workbench_fade_enabled     EQU FALSE
 text_output_enabled        EQU FALSE
 
-DEF_SYS_TAKEN_OVER
-DEF_WRAPPER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-DEF_SET_SECOND_COPPERLIST
-DEF_CUSTOM_MEMORY_USED
 CUSTOM_MEMORY_CHIP         EQU $00000000
 CUSTOM_MEMORY_FAST         EQU $00000001
 
-pt_v3.0b
-  IFD pt_v2.3a
+DEF_PT_VERSION_3.0B
+  IFD DEF_PT_VERSION_2.3A
     INCLUDE "music-tracker/pt2-equals.i"
   ENDC
-  IFD pt_v3.0b
+  IFD DEF_PT_VERSION_3.0B
     INCLUDE "music-tracker/pt3-equals.i"
   ENDC
 pt_ciatiming_enabled       EQU TRUE
 pt_finetune_enabled        EQU FALSE
-  IFD pt_v3.0b
+  IFD DEF_PT_VERSION_3.0B
 pt_metronome_enabled       EQU FALSE
   ENDC
 pt_mute_enabled            EQU TRUE
@@ -137,10 +140,10 @@ spr_y_size2                EQU 0
 spr_depth                  EQU 0
 spr_colors_number          EQU 0
 
-  IFD pt_v2.3a
+  IFD DEF_PT_VERSION_2.3A
 audio_memory_size          EQU 0
   ENDC
-  IFD pt_v3.0b
+  IFD DEF_PT_VERSION_3.0B
 audio_memory_size          EQU 2
   ENDC
 
@@ -280,10 +283,10 @@ spr7_y_size2       EQU 0
 ; ** Relative offsets for variables **
 
 ; **** PT-Replay ****
-  IFD pt_v2.3a
+  IFD DEF_PT_VERSION_2.3A
     INCLUDE "music-tracker/pt2-variables-offsets.i"
   ENDC
-  IFD pt_v3.0b
+  IFD DEF_PT_VERSION_3.0B
     INCLUDE "music-tracker/pt3-variables-offsets.i"
   ENDC
 
@@ -332,10 +335,10 @@ init_custom_memory_table
 init_own_variables
 
 ; **** PT-Replay ****
-  IFD pt_v2.3a
+  IFD DEF_PT_VERSION_2.3A
     PT2_INIT_VARIABLES
   ENDC
-  IFD pt_v3.0b
+  IFD DEF_PT_VERSION_3.0B
     PT3_INIT_VARIABLES
   ENDC
   rts
@@ -539,10 +542,10 @@ VERTB_int_server
   ENDC
 
 ; ** PT-replay routine **
-  IFD pt_v2.3a
+  IFD DEF_PT_VERSION_2.3A
     PT2_REPLAY pt_SetSoftInterrupt
   ENDC
-  IFD pt_v3.0b
+  IFD DEF_PT_VERSION_3.0B
     PT3_REPLAY pt_SetSoftInterrupt
   ENDC
 
@@ -795,10 +798,10 @@ pf1_color_table
   INCLUDE "music-tracker/pt-vibrato-tremolo-table.i"
 
 ; ** "Arpeggio/Tone Portamento" **
-  IFD pt_v2.3a
+  IFD DEF_PT_VERSION_2.3A
     INCLUDE "music-tracker/pt2-period-table.i"
   ENDC
-  IFD pt_v3.0b
+  IFD DEF_PT_VERSION_3.0B
     INCLUDE "music-tracker/pt3-period-table.i"
   ENDC
 

@@ -13,6 +13,7 @@
 
   MC68040
 
+
   XREF color00_bits
   XREF nop_first_copperlist
   XREF nop_second_copperlist
@@ -20,6 +21,12 @@
   XREF sine_table
 
   XDEF start_10_credits
+
+
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
+
 
 ; ** Library-Includes V.3.x nachladen **
   INCDIR "Daten:include3.5/"
@@ -57,11 +64,7 @@ workbench_start_enabled           EQU FALSE
 workbench_fade_enabled            EQU FALSE
 text_output_enabled               EQU FALSE
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-
-mgv_count_lines                   EQU FALSE
+mgv_count_lines_enabled           EQU FALSE
 mgv_premorph_enabled              EQU TRUE
 mgv_morph_loop_enabled            EQU TRUE
 
@@ -1361,7 +1364,7 @@ mgv_set_second_copperlist_jump
   ADDF.L  cl2_extension4_entry,d0
   moveq   #TRUE,d1           ;32-Bit-Zugriff
   move.w  mgv_lines_counter(a3),d1
-  IFEQ mgv_count_lines
+  IFEQ mgv_count_lines_enabled
     cmp.w   $140000,d1
     blt.s   mgv_skip
     move.w  d1,$140000
