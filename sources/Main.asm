@@ -84,9 +84,9 @@
 ; ** Konstanten **
   INCLUDE "equals.i"
 
-requires_68030             EQU FALSE  
-requires_68040             EQU FALSE
-requires_68060             EQU FALSE
+requires_030_cpu           EQU FALSE  
+requires_040_cpu           EQU FALSE
+requires_060_cpu           EQU FALSE
 requires_fast_memory       EQU FALSE
 requires_multiscan_monitor EQU FALSE
 
@@ -94,9 +94,9 @@ workbench_start_enabled    EQU FALSE
 workbench_fade_enabled     EQU FALSE
 text_output_enabled        EQU FALSE
 
-LINKER_PASS_GLOBAL_REFERENCES
-LINKER_PASS_RETURN_CODE
-SET_SECOND_COPPERLIST
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
+DEF_SET_SECOND_COPPERLIST
 
 dma_bits                   EQU DMAF_COPPER+DMAF_MASTER+DMAF_SETCLR
 intena_bits                EQU INTF_INTEN+INTF_SETCLR

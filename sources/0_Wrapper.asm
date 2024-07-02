@@ -15,7 +15,7 @@
 
   XREF color00_bits
   XREF start_00_intro
-  XREF start_01_LINKER_WRAPPER
+  XREF start_01_DEF_WRAPPER
 
   XDEF start_0_pt_replay
   XDEF sc_start
@@ -47,9 +47,9 @@
 ; ** Konstanten **
   INCLUDE "equals.i"
 
-requires_68030             EQU FALSE  
-requires_68040             EQU FALSE
-requires_68060             EQU FALSE
+requires_030_cpu           EQU FALSE  
+requires_040_cpu           EQU FALSE
+requires_060_cpu           EQU FALSE
 requires_fast_memory       EQU FALSE
 requires_multiscan_monitor EQU FALSE
 
@@ -57,12 +57,12 @@ workbench_start_enabled    EQU FALSE
 workbench_fade_enabled     EQU FALSE
 text_output_enabled        EQU FALSE
 
-LINKER_SYS_TAKEN_OVER
-LINKER_WRAPPER
-LINKER_PASS_GLOBAL_REFERENCES
-LINKER_PASS_RETURN_CODE
-SET_SECOND_COPPERLIST
-CUSTOM_MEMORY_USED
+DEF_SYS_TAKEN_OVER
+DEF_WRAPPER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
+DEF_SET_SECOND_COPPERLIST
+DEF_CUSTOM_MEMORY_USED
 CUSTOM_MEMORY_CHIP         EQU $00000000
 CUSTOM_MEMORY_FAST         EQU $00000001
 
@@ -479,9 +479,9 @@ custom_memory_error
 main_routine
   bsr     start_00_intro
   tst.l   d0
-  bne.s   no_start_01_LINKER_WRAPPER
-  bsr     start_01_LINKER_WRAPPER
-no_start_01_LINKER_WRAPPER
+  bne.s   no_start_01_DEF_WRAPPER
+  bsr     start_01_DEF_WRAPPER
+no_start_01_DEF_WRAPPER
   rts
 
   IFEQ pt_music_fader_enabled

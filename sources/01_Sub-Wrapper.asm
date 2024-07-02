@@ -20,7 +20,7 @@
   XDEF v_bplcon3_bits2
   XDEF v_bplcon4_bits
   XDEF v_fmode_bits
-  XDEF start_01_LINKER_WRAPPER
+  XDEF start_01_DEF_WRAPPER
 
   XREF color00_bits
   XREF nop_second_copperlist
@@ -63,9 +63,9 @@
 ; ** Konstanten **
   INCLUDE "equals.i"
 
-requires_68030              EQU FALSE  
-requires_68040              EQU FALSE
-requires_68060              EQU FALSE
+requires_030_cpu            EQU FALSE  
+requires_040_cpu            EQU FALSE
+requires_060_cpu            EQU FALSE
 requires_fast_memory        EQU FALSE
 requires_multiscan_monitor  EQU FALSE
 
@@ -73,10 +73,10 @@ workbench_start_enabled     EQU FALSE
 workbench_fade_enabled      EQU FALSE
 text_output_enabled         EQU FALSE
 
-LINKER_SYS_TAKEN_OVER
-LINKER_PASS_GLOBAL_REFERENCES
-LINKER_PASS_RETURN_CODE
-SET_SECOND_COPPERLIST
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
+DEF_SET_SECOND_COPPERLIST
 
 dma_bits                    EQU DMAF_SPRITE+DMAF_COPPER+DMAF_SETCLR
 intena_bits                 EQU INTF_SETCLR
@@ -457,7 +457,7 @@ sprfo_fader_angle      RS.W 1
 variables_size         RS.B 0
 
 
-start_01_LINKER_WRAPPER
+start_01_DEF_WRAPPER
 
   INCLUDE "sys-wrapper.i"
 
