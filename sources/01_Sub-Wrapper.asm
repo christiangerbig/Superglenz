@@ -23,7 +23,7 @@
   XDEF v_bplcon3_bits2
   XDEF v_bplcon4_bits
   XDEF v_fmode_bits
-  XDEF start_01_DEF_WRAPPER
+  XDEF start_01_wrapper
 
   XREF color00_bits
   XREF nop_second_copperlist
@@ -38,13 +38,6 @@
   XREF sine_table
 
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-DEF_SET_SECOND_COPPERLIST
-
-
-; ** Library-Includes V.3.x nachladen **
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -64,10 +57,19 @@ DEF_SET_SECOND_COPPERLIST
   INCLUDE "hardware/dmabits.i"
   INCLUDE "hardware/intbits.i"
 
+
   INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
 
 
-; ** Konstanten **
+SYS_TAKEN_OVER              SET 1
+PASS_GLOBAL_REFERENCES      SET 1
+PASS_RETURN_CODE            SET 1
+SET_SECOND_COPPERLIST       SET 1
+
+
+  INCLUDE "macros.i"
+
+
   INCLUDE "equals.i"
 
 requires_030_cpu            EQU FALSE  
@@ -186,23 +188,14 @@ sprfo_fader_center          EQU sprfo_fader_speed_max+1
 sprfo_fader_angle_speed     EQU 2
 
 
-; ## Makrobefehle ##
-  INCLUDE "macros.i"
-
-
-; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
   INCLUDE "except-vectors-offsets.i"
 
 
-; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
   INCLUDE "extra-pf-attributes-structure.i"
 
 
-; ** Struktur, die alle Eigenschaften der Sprites enthält **
   INCLUDE "sprite-attributes-structure.i"
 
-
-; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
 
   RSRESET
 
@@ -214,8 +207,6 @@ cl1_COPJMP2      RS.L 1
 
 copperlist1_size RS.B 0
 
-
-; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
 
   RSRESET
 
@@ -441,29 +432,30 @@ spr7_x_size2     EQU spr_x_size2
 spr7_y_size2     EQU sprite7_size/(spr_x_size2/8)
 
 
-; ** Struktur, die alle Variablenoffsets enthält **
+
+  RSRESET
+
   INCLUDE "variables-offsets.i"
 
 ; **** Sprite-Fader ****
-sprf_colors_counter    RS.W 1
+sprf_colors_counter     RS.W 1
 sprf_copy_colors_active RS.W 1
 
 ; **** Sprite-Fader-In ****
-sprfi_active           RS.W 1
-sprfi_fader_angle      RS.W 1
+sprfi_active            RS.W 1
+sprfi_fader_angle       RS.W 1
 
 ; **** Sprite-Fader-Out ****
-sprfo_active           RS.W 1
-sprfo_fader_angle      RS.W 1
+sprfo_active            RS.W 1
+sprfo_fader_angle       RS.W 1
 
-variables_size         RS.B 0
+variables_size          RS.B 0
 
 
-start_01_DEF_WRAPPER
+start_01_wrapper
 
   INCLUDE "sys-wrapper.i"
 
-; ** Eigene Variablen initialisieren **
   CNOP 0,4
 init_own_variables
 
@@ -503,7 +495,6 @@ init_sprites
   INIT_ATTACHED_SPRITES_CLUSTER bg,spr_pointers_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
 
 
-; ** 1. Copperliste initialisieren **
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0
@@ -529,7 +520,6 @@ cl1_init_color_registers
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
 
-; ** 2. Copperliste initialisieren **
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_display(a3),a0
@@ -537,11 +527,6 @@ init_second_copperlist
   rts
 
 
-; ## Hauptprogramm ##
-; a3 ... Basisadresse aller Variablen
-; a4 ... CIA-A-Base
-; a5 ... CIA-B-Base
-; a6 ... DMACONR
   CNOP 0,4
 main_routine
   move.l  a0,-(a7)
@@ -597,7 +582,6 @@ main_routine
   move.w  d0,sprf_copy_colors_active(a3) ;Kopieren der Farben an
   move.w  d0,sprfo_active(a3) ;Sprite-Fader-Out an
 
-; ## Rasterstahl-Routinen ##
 beam_routines
   bsr     wait_beam_position
   bsr     sprite_fader_in
@@ -699,7 +683,6 @@ no_sprite_fader_out
   COPY_COLOR_TABLE_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR01_high5,cl1_COLOR01_low5
 
 
-; ## Interrupt-Routinen ##
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
@@ -708,11 +691,9 @@ NMI_int_server
   rts
 
 
-; ## Hilfsroutinen ##
   INCLUDE "help-routines.i"
 
 
-; ## Speicherstellen für Tabellen und Strukturen ##
   INCLUDE "sys-structures.i"
 
 ; ** Farben der Sprites **
@@ -738,19 +719,16 @@ sprfo_color_table
   ENDR
 
 
-; ## Speicherstellen allgemein ##
   INCLUDE "sys-variables.i"
 
 
-; ## Speicherstellen für Namen ##
   INCLUDE "sys-names.i"
 
 
-; ## Speicherstellen für Texte ##
   INCLUDE "error-texts.i"
 
 
-; ## Grafikdaten nachladen ##
+; ** Grafikdaten nachladen **
 
 ; **** Hintergrundbild ****
 bg_image_data SECTION gfx1,DATA

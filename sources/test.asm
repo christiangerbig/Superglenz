@@ -4,7 +4,6 @@
 
   MC68020
 
-; ** Konstanten **
 
 ; **** Main ****
 TRUE                                EQU 0

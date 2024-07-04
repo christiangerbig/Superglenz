@@ -33,12 +33,6 @@
   XREF sine_table
 
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-
-
-; ** Library-Includes V.3.x nachladen **
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -58,10 +52,18 @@ DEF_PASS_RETURN_CODE
   INCLUDE "hardware/dmabits.i"
   INCLUDE "hardware/intbits.i"
 
+
   INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
 
 
-; ** Konstanten **
+SYS_TAKEN_OVER                    SET 1
+PASS_GLOBAL_REFERENCES            SET 1
+PASS_RETURN_CODE                  SET 1
+
+
+  INCLUDE "macros.i"
+
+
   INCLUDE "equals.i"
 
 requires_030_cpu                  EQU FALSE
@@ -143,20 +145,20 @@ visible_lines_number              EQU 160
 MINROW                            EQU VSTOP_OVERSCAN_PAL
 
 pf_pixel_per_datafetch            EQU 64 ;4x
-DDFSTRT_bits                      EQU DDFSTART_192_PIXEL_4X
-DDFSTOP_bits                      EQU DDFSTOP_192_PIXEL_4X
 
 display_window_hstart             EQU HSTART_160_PIXEL
 display_window_vstart             EQU MINROW
-diwstrt_bits                      EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
 display_window_hstop              EQU HSTOP_160_pixel
 display_window_vstop              EQU VSTOP_OVERSCAN_PAL
-diwstop_bits                      EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
 
 pf1_plane_width                   EQU pf1_x_size3/8
 data_fetch_width                  EQU pixel_per_line/8
 pf1_plane_moduli                  EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
+diwstrt_bits                      EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
+diwstop_bits                      EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
+ddfstrt_bits                      EQU DDFSTART_192_PIXEL_4X
+ddfstop_bits                      EQU DDFSTOP_192_PIXEL_4X
 bplcon0_bits                      EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
 bplcon1_bits                      EQU $4400
 bplcon2_bits                      EQU 0
@@ -528,23 +530,14 @@ spbi_y_angle_speed                EQU 4
 spbo_y_angle_speed                EQU 5
 
 
-; ## Makrobefehle ##
-  INCLUDE "macros.i"
-
-
-; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
   INCLUDE "except-vectors-offsets.i"
 
 
-; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
   INCLUDE "extra-pf-attributes-structure.i"
 
 
-; ** Struktur, die alle Eigenschaften der Sprites enthält **
   INCLUDE "sprite-attributes-structure.i"
 
-
-; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
 
   RSRESET
 
@@ -582,6 +575,7 @@ cl2_ext2_WAITBLIT   RS.L 1
 
 cl2_extension2_size RS.B 0
 
+
   RSRESET
 
 cl2_extension3      RS.B 0
@@ -597,6 +591,7 @@ cl2_ext3_BLTDMOD    RS.L 1
 cl2_ext3_BLTSIZE    RS.L 1
 
 cl2_extension3_size RS.B 0
+
 
   RSRESET
 
@@ -656,7 +651,9 @@ spr6_y_size2            EQU 0
 spr7_x_size2            EQU spr_x_size2
 spr7_y_size2            EQU 0
 
-; ** Struktur, die alle Variablenoffsets enthält **
+
+  RSRESET
+
   INCLUDE "variables-offsets.i"
 
 save_a7                          RS.L 1
@@ -719,7 +716,6 @@ start_014_morph_glenz_vectors
 
   INCLUDE "sys-wrapper.i"
 
-; ** Eigene Variablen initialisieren **
   CNOP 0,4
 init_own_variables
 
@@ -835,7 +831,6 @@ mgv_init_color_table
   rts
 
 
-; ** 2. Copperliste initialisieren **
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction2(a3),a0
@@ -846,7 +841,7 @@ init_second_copperlist
   bsr     cl2_init_line_blits
   bsr     cl2_init_fill_blit
   COP_LISTEND
-  bsr     get_DEF_WRAPPER_view_values
+  bsr     get_wrapper_view_values
   bsr     cl2_set_bitplane_pointers
   bsr     copy_second_copperlist
   bsr     swap_second_copperlist
@@ -918,7 +913,7 @@ cl2_init_fill_blit
   rts
 
   CNOP 0,4
-get_DEF_WRAPPER_view_values
+get_wrapper_view_values
   move.l  cl2_construction2(a3),a0
   or.w    #v_bplcon0_bits,cl2_BPLCON0+2(a0)
   or.w    #v_bplcon3_bits1,cl2_BPLCON3_1+2(a0)
@@ -931,15 +926,9 @@ get_DEF_WRAPPER_view_values
   COPY_COPPERLIST cl2,2
 
 
-; ## Hauptprogramm ##
-; a3 ... Basisadresse aller Variablen
-; a4 ... CIA-A-Base
-; a5 ... CIA-B-Base
-; a6 ... DMACONR
   CNOP 0,4
 main_routine
 
-; ## Rasterstahl-Routinen ##
 beam_routines
   bsr     wait_beam_position
   bsr.s   swap_second_copperlist
@@ -966,7 +955,6 @@ fast_exit
   rts
 
 
-; ** Copperlisten vertauschen **
   SWAP_COPPERLIST cl2,2
 
 ; ** Playfields vertauschen **
@@ -1412,7 +1400,6 @@ mgv_morph_no_delay_counter
   rts
 
 
-; ## Interrupt-Routinen ##
   
 
   INCLUDE "int-autovectors-handlers.i"
@@ -1423,14 +1410,12 @@ NMI_int_server
   rts
 
 
-; ## Hilfsroutinen ##
   INCLUDE "help-routines.i"
 
 
-; ## Speicherstellen für Tabellen und Strukturen ##
   INCLUDE "sys-structures.i"
 
-; ** Farben des ersten Playfields **
+
   CNOP 0,4
 pf1_color_table
   REPT pf1_colors_number
@@ -2410,15 +2395,12 @@ mgv_morph_shapes_table
   DS.B mgv_morph_shape_size*mgv_morph_shapes_number
 
 
-; ## Speicherstellen allgemein ##
   INCLUDE "sys-variables.i"
 
 
-; ## Speicherstellen für Namen ##
   INCLUDE "sys-names.i"
 
 
-; ## Speicherstellen für Texte ##
   INCLUDE "error-texts.i"
 
   END
