@@ -1757,8 +1757,7 @@ mgv_no_restart_morph_shapes_table_start
   move.l  d0,mgv_object3_x_pre_rotation_angle(a3)
   move.w  d0,mgv_object3_z_pre_rotation_angle(a3)
 mgv_morph_objects_disable
-  moveq   #FALSE,d0
-  move.w  d0,mgv_morph_active(a3) ;Morhing aus
+  move.w  #FALSE,mgv_morph_active(a3) ;Morhing aus
 mgv_no_morph_objects
   rts
 
@@ -1955,8 +1954,7 @@ no_scroll_playfield_bottom_in
   rts
   CNOP 0,4
 spbi_finished
-  moveq   #FALSE,d0
-  move.w  d0,spbi_active(a3) ;Scroll-Playfield-Bottom-In aus
+  move.w  #FALSE,spbi_active(a3) ;Scroll-Playfield-Bottom-In aus
   rts
 
 ; ** Playfield nach unten ausscrollen **
@@ -1981,8 +1979,7 @@ no_scroll_playfield_bottom_out
   CNOP 0,4
 spbo_finished
   clr.w   fx_active(a3)      ;Effekte beendet
-  moveq   #FALSE,d0
-  move.w  d0,spbo_active(a3) ;Scroll-Playfield-Bottom-Out aus
+  move.w  #FALSE,spbo_active(a3) ;Scroll-Playfield-Bottom-Out aus
   rts
 
   CNOP 0,4

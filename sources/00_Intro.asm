@@ -1339,8 +1339,7 @@ no_scroll_playfield_bottom_in
   rts
   CNOP 0,4
 spbi_finished
-  moveq   #FALSE,d0
-  move.w  d0,spbi_active(a3) ;Scroll-Playfield-Bottom-In aus
+  move.w  #FALSE,spbi_active(a3) ;Scroll-Playfield-Bottom-In aus
   rts
 
 ; ** Playfield nach unten ausscrollen **
@@ -1365,8 +1364,7 @@ no_scroll_playfield_bottom_out
   CNOP 0,4
 spbo_finished
   clr.w   fx_active(a3)      ;Effekte beendet
-  moveq   #FALSE,d0
-  move.w  d0,spbo_active(a3) ;Scroll-Playfield-Bottom-Out aus
+  move.w  #FALSE,spbo_active(a3) ;Scroll-Playfield-Bottom-Out aus
   rts
 
   CNOP 0,4
@@ -1420,8 +1418,7 @@ no_horiz_fader_in1
   rts
   CNOP 0,4
 hfi1_finished
-  moveq   #FALSE,d0
-  move.w  d0,hfi1_active(a3) ;Horiz-Fader-In1 aus
+  move.w  #FALSE,hfi1_active(a3) ;Horiz-Fader-In1 aus
   rts
 
 ; ** Playfield horizontal einfaden **
@@ -1452,8 +1449,7 @@ no_horiz_fader_in2
   rts
   CNOP 0,4
 hfi2_finished
-  moveq   #FALSE,d0
-  move.w  d0,hfi2_active(a3) ;Horiz-Fader-In2 aus
+  move.w  #FALSE,hfi2_active(a3) ;Horiz-Fader-In2 aus
   rts
 
 ; ** Grafik horizontal ausfaden **
@@ -1483,8 +1479,7 @@ no_horiz_fader_out1
   rts
   CNOP 0,4
 hfo1_finished
-  moveq   #FALSE,d0
-  move.w  d0,hfo1_active(a3) ;Horiz-Fader-Out1 aus
+  move.w  #FALSE,hfo1_active(a3) ;Horiz-Fader-Out1 aus
   rts
 
 ; ** Playfield horizontal ausfaden **
@@ -1514,8 +1509,7 @@ no_horiz_fader_out2
   rts
   CNOP 0,4
 hfo2_finished
-  moveq   #FALSE,d0
-  move.w  d0,hfo2_active(a3) ;Horiz-Fader-Out2 aus
+  move.w  #FALSE,hfo2_active(a3) ;Horiz-Fader-Out2 aus
   rts
 
 

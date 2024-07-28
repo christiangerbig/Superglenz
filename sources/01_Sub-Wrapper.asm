@@ -634,8 +634,7 @@ sprfi_no_restart_fader_angle
   movem.l (a7)+,a4-a6
   move.w  d6,sprf_colors_counter(a3) ;Image-Fader-In fertig ?
   bne.s   no_sprite_fader_in  ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,sprfi_active(a3) ;Sprite-Fader-In aus
+  move.w  #FALSE,sprfi_active(a3) ;Sprite-Fader-In aus
 no_sprite_fader_in
   rts
 
@@ -672,8 +671,7 @@ sprfo_no_restart_fader_angle
   movem.l (a7)+,a4-a6
   move.w  d6,sprf_colors_counter(a3) ;Image-Fader-Out fertig ?
   bne.s   no_sprite_fader_out ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,sprfo_active(a3) ;Sprite-Fader-Out aus
+  move.w  #FALSE,sprfo_active(a3) ;Sprite-Fader-Out aus
 no_sprite_fader_out
   rts
 

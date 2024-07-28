@@ -1198,8 +1198,7 @@ mgv_save_morph_shapes_table_start
   move.w  d1,mgv_morph_shapes_table_start(a3) 
   move.w  #mgv_morph_delay,mgv_morph_delay_counter(a3) ;Zähler zurücksetzen
 mgv_morph_object_disable
-  moveq   #FALSE,d0
-  move.w  d0,mgv_morph_active(a3) ;Morhing aus
+  move.w  #FALSE,mgv_morph_active(a3) ;Morhing aus
 mgv_no_morph_object
   rts
 
@@ -1398,8 +1397,7 @@ cfc_save_fader_angle
   movem.l (a7)+,a4-a6
   move.w  d6,cfc_colors_counter(a3) ;Color-Fader-Cross fertig ?
   bne.s   no_colors_fader_cross ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,cfc_active(a3)  ;Color-Fader-Cross aus
+  move.w  #FALSE,cfc_active(a3)  ;Color-Fader-Cross aus
 no_colors_fader_cross
   rts
 
@@ -1467,8 +1465,7 @@ cfc_no_restart_color_bank
   tst.w   cfc_colors_counter(a3) ;Fading beendet ?
   bne.s   cfc_no_copy_color_table ;Nein -> verzweige
 cfc_disable_copy_color_table
-  moveq   #FALSE,d0
-  move.w  d0,cfc_copy_colors_active(a3) ;Kopieren beendet
+  move.w  #FALSE,cfc_copy_colors_active(a3) ;Kopieren beendet
 cfc_next_entry
   move.w  #cfc_fader_delay,cfc_fader_delay_counter(a3) ;Zähler zurücksetzen
   move.w  cfc_color_table_start(a3),d0
@@ -1486,8 +1483,7 @@ cfc_no_copy_color_table
   rts
   CNOP 0,4
 cfc_stop_colors_fader_cross
-  moveq  #FALSE,d0
-  move.w d0,cfc_fader_delay_counter(a3) ;Zähler deaktivieren
+  move.w #FALSE,cfc_fader_delay_counter(a3) ;Zähler deaktivieren
   rts
 
 
