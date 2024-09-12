@@ -73,7 +73,7 @@ requires_fast_memory              EQU FALSE
 requires_multiscan_monitor        EQU FALSE
 
 workbench_start_enabled           EQU FALSE
-workbench_fade_enabled            EQU FALSE
+screen_fader_enabled            EQU FALSE
 text_output_enabled               EQU FALSE
 
 mgv_count_lines_enabled           EQU FALSE
@@ -113,7 +113,7 @@ pf2_colors_number                 EQU 0
 pf_colors_number                  EQU pf1_colors_number+pf2_colors_number
 pf_depth                          EQU pf1_depth3+pf2_depth3
 
-extra_pf_number                   EQU 0
+pf_extra_number                   EQU 0
 
 spr_number                        EQU 0
 spr_x_size1                       EQU 0
@@ -158,7 +158,7 @@ pf1_plane_moduli                  EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane
 diwstrt_bits                      EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
 diwstop_bits                      EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
 ddfstrt_bits                      EQU DDFSTART_320_PIXEL
-ddfstop_bits                      EQU DDFSTOP_256_PIXEL_LEFT_ALIGNED_4X
+ddfstop_bits                      EQU DDFSTOP_256_PIXEL_LALGN_4X
 bplcon0_bits                      EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
 bplcon1_bits                      EQU $8800
 bplcon2_bits                      EQU 0
@@ -302,10 +302,10 @@ spbo_y_angle_speed                EQU 5
   INCLUDE "except-vectors-offsets.i"
 
 
-  INCLUDE "extra-pf-attributes-structure.i"
+  INCLUDE "extra-pf-attributes.i"
 
 
-  INCLUDE "sprite-attributes-structure.i"
+  INCLUDE "sprite-attributes.i"
 
 
   RSRESET
