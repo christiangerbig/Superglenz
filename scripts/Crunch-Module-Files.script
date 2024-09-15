@@ -3,8 +3,8 @@ CD Daten:Asm-Sources.AGA/projects/Superglenz/modules
 stc "mod.1989-a number.song" -fd -p0 -o0
 stc "mod.1989-a number.smps" -fd -p0 -o0
 
-stc mod.altitudes2.song -fd -p0 -o0
-stc mod.altitudes2.smps -fd -p0 -o0
+stc "mod.Funky Evening.song" -fd -p0 -o0
+stc "mod.Funky Evening.smps" -fd -p0 -o0
 
 CD /
 

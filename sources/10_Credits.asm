@@ -297,7 +297,7 @@ cfc_fader_angle_speed             EQU 2
 cfc_fader_delay                   EQU 6*PAL_FPS
 
 ; **** Effects-Handler ****
-eh_trigger_number_max             EQU 5
+eh_trigger_number_max             EQU 2
 
 
 pf1_bitplane_x_offset             EQU 0
@@ -1082,7 +1082,39 @@ vts_set_characters_y_position
   rts
 
 ; ** Neues Image für Character ermitteln **
-  GET_NEW_CHARACTER_IMAGE.W vts
+  GET_NEW_CHARACTER_IMAGE.W vts,vts_check_control_codes,NORESTART
+
+  CNOP 0,4
+vts_check_control_codes
+  cmp.b   #ASCII_CTRL_V,d0
+  beq.s   vts_stop_vert_text_scroll
+  cmp.b   #ASCII_CTRL_F,d0
+  beq.s   vts_stop_colors_fader_cross
+  cmp.b   #ASCII_CTRL_S,d0
+  beq.s   vts_stop_all
+  rts
+  CNOP 0,4
+vts_stop_vert_text_scroll
+  clr.w   vts_variable_vert_scroll_speed(a3) ;Geschwindigkeit = Null
+  moveq   #TRUE,d0           ;Zeichen gefunden
+  rts
+  CNOP 0,4
+vts_stop_colors_fader_cross
+  moveq   #-1,d0
+  move.w  d0,cfc_color_table_start(a3) ;Startwert für Farbtabelle "Ausblenden"
+  tst.w   cfc_active(a3)     ;Colors-Fader-Cross bereits aktiv ?
+  beq.s   vts_no_activate_delay_counter ;Ja -> verzweige
+  moveq   #1,d0
+  move.w  d0,cfc_fader_delay_counter(a3) ;Zähler aktivieren
+vts_no_activate_delay_counter
+  moveq   #TRUE,d0           ;Zeichen gefunden
+  rts
+  CNOP 0,4
+vts_stop_all
+  clr.w   fx_active(a3)      ;Effekte beendet
+  moveq   #TRUE,d0           ;Zeichen gefunden
+  rts
+
 
 ; ** Playfield löschen **
   CNOP 0,4
@@ -1530,12 +1562,6 @@ effects_handler
   beq.s   eh_start_colors_fader_cross
   subq.w  #1,d0
   beq.s   eh_start_vert_text_scroll
-  subq.w  #1,d0
-  beq.s   eh_stop_vert_text_scroll
-  subq.w  #1,d0
-  beq.s   eh_stop_colors_fader_cross
-  subq.w  #1,d0
-  beq.s   eh_stop_all
 no_effects_handler
   rts
   CNOP 0,4
@@ -1550,25 +1576,6 @@ eh_start_vert_text_scroll
   moveq   #vts_vert_scroll_speed,d0
   move.w  d0,vts_variable_vert_scroll_speed(a3) ;Geschwindigkeit setzen
   rts
-  CNOP 0,4
-eh_stop_vert_text_scroll
-  clr.w   vts_variable_vert_scroll_speed(a3) ;Geschwindigkeit = Null
-  rts
-  CNOP 0,4
-eh_stop_colors_fader_cross
-  moveq   #-1,d0
-  move.w  d0,cfc_color_table_start(a3) ;Startwert für Farbtabelle "Ausblenden"
-  tst.w   cfc_active(a3)     ;Colors-Fader-Cross bereits aktiv ?
-  beq.s   eh_no_activate_delay_counter ;Ja -> verzweige
-  moveq   #1,d0
-  move.w  d0,cfc_fader_delay_counter(a3) ;Zähler aktivieren
-eh_no_activate_delay_counter
-  rts
-  CNOP 0,4
-eh_stop_all
-  clr.w   fx_active(a3)      ;Effekte beendet
-  rts
-
 
   INCLUDE "int-autovectors-handlers.i"
 
@@ -2003,6 +2010,7 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B "                    "
   DC.B "--------------------"
   DC.B "                    "
   DC.B "# GLENZ 2 #         "
@@ -2013,6 +2021,7 @@ vts_text
   DC.B "SCREEN: 256 X 256   "
   DC.B "                    "
   DC.B "PLANES: 3           "
+  DC.B "                    "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2045,6 +2054,7 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B "                    "
   DC.B "--------------------"
   DC.B "                    "
   DC.B "# GLENZ 4 #         "
@@ -2055,6 +2065,7 @@ vts_text
   DC.B "SCREEN: 240 X 240   "
   DC.B "                    "
   DC.B "PLANES: 3           "
+  DC.B "                    "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2087,6 +2098,7 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B "                    "
   DC.B "--------------------"
   DC.B "                    "
   DC.B "# GLENZ 6 #         "
@@ -2108,6 +2120,7 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B "                    "
   DC.B "--------------------"
   DC.B "                    "
   DC.B "# GLENZ 7 #         "
@@ -2118,6 +2131,7 @@ vts_text
   DC.B "SCREEN: 144 X 144   "
   DC.B "                    "
   DC.B "PLANES: 7           "
+  DC.B "                    "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2181,6 +2195,42 @@ vts_text
   DC.B "                    "
   DC.B "RESISTANCE IN 2025  "
   DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B ASCII_CTRL_V
+  DC.B ASCII_CTRL_F
+  DC.B ASCII_CTRL_S
+
   DC.B FALSE
   EVEN
 

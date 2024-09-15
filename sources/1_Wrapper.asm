@@ -65,7 +65,7 @@ requires_fast_memory       EQU FALSE
 requires_multiscan_monitor EQU FALSE
 
 workbench_start_enabled    EQU FALSE
-screen_fader_enabled     EQU FALSE
+screen_fader_enabled       EQU FALSE
 text_output_enabled        EQU FALSE
 
 CUSTOM_MEMORY_CHIP         EQU $00000000
@@ -82,13 +82,13 @@ pt_finetune_enabled        EQU FALSE
   IFD PROTRACKER_VERSION_3.0B
 pt_metronome_enabled       EQU FALSE
   ENDC
-pt_mute_enabled            EQU TRUE
+pt_mute_enabled            EQU FALSE
 pt_track_volumes_enabled   EQU FALSE
 pt_track_periods_enabled   EQU FALSE
 pt_music_fader_enabled     EQU FALSE
 pt_split_module_enabled    EQU TRUE
-pt_usedfx                  EQU %1101000100000000
-pt_usedefx                 EQU %0000000000000001
+pt_usedfx                  EQU %1101011100001000
+pt_usedefx                 EQU %0011000000000000
 
 dma_bits                   EQU DMAF_COPPER+DMAF_SETCLR
 
@@ -188,8 +188,8 @@ cl1_vstart                 EQU beam_position&$ff
 
 ; **** Custom Memory ****
 custom_memory_number       EQU 2
-part_1_audio_memory_size1  EQU 19516 ;Song
-part_1_audio_memory_size2  EQU 54000 ;Samples
+part_1_audio_memory_size1  EQU 11324 ;Song
+part_1_audio_memory_size2  EQU 285900 ;Samples
 
 ; **** PT-Replay ****
 pt_fade_out_delay          EQU 2 ;Ticks
@@ -602,12 +602,12 @@ custom_memory_table
 ; **** PT-Replay ****
   IFEQ pt_split_module_enabled
 pt_auddata SECTION pt_audio,DATA
-    INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.altitudes2.song.stc"
+    INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.Funky Evening.song.stc"
 pt_audsmps SECTION pt_audio2,DATA_C
-    INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.altitudes2.smps.stc"
+    INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.Funky Evening.smps.stc"
   ELSE
 pt_auddata SECTION pt_audio,DATA_C
-    INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.altitudes2"
+    INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.Funky Evening"
   ENDC
 
   END

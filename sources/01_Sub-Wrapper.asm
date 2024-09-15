@@ -535,47 +535,47 @@ main_routine
   tst.l   d0
   bne     exit
 
-  movem.l a0/a3-a6,-(a7)
-  bsr     start_010_morph_glenz_vectors
-  movem.l (a7)+,a0/a3-a6
-  tst.l   d0
-  bne     exit
+;  movem.l a0/a3-a6,-(a7)
+;  bsr     start_010_morph_glenz_vectors
+;  movem.l (a7)+,a0/a3-a6
+;  tst.l   d0
+;  bne     exit
 
-  movem.l a0/a3-a6,-(a7)
-  bsr     start_011_morph_glenz_vectors
-  movem.l (a7)+,a0/a3-a6
-  tst.l   d0
-  bne     exit
+;  movem.l a0/a3-a6,-(a7)
+;  bsr     start_011_morph_glenz_vectors
+;  movem.l (a7)+,a0/a3-a6
+;  tst.l   d0
+;  bne     exit
 
-  movem.l a0/a3-a6,-(a7)
-  bsr     start_012_morph_glenz_vectors
-  movem.l (a7)+,a0/a3-a6
-  tst.l   d0
-  bne.s   exit
+;  movem.l a0/a3-a6,-(a7)
+;  bsr     start_012_morph_glenz_vectors
+;  movem.l (a7)+,a0/a3-a6
+;  tst.l   d0
+;  bne.s   exit
 
-  movem.l a0/a3-a6,-(a7)
-  bsr     start_013_morph_glenz_vectors
-  movem.l (a7)+,a0/a3-a6
-  tst.l   d0
-  bne.s   exit
+;  movem.l a0/a3-a6,-(a7)
+;  bsr     start_013_morph_glenz_vectors
+;  movem.l (a7)+,a0/a3-a6
+;  tst.l   d0
+;  bne.s   exit
 
-  movem.l a0/a3-a6,-(a7)
-  bsr     start_014_morph_glenz_vectors
-  movem.l (a7)+,a0/a3-a6
-  tst.l   d0
-  bne.s   exit
+;  movem.l a0/a3-a6,-(a7)
+;  bsr     start_014_morph_glenz_vectors
+;  movem.l (a7)+,a0/a3-a6
+;  tst.l   d0
+;  bne.s   exit
 
-  movem.l a0/a3-a6,-(a7)
-  bsr     start_015_morph_2xglenz_vectors
-  movem.l (a7)+,a0/a3-a6
-  tst.l   d0
-  bne.s   exit
+;  movem.l a0/a3-a6,-(a7)
+;  bsr     start_015_morph_2xglenz_vectors
+;  movem.l (a7)+,a0/a3-a6
+;  tst.l   d0
+;  bne.s   exit
 
-  movem.l a0/a3-a6,-(a7)
-  jsr     start_016_morph_3xglenz_vectors
-  movem.l (a7)+,a0/a3-a6
-  tst.l   d0
-  bne.s   exit
+;  movem.l a0/a3-a6,-(a7)
+;  jsr     start_016_morph_3xglenz_vectors
+;  movem.l (a7)+,a0/a3-a6
+;  tst.l   d0
+;  bne.s   exit
 
   move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
   moveq   #0,d0
