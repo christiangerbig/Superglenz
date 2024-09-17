@@ -1,8 +1,8 @@
 ; ##############################
 ; # Programm: Main.asm         #
 ; # Autor:    Christian Gerbig #
-; # Datum:    08.06.2024       #
-; # Version:  1.4 beta         #
+; # Datum:    17.09.2024       #
+; # Version:  1.5 beta         #
 ; # CPU:      68020+           #
 ; # FASTMEM:  -                #
 ; # Chipset:  AGA              #
@@ -10,31 +10,41 @@
 ; ##############################
 
 ; V.1.0 Beta
-; Erstes Release
+; - Erstes Release
 
 ; V.1.1 Beta
-; Intro: Bugfix, Starterte des horizontal Faders waren dem Wert -1 zugewiesen
-; Glenz-Parts 1-3: Bugfix, Für das 3. Playfield waren immer 100 Zeilen zu wenig angegeben -> Guru
-; Glenz-Part4: Bugfix, Einscrollen jetzt nicht mehr mit Anzeigefehler, Es wurden von der CPU 8 Bytes zu viel gelöscht
-; Glenz-Part5: Morphing-Delay bei 3. Form verkürzt
-; Sub-Wrapper: - Ist jetzt kein Wrapper mehr
-;              - Bugfix, Fehlerabfrage, jetzt wird sofort bei einem Fehler der Glenz-Parts ausgestiegen
-; Alle Module sind jetzt stumm
+; - Intro: Bugfix, Starterte des horizontal Faders waren dem Wert -1 zugewiesen
+; - Glenz-Parts 1-3: Bugfix, Für das 3. Playfield waren immer 100 Zeilen zu wenig angegeben -> Guru
+; - Glenz-Part4: Bugfix, Einscrollen jetzt nicht mehr mit Anzeigefehler, Es wurden von der CPU 8 Bytes zu viel gelöscht
+; - Glenz-Part5: Morphing-Delay bei 3. Form verkürzt
+; - Sub-Wrapper: Ist jetzt kein Wrapper mehr
+; - Bugfix, Fehlerabfrage, jetzt wird sofort bei einem Fehler der Glenz-Parts ausgestiegen
+; - Alle Module sind jetzt stumm
 
 ; V.1.2 Beta
-; Bugfix Spritefield-Display-Bug rechter Rand: Alle Sprites weitere 8 Pixel
-; nach rechts (X+16).
-; Neue Glenz-Parts: 48-Faces-Glenz + 128-Faces-Glenz.
+; - Bugfix Spritefield-Display-Bug rechter Rand: Alle Sprites weitere 8 Pixel
+;   nach rechts (X+16).
+; - Neue Glenz-Parts: 48-Faces-Glenz + 128-Faces-Glenz.
 
 
 ; V.1.3 Beta
-; Bugfix: Intro-Part Y-Wrap-Befehl wurde nicht berücksichtigt -> Random-Speicherfehler.
-; Alle Morphingsequenzen gekürzt und geändert.
-; End-Part: Dual-Playfield mit Schatten für Abspann-Text.
+; - Bugfix: Intro-Part Y-Wrap-Befehl wurde nicht berücksichtigt -> Random-Speicherfehler.
+; - Alle Morphingsequenzen gekürzt und geändert.
+; - End-Part: Dual-Playfield mit Schatten für Abspann-Text.
 
 ; V1.4 Beta
-; End-Part: Cross-Fader für Glenz
-; Mit überarbeiteten Include-Files (COPCON)
+; - End-Part: Cross-Fader für Glenz
+; - Mit überarbeiteten Include-Files (COPCON)
+
+; V1.5 Beta
+; - Mit überarbeiteten Include-Dateien
+; - 1-Wrapper: Musik-Fader aktiviert, globale Variablen definiert
+; - Endpart: Magnetic Fox' Modul eingefügt, Vertical-Scroller steuert jetzt den Musik-Fader an.
+; - Global-FXStatus der Musik-Faders beendet das Demo
+; - Parts 013/014: Bewegungen geändert
+; - Bugfix: DIWSTRT/DIWSTOP/DIWHIGH werden für Playfield-Scroller vorinitialisiert,
+;           da LodView(NULL) DIWHIGH=$0000 setzt und sich die Werte von DIWSTRT/
+;           DIWHIGH durch das OS ändern
 
 
   SECTION code_and_variables,CODE
@@ -338,7 +348,7 @@ nop_second_copperlist DC.L 0
   INCLUDE "error-texts.i"
 
 
-  DC.B "$VER: RSE-Superglenz 1.4 beta (8.6.24)",0
+  DC.B "$VER: RSE-Superglenz 1.5 beta (17.9.24)",0
   EVEN
 
   END

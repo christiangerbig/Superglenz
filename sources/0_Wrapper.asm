@@ -66,7 +66,7 @@ requires_fast_memory       EQU FALSE
 requires_multiscan_monitor EQU FALSE
 
 workbench_start_enabled    EQU FALSE
-screen_fader_enabled     EQU FALSE
+screen_fader_enabled       EQU FALSE
 text_output_enabled        EQU FALSE
 
 CUSTOM_MEMORY_CHIP         EQU $00000000
@@ -477,7 +477,7 @@ no_start_01_wrapper
 pt_mouse_handler
     btst    #POTINPB_DATLY,POTINP-DMACONR(a6) ;Rechte Mustaste gedrückt?
     bne.s   pt_no_mouse_handler ;Nein -> verzweige
-    clr.w   pt_fade_out_music_active(a3) ;Fader an
+    clr.w   pt_music_fader_active(a3) ;Fader an
 pt_no_mouse_handler
     rts
   ENDC
@@ -515,7 +515,7 @@ VERTB_int_server
   ENDC
 
   IFEQ pt_music_fader_enabled
-    bsr.s   pt_fade_out_music
+    bsr.s   pt_music_fader
     bra.s   pt_PlayMusic
 
 ; ** Musik ausblenden **

@@ -19,6 +19,8 @@
   XREF nop_second_copperlist
   XREF mouse_handler
   XREF sine_table
+  XREF global_music_fader_active
+  XREF global_fx_active
 
   XDEF start_10_credits
 
@@ -63,7 +65,7 @@ requires_fast_memory              EQU FALSE
 requires_multiscan_monitor        EQU FALSE
 
 workbench_start_enabled           EQU FALSE
-screen_fader_enabled            EQU FALSE
+screen_fader_enabled              EQU FALSE
 text_output_enabled               EQU FALSE
 
 mgv_count_lines_enabled           EQU FALSE
@@ -585,9 +587,6 @@ cfc_copy_colors_active           RS.W 1
 ; **** Effects-Handler ****
 eh_trigger_number                RS.W 1
 
-; **** Main ****
-fx_active                        RS.W 1
-
 variables_size                   RS.B 0
 
 
@@ -666,8 +665,6 @@ init_own_variables
 ; **** Effects-Handler ****
   move.w  d0,eh_trigger_number(a3)
 
-; **** Main ****
-  move.w  d1,fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -975,7 +972,8 @@ beam_routines
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  move.l  global_fx_active(pc),a0
+  tst.w   (a0)               ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
@@ -1086,12 +1084,20 @@ vts_set_characters_y_position
 
   CNOP 0,4
 vts_check_control_codes
+  cmp.b   #ASCII_CTRL_M,d0
+  beq.s   vts_enable_music_fader
   cmp.b   #ASCII_CTRL_V,d0
   beq.s   vts_stop_vert_text_scroll
   cmp.b   #ASCII_CTRL_F,d0
   beq.s   vts_stop_colors_fader_cross
-  cmp.b   #ASCII_CTRL_S,d0
-  beq.s   vts_stop_all
+  rts
+  CNOP 0,4
+vts_enable_music_fader
+  move.l  a0,d0
+  move.l  global_music_fader_active(pc),a0
+  clr.w   (a0)
+  move.l  d0,a0
+  moveq   #TRUE,d0           ;Zeichen gefunden
   rts
   CNOP 0,4
 vts_stop_vert_text_scroll
@@ -1100,18 +1106,13 @@ vts_stop_vert_text_scroll
   rts
   CNOP 0,4
 vts_stop_colors_fader_cross
-  moveq   #-1,d0
-  move.w  d0,cfc_color_table_start(a3) ;Startwert für Farbtabelle "Ausblenden"
+  moveq   #-1,d0             ;Startwert für Farbtabelle "Ausblenden"
+  move.w  d0,cfc_color_table_start(a3) 
   tst.w   cfc_active(a3)     ;Colors-Fader-Cross bereits aktiv ?
-  beq.s   vts_no_activate_delay_counter ;Ja -> verzweige
+  beq.s   vts_no_activate_delay_counter
   moveq   #1,d0
   move.w  d0,cfc_fader_delay_counter(a3) ;Zähler aktivieren
 vts_no_activate_delay_counter
-  moveq   #TRUE,d0           ;Zeichen gefunden
-  rts
-  CNOP 0,4
-vts_stop_all
-  clr.w   fx_active(a3)      ;Effekte beendet
   moveq   #TRUE,d0           ;Zeichen gefunden
   rts
 
@@ -1951,7 +1952,7 @@ vts_text
   DC.B "                    "
   DC.B "GRAPHICS - NN       "
   DC.B "                    "
-  DC.B "MUSIC - NN          "
+  DC.B "MUSIC - MAGNETIC FOX"
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2011,6 +2012,9 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
   DC.B "--------------------"
   DC.B "                    "
   DC.B "# GLENZ 2 #         "
@@ -2021,6 +2025,9 @@ vts_text
   DC.B "SCREEN: 256 X 256   "
   DC.B "                    "
   DC.B "PLANES: 3           "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2055,6 +2062,9 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
   DC.B "--------------------"
   DC.B "                    "
   DC.B "# GLENZ 4 #         "
@@ -2065,6 +2075,9 @@ vts_text
   DC.B "SCREEN: 240 X 240   "
   DC.B "                    "
   DC.B "PLANES: 3           "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2099,6 +2112,9 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
   DC.B "--------------------"
   DC.B "                    "
   DC.B "# GLENZ 6 #         "
@@ -2109,6 +2125,9 @@ vts_text
   DC.B "SCREEN: 192 X 192   "
   DC.B "                    "
   DC.B "PLANES: 5           "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2160,6 +2179,9 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
+  DC.B "                    "
   DC.B "#VANILLAMIGA RULEZ# "
   DC.B "                    "
   DC.B "                    "
@@ -2202,6 +2224,7 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B ASCII_CTRL_M
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2210,6 +2233,7 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
+  DC.B ASCII_CTRL_F
   DC.B "                    "
   DC.B "                    "
   DC.B "                    "
@@ -2228,10 +2252,7 @@ vts_text
   DC.B "                    "
   DC.B "                    "
   DC.B ASCII_CTRL_V
-  DC.B ASCII_CTRL_F
-  DC.B ASCII_CTRL_S
-
-  DC.B FALSE
+  DC.B "                    "
   EVEN
 
 

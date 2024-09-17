@@ -19,6 +19,8 @@
   XREF sc_start
 
   XDEF start_1_pt_replay
+  XDEF global_music_fader_active
+  XDEF global_fx_active
 
 
   INCDIR "Daten:include3.5/"
@@ -85,7 +87,7 @@ pt_metronome_enabled       EQU FALSE
 pt_mute_enabled            EQU FALSE
 pt_track_volumes_enabled   EQU FALSE
 pt_track_periods_enabled   EQU FALSE
-pt_music_fader_enabled     EQU FALSE
+pt_music_fader_enabled     EQU TRUE
 pt_split_module_enabled    EQU TRUE
 pt_usedfx                  EQU %1101011100001000
 pt_usedefx                 EQU %0011000000000000
@@ -192,7 +194,7 @@ part_1_audio_memory_size1  EQU 11324 ;Song
 part_1_audio_memory_size2  EQU 285900 ;Samples
 
 ; **** PT-Replay ****
-pt_fade_out_delay          EQU 2 ;Ticks
+pt_fade_out_delay          EQU 3 ;Ticks
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -282,6 +284,9 @@ spr7_y_size2       EQU 0
     INCLUDE "music-tracker/pt3-variables-offsets.i"
   ENDC
 
+; **** Main ****
+fx_active      RS.W 1
+
 variables_size RS.B 0
 
 
@@ -332,6 +337,15 @@ init_own_variables
   IFD PROTRACKER_VERSION_3.0B
     PT3_INIT_VARIABLES
   ENDC
+  lea     pt_music_fader_active(a3),a0
+  lea     global_music_fader_active(pc),a1
+  move.l  a0,(a1)
+  lea     fx_active(a3),a0
+  lea     global_fx_active(pc),a1
+  move.l  a0,(a1)
+
+; **** Main ****
+  move.w  #FALSE,fx_active(a3)
   rts
 
 ; **** Main ****
@@ -471,7 +485,7 @@ main_routine
 pt_mouse_handler
     btst    #POTINPB_DATLY,POTINP-DMACONR(a6) ;Rechte Mustaste gedrückt?
     bne.s   pt_no_mouse_handler ;Nein -> verzweige
-    clr.w   pt_fade_out_music_active(a3) ;Fader an
+    clr.w   pt_music_fader_active(a3) ;Fader an
 pt_no_mouse_handler
     rts
   ENDC
@@ -509,11 +523,11 @@ VERTB_int_server
   ENDC
 
   IFEQ pt_music_fader_enabled
-    bsr.s   pt_fade_out_music
+    bsr.s   pt_music_fader
     bra.s   pt_PlayMusic
 
 ; ** Musik ausblenden **
-    PT_FADE_OUT_VOLUME
+    PT_FADE_OUT_VOLUME fx_active
 
     CNOP 0,4
   ENDC
@@ -590,6 +604,9 @@ custom_memory_table
 
 
   INCLUDE "sys-variables.i"
+
+global_music_fader_active DC.L 0
+global_fx_active          DC.L 0
 
 
   INCLUDE "sys-names.i"

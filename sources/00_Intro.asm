@@ -63,10 +63,10 @@ requires_fast_memory           EQU FALSE
 requires_multiscan_monitor     EQU FALSE
 
 workbench_start_enabled        EQU FALSE
-screen_fader_enabled         EQU FALSE
+screen_fader_enabled           EQU FALSE
 text_output_enabled            EQU FALSE
 
-dma_bits                       EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
+dma_bits                       EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_RASTER+DMAF_SETCLR
 
 intena_bits                    EQU INTF_SETCLR
 
@@ -126,7 +126,7 @@ ciaa_tb_continuous_enabled     EQU FALSE
 ciab_ta_continuous_enabled     EQU FALSE
 ciab_tb_continuous_enabled     EQU FALSE
 
-beam_position                  EQU $136
+beam_position                  EQU $135
 
 pixel_per_line                 EQU 192
 visible_pixels_number          EQU 192
@@ -139,7 +139,7 @@ spr_pixel_per_datafetch        EQU 64 ;4x
 display_window_hstart          EQU HSTART_192_PIXEL
 display_window_vstart          EQU MINROW
 display_window_hstop           EQU HSTOP_192_pixel
-display_window_vstop           EQU VSTOP_256_LINES
+display_window_vstop           EQU VSTOP_OVERSCAN_PAL
 
 pf1_plane_width                EQU pf1_x_size3/8
 data_fetch_width               EQU pixel_per_line/8
@@ -314,9 +314,8 @@ gv_fill_blit_depth             EQU pf1_depth3
 ; **** Scroll-Playfield-Bottom ****
 spb_min_vstart                 EQU VSTART_192_LINES
 spb_max_vstop                  EQU VSTOP_OVERSCAN_PAL
-spb_max_visible_lines_number   EQU 283
-spb_y_radius                   EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
-spb_y_centre                   EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
+spb_y_radius                   EQU spb_max_vstop-spb_min_vstart
+spb_y_centre                   EQU spb_max_vstop-spb_min_vstart
 
 ; **** Scroll-Playfield-Bottom-In ****
 spbi_y_angle_speed             EQU 3
@@ -744,6 +743,7 @@ init_all
   bsr     gv_init_color_table
   bsr     hf_dim_colors
   bsr     init_color_registers
+  bsr     spb_init_display_window
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
@@ -964,6 +964,12 @@ init_color_registers
   CPU_INIT_COLOR_LOW COLOR00,32
   rts
 
+  CNOP 0,4
+spb_init_display_window
+  move.w  #diwstrt_bits,DIWSTRT-DMACONR(a6)
+  move.w  #diwstop_bits,DIWSTOP-DMACONR(a6)
+  move.w  #diwhigh_bits,DIWHIGH-DMACONR(a6) ; Muss sein, da LoadView() DIWHIGH=$0000 setzt -> Anzeigefehler
+  rts
 
   CNOP 0,4
 init_first_copperlist
@@ -976,7 +982,8 @@ init_first_copperlist
   bsr     cl1_reset_pointer
   bsr     cl1_init_copper_interrupt
   COP_LISTEND
-  bra     cl1_set_sprite_pointers
+  bsr     cl1_set_sprite_pointers
+  bra     cl1_set_bitplane_pointers
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
 
@@ -1060,6 +1067,8 @@ cl1_reset_pointer
 
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
+  COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
+
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_display(a3),a0
@@ -1119,9 +1128,9 @@ beam_routines
   tst.w   fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
-  move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
+  move.l  nop_second_copperlist,COP2LC-DMACONR(a6)
   move.w  d0,COPJMP2-DMACONR(a6)
-  move.l  nop_first_copperlist,COP1LC-DMACONR(a6) ;2. Copperliste deaktivieren
+  move.l  nop_first_copperlist,COP1LC-DMACONR(a6)
   move.w  d0,COPJMP1-DMACONR(a6)
   move.w  custom_error_code(a3),d1
   rts
@@ -1372,9 +1381,9 @@ spb_set_display_window
   move.l  cl1_display(a3),a1
   moveq   #spb_min_VSTART,d1
   add.w   d0,d1              ;+ Y-Offset
-  cmp.w   d3,d1              ;VSTOP-Maximum erreicht ?
+  cmp.w   d3,d1              ;VSTART-Maximum erreicht ?
   ble.s   spb_no_max_VSTOP1  ;Nein -> verzweige
-  move.w  d3,d1              ;VSTOP korrigieren
+  move.w  d3,d1              ;VSTART korrigieren
 spb_no_max_VSTOP1
   move.b  d1,cl1_DIWSTRT+2(a1) ;VSTART V7-V0
   move.w  d1,d2
@@ -1386,7 +1395,7 @@ spb_no_max_VSTOP2
   move.b  d2,cl1_DIWSTOP+2(a1) ;VSTOP V7-V0
   lsr.w   #8,d1              ;VSTART V8-Bit in richtige Position bringen
   move.b  d1,d2              ;VSTART V8 + VSTOP V8
-  or.w    #diwhigh_bits&(~(DIWHIGHF_VSTART8+DIWHIGHF_VSTOP8)),d2 ;restliche Bits
+  or.w    #diwhigh_bits&(~(DIWHIGHF_VSTART8|DIWHIGHF_VSTOP8)),d2 ;restliche Bits
   move.w  d2,cl1_DIWHIGH+2(a1)
   rts
 

@@ -73,7 +73,7 @@ requires_fast_memory              EQU FALSE
 requires_multiscan_monitor        EQU FALSE
 
 workbench_start_enabled           EQU FALSE
-screen_fader_enabled            EQU FALSE
+screen_fader_enabled              EQU FALSE
 text_output_enabled               EQU FALSE
 
 mgv_count_lines_enabled           EQU FALSE
@@ -288,9 +288,9 @@ mgv_fill_blit_depth               EQU pf1_depth3
 ; **** Scroll-Playfield-Bottom ****
 spb_min_vstart                    EQU VSTART_256_LINES
 spb_max_vstop                     EQU VSTOP_OVERSCAN_PAL
-spb_max_visible_lines_number      EQU 283
-spb_y_radius                      EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
-spb_y_centre                      EQU visible_lines_number+(spb_max_visible_lines_number-visible_lines_number)
+spb_y_radius                      EQU spb_max_vstop-spb_min_vstart
+spb_y_centre                      EQU spb_max_vstop-spb_min_vstart
+
 
 ; **** Scroll-Playfield-Bottom-In ****
 spbi_y_angle_speed                EQU 4
@@ -538,6 +538,7 @@ init_all
     bsr.s   mgv_init_start_shape
   ENDC
   bsr     mgv_init_color_table
+  bsr     spb_init_display_window
   bra     init_second_copperlist
 
 ; **** Morph-Glenz-Vectors ****
@@ -599,6 +600,12 @@ mgv_init_color_table
   move.l  (a1),5*LONGWORD_SIZE(a0) ;COLOR05
   rts
 
+  CNOP 0,4
+spb_init_display_window
+  move.w  #diwstrt_bits,DIWSTRT-DMACONR(a6)
+  move.w  #diwstop_bits,DIWSTOP-DMACONR(a6)
+  move.w  #diwhigh_bits,DIWHIGH-DMACONR(a6) ; Muss sein, da LoadView() DIWHIGH=$0000 setzt -> Anzeigefehler
+  rts
 
   CNOP 0,4
 init_second_copperlist
