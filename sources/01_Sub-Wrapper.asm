@@ -457,7 +457,7 @@ start_01_wrapper
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Sprite-Fader ****
   move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
@@ -476,7 +476,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   init_sprites
   bsr     init_first_copperlist
   bra     init_second_copperlist
@@ -528,7 +528,7 @@ init_second_copperlist
 
 
   CNOP 0,4
-main_routine
+main
   move.l  a0,-(a7)
   bsr     beam_routines
   move.l  (a7)+,a0

@@ -659,7 +659,7 @@ start_016_morph_3xglenz_vectors
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Morph-Glenz-Vectors ****
   moveq   #0,d0
@@ -723,7 +723,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   mgv_init_objects_info_table
   bsr     mgv_init_morph_shapes_table
   IFEQ mgv_premorph_enabled
@@ -1434,7 +1434,7 @@ get_wrapper_view_values
 
 
   CNOP 0,4
-main_routine
+main
 
 beam_routines
   bsr     wait_beam_position

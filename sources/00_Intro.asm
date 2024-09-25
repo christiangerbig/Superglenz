@@ -699,7 +699,7 @@ start_00_intro
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Glenz-Vectors ****
   moveq   #0,d0
@@ -737,7 +737,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   init_sprites
   bsr     gv_init_object_info_table
   bsr     gv_init_color_table
@@ -1097,7 +1097,7 @@ cl2_init_bplcon4_registers2_loop
 
 
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 

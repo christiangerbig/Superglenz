@@ -617,7 +617,7 @@ start_10_credits
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Vert-Text-Scroll ****
   lea     vts_image_data,a0
@@ -669,7 +669,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr     init_color_registers
   bsr.s   init_sprites
   bsr     vts_init_characters_offsets
@@ -935,7 +935,7 @@ cl2_init_fill_blit
 
 
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 
