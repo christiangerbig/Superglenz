@@ -272,17 +272,17 @@ init_main_variables
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
-  bsr.s   init_color_registers
+  bsr.s   init_colors
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
   CNOP 0,4
-init_color_registers
+init_colors
   CPU_SELECT_COLOR_HIGH_BANK 0
-  CPU_INIT_COLOR_HIGH COLOR00,1,pf1_color_table
+  CPU_INIT_COLOR_HIGH COLOR00,1,pf1_rgb8_color_table
 
   CPU_SELECT_COLOR_LOW_BANK 0
-  CPU_INIT_COLOR_LOW COLOR00,1,pf1_color_table
+  CPU_INIT_COLOR_LOW COLOR00,1,pf1_rgb8_color_table
   rts
 
 
@@ -291,7 +291,7 @@ init_first_copperlist
   move.l  cl1_display(a3),a0
   lea     nop_first_copperlist(pc),a1
   move.l  a0,(a1)
-  bsr.s   cl1_init_playfield_registers
+  bsr.s   cl1_init_playfield_props
   COP_LISTEND
   rts
 
@@ -332,7 +332,7 @@ NMI_int_server
 
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   DC.L color00_bits
 
 

@@ -687,9 +687,9 @@ mgv_init_objects_info_table_loop
 mgv_init_morph_shapes_table
   lea     mgv_morph_shapes_table(pc),a1 ;Tabelle mit Zeigern auf Objektdaten
 ; ** Form 1 **
-  lea     mgv_object1_shape1_coordinates(pc),a0
+  lea     mgv_object1_shape1_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Koords-Tabelle
-  lea     mgv_object2_shape1_coordinates(pc),a0
+  lea     mgv_object2_shape1_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Koords-Tabelle
   moveq   #mgv_object1_shape1_x_rotation_speed,d2
   move.w  d2,(a1)+           ;X-Achse
@@ -704,9 +704,9 @@ mgv_init_morph_shapes_table
   moveq   #mgv_object2_shape1_z_rotation_speed,d2
   move.w  d2,(a1)+           ;Z-Achse
 ; ** Form 2 **
-  lea     mgv_object1_shape2_coordinates(pc),a0
+  lea     mgv_object1_shape2_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Objekt-Tabelle
-  lea     mgv_object2_shape2_coordinates(pc),a0
+  lea     mgv_object2_shape2_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Koords-Tabelle
   moveq   #mgv_object1_shape2_x_rotation_speed,d2
   move.w  d2,(a1)+           ;X-Achse
@@ -721,9 +721,9 @@ mgv_init_morph_shapes_table
   moveq   #mgv_object2_shape2_z_rotation_speed,d2
   move.w  d2,(a1)+           ;Z-Achse
 ; ** Form 3 **
-  lea     mgv_object1_shape3_coordinates(pc),a0
+  lea     mgv_object1_shape3_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Objekt-Tabelle
-  lea     mgv_object2_shape3_coordinates(pc),a0
+  lea     mgv_object2_shape3_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Koords-Tabelle
   moveq   #mgv_object1_shape3_x_rotation_speed,d2
   move.w  d2,(a1)+           ;X-Achse
@@ -738,9 +738,9 @@ mgv_init_morph_shapes_table
   moveq   #mgv_object2_shape3_z_rotation_speed,d2
   move.w  d2,(a1)+           ;Z-Achse
 ; ** Form 4 **
-  lea     mgv_object1_shape4_coordinates(pc),a0
+  lea     mgv_object1_shape4_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Objekt-Tabelle
-  lea     mgv_object2_shape4_coordinates(pc),a0
+  lea     mgv_object2_shape4_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Koords-Tabelle
   moveq   #mgv_object1_shape4_x_rotation_speed,d2
   move.w  d2,(a1)+           ;X-Achse
@@ -755,9 +755,9 @@ mgv_init_morph_shapes_table
   moveq   #mgv_object2_shape4_z_rotation_speed,d2
   move.w  d2,(a1)+           ;Z-Achse
 ; ** Form 5 **
-  lea     mgv_object1_shape5_coordinates(pc),a0
+  lea     mgv_object1_shape5_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Objekt-Tabelle
-  lea     mgv_object2_shape5_coordinates(pc),a0
+  lea     mgv_object2_shape5_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Koords-Tabelle
   moveq   #mgv_object1_shape5_x_rotation_speed,d2
   move.w  d2,(a1)+           ;X-Achse
@@ -772,9 +772,9 @@ mgv_init_morph_shapes_table
   moveq   #mgv_object2_shape5_z_rotation_speed,d2
   move.w  d2,(a1)+           ;Z-Achse
 ; ** Form 6 **
-  lea     mgv_object1_shape6_coordinates(pc),a0
+  lea     mgv_object1_shape6_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Objekt-Tabelle
-  lea     mgv_object2_shape6_coordinates(pc),a0
+  lea     mgv_object2_shape6_coords(pc),a0
   move.l  a0,(a1)+           ;Zeiger auf Koords-Tabelle
   moveq   #mgv_object1_shape6_x_rotation_speed,d2
   move.w  d2,(a1)+           ;X-Achse
@@ -792,9 +792,9 @@ mgv_init_morph_shapes_table
   ELSE
     move.w  d2,(a1)+         ;Z-Achse
 ; ** Form 7 **
-    lea     mgv_object1_shape7_coordinates(pc),a0
+    lea     mgv_object1_shape7_coords(pc),a0
     move.l  a0,(a1)+         ;Zeiger auf Objekt-Tabelle
-    lea     mgv_object2_shape7_coordinates(pc),a0
+    lea     mgv_object2_shape7_coords(pc),a0
     move.l  a0,(a1)+         ;Zeiger auf Koords-Tabelle
     moveq   #mgv_object1_shape7_x_rotation_speed,d2
     move.w  d2,(a1)+         ;X-Achse
@@ -823,7 +823,7 @@ mgv_init_start_shape
 ; ** Farbtabelle initialisieren **
   CNOP 0,4
 mgv_init_color_table
-  lea     pf1_color_table(pc),a0 ;Zeiger auf Farbtableelle
+  lea     pf1_rgb8_color_table(pc),a0 ;Zeiger auf Farbtableelle
   lea     mgv_glenz_color_table(pc),a1 ;Farben der einzelnen Glenz-Objekte
 ; ** Reinfarben des 1. Glenz **
   move.l  (a1)+,2*LONGWORD_SIZE(a0) ;COLOR02
@@ -928,15 +928,15 @@ spb_init_display_window
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction2(a3),a0
-  bsr.s   cl2_init_playfield_registers
-  bsr     cl2_init_color_registers
-  bsr     cl2_init_bitplane_pointers
-  bsr     cl2_init_line_blits_steady_registers
+  bsr.s   cl2_init_playfield_props
+  bsr     cl2_init_colors
+  bsr     cl2_init_plane_ptrs
+  bsr     cl2_init_line_blits_steady
   bsr     cl2_init_line_blits
   bsr     cl2_init_fill_blit
   COP_LISTEND
   bsr     get_wrapper_view_values
-  bsr     cl2_set_bitplane_pointers
+  bsr     cl2_set_plane_ptrs
   bsr     copy_second_copperlist
   bsr     swap_second_copperlist
   bsr     swap_playfield1
@@ -952,17 +952,17 @@ init_second_copperlist
   COP_INIT_PLAYFIELD_REGISTERS cl2
 
   CNOP 0,4
-cl2_init_color_registers
-  COP_INIT_COLOR_HIGH COLOR00,32,pf1_color_table
+cl2_init_colors
+  COP_INIT_COLOR_HIGH COLOR00,32,pf1_rgb8_color_table
 
   COP_SELECT_COLOR_LOW_BANK 0,v_bplcon3_bits2
-  COP_INIT_COLOR_LOW COLOR00,32,pf1_color_table
+  COP_INIT_COLOR_LOW COLOR00,32,pf1_rgb8_color_table
   rts
 
   COP_INIT_BITPLANE_POINTERS cl2
 
   CNOP 0,4
-cl2_init_line_blits_steady_registers
+cl2_init_line_blits_steady
   COP_WAITBLIT
   COP_MOVEQ FALSE_WORD,BLTAFWM    ;Keine Ausmaskierung
   COP_MOVEQ FALSE_WORD,BLTALWM
@@ -1125,14 +1125,14 @@ mgv_clear_playfield1_loop
 mgv_rotate_objects
   movem.l a4-a6,-(a7)
 ; ** Objekt 1 **
-  lea     mgv_object1_coordinates(pc),a0 ;Koordinaten des Objekts
-  lea     mgv_rotation_xy_coordinates(pc),a1 ;Koord.-Tab.
+  lea     mgv_object1_coords(pc),a0 ;Koordinaten des Objekts
+  lea     mgv_rotation_xy_coords(pc),a1 ;Koord.-Tab.
   lea     mgv_object1_x_rotation_angle(a3),a5
   lea     mgv_object1_variable_x_rotation_speed(a3),a6
   moveq   #mgv_object1_edge_points_number-1,d7 ;Anzahl der Punkte
   bsr.s   mgv_rotation
 ; ** Objekt 2 **
-  lea     mgv_object2_coordinates(pc),a0 ;Koordinaten des Objektsa
+  lea     mgv_object2_coords(pc),a0 ;Koordinaten des Objektsa
   lea     mgv_object2_x_rotation_angle(a3),a5
   lea     mgv_object2_variable_x_rotation_speed(a3),a6
   moveq   #mgv_object2_edge_points_number-1,d7 ;Anzahl der Punkte
@@ -1218,12 +1218,12 @@ mgv_morph_objects
   lea     mgv_morph_shapes_table(pc),a2 ;Tabelle mit Adressen der Objekttabellen
   add.l   d3,a2              ;Offset in Morph-Shapes-Tabelle
 ; ** Object 1 **
-  lea     mgv_object1_coordinates(pc),a0 ;Aktuelle Objektdaten
+  lea     mgv_object1_coords(pc),a0 ;Aktuelle Objektdaten
   move.l  (a2)+,a1           ;Zeiger auf Tabelle 
   MOVEF.W (mgv_object1_edge_points_number*3)-1,d7 ;Anzahl der Koordinaten
   bsr.s   mgv_morph_objects_loop
 ; ** Object 2 **
-  lea     mgv_object2_coordinates(pc),a0 ;Aktuelle Objektdaten
+  lea     mgv_object2_coords(pc),a0 ;Aktuelle Objektdaten
   move.l  (a2)+,a1           ;Zeiger auf Tabelle 
   MOVEF.W (mgv_object2_edge_points_number*3)-1,d7 ;Anzahl der Koordinaten
   bsr.s   mgv_morph_objects_loop
@@ -1278,7 +1278,7 @@ mgv_draw_lines
   movem.l a3-a6,-(a7)
   bsr     mgv_draw_lines_init
   lea     mgv_objects_info_table(pc),a0 ;Zeiger auf Info-Daten zum Objekt
-  lea     mgv_rotation_xy_coordinates(pc),a1 ;Zeiger auf XY-Koordinaten
+  lea     mgv_rotation_xy_coords(pc),a1 ;Zeiger auf XY-Koordinaten
   move.l  pf1_construction1(a3),a2
   move.l  (a2),d0
   add.l   #ALIGN_64KB,d0
@@ -1519,7 +1519,7 @@ NMI_int_server
 
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   REPT pf1_colors_number
     DC.L color00_bits
   ENDR
@@ -1532,16 +1532,16 @@ mgv_glenz_color_table
 
 ; ** Objektdaten **
   CNOP 0,2
-mgv_object1_coordinates
+mgv_object1_coords
 ; * Zoom-In *
   DS.W mgv_object1_edge_points_number*3
-mgv_object2_coordinates
+mgv_object2_coords
 ; * Zoom-In *
   DS.W mgv_object2_edge_points_number*3
 
 ; ** Formen der Objekte **
 ; ** Form 1 **
-mgv_object1_shape1_coordinates
+mgv_object1_shape1_coords
 ; * Würfel *
   DC.W -(48*8),-(48*8),-(48*8) ;P0
   DC.W 48*8,-(48*8),-(48*8)    ;P1
@@ -1557,7 +1557,7 @@ mgv_object1_shape1_coordinates
   DC.W 67*8,0,-(24*8)          ;P11
   DC.W 0,-(67*8),-(24*8)       ;P12
   DC.W 0,67*8,-(24*8)          ;P13
-mgv_object2_shape1_coordinates
+mgv_object2_shape1_coords
 ; * Würfel *
   DC.W 48*8,-(48*8),48*8     ;P18
   DC.W -(48*8),-(48*8),48*8  ;P15
@@ -1576,7 +1576,7 @@ mgv_object2_shape1_coordinates
 
 ; ** Form 2 **
 ; 80 %
-mgv_object1_shape2_coordinates
+mgv_object1_shape2_coords
 ; * Würfel *
   DC.W -(30*8),-(56*8),-(40*8) ;P0
   DC.W 30*8,-(56*8),-(40*8)    ;P1
@@ -1592,7 +1592,7 @@ mgv_object1_shape2_coordinates
   DC.W 56*8,0,-(40*8)          ;P11
   DC.W 30*8,-(56*8),-(10*8)    ;P10
   DC.W -(30*8),56*8,-(10*8)    ;P13
-mgv_object2_shape2_coordinates
+mgv_object2_shape2_coords
 ; * Würfel *
   DC.W 30*8,-(56*8),40*8     ;P18
   DC.W -(30*8),-(56*8),40*8  ;P15
@@ -1610,7 +1610,7 @@ mgv_object2_shape2_coordinates
   DC.W 30*8,56*8,10*8        ;P27
 
 ; ** Form 3 **
-mgv_object1_shape3_coordinates
+mgv_object1_shape3_coords
 ; * Würfel *
   DC.W -(35*8),-(67*8),-(48*8) ;P0
   DC.W 35*8,-(67*8),-(48*8)    ;P1
@@ -1626,7 +1626,7 @@ mgv_object1_shape3_coordinates
   DC.W 67*8,0,-(48*8)          ;P11
   DC.W 35*8,-(67*8),48*8       ;P12
   DC.W -(35*8),67*8,48*8       ;P13
-mgv_object2_shape3_coordinates
+mgv_object2_shape3_coords
 ; * Würfel *
   DC.W 24*8,-(24*8),24*8       ;P14
   DC.W -(24*8),-(24*8),24*8    ;P15
@@ -1644,7 +1644,7 @@ mgv_object2_shape3_coordinates
   DC.W 0,24*8,0                ;P27
 
 ; ** Form 4 **
-mgv_object1_shape4_coordinates
+mgv_object1_shape4_coords
 ; * Würfel *
   DC.W -(52*8),-(52*8),-(52*8) ;P0
   DC.W 52*8,-(52*8),-(52*8)    ;P1
@@ -1660,7 +1660,7 @@ mgv_object1_shape4_coordinates
   DC.W 76*8,0,0                ;P11
   DC.W 0,-(76*8),0             ;P12
   DC.W 0,76*8,0                ;P13
-mgv_object2_shape4_coordinates
+mgv_object2_shape4_coords
 ; * Raumschiff *
   DC.W 24*8,-(11*8),52*8      ;P18
   DC.W -(24*8),-(11*8),52*8   ;P15
@@ -1678,7 +1678,7 @@ mgv_object2_shape4_coordinates
   DC.W 0,11*8,0               ;P27
 
 ; ** Form 5 **
-mgv_object1_shape5_coordinates
+mgv_object1_shape5_coords
 ; * Würfel *
   DC.W -(48*8),-(48*8),-(11*8) ;P0
   DC.W 48*8,-(48*8),-(11*8)    ;P1
@@ -1694,7 +1694,7 @@ mgv_object1_shape5_coordinates
   DC.W 67*8,0,0                ;P11
   DC.W 0,-(67*8),0             ;P12
   DC.W 0,67*8,0                ;P13
-mgv_object2_shape5_coordinates
+mgv_object2_shape5_coords
 ; * Würfel *
   DC.W 48*8,-(11*8),48*8       ;P18
   DC.W -(48*8),-(11*8),48*8    ;P15
@@ -1712,7 +1712,7 @@ mgv_object2_shape5_coordinates
   DC.W 0,19*8,0                ;P27
 
 ; ** Form 6 **
-mgv_object1_shape6_coordinates
+mgv_object1_shape6_coords
 ; * Würfel *
   DC.W -(48*8),-(48*8),-(48*8) ;P0
   DC.W 48*8,-(48*8),-(48*8)    ;P1
@@ -1728,7 +1728,7 @@ mgv_object1_shape6_coordinates
   DC.W 48*8,0,-(35*8)          ;P11
   DC.W 0,-(48*8),-(35*8)       ;P12
   DC.W 0,48*8,-(35*8)          ;P13
-mgv_object2_shape6_coordinates
+mgv_object2_shape6_coords
 ; * Würfel *
   DC.W 48*8,-(48*8),48*8     ;P18
   DC.W -(48*8),-(48*8),48*8  ;P15
@@ -1747,10 +1747,10 @@ mgv_object2_shape6_coordinates
 
   IFNE mgv_morph_loop_enabled
 ; ** Form 7 **
-mgv_object1_shape7_coordinates
+mgv_object1_shape7_coords
 ; * Zoom-Out *
     DS.W mgv_object1_edge_points_number*3
-mgv_object2_shape7_coordinates
+mgv_object2_shape7_coords
 ; * Zoom-Out *
     DS.W mgv_object2_edge_points_number*3
   ENDC
@@ -2030,7 +2030,7 @@ mgv_objects_edge_table
   DC.W 21*2,17*2,27*2,21*2   ;Fläche unten, Dreieck 9 Uhr
 
 ; ** Koordinaten der Linien **
-mgv_rotation_xy_coordinates
+mgv_rotation_xy_coords
   DS.W mgv_objects_edge_points_number*2
 
 ; ** Tabelle mit Adressen der Objekttabellen **
@@ -2051,7 +2051,7 @@ mgv_morph_shapes_table
 
 ; ** Form 2 **
 ; 70 %
-mgv_object1_shape2_coordinates
+mgv_object1_shape2_coords
 ; * Würfel *
   DC.W -(26*8),-(49*8),-(35*8) ;P0
   DC.W 26*8,-(49*8),-(35*8)    ;P1
@@ -2067,7 +2067,7 @@ mgv_object1_shape2_coordinates
   DC.W 49*8,0,-(35*8)          ;P11
   DC.W 26*8,-(49*8),-(8*8)    ;P8
   DC.W -(26*8),49*8,-(8*8)    ;P13
-mgv_object2_shape2_coordinates
+mgv_object2_shape2_coords
 ; * Würfel *
   DC.W 26*8,-(49*8),35*8     ;P18
   DC.W -(26*8),-(49*8),35*8  ;P15

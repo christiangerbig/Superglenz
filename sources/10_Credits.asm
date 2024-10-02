@@ -72,7 +72,7 @@ mgv_count_lines_enabled           EQU FALSE
 mgv_premorph_enabled              EQU TRUE
 mgv_morph_loop_enabled            EQU TRUE
 
-cfc_prefade_enabled               EQU FALSE
+cfc_rgb8_prefade_enabled               EQU FALSE
 
 dma_bits                          EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 intena_bits                       EQU INTF_SETCLR
@@ -288,25 +288,25 @@ mgv_clear_blit_y_size             EQU visible_lines_number
 mgv_clear_blit_depth              EQU extra_pf1_depth
 
 ; **** Colors-Fader-Cross ****
-cfc_start_color                   EQU 18
-cfc_color_table_offset            EQU 2
-cfc_colors_number                 EQU 4
-cfc_color_tables_number           EQU 3
-cfc_fader_speed_max               EQU 6
-cfc_fader_radius                  EQU cfc_fader_speed_max
-cfc_fader_center                  EQU cfc_fader_speed_max+1
-cfc_fader_angle_speed             EQU 2
-cfc_fader_delay                   EQU 6*PAL_FPS
+cfc_rgb8_start_color                   EQU 18
+cfc_rgb8_color_table_offset            EQU 2
+cfc_rgb8_colors_number                 EQU 4
+cfc_rgb8_color_tables_number           EQU 3
+cfc_rgb8_fader_speed_max               EQU 6
+cfc_rgb8_fader_radius                  EQU cfc_rgb8_fader_speed_max
+cfc_rgb8_fader_center                  EQU cfc_rgb8_fader_speed_max+1
+cfc_rgb8_fader_angle_speed             EQU 2
+cfc_rgb8_fader_delay                   EQU 6*PAL_FPS
 
 ; **** Effects-Handler ****
 eh_trigger_number_max             EQU 2
 
 
-pf1_bitplane_x_offset             EQU 0
-pf1_bitplane_y_offset             EQU vts_text_character_y_size
+pf1_plane_x_offset             EQU 0
+pf1_plane_y_offset             EQU vts_text_character_y_size
 
-pf2_bitplane_x_offset             EQU 0
-pf2_bitplane_y_offset             EQU vts_text_character_y_size-1
+pf2_plane_x_offset             EQU 0
+pf2_plane_y_offset             EQU vts_text_character_y_size-1
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -577,12 +577,12 @@ mgv_morph_shapes_table_start     RS.W 1
 mgv_morph_delay_counter          RS.W 1
 
 ; **** Colors-Fader-Cross ****
-cfc_active                       RS.W 1
-cfc_fader_angle                  RS.W 1
-cfc_fader_delay_counter          RS.W 1
-cfc_color_table_start            RS.W 1
-cfc_colors_counter               RS.W 1
-cfc_copy_colors_active           RS.W 1
+cfc_rgb8_active                       RS.W 1
+cfc_rgb8_fader_angle                  RS.W 1
+cfc_rgb8_fader_delay_counter          RS.W 1
+cfc_rgb8_color_table_start            RS.W 1
+cfc_rgb8_colors_counter               RS.W 1
+cfc_rgb8_copy_colors_active           RS.W 1
 
 ; **** Effects-Handler ****
 eh_trigger_number                RS.W 1
@@ -648,19 +648,19 @@ init_main_variables
   ENDC
 
 ; **** Colors-Fader-Cross ****
-  IFEQ cfc_prefade_enabled
-    move.w  d0,cfc_active(a3)
-    move.w  #cfc_colors_number*3,cfc_colors_counter(a3)
-    move.w  d0,cfc_copy_colors_active(a3)
+  IFEQ cfc_rgb8_prefade_enabled
+    move.w  d0,cfc_rgb8_active(a3)
+    move.w  #cfc_rgb8_colors_number*3,cfc_rgb8_colors_counter(a3)
+    move.w  d0,cfc_rgb8_copy_colors_active(a3)
   ELSE
-    move.w  d1,cfc_active(a3)
-    move.w  d0,cfc_colors_counter(a3)
-    move.w  d1,cfc_copy_colors_active(a3)
+    move.w  d1,cfc_rgb8_active(a3)
+    move.w  d0,cfc_rgb8_colors_counter(a3)
+    move.w  d1,cfc_rgb8_copy_colors_active(a3)
   ENDC
-  move.w  #sine_table_length/4,cfc_fader_angle(a3) ;90 Grad
+  move.w  #sine_table_length/4,cfc_rgb8_fader_angle(a3) ;90 Grad
   moveq   #1,d2
-  move.w  d2,cfc_fader_delay_counter(a3) ;Delay-Counter aktivieren
-  move.w  d0,cfc_color_table_start(a3)
+  move.w  d2,cfc_rgb8_fader_delay_counter(a3) ;Delay-Counter aktivieren
+  move.w  d0,cfc_rgb8_color_table_start(a3)
 
 ; **** Effects-Handler ****
   move.w  d0,eh_trigger_number(a3)
@@ -670,7 +670,7 @@ init_main_variables
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
-  bsr     init_color_registers
+  bsr     init_colors
   bsr.s   init_sprites
   bsr     vts_init_characters_offsets
   bsr     vts_init_characters_x_positions
@@ -686,21 +686,21 @@ init_main
 
 ; ** Playfieldfarben initialisieren **
   CNOP 0,4
-init_color_registers
+init_colors
   CPU_SELECT_COLOR_HIGH_BANK 0
-  CPU_INIT_COLOR_HIGH COLOR00,2,pf1_color_table
-  CPU_INIT_COLOR_HIGH COLOR02,2,pf2_color_table
+  CPU_INIT_COLOR_HIGH COLOR00,2,pf1_rgb8_color_table
+  CPU_INIT_COLOR_HIGH COLOR02,2,pf2_rgb8_color_table
 
   CPU_SELECT_COLOR_LOW_BANK 0
-  CPU_INIT_COLOR_LOW COLOR00,2,pf1_color_table
-  CPU_INIT_COLOR_LOW COLOR02,2,pf2_color_table
+  CPU_INIT_COLOR_LOW COLOR00,2,pf1_rgb8_color_table
+  CPU_INIT_COLOR_LOW COLOR02,2,pf2_rgb8_color_table
   rts
 
 ; ** Sprites initialisieren **
   CNOP 0,4
 init_sprites
-  bsr.s   spr_init_pointers_table
-  bsr.s   mgv_init_xy_coordinates
+  bsr.s   spr_init_ptrs_table
+  bsr.s   mgv_init_xy_coords
   bra.s   spr_copy_structures
 
 ; ** Tabelle mit Zeigern auf Sprites initialisieren **
@@ -709,10 +709,10 @@ init_sprites
 
 ; ** Sprite-Koordinaten initialisieren **
   CNOP 0,4
-mgv_init_xy_coordinates
+mgv_init_xy_coords
   move.w  #HSTART_320_PIXEL*4,d0 ;X-Koord.
   MOVEF.W display_window_vstart,d1 ;Y-Koord.
-  lea     spr_pointers_construction(pc),a2
+  lea     spr_ptrs_construction(pc),a2
   move.l  (a2)+,a0           ;SPR0
   move.l  (a2),a1            ;SPR1
 
@@ -769,23 +769,23 @@ mgv_init_object1_info_table_loop
   CNOP 0,4
 mgv_init_morph_shapes_table
 ; ** Form 1 **
-  lea     mgv_object_shape1_coordinates(pc),a0 ;Zeiger auf 1. Form
+  lea     mgv_object_shape1_coords(pc),a0 ;Zeiger auf 1. Form
   lea     mgv_morph_shapes_table(pc),a1 ;Tabelle mit Zeigern auf Objektdaten
   move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
 ; ** Form 2 **
-  lea     mgv_object_shape2_coordinates(pc),a0 ;Zeiger auf 2. Form
+  lea     mgv_object_shape2_coords(pc),a0 ;Zeiger auf 2. Form
   move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
 ; ** Form 3 **
-  lea     mgv_object_shape3_coordinates(pc),a0 ;Zeiger auf 3. Form
+  lea     mgv_object_shape3_coords(pc),a0 ;Zeiger auf 3. Form
   move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
 ; ** Form 4 **
-  lea     mgv_object_shape4_coordinates(pc),a0 ;Zeiger auf 4. Form
+  lea     mgv_object_shape4_coords(pc),a0 ;Zeiger auf 4. Form
   IFEQ mgv_morph_loop_enabled
     move.l  a0,(a1)         ;Zeiger auf Form-Tabelle
   ELSE
     move.l  a0,(a1)+        ;Zeiger auf Form-Tabelle
 ; ** Form 5 **
-    lea     mgv_object_shape5_coordinates(pc),a0 ;Zeiger auf 6. Form
+    lea     mgv_object_shape5_coords(pc),a0 ;Zeiger auf 6. Form
     move.l  a0,(a1)         ;Zeiger auf Form-Tabelle
   ENDC
   rts
@@ -803,13 +803,13 @@ mgv_init_start_shape
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0
-  bsr.s   cl1_init_playfield_registers
-  bsr     cl1_init_sprite_pointers
-  bsr     cl1_init_color_registers
-  bsr     cl1_init_bitplane_pointers
+  bsr.s   cl1_init_playfield_props
+  bsr     cl1_init_sprite_ptrs
+  bsr     cl1_init_colors
+  bsr     cl1_init_plane_ptrs
   COP_MOVEQ TRUE,COPJMP2
-  bsr     cl1_set_sprite_pointers
-  bra     cl1_set_bitplane_pointers
+  bsr     cl1_set_sprite_ptrs
+  bra     cl1_set_plane_ptrs
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
 
@@ -818,17 +818,17 @@ init_first_copperlist
   COP_INIT_BITPLANE_POINTERS cl1
 
   CNOP 0,4
-cl1_init_color_registers
-  COP_INIT_COLOR_HIGH COLOR16,16,spr_color_table
+cl1_init_colors
+  COP_INIT_COLOR_HIGH COLOR16,16,spr_rgb8_color_table
 
   COP_SELECT_COLOR_LOW_BANK 0
-  COP_INIT_COLOR_LOW COLOR16,16,spr_color_table
+  COP_INIT_COLOR_LOW COLOR16,16,spr_rgb8_color_table
   rts
 
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
   CNOP 0,4
-cl1_set_bitplane_pointers
+cl1_set_plane_ptrs
   move.l  cl1_display(a3),a0
   lea     cl1_BPL2PTH+2(a0),a1
   ADDF.W  cl1_BPL1PTH+2,a0
@@ -836,27 +836,27 @@ cl1_set_bitplane_pointers
 
 ; ** Zeiger auf Playfield 1 eintragen **
   moveq   #pf1_depth3-1,d7    ;Anzahl der Bitplanes
-cl1_set_bitplane_pointers_loop1
+cl1_set_plane_ptrs_loop1
   move.w  (a2)+,(a0)         ;BPLxPTH
   ADDF.W  16,a0              ;übernächter Playfieldzeiger
   move.w  (a2)+,4-16(a0)     ;BPLxPTL
-  dbf     d7,cl1_set_bitplane_pointers_loop1
+  dbf     d7,cl1_set_plane_ptrs_loop1
 
 ; ** Zeiger auf Playfield 2 eintragen **
   move.l  pf1_display(a3),a2 ;Zeiger auf erste Plane
   moveq   #pf2_depth3-1,d7    ;Anzahl der Bitplanes
-cl1_set_bitplane_pointers_loop2
+cl1_set_plane_ptrs_loop2
   move.w  (a2)+,(a1)         ;BPLxPTH
   ADDF.W  16,a1              ;übernächter Playfieldzeiger
   move.w  (a2)+,4-16(a1)     ;BPLxPTL
-  dbf     d7,cl1_set_bitplane_pointers_loop2
+  dbf     d7,cl1_set_plane_ptrs_loop2
   rts
 
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction2(a3),a0
   bsr.s   cl2_init_clear_blit
-  bsr.s   cl2_init_line_blits_steady_registers
+  bsr.s   cl2_init_line_blits_steady
   bsr     cl2_init_line_blits
   bsr     cl2_init_fill_blit
   COP_LISTEND
@@ -887,7 +887,7 @@ cl2_init_clear_blit
   rts
 
   CNOP 0,4
-cl2_init_line_blits_steady_registers
+cl2_init_line_blits_steady
   COP_WAITBLIT
   COP_MOVEQ FALSE_WORD,BLTAFWM    ;Keine Ausmaskierung
   COP_MOVEQ FALSE_WORD,BLTALWM
@@ -942,8 +942,8 @@ main
 
   CNOP 0,4
 no_sync_routines
-  IFEQ cfc_prefade_enabled
-    bra     cfc_init_start_colors
+  IFEQ cfc_rgb8_prefade_enabled
+    bra     cfc_rgb8_init_start_colors
   ELSE
     rts
   ENDC
@@ -967,7 +967,7 @@ beam_routines
   bsr     mgv_copy_extra_playfield
   bsr     vert_text_scroll
   bsr     colors_fader_cross
-  bsr     cfc_copy_color_table
+  bsr     cfc_rgb8_copy_color_table
   bsr     control_counters
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
@@ -996,7 +996,7 @@ SWAP_PLAYFIELDs
   move.l  pf1_construction2(a3),a1
   ADDF.W  cl1_BPL1PTH+2,a0
   move.l  pf1_display(a3),pf1_construction2(a3)
-  MOVEF.L (pf1_bitplane_x_offset/8)+(pf1_bitplane_y_offset*pf1_plane_width*pf1_depth3),d1
+  MOVEF.L (pf1_plane_x_offset/8)+(pf1_plane_y_offset*pf1_plane_width*pf1_depth3),d1
   move.l  a1,pf1_display(a3)
   move.l  a1,a2
   moveq   #pf1_depth3-1,d7   ;Anzahl der Planes
@@ -1009,7 +1009,7 @@ swap_playfield1_loop
   ADDF.W  16,a0
   dbf     d7,swap_playfield1_loop
 
-  MOVEF.L (pf2_bitplane_x_offset/8)+(pf2_bitplane_y_offset*pf1_plane_width*pf1_depth3),d1
+  MOVEF.L (pf2_plane_x_offset/8)+(pf2_plane_y_offset*pf1_plane_width*pf1_depth3),d1
   move.l  cl1_display(a3),a0
   ADDF.W  cl1_BPL2PTH+2,a0
   moveq   #pf2_depth3-1,d7   ;Anzahl der Planes
@@ -1039,7 +1039,7 @@ vert_text_scroll
   MOVEF.L vts_text_characters_per_line*4,d3
   MOVEF.W vts_text_character_y_restart,d4
   lea     vts_characters_y_positions(pc),a1 ;Y-Koords der Chars
-  lea     vts_characters_image_pointers(pc),a2 ;Zeiger auf Adressen der Char-Images
+  lea     vts_characters_image_ptrs(pc),a2 ;Zeiger auf Adressen der Char-Images
   move.l  pf1_construction2(a3),a4
   move.l  (a4),a4
   moveq   #vts_text_characters_per_column-1,d7 ;Anzahl der Zeichen pro Spalte
@@ -1107,11 +1107,11 @@ vts_stop_vert_text_scroll
   CNOP 0,4
 vts_stop_colors_fader_cross
   moveq   #-1,d0             ;Startwert für Farbtabelle "Ausblenden"
-  move.w  d0,cfc_color_table_start(a3) 
-  tst.w   cfc_active(a3)     ;Colors-Fader-Cross bereits aktiv ?
+  move.w  d0,cfc_rgb8_color_table_start(a3) 
+  tst.w   cfc_rgb8_active(a3)     ;Colors-Fader-Cross bereits aktiv ?
   beq.s   vts_no_activate_delay_counter
   moveq   #1,d0
-  move.w  d0,cfc_fader_delay_counter(a3) ;Zähler aktivieren
+  move.w  d0,cfc_rgb8_fader_delay_counter(a3) ;Zähler aktivieren
 vts_no_activate_delay_counter
   moveq   #TRUE,d0           ;Zeichen gefunden
   rts
@@ -1161,8 +1161,8 @@ mgv_rotation
   add.w   mgv_rotation_variable_y_speed(a3),d1 ;nächster Y-Winkel
   and.w   d3,d1              ;Übertrag entfernen
   move.w  d1,mgv_rotation_y_angle(a3) 
-  lea     mgv_object_coordinates(pc),a0 ;Koordinaten der Linien
-  lea     mgv_rotation_xy_coordinates(pc),a1 ;Koord.-Tab.
+  lea     mgv_object_coords(pc),a0 ;Koordinaten der Linien
+  lea     mgv_rotation_xy_coords(pc),a1 ;Koord.-Tab.
   move.w  #mgv_rotation_d*8,a4 ;d
   move.w  #mgv_rotation_x_center,a5 ;X-Mittelpunkt
   move.w  #mgv_rotation_y_center,a6 ;Y-Mittelpunkt
@@ -1195,7 +1195,7 @@ mgv_morph_object
   bne.s   mgv_no_morph_object ;Nein -> verzweige
   move.w  mgv_morph_shapes_table_start(a3),d1 ;Startwert
   moveq   #TRUE,d2           ;Koordinatenzähler
-  lea     mgv_object_coordinates(pc),a0 ;Aktuelle Objektdaten
+  lea     mgv_object_coords(pc),a0 ;Aktuelle Objektdaten
   lea     mgv_morph_shapes_table(pc),a1 ;Tabelle mit Adressen der Formen-Tabellen
   move.l  (a1,d1.w*4),a1     ;Zeiger auf Tabelle 
   MOVEF.W mgv_object_edge_points_number*3-1,d7 ;Anzahl der Koordinaten
@@ -1241,7 +1241,7 @@ mgv_draw_lines
   movem.l a3-a6,-(a7)
   bsr     mgv_draw_lines_init
   lea     mgv_object_info_table(pc),a0 ;Zeiger auf Info-Daten zum Objekt
-  lea     mgv_rotation_xy_coordinates(pc),a1 ;Zeiger auf XY-Koordinaten
+  lea     mgv_rotation_xy_coords(pc),a1 ;Zeiger auf XY-Koordinaten
   move.l  extra_pf1(a3),a2
   move.l  (a2),d0
   add.l   #ALIGN_64KB,d0
@@ -1350,7 +1350,7 @@ mgv_fill_extra_playfield
 ; ** Puffer in Sprite-Strukturen kopieren **
   CNOP 0,4
 mgv_copy_extra_playfield
-  lea     spr_pointers_construction(pc),a2 ;Zeiger auf Sprites
+  lea     spr_ptrs_construction(pc),a2 ;Zeiger auf Sprites
   move.l  (a2)+,a0           ;1. Sprite-Struktur (SPR0)
   ADDF.W  (spr_pixel_per_datafetch/4),a0 ;Sprite-Header überspringen
   move.l  (a2),a1            ;2. Sprite-Struktur (SPR1)
@@ -1397,26 +1397,26 @@ mgv_skip
 ; ** Farben überblenden **
   CNOP 0,4
 colors_fader_cross
-  tst.w   cfc_active(a3)     ;Colors-Fader-Cross an ?
+  tst.w   cfc_rgb8_active(a3)     ;Colors-Fader-Cross an ?
   bne.s   no_colors_fader_cross ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  cfc_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  cfc_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
-  ADDF.W  cfc_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  cfc_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   cfc_save_fader_angle ;Ja -> verzweige
+  ble.s   cfc_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-cfc_save_fader_angle
-  move.w  d0,cfc_fader_angle(a3)
-  MOVEF.W cfc_colors_number*3,d6 ;Zähler
+cfc_rgb8_save_fader_angle
+  move.w  d0,cfc_rgb8_fader_angle(a3)
+  MOVEF.W cfc_rgb8_colors_number*3,d6 ;Zähler
   lea     sine_table,a0
   move.w  (a0,d2.w*2),d0     ;sin(w)
-  MULSF.W cfc_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
+  MULSF.W cfc_rgb8_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
-  ADDF.W  cfc_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(cfc_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     cfc_color_table+(cfc_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
-  move.w  cfc_color_table_start(a3),d1
+  ADDF.W  cfc_rgb8_fader_center,d0 ;+ Fader-Mittelpunkt
+  lea     spr_rgb8_color_table+(cfc_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     cfc_rgb8_color_table+(cfc_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
+  move.w  cfc_rgb8_color_table_start(a3),d1
   MULUF.W LONGWORD_SIZE,d1
   lea     (a1,d1.w*8),a1
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
@@ -1425,30 +1425,30 @@ cfc_save_fader_angle
   move.l  d0,a2              ;Additions-/Subtraktionswert für Rot
   lsr.l   #8,d0              ;BYTESHIFT
   move.l  d0,a4              ;Additions-/Subtraktionswert für Grün
-  MOVEF.W cfc_colors_number-1,d7 ;Anzahl der Farben
-  bsr     cfc_fader_loop
+  MOVEF.W cfc_rgb8_colors_number-1,d7 ;Anzahl der Farben
+  bsr     cfc_rgb8_fader_loop
   movem.l (a7)+,a4-a6
-  move.w  d6,cfc_colors_counter(a3) ;Color-Fader-Cross fertig ?
+  move.w  d6,cfc_rgb8_colors_counter(a3) ;Color-Fader-Cross fertig ?
   bne.s   no_colors_fader_cross ;Nein -> verzweige
-  move.w  #FALSE,cfc_active(a3)  ;Color-Fader-Cross aus
+  move.w  #FALSE,cfc_rgb8_active(a3)  ;Color-Fader-Cross aus
 no_colors_fader_cross
   rts
 
-  COLOR_FADER cfc
+  RGB8_COLOR_FADER cfc
 
 ; ** Farbwerte in Copperliste kopieren **
   CNOP 0,4
-cfc_copy_color_table
+cfc_rgb8_copy_color_table
   IFNE cl1_size2
     move.l  a4,-(a7)
   ENDC
-  tst.w   cfc_copy_colors_active(a3) ;Kopieren der Farbwerte beendet ?
-  bne.s   cfc_no_copy_color_table ;Ja -> verzweige
-  move.w  #$0f0f,d3          ;Maske RGB-Nibbles
-  IFGT cfc_colors_number-32
-    moveq   #cfc_start_xolor*8,d4 ;Color-Bank Farbregisterzähler
+  tst.w   cfc_rgb8_copy_colors_active(a3) ;Kopieren der Farbwerte beendet ?
+  bne.s   cfc_rgb8_no_copy_color_table ;Ja -> verzweige
+  move.w  #GB_NIBBLES_MASK,d3          ;Maske RGB-Nibbles
+  IFGT cfc_rgb8_colors_number-32
+    moveq   #cfc_rgb8_start_xolor*8,d4 ;Color-Bank Farbregisterzähler
   ENDC
-  lea     spr_color_table+(cfc_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     spr_rgb8_color_table+(cfc_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
   move.l  cl1_display(a3),a1 
   ADDF.W  cl1_COLOR18_high1+2,a1
   IFNE cl1_size1
@@ -1459,8 +1459,8 @@ cfc_copy_color_table
     move.l  cl1_construction2(a3),a4 
     ADDF.W  cl1_COLOR18_high1+2,a4
   ENDC
-  MOVEF.W cfc_colors_number-1,d7 ;Anzahl der Farben
-cfc_copy_color_table_loop
+  MOVEF.W cfc_rgb8_colors_number-1,d7 ;Anzahl der Farben
+cfc_rgb8_copy_color_table_loop
   move.l  (a0)+,d0           ;RGB8-Farbwert
   move.l  d0,d2              
   RGB8_TO_RGB4_HIGH d0,d1,d3
@@ -1482,9 +1482,9 @@ cfc_copy_color_table_loop
     move.w  d2,cl1_COLOR18_low1-cl1_COLOR18_high1(a4) ;Low-Bits COLORxx
     addq.w  #4,a4            ;nächstes Farbregister
   ENDC
-  IFGT cfc_colors_number-32
+  IFGT cfc_rgb8_colors_number-32
     addq.b  #1*8,d4          ;Farbregister-Zähler erhöhen
-    bne.s   cfc_no_restart_color_bank ;Nein -> verzweige
+    bne.s   cfc_rgb8_no_restart_color_bank ;Nein -> verzweige
     addq.w  #4,a1            ;CMOVE überspringen
     IFNE cl1_size1
       addq.w  #4,a2          ;CMOVE überspringen
@@ -1492,31 +1492,31 @@ cfc_copy_color_table_loop
     IFNE cl1_size2
       addq.w  #4,a4          ;CMOVE überspringen
     ENDC
-cfc_no_restart_color_bank
+cfc_rgb8_no_restart_color_bank
   ENDC
-  dbf     d7,cfc_copy_color_table_loop
-  tst.w   cfc_colors_counter(a3) ;Fading beendet ?
-  bne.s   cfc_no_copy_color_table ;Nein -> verzweige
-cfc_disable_copy_color_table
-  move.w  #FALSE,cfc_copy_colors_active(a3) ;Kopieren beendet
-cfc_next_entry
-  move.w  #cfc_fader_delay,cfc_fader_delay_counter(a3) ;Zähler zurücksetzen
-  move.w  cfc_color_table_start(a3),d0
+  dbf     d7,cfc_rgb8_copy_color_table_loop
+  tst.w   cfc_rgb8_colors_counter(a3) ;Fading beendet ?
+  bne.s   cfc_rgb8_no_copy_color_table ;Nein -> verzweige
+cfc_rgb8_disable_copy_color_table
+  move.w  #FALSE,cfc_rgb8_copy_colors_active(a3) ;Kopieren beendet
+cfc_rgb8_next_entry
+  move.w  #cfc_rgb8_fader_delay,cfc_rgb8_fader_delay_counter(a3) ;Zähler zurücksetzen
+  move.w  cfc_rgb8_color_table_start(a3),d0
   addq.w  #1,d0              ;nächste Farbtabelle
-  beq.s   cfc_stop_colors_fader_cross ;Wenn Null -> verzweige
-  cmp.w   #cfc_color_tables_number,d0 ;Ende der Farbtabelle?
-  blt.s   cfc_save_color_table_start ;Nein -> verzweige
+  beq.s   cfc_rgb8_stop_colors_fader_cross ;Wenn Null -> verzweige
+  cmp.w   #cfc_rgb8_color_tables_number,d0 ;Ende der Farbtabelle?
+  blt.s   cfc_rgb8_save_color_table_start ;Nein -> verzweige
   moveq   #0,d0           ;Neustart
-cfc_save_color_table_start
-  move.w  d0,cfc_color_table_start(a3)
-cfc_no_copy_color_table
+cfc_rgb8_save_color_table_start
+  move.w  d0,cfc_rgb8_color_table_start(a3)
+cfc_rgb8_no_copy_color_table
   IFNE cl1_size2
     move.l  (a7)+,a4
   ENDC
   rts
   CNOP 0,4
-cfc_stop_colors_fader_cross
-  move.w #FALSE,cfc_fader_delay_counter(a3) ;Zähler deaktivieren
+cfc_rgb8_stop_colors_fader_cross
+  move.w #FALSE,cfc_rgb8_fader_delay_counter(a3) ;Zähler deaktivieren
   rts
 
 
@@ -1533,19 +1533,19 @@ mgv_morph_save_delay_counter
   move.w  d0,mgv_morph_delay_counter(a3) 
 mgv_morph_no_delay_counter
 
-  move.w  cfc_fader_delay_counter(a3),d0
-  bmi.s   cfc_no_fader_delay_counter ;Wenn Zähler negativ -> verzweige
+  move.w  cfc_rgb8_fader_delay_counter(a3),d0
+  bmi.s   cfc_rgb8_no_fader_delay_counter ;Wenn Zähler negativ -> verzweige
   subq.w  #1,d0
-  bpl.s   cfc_save_fader_delay_counter ;Wenn Zähler positiv -> verzweige
-cfc_fader_enable
-  move.w  #cfc_colors_number*3,cfc_colors_counter(a3)
+  bpl.s   cfc_rgb8_save_fader_delay_counter ;Wenn Zähler positiv -> verzweige
+cfc_rgb8_fader_enable
+  move.w  #cfc_rgb8_colors_number*3,cfc_rgb8_colors_counter(a3)
   moveq   #TRUE,d1
-  move.w  d1,cfc_active(a3)
-  move.w  #sine_table_length/4,cfc_fader_angle(a3) ;90 Grad
-  move.w  d1,cfc_copy_colors_active(a3)
-cfc_save_fader_delay_counter
-  move.w  d0,cfc_fader_delay_counter(a3) 
-cfc_no_fader_delay_counter
+  move.w  d1,cfc_rgb8_active(a3)
+  move.w  #sine_table_length/4,cfc_rgb8_fader_angle(a3) ;90 Grad
+  move.w  d1,cfc_rgb8_copy_colors_active(a3)
+cfc_rgb8_save_fader_delay_counter
+  move.w  d0,cfc_rgb8_fader_delay_counter(a3) 
+cfc_rgb8_no_fader_delay_counter
   rts
 
 ; ** SOFTINT-Interrupts abfragen **
@@ -1567,10 +1567,10 @@ no_effects_handler
   rts
   CNOP 0,4
 eh_start_colors_fader_cross
-  move.w  #cfc_colors_number*3,cfc_colors_counter(a3)
+  move.w  #cfc_rgb8_colors_number*3,cfc_rgb8_colors_counter(a3)
   moveq   #0,d0
-  move.w  d0,cfc_active(a3)
-  move.w  d0,cfc_copy_colors_active(a3)
+  move.w  d0,cfc_rgb8_active(a3)
+  move.w  d0,cfc_rgb8_copy_colors_active(a3)
   rts
   CNOP 0,4
 eh_start_vert_text_scroll
@@ -1593,25 +1593,25 @@ NMI_int_server
 
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   DC.L color00_bits,$f7e954
 
 ; ** Farben des zweiten Playfields **
   CNOP 0,4
-pf2_color_table
+pf2_rgb8_color_table
   DC.L color00_bits,$000000
 
 ; ** Farben der Sprites **
-spr_color_table
+spr_rgb8_color_table
   REPT spr_colors_number
     DC.L color00_bits
   ENDR
 
 ; ** Adressen der Sprites **
-spr_pointers_construction
+spr_ptrs_construction
   DS.L spr_number
 
-spr_pointers_display
+spr_ptrs_display
   DS.L spr_number
 
 ; **** Vert-Text-Scroll ****
@@ -1636,19 +1636,19 @@ vts_characters_y_positions
 
 ; ** Tabelle für Char-Image-Adressen **
   CNOP 0,4
-vts_characters_image_pointers
+vts_characters_image_ptrs
   DS.L vts_text_characters_number
 
 ; **** Morph-Glenz-Vectors ****
 ; ** Objektdaten **
   CNOP 0,2
-mgv_object_coordinates
+mgv_object_coords
 ; * Zoom-In *
   DS.W mgv_object_edge_points_number*3
 
 ; ** Formen des Objekts **
 ; ** Form 1 **
-mgv_object_shape1_coordinates
+mgv_object_shape1_coords
 ; ** Quader 1 **
   DC.W -(20*8),-(120*8),-(20*8) ;P0
   DC.W 20*8,-(120*8),-(20*8)    ;P1
@@ -1666,7 +1666,7 @@ mgv_object_shape1_coordinates
   DC.W 0,120*8,0                ;P13
 
 ; ** Form 2 **
-mgv_object_shape2_coordinates
+mgv_object_shape2_coords
 ; ** Pyramide **
   DC.W -(10*8),-(20*8),-(10*8) ;P0
   DC.W 10*8,-(20*8),-(10*8)    ;P1
@@ -1684,7 +1684,7 @@ mgv_object_shape2_coordinates
   DC.W 0,120*8,0               ;P13
 
 ; ** Form 3 **
-mgv_object_shape3_coordinates
+mgv_object_shape3_coords
 ; ** Keil 1 **
   DC.W -(20*8),-(80*8),-(20*8) ;P0
   DC.W 20*8,-(80*8),-(20*8)    ;P1
@@ -1702,7 +1702,7 @@ mgv_object_shape3_coordinates
   DC.W 0,120*8,0               ;P13
 
 ; ** Form 4 **
-mgv_object_shape4_coordinates
+mgv_object_shape4_coords
 ; ** Keil 2 **
   DC.W -(20*8),-(10*8),-(20*8) ;P0
   DC.W 20*8,-(10*8),-(20*8)    ;P1
@@ -1721,7 +1721,7 @@ mgv_object_shape4_coordinates
 
   IFNE mgv_morph_loop_enabled
 ; ** Form 5 **
-mgv_object_shape5_coordinates
+mgv_object_shape5_coords
 ; * Zoom-Out *
     DS.W mgv_object_edge_points_number*3
   ENDC
@@ -1865,7 +1865,7 @@ mgv_object_edge_table
   DC.W 7*2,3*2,13*2,7*2      ;Fläche unten, Dreieck 9 Uhr
 
 ; ** Koordinaten der Linien **
-mgv_rotation_xy_coordinates
+mgv_rotation_xy_coords
   DS.W mgv_object_edge_points_number*2
 
 ; ** Tabelle mit Adressen der Objekttabellen **
@@ -1876,12 +1876,12 @@ mgv_morph_shapes_table
 ; **** Color-Fader-Cross ****
 ; ** Zielfarbwerte für Color-Fader-Cross **
   CNOP 0,4
-cfc_color_table_fade_out
+cfc_rgb8_color_table_fade_out
   REPT 8
     DC.L color00_bits
   ENDR
 
-cfc_color_table
+cfc_rgb8_color_table
   REPT 2
     DC.L color00_bits
   ENDR

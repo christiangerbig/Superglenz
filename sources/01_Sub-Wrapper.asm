@@ -173,19 +173,19 @@ bg_image_x_position         EQU 16
 bg_image_y_position         EQU MINROW
 
 ; **** Sprite-Fader ****
-sprf_start_color            EQU 1
-sprf_color_table_offset     EQU 1
-sprf_colors_number          EQU spr_colors_number-1
+sprf_rgb8_start_color            EQU 1
+sprf_rgb8_color_table_offset     EQU 1
+sprf_rgb8_colors_number          EQU spr_colors_number-1
 
-sprfi_fader_speed_max       EQU 4
-sprfi_fader_radius          EQU sprfi_fader_speed_max
-sprfi_fader_center          EQU sprfi_fader_speed_max+1
-sprfi_fader_angle_speed     EQU 2
+sprfi_rgb8_fader_speed_max       EQU 4
+sprfi_rgb8_fader_radius          EQU sprfi_rgb8_fader_speed_max
+sprfi_rgb8_fader_center          EQU sprfi_rgb8_fader_speed_max+1
+sprfi_rgb8_fader_angle_speed     EQU 2
 
-sprfo_fader_speed_max       EQU 8
-sprfo_fader_radius          EQU sprfo_fader_speed_max
-sprfo_fader_center          EQU sprfo_fader_speed_max+1
-sprfo_fader_angle_speed     EQU 2
+sprfo_rgb8_fader_speed_max       EQU 8
+sprfo_rgb8_fader_radius          EQU sprfo_rgb8_fader_speed_max
+sprfo_rgb8_fader_center          EQU sprfo_rgb8_fader_speed_max+1
+sprfo_rgb8_fader_angle_speed     EQU 2
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -438,16 +438,16 @@ spr7_y_size2     EQU sprite7_size/(spr_x_size2/8)
   INCLUDE "variables-offsets.i"
 
 ; **** Sprite-Fader ****
-sprf_colors_counter     RS.W 1
-sprf_copy_colors_active RS.W 1
+sprf_rgb8_colors_counter     RS.W 1
+sprf_rgb8_copy_colors_active RS.W 1
 
 ; **** Sprite-Fader-In ****
-sprfi_active            RS.W 1
-sprfi_fader_angle       RS.W 1
+sprfi_rgb8_active            RS.W 1
+sprfi_rgb8_fader_angle       RS.W 1
 
 ; **** Sprite-Fader-Out ****
-sprfo_active            RS.W 1
-sprfo_fader_angle       RS.W 1
+sprfo_rgb8_active            RS.W 1
+sprfo_rgb8_fader_angle       RS.W 1
 
 variables_size          RS.B 0
 
@@ -460,18 +460,18 @@ start_01_wrapper
 init_main_variables
 
 ; **** Sprite-Fader ****
-  move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
+  move.w  #sprf_rgb8_colors_number*3,sprf_rgb8_colors_counter(a3)
   moveq   #0,d0
-  move.w  d0,sprf_copy_colors_active(a3) ;Kopieren der Farben an
+  move.w  d0,sprf_rgb8_copy_colors_active(a3) ;Kopieren der Farben an
 
 ; **** Sprite-Fader-In ****
-  move.w  d0,sprfi_active(a3) ;Sprite-Fader-In an
-  move.w  #sine_table_length/4,sprfi_fader_angle(a3) ;90 Grad
+  move.w  d0,sprfi_rgb8_active(a3) ;Sprite-Fader-In an
+  move.w  #sine_table_length/4,sprfi_rgb8_fader_angle(a3) ;90 Grad
 
 ; **** Sprite-Fader-Out ****
   moveq   #FALSE,d1
-  move.w  d1,sprfo_active(a3)
-  move.w  #sine_table_length/4,sprfo_fader_angle(a3) ;90 Grad
+  move.w  d1,sprfo_rgb8_active(a3)
+  move.w  #sine_table_length/4,sprfo_rgb8_fader_angle(a3) ;90 Grad
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -484,7 +484,7 @@ init_main
 ; ** Sprites initialisieren **
   CNOP 0,4
 init_sprites
-  bsr.s   spr_init_pointers_table
+  bsr.s   spr_init_ptrs_table
   bra.s   bg_init_attached_sprites_cluster
 
 ; ** Tabelle mit Zeigern auf Sprites initialisieren **
@@ -492,29 +492,29 @@ init_sprites
   INIT_SPRITE_POINTERS_TABLE
 
 ; ** Spritestrukturen initialisieren **
-  INIT_ATTACHED_SPRITES_CLUSTER bg,spr_pointers_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
+  INIT_ATTACHED_SPRITES_CLUSTER bg,spr_ptrs_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
 
 
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0
-  bsr.s   cl1_init_playfield_registers
-  bsr.s   cl1_init_sprite_pointers
-  bsr     cl1_init_color_registers
+  bsr.s   cl1_init_playfield_props
+  bsr.s   cl1_init_sprite_ptrs
+  bsr     cl1_init_colors
   COP_MOVEQ TRUE,COPJMP2
-  bra     cl1_set_sprite_pointers
+  bra     cl1_set_sprite_ptrs
 
   COP_INIT_PLAYFIELD_REGISTERS cl1,BLANKSPR
 
   COP_INIT_SPRITE_POINTERS cl1
 
   CNOP 0,4
-cl1_init_color_registers
+cl1_init_colors
   COP_SELECT_COLOR_HIGH_BANK 4
-  COP_INIT_COLOR_HIGH COLOR00,16,spr_color_table
+  COP_INIT_COLOR_HIGH COLOR00,16,spr_rgb8_color_table
 
   COP_SELECT_COLOR_LOW_BANK 4
-  COP_INIT_COLOR_LOW COLOR00,16,spr_color_table
+  COP_INIT_COLOR_LOW COLOR00,16,spr_rgb8_color_table
   rts
 
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
@@ -577,22 +577,22 @@ main
   tst.l   d0
   bne.s   exit
 
-  move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
+  move.w  #sprf_rgb8_colors_number*3,sprf_rgb8_colors_counter(a3)
   moveq   #0,d0
-  move.w  d0,sprf_copy_colors_active(a3) ;Kopieren der Farben an
-  move.w  d0,sprfo_active(a3) ;Sprite-Fader-Out an
+  move.w  d0,sprf_rgb8_copy_colors_active(a3) ;Kopieren der Farben an
+  move.w  d0,sprfo_rgb8_active(a3) ;Sprite-Fader-Out an
 
 beam_routines
   bsr     wait_beam_position
   bsr     sprite_fader_in
   bsr     sprite_fader_out
-  bsr     sprf_copy_color_table
+  bsr     sprf_rgb8_copy_color_table
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   sprfi_active(a3)   ;Sprite-Fader-In an ?
+  tst.w   sprfi_rgb8_active(a3)   ;Sprite-Fader-In an ?
   beq.s   beam_routines      ;Ja -> Schleife
-  tst.w   sprfo_active(a3)   ;Sprite-Fader-Out an ?
+  tst.w   sprfo_rgb8_active(a3)   ;Sprite-Fader-Out an ?
   beq.s   beam_routines      ;Ja -> Schleife
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -604,81 +604,81 @@ exit
 ; ** Sprites einblenden **
   CNOP 0,4
 sprite_fader_in
-  tst.w   sprfi_active(a3)   ;Sprite-Fader-In an ?
+  tst.w   sprfi_rgb8_active(a3)   ;Sprite-Fader-In an ?
   bne.s   no_sprite_fader_in ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  sprfi_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  sprfi_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
-  ADDF.W  sprfi_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  sprfi_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   sprfi_no_restart_fader_angle ;Ja -> verzweige
+  ble.s   sprfi_rgb8_no_restart_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-sprfi_no_restart_fader_angle
-  move.w  d0,sprfi_fader_angle(a3) 
-  MOVEF.W sprf_colors_number*3,d6 ;Zähler
+sprfi_rgb8_no_restart_fader_angle
+  move.w  d0,sprfi_rgb8_fader_angle(a3) 
+  MOVEF.W sprf_rgb8_colors_number*3,d6 ;Zähler
   lea     sine_table(pc),a0  
   move.w  (a0,d2.w*2),d0     ;sin(w)
-  MULSF.W sprfi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
+  MULSF.W sprfi_rgb8_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
-  ADDF.W  sprfi_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfi_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
+  ADDF.W  sprfi_rgb8_fader_center,d0 ;+ Fader-Mittelpunkt
+  lea     spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfi_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
   move.l  d0,a2              ;Additions-/Subtraktionswert für Rot
   lsr.l   #8,d0              ;BYTESHIFT
   move.l  d0,a4              ;Additions-/Subtraktionswert für Grün
-  MOVEF.W sprf_colors_number-1,d7 ;Anzahl der Farben
-  bsr     sprf_fader_loop
+  MOVEF.W sprf_rgb8_colors_number-1,d7 ;Anzahl der Farben
+  bsr     sprf_rgb8_fader_loop
   movem.l (a7)+,a4-a6
-  move.w  d6,sprf_colors_counter(a3) ;Image-Fader-In fertig ?
+  move.w  d6,sprf_rgb8_colors_counter(a3) ;Image-Fader-In fertig ?
   bne.s   no_sprite_fader_in  ;Nein -> verzweige
-  move.w  #FALSE,sprfi_active(a3) ;Sprite-Fader-In aus
+  move.w  #FALSE,sprfi_rgb8_active(a3) ;Sprite-Fader-In aus
 no_sprite_fader_in
   rts
 
 ; ** Sprites ausblenden **
   CNOP 0,4
 sprite_fader_out
-  tst.w   sprfo_active(a3)   ;Sprite-Fader-Out an ?
+  tst.w   sprfo_rgb8_active(a3)   ;Sprite-Fader-Out an ?
   bne.s   no_sprite_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  sprfo_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  sprfo_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
-  ADDF.W  sprfo_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  sprfo_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   sprfo_no_restart_fader_angle ;Ja -> verzweige
+  ble.s   sprfo_rgb8_no_restart_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-sprfo_no_restart_fader_angle
-  move.w  d0,sprfo_fader_angle(a3) 
-  MOVEF.W sprf_colors_number*3,d6 ;Zähler
+sprfo_rgb8_no_restart_fader_angle
+  move.w  d0,sprfo_rgb8_fader_angle(a3) 
+  MOVEF.W sprf_rgb8_colors_number*3,d6 ;Zähler
   lea     sine_table(pc),a0  
   move.w  (a0,d2.w*2),d0     ;sin(w)
-  MULSF.W sprfo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
+  MULSF.W sprfo_rgb8_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
-  ADDF.W  sprfo_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfo_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
+  ADDF.W  sprfo_rgb8_fader_center,d0 ;+ Fader-Mittelpunkt
+  lea     spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfo_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
   move.l  d0,a2              ;Additions-/Subtraktionswert für Rot
   lsr.l   #8,d0              ;BYTESHIFT
   move.l  d0,a4              ;Additions-/Subtraktionswert für Grün
-  MOVEF.W sprf_colors_number-1,d7 ;Anzahl der Farben
-  bsr     sprf_fader_loop
+  MOVEF.W sprf_rgb8_colors_number-1,d7 ;Anzahl der Farben
+  bsr     sprf_rgb8_fader_loop
   movem.l (a7)+,a4-a6
-  move.w  d6,sprf_colors_counter(a3) ;Image-Fader-Out fertig ?
+  move.w  d6,sprf_rgb8_colors_counter(a3) ;Image-Fader-Out fertig ?
   bne.s   no_sprite_fader_out ;Nein -> verzweige
-  move.w  #FALSE,sprfo_active(a3) ;Sprite-Fader-Out aus
+  move.w  #FALSE,sprfo_rgb8_active(a3) ;Sprite-Fader-Out aus
 no_sprite_fader_out
   rts
 
-  COLOR_FADER sprf
+  RGB8_COLOR_FADER sprf
 
 ; ** Farbwerte in Copperliste kopieren **
-  COPY_COLOR_TABLE_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR01_high5,cl1_COLOR01_low5
+  COPY_RGB8_COLORS_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR01_high5,cl1_COLOR01_low5
 
 
   INCLUDE "int-autovectors-handlers.i"
@@ -695,23 +695,23 @@ NMI_int_server
   INCLUDE "sys-structures.i"
 
 ; ** Farben der Sprites **
-spr_color_table
+spr_rgb8_color_table
   REPT spr_colors_number
     DC.L color00_bits
   ENDR
 
 ; ** Adressen der Sprites **
-spr_pointers_display
+spr_ptrs_display
   DS.L spr_number
 
 ; **** Sprite-Fader ****
 ; ** Zielfarbwerte für Sprite-Fader-In **
   CNOP 0,4
-sprfi_color_table
+sprfi_rgb8_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/256x283x16-Skyline.ct"
 
 ; ** Zielfarbwerte für Sprite-Fader-Out **
-sprfo_color_table
+sprfo_rgb8_color_table
   REPT spr_colors_number
     DC.L color00_bits
   ENDR

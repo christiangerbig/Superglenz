@@ -24,7 +24,7 @@ Abspann / Credits
 Morphendes Doppel-1x-Glenz mit Wide-Sprites und Scan-Wiederholung für den rechten Rand. Vert-Text-Scroll aus 8x7-Zeichen.
 
 
-INIT_ATTACHED_SPRITES_CLUSTER bg,spr_pointers_display,bg_image_x_position+8,bg_image_y_position,spr_x_size2,,,REPEAT
+INIT_ATTACHED_SPRITES_CLUSTER bg,spr_ptrs_display,bg_image_x_position+8,bg_image_y_position,spr_x_size2,,,REPEAT
 
 Placeholder-Modul (Main)    %1101010000010110, %0000000000000001
 Placeholder-Modul (Credits) %1101000000000000, %0000000000000001

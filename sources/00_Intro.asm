@@ -742,7 +742,7 @@ init_main
   bsr     gv_init_object_info_table
   bsr     gv_init_color_table
   bsr     hf_dim_colors
-  bsr     init_color_registers
+  bsr     init_colors
   bsr     spb_init_display_window
   bsr     init_first_copperlist
   bra     init_second_copperlist
@@ -750,7 +750,7 @@ init_main
 ; ** Sprites initialisieren **
   CNOP 0,4
 init_sprites
-  bsr.s   spr_init_pointers_table
+  bsr.s   spr_init_ptrs_table
   bra.s   init_sprites_cluster
 
 ; ** Tabelle mit Zeigern auf Sprites initialisieren **
@@ -765,12 +765,12 @@ init_sprites_cluster
   moveq   #title_image_y_position,d1 ;Y
   MOVEF.W title_image_y_size,d2 ;Höhe
   moveq   #((title_image_x_size-spr_x_size2)/8)+title_image_width,d3
-  lea     spr_pointers_display(pc),a1 ;Zeiger auf Sprites
+  lea     spr_ptrs_display(pc),a1 ;Zeiger auf Sprites
   move.l  (a1)+,a0           ;SPR0-Struktur
   lea     title_image_data+((spr_x_size2/8)*0),a2 ;Bitplane 1
   lea     title_image_width(a2),a4 ;Bitplane 2
   MOVEF.W title_image_y_size-1,d7 ;Höhe des Einzelsprites
-  bsr     copy_sprite_bitplanes
+  bsr     copy_sprite_planes
 
   MOVEF.W (title_image_x_position+(spr_x_size2*1))*4,d0 ;X
   moveq   #title_image_y_position,d1 ;Y
@@ -779,7 +779,7 @@ init_sprites_cluster
   lea     title_image_data+((spr_x_size2/8)*1),a2 ;Bitplane 1
   lea     title_image_width(a2),a4 ;Bitplane 2
   MOVEF.W title_image_y_size-1,d7 ;Höhe des Einzelsprites
-  bsr.s   copy_sprite_bitplanes
+  bsr.s   copy_sprite_planes
 
   MOVEF.W (title_image_x_position+(spr_x_size2*2))*4,d0 ;X
   moveq   #title_image_y_position,d1 ;Y
@@ -788,20 +788,20 @@ init_sprites_cluster
   lea     title_image_data+((spr_x_size2/8)*2),a2 ;Bitplane 1
   lea     title_image_width(a2),a4 ;Bitplane 2
   MOVEF.W title_image_y_size-1,d7 ;Höhe des Einzelsprites
-  bsr.s   copy_sprite_bitplanes
+  bsr.s   copy_sprite_planes
 
 
   MOVEF.W logo_image_x_position1*4,d0 ;X
   MOVEF.W logo_image_y_position1,d1 ;Y
   MOVEF.W logo_image_y_size,d2 ;Höhe
   moveq   #((logo_image_x_size-spr_x_size2)/8)+logo_image_width,d3
-  lea     spr_pointers_display(pc),a1 ;Zeiger auf Sprites
+  lea     spr_ptrs_display(pc),a1 ;Zeiger auf Sprites
   move.l  (a1)+,a0           ;SPR0-Struktur
   ADDF.W  spr0_extension2_entry,a0
   lea     logo_image_data+((spr_x_size2/8)*0),a2 ;Bitplane 1
   lea     logo_image_width(a2),a4 ;Bitplane 2
   MOVEF.W logo_image_y_size-1,d7 ;Höhe des Einzelsprites
-  bsr.s   copy_sprite_bitplanes
+  bsr.s   copy_sprite_planes
 
   MOVEF.W logo_image_x_position2*4,d0 ;X
   MOVEF.W logo_image_y_position2,d1 ;Y
@@ -811,7 +811,7 @@ init_sprites_cluster
   lea     logo_image_data+((spr_x_size2/8)*1),a2 ;Bitplane 1
   lea     logo_image_width(a2),a4 ;Bitplane 2
   MOVEF.W logo_image_y_size-1,d7 ;Höhe des Einzelsprites
-  bsr.s   copy_sprite_bitplanes
+  bsr.s   copy_sprite_planes
 
   MOVEF.W logo_image_x_position3*4,d0 ;X
   MOVEF.W logo_image_y_position3,d1 ;Y
@@ -821,25 +821,25 @@ init_sprites_cluster
   lea     logo_image_data+((spr_x_size2/8)*2),a2 ;Bitplane 1
   lea     logo_image_width(a2),a4 ;Bitplane 2
   MOVEF.W logo_image_y_size-1,d7 ;Höhe des Einzelsprites
-  bsr.s   copy_sprite_bitplanes
+  bsr.s   copy_sprite_planes
   move.l  (a7)+,a4
   rts
 
   CNOP 0,4
-copy_sprite_bitplanes
+copy_sprite_planes
   add.w   d1,d2              ;VSTOP
   SET_SPRITE_POSITION d0,d1,d2
   move.w  d1,(a0)            ;SPRxPOS
   move.w  d2,spr_pixel_per_datafetch/8(a0) ;SPRxCTL
   ADDF.W  (spr_pixel_per_datafetch/4),a0 ;Sprite-Header überspringen
-copy_sprite_bitplanes_loop
+copy_sprite_planes_loop
   move.l  (a2)+,(a0)+        ;Plane 1 64 Pixel
   move.l  (a2)+,(a0)+
   add.l   d3,a2
   move.l  (a4)+,(a0)+        ;Plane 2 64 Pixel
   move.l  (a4)+,(a0)+
   add.l   d3,a4
-  dbf     d7,copy_sprite_bitplanes_loop
+  dbf     d7,copy_sprite_planes_loop
   rts
 
 ; **** Glenz-Vectors ****
@@ -862,7 +862,7 @@ gv_init_object_info_table_loop
 ; ** Farbtablelle initialisieren **
   CNOP 0,4
 gv_init_color_table
-  lea     pf1_color_table(pc),a0 ;Zeiger auf Farbtableelle
+  lea     pf1_rgb8_color_table(pc),a0 ;Zeiger auf Farbtableelle
   lea     gv_glenz_color_table(pc),a1 ;Farben der einzelnen Glenz-Objekte
   move.l  (a1)+,2*LONGWORD_SIZE(a0) ;COLOR02
   move.l  (a1)+,3*LONGWORD_SIZE(a0) ;COLOR03
@@ -876,7 +876,7 @@ gv_init_color_table
 hf_dim_colors
   moveq   #1,d3              ;minimale Helligkeit
   moveq   #hf_colorbanks_number,d4 ;maximale Helligkeit
-  lea     spr_color_table+(hf_colors_per_colorbank*LONGWORD_SIZE)+(1*LONGWORD_SIZE)(pc),a0
+  lea     spr_rgb8_color_table+(hf_colors_per_colorbank*LONGWORD_SIZE)+(1*LONGWORD_SIZE)(pc),a0
   MOVEF.W (hf_colorbanks_number-1)-1,d7 ;Anzahl der Colour-Banks
 hf_dim_colors_loop1
   moveq   #hf_colorbanks_number,d5
@@ -926,10 +926,10 @@ hf_dim_colors_loop2
   rts
 
   CNOP 0,4
-init_color_registers
+init_colors
   CPU_SELECT_COLOR_HIGH_BANK 0
-  CPU_INIT_COLOR_HIGH COLOR00,8,pf1_color_table
-  CPU_INIT_COLOR_HIGH COLOR16,16,spr_color_table
+  CPU_INIT_COLOR_HIGH COLOR00,8,pf1_rgb8_color_table
+  CPU_INIT_COLOR_HIGH COLOR16,16,spr_rgb8_color_table
   CPU_SELECT_COLOR_HIGH_BANK 1
   CPU_INIT_COLOR_HIGH COLOR00,32
   CPU_SELECT_COLOR_HIGH_BANK 2
@@ -946,8 +946,8 @@ init_color_registers
   CPU_INIT_COLOR_HIGH COLOR00,32
 
   CPU_SELECT_COLOR_LOW_BANK 0
-  CPU_INIT_COLOR_LOW COLOR00,8,pf1_color_table
-  CPU_INIT_COLOR_LOW COLOR16,16,spr_color_table
+  CPU_INIT_COLOR_LOW COLOR00,8,pf1_rgb8_color_table
+  CPU_INIT_COLOR_LOW COLOR16,16,spr_rgb8_color_table
   CPU_SELECT_COLOR_LOW_BANK 1
   CPU_INIT_COLOR_LOW COLOR00,32
   CPU_SELECT_COLOR_LOW_BANK 2
@@ -974,16 +974,16 @@ spb_init_display_window
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0
-  bsr.s   cl1_init_playfield_registers
-  bsr     cl1_init_sprite_pointers
-  bsr     cl1_init_bitplane_pointers
-  bsr     cl1_init_branches_pointers1
-  bsr     cl1_init_branches_pointers2
+  bsr.s   cl1_init_playfield_props
+  bsr     cl1_init_sprite_ptrs
+  bsr     cl1_init_plane_ptrs
+  bsr     cl1_init_branches_ptrs1
+  bsr     cl1_init_branches_ptrs2
   bsr     cl1_reset_pointer
   bsr     cl1_init_copper_interrupt
   COP_LISTEND
-  bsr     cl1_set_sprite_pointers
-  bra     cl1_set_bitplane_pointers
+  bsr     cl1_set_sprite_ptrs
+  bra     cl1_set_plane_ptrs
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
 
@@ -992,7 +992,7 @@ init_first_copperlist
   COP_INIT_BITPLANE_POINTERS cl1
 
   CNOP 0,4
-cl1_init_branches_pointers1
+cl1_init_branches_ptrs1
   move.l  #(((cl1_vstart1<<24)+(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d0 ;WAIT-Befehl
   move.l  cl1_display(a3),d1
   add.l   #cl1_extension1_entry+cl1_ext1_subextension1_entry+cl1_subextension1_size,d1
@@ -1007,7 +1007,7 @@ cl1_init_branches_pointers1
   move.w  #COP2LCL,(a0)+
   move.w  d4,(a0)+
   MOVEF.W cl1_display_y_size1-1,d7 ;Anzahl der Zeilen
-cl1_init_branches_pointers1_loop
+cl1_init_branches_ptrs1_loop
   move.l  d0,(a0)+           ;WAIT x,y
   swap    d1                 ;High-Wert
   move.w  #COP1LCH,(a0)+
@@ -1018,11 +1018,11 @@ cl1_init_branches_pointers1_loop
   move.w  d1,(a0)+
   add.l   d3,d1              ;Einsprungadresse CL1 erhöhen
   COP_MOVEQ TRUE,COPJMP2
-  dbf     d7,cl1_init_branches_pointers1_loop
+  dbf     d7,cl1_init_branches_ptrs1_loop
   rts
 
   CNOP 0,4
-cl1_init_branches_pointers2
+cl1_init_branches_ptrs2
   move.l  #(((cl1_vstart2<<24)+(((cl1_hstart2/4)*2)<<16))|$10000)|$fffe,d0 ;WAIT-Befehl
   move.l  cl1_display(a3),d1
   add.l   #cl1_extension2_entry+cl1_ext2_subextension1_entry+cl1_subextension1_size,d1
@@ -1038,7 +1038,7 @@ cl1_init_branches_pointers2
   move.w  #COP2LCL,(a0)+
   move.w  d4,(a0)+
   MOVEF.W cl1_display_y_size2-1,d7 ;Anzahl der Zeilen
-cl1_init_branches_pointers2_loop
+cl1_init_branches_ptrs2_loop
   move.l  d0,(a0)+           ;WAIT x,y
   swap    d1                 ;High-Wert
   move.w  #COP1LCH,(a0)+
@@ -1049,7 +1049,7 @@ cl1_init_branches_pointers2_loop
   move.w  d1,(a0)+
   add.l   d3,d1              ;Einsprungadresse CL1 erhöhen
   COP_MOVEQ TRUE,COPJMP2
-  dbf     d7,cl1_init_branches_pointers2_loop
+  dbf     d7,cl1_init_branches_ptrs2_loop
   rts
 
   CNOP 0,4
@@ -1072,26 +1072,26 @@ cl1_reset_pointer
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_display(a3),a0
-  bsr.s   cl2_init_bplcon4_registers1
-  bra.s   cl2_init_bplcon4_registers2
+  bsr.s   cl2_init_bplcon41
+  bra.s   cl2_init_bplcon42
 
   CNOP 0,4
-cl2_init_bplcon4_registers1
+cl2_init_bplcon41
   move.l  #(BPLCON4<<16)+bplcon4_bits,d0
   moveq  #cl2_display_width1-1,d7 ;Anzahl der Spalten
-cl2_init_bplcon4_registers1_loop
+cl2_init_bplcon41_loop
   move.l  d0,(a0)+           ;BPLCON4
-  dbf     d7,cl2_init_bplcon4_registers1_loop
+  dbf     d7,cl2_init_bplcon41_loop
   COP_MOVEQ TRUE,COPJMP1
   rts
 
   CNOP 0,4
-cl2_init_bplcon4_registers2
+cl2_init_bplcon42
   move.l  #(BPLCON4<<16)+bplcon4_bits,d0
   moveq  #cl2_display_width2-1,d7 ;Anzahl der Spalten
-cl2_init_bplcon4_registers2_loop
+cl2_init_bplcon42_loop
   move.l  d0,(a0)+           ;BPLCON4
-  dbf     d7,cl2_init_bplcon4_registers2_loop
+  dbf     d7,cl2_init_bplcon42_loop
   COP_MOVEQ TRUE,COPJMP1
   rts
 
@@ -1210,8 +1210,8 @@ gv_rotation_no_y_angle_restart1
 gv_rotation_no_y_angle_restart2
   ENDC
   move.w  d1,gv_rotation_y_angle(a3) 
-  lea     gv_object_coordinates(pc),a0 ;Koordinaten der Linien
-  lea     gv_rotation_xy_coordinates(pc),a1 ;Koord.-Tab.
+  lea     gv_object_coords(pc),a0 ;Koordinaten der Linien
+  lea     gv_rotation_xy_coords(pc),a1 ;Koord.-Tab.
   move.w  #gv_rotation_d*8,a4 ;d
   move.w  #gv_rotation_xy_center,a5 ;X+Y-Mittelpunkt
   moveq   #gv_object_edge_points_number-1,d7 ;Anzahl der Punkte
@@ -1242,7 +1242,7 @@ gv_draw_lines
   movem.l a3-a5,-(a7)
   bsr     gv_draw_lines_init
   lea     gv_object_info_table(pc),a0 ;Zeiger auf Info-Daten zum Objekt
-  lea     gv_rotation_xy_coordinates(pc),a1   ;Zeiger auf XY-Koordinaten
+  lea     gv_rotation_xy_coords(pc),a1   ;Zeiger auf XY-Koordinaten
   move.l  pf1_construction2(a3),a2
   move.l  (a2),a2
   move.l  #((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3
@@ -1598,13 +1598,13 @@ NMI_int_server
 
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   REPT 8 ;pf1_colors_number
     DC.L color00_bits
   ENDR
 
 ; ** Farben der Sprites **
-spr_color_table
+spr_rgb8_color_table
   REPT hf_colors_per_colorbank
     DC.L color00_bits
   ENDR
@@ -1680,7 +1680,7 @@ spr_color_table
   ENDR
 
 ; ** Adressen der Sprites **
-spr_pointers_display
+spr_ptrs_display
   DS.L spr_number
 
 ; ** Sinus / Cosinustabelle **
@@ -1700,7 +1700,7 @@ gv_glenz_color_table
 
 ; ** Objektdaten **
   CNOP 0,2
-gv_object_coordinates
+gv_object_coords
 ; ** Diamant
   DC.W 0,-(36*8),0             ;P0
   DC.W -(19*8),-(36*8),-(48*8) ;P1
@@ -1997,7 +1997,7 @@ gv_object_edge_table
   DC.W 25*2,22*2,23*2,25*2   ;Fläche 46 unten, Dreieck 10,5 Uhr
 
 ; ** Koordinaten der Linien **
-gv_rotation_xy_coordinates
+gv_rotation_xy_coords
   DS.W gv_object_edge_points_number*2
 
 ; **** Horiz-Fader ****

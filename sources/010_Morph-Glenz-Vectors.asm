@@ -530,20 +530,20 @@ mgv_init_object1_info_table_loop
   CNOP 0,4
 mgv_init_morph_shapes_table
 ; ** Form 1 **
-  lea     mgv_object_shape1_coordinates(pc),a0 ;Zeiger auf 1. Form
+  lea     mgv_object_shape1_coords(pc),a0 ;Zeiger auf 1. Form
   lea     mgv_morph_shapes_table(pc),a1 ;Tabelle mit Zeigern auf Objektdaten
   move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
 ; ** Form 2 **
-  lea     mgv_object_shape2_coordinates(pc),a0 ;Zeiger auf 2. Form
+  lea     mgv_object_shape2_coords(pc),a0 ;Zeiger auf 2. Form
   move.l  a0,(a1)+           ;Zeiger auf Form-Tabelle
 ; ** Form 3 **
-  lea     mgv_object_shape3_coordinates(pc),a0 ;Zeiger auf 3. Form
+  lea     mgv_object_shape3_coords(pc),a0 ;Zeiger auf 3. Form
   IFEQ mgv_morph_loop_enabled
     move.l  a0,(a1)          ;Zeiger auf Form-Tabelle
   ELSE
     move.l  a0,(a1)+         ;Zeiger auf Form-Tabelle
 ; ** Form 4 **
-    lea     mgv_object_shape4_coordinates(pc),a0 ;Zeiger auf 4. Form
+    lea     mgv_object_shape4_coords(pc),a0 ;Zeiger auf 4. Form
     move.l  a0,(a1)          ;Zeiger auf Form-Tabelle
   ENDC
   rts
@@ -560,7 +560,7 @@ mgv_init_start_shape
 ; ** Farbtabelle initialisieren **
   CNOP 0,4
 mgv_init_color_table
-  lea     pf1_color_table(pc),a0 ;Zeiger auf Farbtableelle
+  lea     pf1_rgb8_color_table(pc),a0 ;Zeiger auf Farbtableelle
   lea     mgv_glenz_color_table1(pc),a1 ;Farben der einzelnen Glenz-Objekte
   move.l  (a1)+,2*LONGWORD_SIZE(a0) ;COLOR02
   move.l  (a1)+,3*LONGWORD_SIZE(a0) ;COLOR03
@@ -578,15 +578,15 @@ spb_init_display_window
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction2(a3),a0
-  bsr.s   cl2_init_playfield_registers
-  bsr     cl2_init_color_registers
-  bsr     cl2_init_bitplane_pointers
-  bsr     cl2_init_line_blits_steady_registers
+  bsr.s   cl2_init_playfield_props
+  bsr     cl2_init_colors
+  bsr     cl2_init_plane_ptrs
+  bsr     cl2_init_line_blits_steady
   bsr     cl2_init_line_blits
   bsr     cl2_init_fill_blit
   COP_LISTEND
   bsr     get_wrapper_view_values
-  bsr     cl2_set_bitplane_pointers
+  bsr     cl2_set_plane_ptrs
   bsr     copy_second_copperlist
   bsr     swap_second_copperlist
   bsr     swap_playfield1
@@ -602,17 +602,17 @@ init_second_copperlist
   COP_INIT_PLAYFIELD_REGISTERS cl2
 
   CNOP 0,4
-cl2_init_color_registers
-  COP_INIT_COLOR_HIGH COLOR00,8,pf1_color_table
+cl2_init_colors
+  COP_INIT_COLOR_HIGH COLOR00,8,pf1_rgb8_color_table
 
   COP_SELECT_COLOR_LOW_BANK 0,v_bplcon3_bits2
-  COP_INIT_COLOR_LOW COLOR00,8,pf1_color_table
+  COP_INIT_COLOR_LOW COLOR00,8,pf1_rgb8_color_table
   rts
 
   COP_INIT_BITPLANE_POINTERS cl2
 
   CNOP 0,4
-cl2_init_line_blits_steady_registers
+cl2_init_line_blits_steady
   COP_WAITBLIT
   COP_MOVEQ FALSE_WORD,BLTAFWM    ;Keine Ausmaskierung
   COP_MOVEQ FALSE_WORD,BLTALWM
@@ -844,8 +844,8 @@ mgv_rotation
   add.w   mgv_rotation_variable_z_speed(a3),d1 ;nächster Z-Winkel
   and.w   d3,d1              ;Übertrag entfernen
   move.w  d1,mgv_rotation_z_angle(a3) 
-  lea     mgv_object_coordinates(pc),a0 ;Koordinaten der Linien
-  lea     mgv_rotation_xy_coordinates(pc),a1 ;Koord.-Tab.
+  lea     mgv_object_coords(pc),a0 ;Koordinaten der Linien
+  lea     mgv_rotation_xy_coords(pc),a1 ;Koord.-Tab.
   move.w  #(mgv_rotation_d-100)*8,a4 ;d
   move.w  #mgv_rotation_xy_center,a5 ;X+Y-Mittelpunkt
   moveq   #mgv_object_edge_points_number-1,d7 ;Anzahl der Punkte
@@ -879,7 +879,7 @@ mgv_morph_object
   bne.s   mgv_no_morph_object ;Nein -> verzweige
   move.w  mgv_morph_shapes_table_start(a3),d1 ;Startwert
   moveq   #TRUE,d2           ;Koordinatenzähler
-  lea     mgv_object_coordinates(pc),a0 ;Aktuelle Objektdaten
+  lea     mgv_object_coords(pc),a0 ;Aktuelle Objektdaten
   lea     mgv_morph_shapes_table(pc),a1 ;Tabelle mit Adressen der Formen-Tabellen
   move.l  (a1,d1.w*4),a1     ;Zeiger auf Tabelle 
   MOVEF.W mgv_object_edge_points_number*3-1,d7 ;Anzahl der Koordinaten
@@ -925,7 +925,7 @@ mgv_draw_lines
   movem.l a3-a6,-(a7)
   bsr     mgv_draw_lines_init
   lea     mgv_object_info_table(pc),a0 ;Zeiger auf Info-Daten zum Objekt
-  lea     mgv_rotation_xy_coordinates(pc),a1 ;Zeiger auf XY-Koordinaten
+  lea     mgv_rotation_xy_coords(pc),a1 ;Zeiger auf XY-Koordinaten
   move.l  pf1_construction1(a3),a2 ;Plane0
   move.l  (a2),d0
   add.l   #ALIGN_64KB,d0
@@ -1161,7 +1161,7 @@ NMI_int_server
 
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   REPT pf1_colors_number
     DC.L color00_bits
   ENDR
@@ -1174,13 +1174,13 @@ mgv_glenz_color_table1
 
 ; ** Objektdaten **
   CNOP 0,2
-mgv_object_coordinates
+mgv_object_coords
 ; * Zoom-In *
   DS.W mgv_object_edge_points_number*3
 
 ; ** Formen des Objekts **
 ; ** Form 1 **
-mgv_object_shape1_coordinates
+mgv_object_shape1_coords
 ; ** Polygon **
   DC.W 0,-(64*8),-(32*8)    ;P0
   DC.W 32*8,0,-(32*8)       ;P1
@@ -1196,7 +1196,7 @@ mgv_object_shape1_coordinates
   DC.W -(32*8),0,32*8       ;P11
 
 ; ** Form 2 **
-mgv_object_shape2_coordinates
+mgv_object_shape2_coords
 ; ** Pyramide **
   DC.W 0,-(54*8),-(14*8)    ;P0
   DC.W 27*8,0,-(34*8)       ;P1
@@ -1212,7 +1212,7 @@ mgv_object_shape2_coordinates
   DC.W -(27*8),0,34*8       ;P11
 
 ; ** Form 3 **
-mgv_object_shape3_coordinates
+mgv_object_shape3_coords
 ; ** Polygon2 **
   DC.W 0,-(64*8),-(32*8)    ;P0
   DC.W 64*8,0,-(64*8)       ;P1
@@ -1230,7 +1230,7 @@ mgv_object_shape3_coordinates
   IFNE mgv_morph_loop_enabled
 ; ** Form 4 **
 ; * Zoom-Out *
-mgv_object_shape4_coordinates
+mgv_object_shape4_coords
     DS.W mgv_object_edge_points_number*3
   ENDC
 
@@ -1351,7 +1351,7 @@ mgv_object_edge_table
   DC.W 2*2,8*2,9*2,2*2
 
 ; ** Koordinaten der Linien **
-mgv_rotation_xy_coordinates
+mgv_rotation_xy_coords
   DS.W mgv_object_edge_points_number*2
 
 ; ** Tabelle mit Adressen der Objekttabellen **
