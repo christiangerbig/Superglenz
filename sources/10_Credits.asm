@@ -4,8 +4,8 @@
 ; # Datum:    23.04.2024       #
 ; # Version:  1.0              #
 ; # CPU:      68020+           #
-; # FASTMEM:  -                #
-; # Chipset:  AGA              #
+; # Fast-Memory: -             #
+; # Chipset:  AGA PAL          #
 ; # OS:       3.0+             #
 ; ##############################
 
@@ -728,7 +728,7 @@ mgv_init_sprite_header
   move.w  d1,(a0)            ;SPRxPOS 1. Sprite-Struktur
   move.w  d1,(a1)            ;SPRxPOS 2. Sprite-Struktur
   move.w  d2,spr_pixel_per_datafetch/8(a0) ;SPRxCTL 1. Sprite-Struktur
-  tas     d2                 ;Attached-Bit setzen
+  or.b    #SPRCTLF_ATT,d2                 ;Attached-Bit setzen
   move.w  d2,spr_pixel_per_datafetch/8(a1) ;SPRxCTL 2. Sprite-Struktur
   rts
 

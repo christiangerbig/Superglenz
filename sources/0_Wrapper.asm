@@ -4,8 +4,8 @@
 ; # Datum:    06.04.2024       #
 ; # Version:  1.0              #
 ; # CPU:      68020+           #
-; # FASTMEM:  -                #
-; # Chipset:  AGA              #
+; # Fast-Memory: -             #
+; # Chipset:  AGA PAL          #
 ; # OS:       3.0+             #
 ; ##############################
 
