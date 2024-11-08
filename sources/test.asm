@@ -1,4 +1,4 @@
-; Includedatei: "normsource-includes/equals.i"
+; Includedatei: "custom-includes/equals.i"
 ; Datum:        19.02.2023
 ; Version:      5.6
 
@@ -318,7 +318,7 @@ no_scroll_playfield_buttom_out
   rts
   CNOP 0,4
 spbo_finished
-;  clr.w   fx_active(a3)      ;Effekte beendet
+;  clr.w   stop_fx_active(a3)      ;Effekte beendet
   moveq   #FALSE,d0
   move.w  d0,spbo_active(a3) ;Scroll-Playfield-Buttom-Out aus
   rts
