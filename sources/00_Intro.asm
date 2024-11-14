@@ -1524,11 +1524,12 @@ effects_handler
 	moveq	#INTF_SOFTINT,d1
 	and.w	INTREQR-DMACONR(a6),d1
 	beq.s	effects_handler_quit
-	addq.w	#1,eh_trigger_number(a3)
 	move.w	eh_trigger_number(a3),d0
 	cmp.w	#eh_trigger_number_max,d0
 	bgt.s	effects_handler_quit
 	move.w	d1,INTREQ-DMACONR(a6)
+	addq.w	#1,d0
+	move.w	d0,eh_trigger_number(a3)
 	subq.w	#1,d0
 	beq.s	eh_start_scroll_pf_bottom_in
 	subq.w	#1,d0
