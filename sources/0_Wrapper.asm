@@ -510,10 +510,10 @@ VERTB_int_server
 	IFD PROTRACKER_VERSION_2.3A 
 		PT2_REPLAY pt_SetSoftInterrupt
 	ENDC
+
 	IFD PROTRACKER_VERSION_3.0B
 		PT3_REPLAY pt_SetSoftInterrupt
 	ENDC
-
 
 	CNOP 0,4
 pt_SetSoftInterrupt
@@ -753,6 +753,7 @@ sc_newd1
 	IFD PROTRACKER_VERSION_2.3A 
 		INCLUDE "music-tracker/pt2-period-table.i"
 	ENDC
+
 	IFD PROTRACKER_VERSION_3.0B
 		INCLUDE "music-tracker/pt3-period-table.i"
 	ENDC

@@ -1528,8 +1528,8 @@ effects_handler_quit
 	rts
 	CNOP 0,4
 eh_start_colors_fader_cross
-	move.w	#cfc_rgb8_colors_number*3,cfc_rgb8_colors_counter(a3)
 	clr.w	cfc_rgb8_active(a3)
+	move.w	#cfc_rgb8_colors_number*3,cfc_rgb8_colors_counter(a3)
 	clr.w	cfc_rgb8_copy_colors_active(a3)
 	rts
 	CNOP 0,4
