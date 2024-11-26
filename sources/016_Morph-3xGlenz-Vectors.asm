@@ -886,7 +886,7 @@ mgv_init_color_table
 	lea	pf1_rgb8_color_table(pc),a0
 	lea	mgv_rgb8_color_table(pc),a1
 ; ** Reinfarben des 1. Glenz **
-	move.l	(a1)+,2*LONGWORD_SIZE(a0) ; COLOR02
+	move.l	(a1)+,QUADWORD_SIZE(a0) ; COLOR02
 	move.l	(a1)+,3*LONGWORD_SIZE(a0) ; COLOR03
 	move.l	(a1)+,4*LONGWORD_SIZE(a0) ; COLOR04
 	move.l	(a1)+,5*LONGWORD_SIZE(a0) ; COLOR05
@@ -896,7 +896,7 @@ mgv_init_color_table
 	move.l	(a1)+,16*LONGWORD_SIZE(a0) ; COLOR16
 	move.l	(a1)+,17*LONGWORD_SIZE(a0) ; COLOR17
 ; ** Reinfarben des 3. Glenz **
-	move.l	(a1)+,32*LONGWORD_SIZE(a0) ; COLOR32
+	move.l	(a1)+,3QUADWORD_SIZE(a0) ; COLOR32
 	move.l	(a1)+,33*LONGWORD_SIZE(a0) ; COLOR33
 	move.l	(a1)+,64*LONGWORD_SIZE(a0) ; COLOR64
 	move.l	(a1),65*LONGWORD_SIZE(a0) ; COLOR65
@@ -1947,7 +1947,7 @@ mgv_control_counters_quit
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

@@ -1542,7 +1542,7 @@ eh_start_vert_text_scroll
 
 ; ** Level-7-Interrupt-Server **
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

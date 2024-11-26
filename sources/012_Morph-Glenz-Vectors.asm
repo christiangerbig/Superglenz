@@ -601,7 +601,7 @@ mgv_init_start_shape
 mgv_init_color_table
 	lea	pf1_rgb8_color_table(pc),a0
 	lea	mgv_rgb8_color_table(pc),a1
-	move.l	(a1)+,2*LONGWORD_SIZE(a0) ; COLOR02
+	move.l	(a1)+,QUADWORD_SIZE(a0) ; COLOR02
 	move.l	(a1)+,3*LONGWORD_SIZE(a0) ; COLOR03
 	move.l	(a1)+,4*LONGWORD_SIZE(a0) ; COLOR04
 	move.l	(a1),5*LONGWORD_SIZE(a0) ; COLOR05
@@ -1170,7 +1170,7 @@ mgv_control_counters_quit
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

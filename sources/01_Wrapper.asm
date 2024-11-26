@@ -45,7 +45,7 @@
   INCLUDE "hardware/dmabits.i"
   INCLUDE "hardware/intbits.i"
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 ; ** Konstanten **
@@ -572,7 +572,7 @@ beam_routines
 ; ** Level-7-Interrupt-Server **
 ; ------------------------------
   CNOP 0,4
-NMI_int_server
+nmi_int_server
   rts
 
 
