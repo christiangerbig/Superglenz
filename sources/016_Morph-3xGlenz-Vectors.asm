@@ -896,7 +896,7 @@ mgv_init_color_table
 	move.l	(a1)+,16*LONGWORD_SIZE(a0) ; COLOR16
 	move.l	(a1)+,17*LONGWORD_SIZE(a0) ; COLOR17
 ; ** Reinfarben des 3. Glenz **
-	move.l	(a1)+,3QUADWORD_SIZE(a0) ; COLOR32
+	move.l	(a1)+,32*LONGWORD_SIZE(a0) ; COLOR32
 	move.l	(a1)+,33*LONGWORD_SIZE(a0) ; COLOR33
 	move.l	(a1)+,64*LONGWORD_SIZE(a0) ; COLOR64
 	move.l	(a1),65*LONGWORD_SIZE(a0) ; COLOR65
