@@ -1,4 +1,6 @@
-Intro
+Party:		Nordlicht
+Release Date:	2025
+Type:		AGA Demo
 
 1. Glenz-Objekt wird vom unteren Playfieldschirmrand eingescrollt.
 Nur um die Y-Achse rotierendes Diamanten-Glenz-Objekt. Form wie bei Superman-Logo. Darüber der Text "Superglenz" anstatt Superman. Screengröße 192x192.

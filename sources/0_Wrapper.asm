@@ -52,7 +52,7 @@ PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
 SET_SECOND_COPPERLIST		SET 1
 CUSTOM_MEMORY_USED		SET 1
-PROTRACKER_VERSION_3.0B		SET 1
+PROTRACKER_VERSION_3		SET 1
 
 
 	INCLUDE "macros.i"
@@ -76,14 +76,15 @@ CUSTOM_MEMORY_FAST		EQU $00000001
 pt_ciatiming_enabled		EQU TRUE
 pt_finetune_enabled		EQU FALSE
 pt_metronome_enabled		EQU FALSE
-pt_mute_enabled			EQU TRUE
+pt_mute_enabled			EQU FALSE
 pt_track_notes_played_enabled	EQU FALSE
 pt_track_volumes_enabled	EQU FALSE
 pt_track_periods_enabled	EQU FALSE
+pt_track_data_enabled		EQU FALSE
 pt_music_fader_enabled		EQU FALSE
 pt_split_module_enabled		EQU TRUE
-pt_usedfx			EQU %1101010100010110
-pt_usedefx			EQU %0000000000000001
+pt_usedfx			EQU %1101010101011110
+pt_usedefx			EQU %0000111000000000
 
 dma_bits			EQU DMAF_COPPER|DMAF_SETCLR
 
@@ -136,10 +137,10 @@ spr_y_size2			EQU 0
 spr_depth			EQU 0
 spr_colors_number		EQU 0
 
-	IFD PROTRACKER_VERSION_2.3A 
+	IFD PROTRACKER_VERSION_2 
 audio_memory_size		EQU 0
 	ENDC
-	IFD PROTRACKER_VERSION_3.0B
+	IFD PROTRACKER_VERSION_3
 audio_memory_size		EQU 2
 	ENDC
 
@@ -184,8 +185,8 @@ cl1_vstart			EQU beam_position&$ff
 
 ; **** Custom Memory ****
 custom_memory_number		EQU 2
-part_0_audio_memory_size1	EQU 29756 ; Song
-part_0_audio_memory_size2	EQU 149020 ; Samples
+part_0_audio_memory_size1	EQU 28732 ; Song
+part_0_audio_memory_size2	EQU 192246 ; Samples
 
 
 	INCLUDE "except-vectors-offsets.i"
@@ -267,10 +268,10 @@ spr7_y_size2		EQU 0
 	INCLUDE "variables-offsets.i"
 
 ; **** PT-Replay ****
-	IFD PROTRACKER_VERSION_2.3A 
+	IFD PROTRACKER_VERSION_2 
 		INCLUDE "music-tracker/pt2-variables-offsets.i"
 	ENDC
-	IFD PROTRACKER_VERSION_3.0B
+	IFD PROTRACKER_VERSION_3
 		INCLUDE "music-tracker/pt3-variables-offsets.i"
 	ENDC
 
@@ -320,10 +321,10 @@ init_custom_memory_table
 init_main_variables
 
 ; **** PT-Replay ****
-	IFD PROTRACKER_VERSION_2.3A 
+	IFD PROTRACKER_VERSION_2 
 		PT2_INIT_VARIABLES
 	ENDC
-	IFD PROTRACKER_VERSION_3.0B
+	IFD PROTRACKER_VERSION_3
 		PT3_INIT_VARIABLES
 	ENDC
 	rts
@@ -508,11 +509,11 @@ VERTB_int_server
 		CNOP 0,4
 	ENDC
 
-	IFD PROTRACKER_VERSION_2.3A 
+	IFD PROTRACKER_VERSION_2 
 		PT2_REPLAY pt_SetSoftInterrupt
 	ENDC
 
-	IFD PROTRACKER_VERSION_3.0B
+	IFD PROTRACKER_VERSION_3
 		PT3_REPLAY pt_SetSoftInterrupt
 	ENDC
 
@@ -751,11 +752,11 @@ sc_newd1
 
 	INCLUDE "music-tracker/pt-vibrato-tremolo-table.i"
 
-	IFD PROTRACKER_VERSION_2.3A 
+	IFD PROTRACKER_VERSION_2 
 		INCLUDE "music-tracker/pt2-period-table.i"
 	ENDC
 
-	IFD PROTRACKER_VERSION_3.0B
+	IFD PROTRACKER_VERSION_3
 		INCLUDE "music-tracker/pt3-period-table.i"
 	ENDC
 
@@ -785,12 +786,12 @@ custom_memory_table
 ; **** PT-Replay ****
 	IFEQ pt_split_module_enabled
 pt_auddata SECTION pt_audio,DATA
-		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.1989-a number.song.stc"
+		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.LeVoyageFantastique.song.stc"
 pt_audsmps SECTION pt_audio2,DATA_C
-		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.1989-a number.smps.stc"
+		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.LeVoyageFantastique.smps.stc"
 	ELSE
 pt_auddata SECTION pt_audio,DATA_C
-		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.1989-a number"
+		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.LeVoyageFantastique"
 	ENDC
 
 	END
