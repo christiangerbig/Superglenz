@@ -750,7 +750,7 @@ beam_routines
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
-	move.l	nop_second_copperlist(pc),COP2LC-DMACONR(a6)
+	move.l	nop_second_copperlist,COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
