@@ -52,7 +52,6 @@ I need a background picture only in greyshades like the placeholder with a skyli
 256 x 283 pixel in 16 colours.
 
 I use the same trick as in "30" for the sunset background. 256 pixel horizontal are stretched to 320 pixel.
-Remember that there is a seamless transition. The first 64 pixel are repeated after the 256 pixel to
-get a 320 pixel display.
+Remember that there must be a seamless transition! The first 64 pixel are repeated after 256 pixel to
+get a 320 pixel display or in other words, the first 64 pixel are put at the end of each 256 pixel line.
 
-256x
