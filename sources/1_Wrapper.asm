@@ -20,7 +20,7 @@
 	XREF sc_start
 
 	XDEF start_1_pt_replay
-	XDEF global_music_fader_active
+	XDEF pt_global_music_fader_active
 	XDEF global_stop_fx_active
 
 
@@ -278,9 +278,6 @@ spr7_y_size2			EQU 0
 		INCLUDE "music-tracker/pt3-variables-offsets.i"
 	ENDC
 
-; **** Main ****
-stop_fx_active			RS.W 1
-
 variables_size			RS.B 0
 
 
@@ -330,15 +327,12 @@ init_main_variables
 	IFD PROTRACKER_VERSION_3
 		PT3_INIT_VARIABLES
 	ENDC
-	lea	pt_music_fader_active(a3),a0
-	lea	global_music_fader_active(pc),a1
-	move.l	a0,(a1)
-	lea	stop_fx_active(a3),a0
-	lea	global_stop_fx_active(pc),a1
-	move.l	a0,(a1)
+	lea	pt_global_music_fader_active(pc),a0
+	move.w	#FALSE,(a0)
 
 ; **** Main ****
-	move.w	#FALSE,stop_fx_active(a3)
+	lea	global_stop_fx_active(pc),a0
+	move.w	#FALSE,(a0)
 	rts
 
 	CNOP 0,4
@@ -507,7 +501,7 @@ VERTB_int_server
 		bsr.s	pt_music_fader
 		bra.s	pt_PlayMusic
 
-		PT_FADE_OUT_VOLUME stop_fx_active
+		PT_FADE_OUT_VOLUME global_stop_fx_active,GLOBALVAR
 
 		CNOP 0,4
 	ENDC
@@ -576,9 +570,12 @@ custom_memory_table
 	INCLUDE "sys-variables.i"
 
 
-	CNOP 0,4
-global_music_fader_active 	DC.L 0
-global_stop_fx_active		DC.L 0
+	CNOP 0,2
+; **** PT-Replay ****
+pt_global_music_fader_active 	DC.W 0
+
+; **** Main ****
+global_stop_fx_active		DC.W 0
 
 
 	INCLUDE "sys-names.i"

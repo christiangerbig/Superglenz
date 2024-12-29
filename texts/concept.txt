@@ -43,3 +43,16 @@ Struktur der Linker-Objekte:
   014_Morphing-3xGlenz
 1_Wrapper (Musik)
  10_Credits
+
+
+@grass
+
+I need a background picture only in greyshades like the placeholder with a skyline theme.
+
+256 x 283 pixel in 16 colours.
+
+I use the same trick as in "30" for the sunset background. 256 pixel horizontal are stretched to 320 pixel.
+Remember that there is a seamless transition. The first 64 pixel are repeated after the 256 pixel to
+get a 320 pixel display.
+
+256x

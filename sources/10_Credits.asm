@@ -21,7 +21,7 @@
 	XREF nop_second_copperlist
 	XREF mouse_handler
 	XREF sine_table
-	XREF global_music_fader_active
+	XREF pt_global_music_fader_active
 	XREF global_stop_fx_active
 
 	XDEF start_10_credits
@@ -956,8 +956,7 @@ beam_routines
 	jsr	mouse_handler
 	tst.l	d0			; Abbruch ?
 	bne.s	beam_routines_exit
-	move.l	global_stop_fx_active(pc),a0
-	tst.w	(a0)
+	move.w	global_stop_fx_active(pc),d0
 	bne.s	beam_routines
 beam_routines_exit
 	move.l	nop_second_copperlist,COP2LC-DMACONR(a6)
@@ -1082,7 +1081,7 @@ vts_check_control_codes
 	CNOP 0,4
 vts_enable_music_fader
 	move.l	a0,d0
-	move.l	global_music_fader_active(pc),a0
+	lea	pt_global_music_fader_active(pc),a0
 	clr.w	(a0)
 	move.l	d0,a0
 	moveq	#RETURN_OK,d0
