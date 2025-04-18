@@ -35,11 +35,11 @@
 ; - Alle Morphingsequenzen gekürzt und geändert.
 ; - End-Part: Dual-Playfield mit Schatten für Abspann-Text.
 
-; V1.4 Beta
+; V.1.4 Beta
 ; - End-Part: Cross-Fader für Glenz
 ; - Mit überarbeiteten Include-Files (COPCON)
 
-; V1.5 Beta
+; V.1.5 Beta
 ; - Mit überarbeiteten Include-Dateien
 ; - 1-Wrapper: Musik-Fader aktiviert, globale Variablen definiert
 ; - Endpart: Magnetic Fox' Modul eingefügt, Vertical-Scroller steuert jetzt den Musik-Fader an.
@@ -48,6 +48,9 @@
 ; - Bugfix: DIWSTRT/DIWSTOP/DIWHIGH werden für Playfield-Scroller vorinitialisiert,
 ;   da LodView(NULL) DIWHIGH=$0000 setzt und sich die Werte von DIWSTRT/DIWHIGH
 ;   durch das OS3.x ändern
+
+; V.1.6
+; - Mit Acemans Modul "Voyage Fantastique" als Probe
 
 
 	SECTION code_and_variables,CODE
@@ -353,7 +356,7 @@ nop_second_copperlist		DC.L 0
 	INCLUDE "error-texts.i"
 
 
-	DC.B "$VER: RSE-Superglenz 1.5 beta (17.9.24)",0
+	DC.B "$VER: RSE-Superglenz 1.6 beta (9.3.25)",0
 	EVEN
 
 	END
