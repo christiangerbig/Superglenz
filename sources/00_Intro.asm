@@ -6,12 +6,9 @@
 
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -175,14 +172,14 @@ cl1_vstart3			EQU beam_position&$ff
 
 sine_table_length		EQU 512
 
-; **** Title ****
+; Title
 title_image_x_position		EQU display_window_hstart
 title_image_y_position		EQU VSTART_192_LINES
 title_image_x_size		EQU 192
 title_image_width		EQU title_image_x_size/8
 title_image_y_size		EQU 39
 
-; **** Logo ****
+; Logo
 logo_image_x_position1		EQU display_window_hstart+28
 logo_image_y_position1		EQU VSTART_192_LINES+110
 logo_image_x_position2		EQU display_window_hstart+88
@@ -193,7 +190,7 @@ logo_image_x_size		EQU 192
 logo_image_width		EQU logo_image_x_size/8
 logo_image_y_size		EQU 16
 
-; **** Glenz-Vectors ****
+; Glenz-Vectors
 gv_rot_d			EQU 512
 gv_rot_xy_center		EQU visible_lines_number/2
 gv_rot_y_angle_speed		EQU 4
@@ -308,28 +305,28 @@ gv_object_face47_lines_number	EQU 3
 gv_object_face48_color		EQU 4
 gv_object_face48_lines_number	EQU 3
 
-; **** Fill-Blit ****
+; Fill-Blit
 gv_fill_blit_x_size		EQU visible_pixels_number
 gv_fill_blit_y_size		EQU visible_lines_number
 gv_fill_blit_depth		EQU pf1_depth3
 
-; **** Scroll-Playfield-Bottom ****
+; Scroll-Playfield-Bottom
 spb_min_vstart			EQU VSTART_192_LINES
 spb_max_vstop			EQU VSTOP_OVERSCAN_PAL
 spb_y_radius			EQU spb_max_vstop-spb_min_vstart
 spb_y_centre			EQU spb_max_vstop-spb_min_vstart
 
-; **** Scroll-Playfield-Bottom-In ****
+; Scroll-Playfield-Bottom-In
 spbi_y_angle_speed		EQU 3
 
-; **** Scroll-Playfield-Bottom-Out ****
+; Scroll-Playfield-Bottom-Out
 spbo_y_angle_speed		EQU 2
 
-; **** Horiz-Fader ****
+; Horiz-Fader
 hf_colors_per_colorbank		EQU 16
 hf_colorbanks_number		EQU 240/hf_colors_per_colorbank
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 5
 
 
@@ -340,6 +337,18 @@ eh_trigger_number_max		EQU 5
 
 
 	INCLUDE "sprite-attributes.i"
+
+
+; Glenz-Vectors
+	RSRESET
+
+object_info			RS.B 0
+
+object_info_edges		RS.L 1
+object_info_face_color		RS.W 1
+object_info_lines_number	RS.W 1
+
+object_info_size		RS.B 0
 
 
 	RSRESET
@@ -459,7 +468,6 @@ cl2_extension2_entry		RS.B cl2_extension2_size
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -468,7 +476,7 @@ cl2_size2			EQU 0
 cl2_size3			EQU copperlist2_size
 
 
-; ** Sprite0-Zusatzstruktur **
+; Sprite0-Zusatzstruktur
 	RSRESET
 
 spr0_extension1	RS.B 0
@@ -487,7 +495,7 @@ spr0_ext2_planedata		RS.L (spr_pixel_per_datafetch/16)*logo_image_y_size
 
 spr0_extension2_size		RS.B 0
 
-; ** Sprite0-Hauptstruktur **
+; Sprite0-Hauptstruktur
 	RSRESET
 
 spr0_begin			RS.B 0
@@ -499,7 +507,7 @@ spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite0_size			RS.B 0
 
-; ** Sprite1-Zusatzstruktur **
+; Sprite1-Zusatzstruktur
 	RSRESET
 
 spr1_extension1			RS.B 0
@@ -518,7 +526,7 @@ spr1_ext2_planedata		RS.L (spr_pixel_per_datafetch/16)*logo_image_y_size
 
 spr1_extension2_size		RS.B 0
 
-; ** Sprite1-Hauptstruktur **
+; Sprite1-Hauptstruktur
 	RSRESET
 
 spr1_begin			RS.B 0
@@ -530,7 +538,7 @@ spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite1_size			RS.B 0
 
-; ** Sprite2-Zusatzstruktur **
+; Sprite2-Zusatzstruktur
 	RSRESET
 
 spr2_extension1	RS.B 0
@@ -549,7 +557,7 @@ spr2_ext2_planedata		RS.L (spr_pixel_per_datafetch/16)*logo_image_y_size
 
 spr2_extension2_size		RS.B 0
 
-; ** Sprite2-Hauptstruktur **
+; Sprite2-Hauptstruktur
 	RSRESET
 
 spr2_begin			RS.B 0
@@ -561,7 +569,7 @@ spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite2_size			RS.B 0
 
-; ** Sprite3-Hauptstruktur **
+; Sprite3-Hauptstruktur
 	RSRESET
 
 spr3_begin			RS.B 0
@@ -570,7 +578,7 @@ spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite3_size			RS.B 0
 
-; ** Sprite4-Hauptstruktur **
+; Sprite4-Hauptstruktur
 	RSRESET
 
 spr4_begin			RS.B 0
@@ -579,7 +587,7 @@ spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite4_size			RS.B 0
 
-; ** Sprite5-Hauptstruktur **
+; Sprite5-Hauptstruktur
 	RSRESET
 
 spr5_begin			RS.B 0
@@ -588,7 +596,7 @@ spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite5_size			RS.B 0
 
-; ** Sprite6-Hauptstruktur **
+; Sprite6-Hauptstruktur
 	RSRESET
 
 spr6_begin			RS.B 0
@@ -597,7 +605,7 @@ spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite6_size			RS.B 0
 
-; ** Sprite7-Hauptstruktur **
+; Sprite7-Hauptstruktur
 	RSRESET
 
 spr7_begin			RS.B 0
@@ -606,7 +614,6 @@ spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite7_size			RS.B 0
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -648,53 +655,45 @@ spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 
 save_a7				RS.L 1
 
-; **** Glenz-Vectors ****
+; Glenz-Vectors
 gv_rot_x_angle			RS.W 1
 gv_rot_y_angle			RS.W 1
 gv_rot_z_angle			RS.W 1
 
-; **** Scroll-Playfield-Bottom-In ****
+; Scroll-Playfield-Bottom-In
 spbi_active			RS.W 1
 spbi_y_angle			RS.W 1
 
-; **** Scroll-Playfield-Bottom-Out ****
+; Scroll-Playfield-Bottom-Out
 spbo_active			RS.W 1
 spbo_y_angle			RS.W 1
 
-; **** Horiz-Fader ****
+; Horiz-Fader
 hf1_bplam_table_start		RS.W 1
 hf2_bplam_table_start		RS.W 1
 
-; **** Horiz-Fader-In ****
+; Horiz-Fader-In
 hfi1_active			RS.W 1
 hfi2_active			RS.W 1
 
-; **** Horiz-Fader-Out ****
+; Horiz-Fader-Out
 hfo1_active			RS.W 1
 hfo2_active			RS.W 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
-; **** Glenz-Vectors ****
-	RSRESET
-
-object_info			RS.B 0
-
-object_info_edges		RS.L 1
-object_info_face_color		RS.W 1
-object_info_lines_number	RS.W 1
-
-object_info_size		RS.B 0
+	SECTION code,CODE
 
 
 start_00_intro
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -702,37 +701,37 @@ start_00_intro
 	CNOP 0,4
 init_main_variables
 
-; **** Glenz-Vectors ****
+; Glenz-Vectors
 	moveq	#TRUE,d0
 	move.w	d0,gv_rot_x_angle(a3)
 	move.w	d0,gv_rot_y_angle(a3)
 	move.w	d0,gv_rot_z_angle(a3)
 
-; **** Scroll-Playfield-Bottom-In ****
+; Scroll-Playfield-Bottom-In
 	moveq	#FALSE,d1
 	move.w	d1,spbi_active(a3)
 	move.w	d0,spbi_y_angle(a3) ;0 Grad
 
-; **** Scroll-Playfield-Bottom-Out ****
+; Scroll-Playfield-Bottom-Out
 	move.w	d1,spbo_active(a3)
 	move.w	#sine_table_length/4,spbo_y_angle(a3) ; 90 Grad
 
-; **** Horiz-Fader ****
+; Horiz-Fader
 	move.w	d0,hf1_bplam_table_start(a3)
 	move.w	d0,hf2_bplam_table_start(a3)
 
-; **** Horiz-Fader-In ****
+; Horiz-Fader-In
 	move.w	d1,hfi1_active(a3)
 	move.w	d1,hfi2_active(a3)
 
-; **** Horiz-Fader-Out ****
+; Horiz-Fader-Out
 	move.w	d1,hfo1_active(a3)
 	move.w	d1,hfo2_active(a3)
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -755,7 +754,7 @@ init_sprites
 
 	INIT_SPRITE_POINTERS_TABLE
 
-; **** Logo ****
+; Logo
 	CNOP 0,4
 init_sprites_cluster
 	move.l	a4,-(a7)
@@ -826,15 +825,14 @@ init_sprites_cluster
 	CNOP 0,4
 copy_sprite_planes
 ; Input
-; d0.w	... X-Position
-; d1.w	... Y-Position
-; d2.w	... Höhe
-; d7.w	... Höhe des Einzelaprites
-; a0	... Sprite-Struktur
-; a2	... Zeiger auf Bitplane1
-; a4	... Zeiger auf Bitplane2
+; d0.w	X-Position
+; d1.w	Y-Position
+; d2.w	Höhe
+; d7.w	Höhe des Einzelaprites
+; a0.l	Sprite-Struktur
+; a2.l	Zeiger auf Bitplane1
+; a4.l	Zeiger auf Bitplane2
 ; Result
-; d0.l	... kein Rückgabewert
 	add.w	d1,d2			; VSTOP
 	SET_SPRITE_POSITION d0,d1,d2
 	move.w	d1,(a0)			; SPRxPOS
@@ -850,7 +848,7 @@ copy_sprite_planes_loop
 	dbf	d7,copy_sprite_planes_loop
 	rts
 
-; **** Glenz-Vectors ****
+; Glenz-Vectors
 	CNOP 0,4
 gv_init_object_info
 	lea	gv_object_info+object_info_edges(pc),a0
@@ -876,7 +874,7 @@ gv_init_color_table
 	move.l	(a1),5*LONGWORD_SIZE(a0) ; COLOR05
 	rts
 
-; **** Horiz-Fader ****
+; Horiz-Fader
 	CNOP 0,4
 hf_dim_colors
 	moveq	#1,d3			; minimale Helligkeit
@@ -1013,7 +1011,7 @@ cl1_init_branches_ptrs1
 	move.w	d4,(a0)+
 	MOVEF.W cl1_display_y_size1-1,d7
 cl1_init_branches_ptrs1_loop
-	move.l	d0,(a0)+		; WAIT x,y
+	move.l	d0,(a0)+		; CWAIT x,y
 	swap	d1			; High-Wert
 	move.w	#COP1LCH,(a0)+
 	add.l	d2,d0			; nächste Zeile
@@ -1028,7 +1026,7 @@ cl1_init_branches_ptrs1_loop
 
 	CNOP 0,4
 cl1_init_branches_ptrs2
-	move.l	#(((cl1_vstart2<<24)+(((cl1_hstart2/4)*2)<<16))|$10000)|$fffe,d0 ;WAIT-Befehl
+	move.l	#(((cl1_vstart2<<24)+(((cl1_hstart2/4)*2)<<16))|$10000)|$fffe,d0 ; CWAIT
 	move.l	cl1_display(a3),d1
 	add.l	#cl1_extension2_entry+cl1_ext2_subextension1_entry+cl1_subextension1_size,d1
 	moveq	#1,d2
@@ -1044,7 +1042,7 @@ cl1_init_branches_ptrs2
 	move.w	d4,(a0)+
 	MOVEF.W cl1_display_y_size2-1,d7
 cl1_init_branches_ptrs2_loop
-	move.l	d0,(a0)+		; WAIT x,y
+	move.l	d0,(a0)+		; CWAIT x,y
 	swap	d1			; High-Wert
 	move.w	#COP1LCH,(a0)+
 	add.l	d2,d0			; nächste Zeile
@@ -1226,7 +1224,7 @@ gv_rot_loop
 	move.w	(a0)+,d1		; Y
 	move.w	(a0)+,d2		; Z
 	ROTATE_Y_AXIS
-; ** Zentralprojektion und Translation **
+; Zentralprojektion und Translation
 	MULSF.W gv_rot_d,d0,d3 		; X-Projektion
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
@@ -1253,7 +1251,7 @@ gv_draw_lines
 	move.w	#pf1_plane_width,a4
 	moveq	#gv_object_faces_number-1,d7
 gv_draw_lines_loop1
-; ** Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen **
+; Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen
 	move.l	(a0)+,a5		; Zeiger auf Startwerte der Punkte
 	swap	d7			; Flächenzähler retten
 	move.w	(a5),d4			; P1-Startwert
@@ -1513,7 +1511,7 @@ horiz_fader_out2_loop
 	lsr.b	#4,d1
 	or.b	d1,d0
 	move.b	d0,(a1)
-	addq.w	#LongWORD_SIZE,a1	; nächste Spalte in CL
+	addq.w	#LONGWORD_SIZE,a1	; nächste Spalte in CL
 	dbf	d7,horiz_fader_out2_loop
 horiz_fader_out2_quit
 	rts
@@ -1683,7 +1681,7 @@ sine_table
 		INCLUDE "sine-table-360x16.i"
 	ENDC
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 	CNOP 0,4
 gv_rgb8_color_table
 	INCLUDE "Blitter.AGA:Grafik/1xGlenz-Colorgradient5.ct"
@@ -1719,204 +1717,204 @@ gv_object_coords
 
 	CNOP 0,4
 gv_object_info
-; ** 1. Fläche **
+; 1. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face1_color 	; Farbe der Fläche
 	DC.W gv_object_face1_lines_number-1 ; Anzahl der Linien
-; ** 2. Fläche **
+; 2. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face2_color 	; Farbe der Fläche
 	DC.W gv_object_face2_lines_number-1 ; Anzahl der Linien
-; ** 3. Fläche **
+; 3. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face3_color 	; Farbe der Fläche
 	DC.W gv_object_face3_lines_number-1 ; Anzahl der Linien
-; ** 4. Fläche **
+; 4. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face4_color 	; Farbe der Fläche
 	DC.W gv_object_face4_lines_number-1 ; Anzahl der Linien
-; ** 5. Fläche **
+; 5. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face5_color 	; Farbe der Fläche
 	DC.W gv_object_face5_lines_number-1 ; Anzahl der Linien
-; ** 6. Fläche **
+; 6. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face6_color 	; Farbe der Fläche
 	DC.W gv_object_face6_lines_number-1 ; Anzahl der Linien
-; ** 7. Fläche **
+; 7. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face7_color 	; Farbe der Fläche
 	DC.W gv_object_face7_lines_number-1 ; Anzahl der Linien
-; ** 8. Fläche **
+; 8. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face8_color 	; Farbe der Fläche
 	DC.W gv_object_face8_lines_number-1 ; Anzahl der Linien
 
-; ** 9. Fläche **
+; 9. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face9_color 	; Farbe der Fläche
 	DC.W gv_object_face9_lines_number-1 ; Anzahl der Linien
-; ** 10. Fläche **
+; 10. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face10_color 	; Farbe der Fläche
 	DC.W gv_object_face10_lines_number-1 ; Anzahl der Linien
-; ** 11. Fläche **
+; 11. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face11_color 	; Farbe der Fläche
 	DC.W gv_object_face11_lines_number-1 ;Anzahl der Linien
-; ** 12. Fläche **
+; 12. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face12_color 	; Farbe der Fläche
 	DC.W gv_object_face12_lines_number-1 ;Anzahl der Linien
 
-; ** 13. Fläche **
+; 13. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face13_color 	; Farbe der Fläche
 	DC.W gv_object_face13_lines_number-1 ; Anzahl der Linien
-; ** 14. Fläche **
+; 14. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face14_color 	; Farbe der Fläche
 	DC.W gv_object_face14_lines_number-1 ; Anzahl der Linien
-; ** 15. Fläche **
+; 15. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face15_color 	; Farbe der Fläche
 	DC.W gv_object_face15_lines_number-1 ; Anzahl der Linien
-; ** 16. Fläche **
+; 16. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face16_color 	; Farbe der Fläche
 	DC.W gv_object_face16_lines_number-1 ; Anzahl der Linien
 
-; ** 17. Fläche **
+; 17. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face17_color 	; Farbe der Fläche
 	DC.W gv_object_face17_lines_number-1 ; Anzahl der Linien
-; ** 18. Fläche **
+; 18. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face18_color 	; Farbe der Fläche
 	DC.W gv_object_face18_lines_number-1 ; Anzahl der Linien
-; ** 19. Fläche **
+; 19. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face19_color 	; Farbe der Fläche
 	DC.W gv_object_face19_lines_number-1 ; Anzahl der Linien
-; ** 20. Fläche **
+; 20. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face20_color 	; Farbe der Fläche
 	DC.W gv_object_face20_lines_number-1 ; Anzahl der Linien
 
-; ** 21. Fläche **
+; 21. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face21_color 	; Farbe der Fläche
 	DC.W gv_object_face21_lines_number-1 ; Anzahl der Linien
-; ** 22. Fläche **
+; 22. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face22_color 	; Farbe der Fläche
 	DC.W gv_object_face22_lines_number-1 ; Anzahl der Linien
-; ** 23. Fläche **
+; 23. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face23_color 	; Farbe der Fläche
 	DC.W gv_object_face23_lines_number-1 ; Anzahl der Linien
-; ** 24. Fläche **
+; 24. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face24_color 	; Farbe der Fläche
 	DC.W gv_object_face24_lines_number-1 ; Anzahl der Linien
 
-; ** 25. Fläche **
+; 25. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face25_color 	; Farbe der Fläche
 	DC.W gv_object_face25_lines_number-1 ; Anzahl der Linien
-; ** 26. Fläche **
+; 26. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face26_color 	; Farbe der Fläche
 	DC.W gv_object_face26_lines_number-1 ; Anzahl der Linien
-; ** 27. Fläche **
+; 27. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face27_color 	; Farbe der Fläche
 	DC.W gv_object_face27_lines_number-1 ; Anzahl der Linien
-; ** 28. Fläche **
+; 28. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face28_color 	; Farbe der Fläche
 	DC.W gv_object_face28_lines_number-1 ; Anzahl der Linien
 
-; ** 29. Fläche **
+; 29. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face29_color 	; Farbe der Fläche
 	DC.W gv_object_face29_lines_number-1 ; Anzahl der Linien
-; ** 30. Fläche **
+; 30. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face30_color 	; Farbe der Fläche
 	DC.W gv_object_face30_lines_number-1 ; Anzahl der Linien
-; ** 31. Fläche **
+; 31. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face31_color 	; Farbe der Fläche
 	DC.W gv_object_face31_lines_number-1 ; Anzahl der Linien
-; ** 32. Fläche **
+; 32. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face32_color 	; Farbe der Fläche
 	DC.W gv_object_face32_lines_number-1 ; Anzahl der Linien
 
-; ** 33. Fläche **
+; 33. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face33_color 	; Farbe der Fläche
 	DC.W gv_object_face33_lines_number-1 ; Anzahl der Linien
-; ** 34. Fläche **
+; 34. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face34_color 	; Farbe der Fläche
 	DC.W gv_object_face34_lines_number-1 ; Anzahl der Linien
-; ** 35. Fläche **
+; 35. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face35_color 	; Farbe der Fläche
 	DC.W gv_object_face35_lines_number-1 ; Anzahl der Linien
-; ** 36. Fläche **
+; 36. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face36_color 	; Farbe der Fläche
 	DC.W gv_object_face36_lines_number-1 ; Anzahl der Linien
 
-; ** 37. Fläche **
+; 37. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face37_color 	; Farbe der Fläche
 	DC.W gv_object_face37_lines_number-1 ; Anzahl der Linien
-; ** 38. Fläche **
+; 38. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face38_color 	; Farbe der Fläche
 	DC.W gv_object_face38_lines_number-1 ; Anzahl der Linien
-; ** 39. Fläche **
+; 39. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face39_color 	; Farbe der Fläche
 	DC.W gv_object_face39_lines_number-1 ; Anzahl der Linien
-; ** 40. Fläche **
+; 40. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face40_color 	; Farbe der Fläche
 	DC.W gv_object_face40_lines_number-1 ; Anzahl der Linien
 
-; ** 41. Fläche **
+; 41. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face41_color 	; Farbe der Fläche
 	DC.W gv_object_face41_lines_number-1 ; Anzahl der Linien
-; ** 42. Fläche **
+; 42. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face42_color 	; Farbe der Fläche
 	DC.W gv_object_face42_lines_number-1 ; Anzahl der Linien
-; ** 43. Fläche **
+; 43. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face43_color 	; Farbe der Fläche
 	DC.W gv_object_face43_lines_number-1 ; Anzahl der Linien
-; ** 44. Fläche **
+; 44. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face44_color 	; Farbe der Fläche
 	DC.W gv_object_face44_lines_number-1 ; Anzahl der Linien
-; ** 45. Fläche **
+; 45. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face45_color 	; Farbe der Fläche
 	DC.W gv_object_face45_lines_number-1 ; Anzahl der Linien
-; ** 46. Fläche **
+; 46. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face46_color 	; Farbe der Fläche
 	DC.W gv_object_face46_lines_number-1 ; Anzahl der Linien
-; ** 47. Fläche **
+; 47. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face47_color 	; Farbe der Fläche
 	DC.W gv_object_face47_lines_number-1 ; Anzahl der Linien
-; ** 48. Fläche **
+; 48. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W gv_object_face48_color 	; Farbe der Fläche
 	DC.W gv_object_face48_lines_number-1 ; Anzahl der Linien
@@ -1985,7 +1983,7 @@ gv_object_edges
 gv_rot_xy_coords
 	DS.W gv_object_edge_points_number*2
 
-; **** Horiz-Fader ****
+; Horiz-Fader
 hf_bplam_table
 ; Von dunkel nach hell
 	REPT cl2_display_width1
@@ -2021,13 +2019,13 @@ hf_bplam_table
 	EVEN
 
 
-; ## Grafikdaten nachladen ##
+; Grafikdaten nachladen
 
-; **** Title ****
+; Title
 title_image_data SECTION title_gfx,DATA
 	INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/graphics/192x39x4-Superglenz.rawblit"
 
-; **** Logo ****
+; Logo
 logo_image_data SECTION logo_gfx,DATA
 	INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/graphics/3x64x16x4-RSE.rawblit"
 

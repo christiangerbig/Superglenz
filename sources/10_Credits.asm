@@ -1,17 +1,14 @@
-; Programm:	10_Credits
-; Autor:	Christian Gerbig
-; Datum:	23.04.2024
-; Version:	1.0
+; 10_Credits
+; Christian Gerbig
+; 23.04.2024
+; 1.0
 
 
 ; Requirements
-; CPU:		68020+
-; Fast-Memory:	-
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -143,7 +140,7 @@ ciaa_tb_continuous_enabled	EQU FALSE
 ciab_ta_continuous_enabled	EQU FALSE
 ciab_tb_continuous_enabled	EQU FALSE
 
-beam_position			EQU $133
+beam_position			EQU $132
 
 pixel_per_line			EQU 192
 visible_pixels_number		EQU 192
@@ -183,7 +180,7 @@ cl2_vstart			EQU beam_position&$ff
 
 sine_table_length		EQU 512
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 vts_image_x_size		EQU 320
 vts_image_plane_width		EQU vts_image_x_size/8
 vts_image_depth			EQU 1
@@ -205,7 +202,7 @@ vts_text_characters_per_line	EQU (pixel_per_line-32)/vts_text_character_x_size
 vts_text_characters_per_column	EQU (visible_lines_number+vts_text_character_y_size)/vts_text_character_y_size
 vts_text_characters_number	EQU vts_text_characters_per_line*vts_text_characters_per_column
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 mgv_rot_d			EQU 512
 mgv_rot_x_center		EQU extra_pf1_x_size/2
 mgv_rot_y_center		EQU visible_lines_number/2
@@ -280,17 +277,17 @@ mgv_morph_shapes_number		EQU 5
 mgv_morph_speed			EQU 8
 mgv_morph_delay			EQU 4*PAL_FPS
 
-; **** Fill-Blit ****
+; Fill-Blit
 mgv_fill_blit_x_size		EQU extra_pf1_x_size
 mgv_fill_blit_y_size		EQU visible_lines_number
 mgv_fill_blit_depth		EQU extra_pf1_depth
 
-; **** Clear-Blit ****
+; Clear-Blit
 mgv_clear_blit_x_size		EQU extra_pf1_x_size
 mgv_clear_blit_y_size		EQU visible_lines_number
 mgv_clear_blit_depth		EQU extra_pf1_depth
 
-; **** Colors-Fader-Cross ****
+; Colors-Fader-Cross
 cfc_rgb8_start_color		EQU 18
 cfc_rgb8_color_table_offset	EQU 2
 cfc_rgb8_colors_number		EQU 4
@@ -301,7 +298,7 @@ cfc_rgb8_fader_center		EQU cfc_rgb8_fader_speed_max+1
 cfc_rgb8_fader_angle_speed	EQU 2
 cfc_rgb8_fader_delay		EQU 6*PAL_FPS
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 2
 
 
@@ -319,6 +316,26 @@ pf2_plane_y_offset		EQU vts_text_character_y_size-1
 
 
 	INCLUDE "sprite-attributes.i"
+
+
+; Morph-Glenz-Vectors
+	RSRESET
+
+object_info			RS.B 0
+
+object_info_edges_table		RS.L 1
+object_info_face_color		RS.W 1
+object_info_lines_number 	RS.W 1
+
+object_info_size		RS.B 0
+
+	RSRESET
+
+morph_shape			RS.B 0
+
+morph_shape_object_edges	RS.L 1
+
+morph_shape_size		RS.B 0
 
 
 	RSRESET
@@ -416,7 +433,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -425,7 +441,7 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; ** Sprite0-Zusatzstruktur **
+; Sprite0-Zusatzstruktur
 	RSRESET
 
 spr0_extension1	RS.B 0
@@ -435,7 +451,7 @@ spr0_ext1_planedata		RS.L 1*(spr_pixel_per_datafetch/16)*visible_lines_number
 
 spr0_extension1_size		RS.B 0
 
-; ** Sprite0-Hauptstruktur **
+; Sprite0-Hauptstruktur
 	RSRESET
 
 spr0_begin			RS.B 0
@@ -446,7 +462,7 @@ spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite0_size			RS.B 0
 
-; ** Sprite1-Zusatzstruktur **
+; Sprite1-Zusatzstruktur
 	RSRESET
 
 spr1_extension1			RS.B 0
@@ -456,7 +472,7 @@ spr1_ext1_planedata		RS.L 1*(spr_pixel_per_datafetch/16)*visible_lines_number
 
 spr1_extension1_size		RS.B 0
 
-; ** Sprite1-Hauptstruktur **
+; Sprite1-Hauptstruktur
 	RSRESET
 
 spr1_begin			RS.B 0
@@ -467,7 +483,7 @@ spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite1_size			RS.B 0
 
-; ** Sprite2-Hauptstruktur **
+; Sprite2-Hauptstruktur
 	RSRESET
 
 spr2_begin			RS.B 0
@@ -476,7 +492,7 @@ spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite2_size			RS.B 0
 
-; ** Sprite3-Hauptstruktur **
+; Sprite3-Hauptstruktur
 	RSRESET
 
 spr3_begin			RS.B 0
@@ -485,7 +501,7 @@ spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite3_size			RS.B 0
 
-; ** Sprite4-Hauptstruktur **
+; Sprite4-Hauptstruktur
 	RSRESET
 
 spr4_begin			RS.B 0
@@ -494,7 +510,7 @@ spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite4_size			RS.B 0
 
-; ** Sprite5-Hauptstruktur **
+; Sprite5-Hauptstruktur
 	RSRESET
 
 spr5_begin			RS.B 0
@@ -503,7 +519,7 @@ spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite5_size			RS.B 0
 
-; ** Sprite6-Hauptstruktur **
+; Sprite6-Hauptstruktur
 	RSRESET
 
 spr6_begin			RS.B 0
@@ -512,7 +528,7 @@ spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite6_size			RS.B 0
 
-; ** Sprite7-Hauptstruktur **
+; Sprite7-Hauptstruktur
 	RSRESET
 
 spr7_begin			RS.B 0
@@ -521,7 +537,7 @@ spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite7_size			RS.B 0
 
-; ** Konstanten für die Größe der Spritestrukturen **
+
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU sprite0_size/(spr_x_size1/8)
 spr1_x_size1			EQU spr_x_size1
@@ -563,12 +579,12 @@ spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 
 save_a7				RS.L 1
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 vts_image			RS.L 1
 vts_variable_vert_scroll_speed	RS.W 1
 vts_text_table_start		RS.W 1
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 mgv_rot_y_angle			RS.W 1
 mgv_rot_variable_y_speed	RS.W 1
 mgv_rot_y_angle_speed_angle 	RS.W 1
@@ -579,7 +595,7 @@ mgv_morph_active		RS.W 1
 mgv_morph_shapes_table_start	RS.W 1
 mgv_morph_delay_counter		RS.W 1
 
-; **** Colors-Fader-Cross ****
+; Colors-Fader-Cross
 cfc_rgb8_active			RS.W 1
 cfc_rgb8_fader_angle		RS.W 1
 cfc_rgb8_fader_delay_counter	RS.W 1
@@ -587,47 +603,32 @@ cfc_rgb8_color_table_start	RS.W 1
 cfc_rgb8_colors_counter		RS.W 1
 cfc_rgb8_copy_colors_active	RS.W 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
 variables_size			RS.B 0
 
 
-; **** Morph-Glenz-Vectors ****
-	RSRESET
-
-object_info			RS.B 0
-
-object_info_edges_table		RS.L 1
-object_info_face_color		RS.W 1
-object_info_lines_number 	RS.W 1
-
-object_info_size		RS.B 0
-
-	RSRESET
-
-morph_shape			RS.B 0
-
-morph_shape_object_edges	RS.L 1
-
-morph_shape_size		RS.B 0
+	SECTION code,CODE
 
 
 start_10_credits 
 
+
 	INCLUDE "sys-wrapper.i"
+
 
 	CNOP 0,4
 init_main_variables
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 	lea	vts_image_data,a0
 	move.l	a0,vts_image(a3)
 	moveq	#TRUE,d0
 	move.w	d0,vts_variable_vert_scroll_speed(a3)
 	move.w	d0,vts_text_table_start(a3)
 
-; **** Morphing-Glenz-Vectors ****
+; Morphing-Glenz-Vectors
 	move.w	d0,mgv_rot_y_angle(a3)
 	move.w	d0,mgv_rot_variable_y_speed(a3)
 	move.w	d0,mgv_rot_y_angle_speed_angle(a3)
@@ -647,7 +648,7 @@ init_main_variables
 		move.w	#1,mgv_morph_delay_counter(a3) ; Delay-Counter aktivieren
 	ENDC
 
-; **** Colors-Fader-Cross ****
+; Colors-Fader-Cross
 	IFEQ cfc_rgb8_prefade_enabled
 		move.w	d0,cfc_rgb8_active(a3)
 		move.w	#cfc_rgb8_colors_number*3,cfc_rgb8_colors_counter(a3)
@@ -661,7 +662,7 @@ init_main_variables
 	move.w	#1,cfc_rgb8_fader_delay_counter(a3) ; Delay-Counter aktivieren
 	move.w	d0,cfc_rgb8_color_table_start(a3)
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 	rts
 
@@ -714,12 +715,11 @@ mgv_init_xy_coords
 	CNOP 0,4
 mgv_init_sprite_header
 ; Input
-; d0.w	... X-Koordinate
-; d1.w	... Y-Koordinate
-; a0	... Zeiger auf 1. Sprite-Struktur
-; a1	... Zeiger auf 2. Sprite-Struktur
+; d0.w	X-Koordinate
+; d1.w	Y-Koordinate
+; a0.l	Zeiger auf 1. Sprite-Struktur
+; a1.l	Zeiger auf 2. Sprite-Struktur
 ; Result
-; d0.l	... Kein Rückgabewert
 	MOVEF.W visible_lines_number,d2 ; Höhe
 	add.w	d1,d2			; VSTOP
 	SET_SPRITE_POSITION d0,d1,d2
@@ -732,7 +732,7 @@ mgv_init_sprite_header
 
 	COPY_SPRITE_STRUCTURES
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 	INIT_CHARACTERS_OFFSETS.W vts
 
 	INIT_CHARACTERS_X_POSITIONS vts,LORES,,text_characters_per_line
@@ -741,11 +741,11 @@ mgv_init_sprite_header
 
 	INIT_CHARACTERS_IMAGES vts
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 	CNOP 0,4
 mgv_init_object_info
-	lea	mgv_object_info+object_info_edges_table(pc),a0 ; Zeiger auf Object-Info-Tabelle
-	lea	mgv_object_edges(pc),a1	; Zeiger auf Tebelle mit Eckpunkten
+	lea	mgv_object_info+object_info_edges_table(pc),a0
+	lea	mgv_object_edges(pc),a1
 	move.w	#object_info_size,a2
 	MOVEF.W mgv_object_faces_number-1,d7
 mgv_init_object1_info_loop
@@ -759,19 +759,19 @@ mgv_init_object1_info_loop
 
 	CNOP 0,4
 mgv_init_morph_shapes_table
-	lea	mgv_morph_shapes_table(pc),a0 ; Tabelle mit Zeigern auf Objektdaten
-	lea	mgv_object_shape1_coords(pc),a1 ; Zeiger auf 1. Form
+	lea	mgv_morph_shapes_table(pc),a0
+	lea	mgv_object_shape1_coords(pc),a1
 	move.l	a1,(a0)+		; Zeiger auf Form-Tabelle
-	lea	mgv_object_shape2_coords(pc),a1 ; Zeiger auf 2. Form
+	lea	mgv_object_shape2_coords(pc),a1
 	move.l	a1,(a0)+		; Zeiger auf Form-Tabelle
-	lea	mgv_object_shape3_coords(pc),a1 ; Zeiger auf 3. Form
+	lea	mgv_object_shape3_coords(pc),a1
 	move.l	a1,(a0)+		; Zeiger auf Form-Tabelle
-	lea	mgv_object_shape4_coords(pc),a1 ; Zeiger auf 4. Form
+	lea	mgv_object_shape4_coords(pc),a1
 	IFEQ mgv_morph_loop_enabled
 		move.l	a1,(a0)		; Zeiger auf Form-Tabelle
 	ELSE
 		move.l	a1,(a0)+	; Zeiger auf Form-Tabelle
-		lea	mgv_object_shape5_coords(pc),a1 ; Zeiger auf 6. Form
+		lea	mgv_object_shape5_coords(pc),a1
 		move.l	a1,(a0)		; Zeiger auf Form-Tabelle
 	ENDC
 	rts
@@ -818,7 +818,7 @@ cl1_set_plane_ptrs
 	move.l	cl1_display(a3),a0
 	ADDF.W	cl1_BPL1PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
-	moveq	#pf1_depth3-1,d7	; Anzahl der Bitplanes
+	moveq	#pf1_depth3-1,d7
 cl1_set_plane_ptrs_loop1
 	move.w	(a1)+,(a0)		; BPLxPTH
 	ADDF.W	QUADWORD_SIZE*2,a0	; übernächter Playfieldzeiger
@@ -828,7 +828,7 @@ cl1_set_plane_ptrs_loop1
 	move.l	cl1_display(a3),a0
 	ADDF.W	cl1_BPL2PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
-	moveq	#pf2_depth3-1,d7	; Anzahl der Bitplanes
+	moveq	#pf2_depth3-1,d7
 cl1_set_plane_ptrs_loop2
 	move.w	(a1)+,(a0)		; BPLxPTH
 	ADDF.W	QUADWORD_SIZE*2,a0	; übernächter Playfieldzeiger
@@ -981,7 +981,7 @@ set_playfield1
 	move.l	cl1_display(a3),a0
 	ADDF.W	cl1_BPL1PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
-	moveq	#pf1_depth3-1,d7	; Anzahl der Bitplanes
+	moveq	#pf1_depth3-1,d7
 set_playfield1_loop
 	move.l	(a1)+,d0
 	add.l	d1,d0
@@ -998,7 +998,7 @@ set_playfield2
 	move.l	cl1_display(a3),a0
 	ADDF.W	cl1_BPL2PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
-	moveq	#pf2_depth3-1,d7	; Anzahl der Bitplanes
+	moveq	#pf2_depth3-1,d7
 set_playfield2_loop
 	move.l	(a1)+,d0
 	add.l	d1,d0
@@ -1068,9 +1068,9 @@ vert_text_scroll_skip
 	CNOP 0,4
 vts_check_control_codes
 ; Input
-; d0.b	... ASCII-Code
+; d0.b	ASCII-Code
 ; Result
-; d0.l	... Rückgabewert: Return-Code
+; d0.l	Rückgabewert: Return-Code
 	cmp.b	#ASCII_CTRL_M,d0
 	beq.s	vts_enable_music_fader
 	cmp.b	#ASCII_CTRL_V,d0
@@ -1155,7 +1155,7 @@ mgv_rotate_loop
 	move.w	(a0)+,d1		; Y
 	move.w	(a0)+,d2		; Z
 	ROTATE_Y_AXIS
-; ** Zentralprojektion und Translation **
+; Zentralprojektion und Translation
 	MULSF.W mgv_rot_d,d0,d3 	; X-Projektion
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
@@ -1231,7 +1231,7 @@ mgv_draw_lines
 	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; Mintern Linien
 	MOVEF.W mgv_object_faces_number-1,d7
 mgv_draw_lines_loop1
-; ** Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen **
+; Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen
 	move.l	(a0)+,a5		; Zeiger auf Startwerte der Punkte
 	move.w	(a5),d4			; P1-Startwert
 	move.w	2(a5),d5		; P2-Startwert
@@ -1303,7 +1303,7 @@ mgv_draw_lines_init
 	add.l	#ALIGN_64KB,d0
 	clr.w	d0
 	move.l	cl2_construction2(a3),a0
-	swap	d0			;High
+	swap	d0			; High
 	move.w	d0,cl2_extension2_entry+cl2_ext2_BLTCPTH+WORD_SIZE(a0) ; Playfield lesen
 	move.w	d0,cl2_extension2_entry+cl2_ext2_BLTDPTH+WORD_SIZE(a0) ; Playfield schreiben
 	rts
@@ -1315,12 +1315,12 @@ mgv_fill_extra_playfield
 	add.l	#ALIGN_64KB,d0
 	clr.w	d0
 	move.l	cl2_construction2(a3),a0
-	ADDF.L	(extra_pf1_plane_width*visible_lines_number*extra_pf1_depth)-2,d0 ;Ende des Playfieldes
-	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTAPTL+WORD_SIZE(a0) ;Quelle
-	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTDPTL+WORD_SIZE(a0) ;Ziel
+	ADDF.L	(extra_pf1_plane_width*visible_lines_number*extra_pf1_depth)-2,d0 ; Ende des Playfieldes
+	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTAPTL+WORD_SIZE(a0) ; Quelle
+	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTDPTL+WORD_SIZE(a0) ; Ziel
 	swap	d0
-	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTAPTH+WORD_SIZE(a0) ;Quelle
-	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTDPTH+WORD_SIZE(a0) ;Ziel
+	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTAPTH+WORD_SIZE(a0) ; Quelle
+	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTDPTH+WORD_SIZE(a0) ; Ziel
 	rts
 
 	CNOP 0,4
@@ -1539,7 +1539,6 @@ eh_start_vert_text_scroll
 
 	INCLUDE "int-autovectors-handlers.i"
 
-; ** Level-7-Interrupt-Server **
 	CNOP 0,4
 nmi_int_server
 	rts
@@ -1573,7 +1572,7 @@ spr_ptrs_construction
 spr_ptrs_display
 	DS.L spr_number
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 vts_ascii
 	DC.B "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!?-'():\/#*+<> "
 vts_ascii_end
@@ -1595,17 +1594,17 @@ vts_characters_y_positions
 vts_characters_image_ptrs
 	DS.L vts_text_characters_number
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 	CNOP 0,2
 mgv_object_coords
-; * Zoom-In *
+; Zoom-In
 	DS.W mgv_object_edge_points_number*3
 
-; ** Formen des Objekts **
-; ** Form 1 **
+; Formen des Objekts
+; Form 1
 	CNOP 0,2
 mgv_object_shape1_coords
-; ** Quader 1 **
+; Quader 1
 	DC.W -(20*8),-(120*8),-(20*8)	; P0
 	DC.W 20*8,-(120*8),-(20*8)	; P1
 	DC.W 20*8,120*8,-(20*8)		; P2
@@ -1620,10 +1619,10 @@ mgv_object_shape1_coords
 	DC.W 20*8,0,0			; P11
 	DC.W 0,-(120*8),0		; P12
 	DC.W 0,120*8,0			; P13
-; ** Form 2 **
+; Form 2
 	CNOP 0,2
 mgv_object_shape2_coords
-; ** Pyramide **
+; Pyramide
 	DC.W -(10*8),-(20*8),-(10*8)	; P0
 	DC.W 10*8,-(20*8),-(10*8)	; P1
 	DC.W 20*8,120*8,-(20*8)		; P2
@@ -1638,10 +1637,10 @@ mgv_object_shape2_coords
 	DC.W 15*8,50*8,0		; P11
 	DC.W 0,-(120*8),0		; P12
 	DC.W 0,120*8,0			; P13
-; ** Form 3 **
+; Form 3
 	CNOP 0,2
 mgv_object_shape3_coords
-; ** Keil 1 **
+; Keil 1
 	DC.W -(20*8),-(80*8),-(20*8) 	; P0
 	DC.W 20*8,-(80*8),-(20*8)	; P1
 	DC.W 20*8,80*8,-(20*8)		; P2
@@ -1656,10 +1655,10 @@ mgv_object_shape3_coords
 	DC.W 20*8,0,0			; P11
 	DC.W 0,-(120*8),0		; P12
 	DC.W 0,120*8,0			; P13
-; ** Form 4 **
+; Form 4
 	CNOP 0,2
 mgv_object_shape4_coords
-; ** Keil 2 **
+; Keil 2
 	DC.W -(20*8),-(10*8),-(20*8) 	; P0
 	DC.W 20*8,-(10*8),-(20*8)	; P1
 	DC.W 20*8,10*8,-(20*8)		; P2
@@ -1675,7 +1674,7 @@ mgv_object_shape4_coords
 	DC.W 0,-(60*8),0		; P12
 	DC.W 0,60*8,0			; P13
 	IFNE mgv_morph_loop_enabled
-; ** Form 5 **
+; Form 5
 		CNOP 0,2
 mgv_object_shape5_coords
 ; * Zoom-Out *
@@ -1684,104 +1683,104 @@ mgv_object_shape5_coords
 
 	CNOP 0,4
 mgv_object_info
-; ** 1. Fläche **
+; 1. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face1_color	; Farbe der Fläche
 	DC.W mgv_object_face1_lines_number-1 ; Anzahl der Linien
-; ** 2. Fläche **
+; 2. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face2_color	; Farbe der Fläche
 	DC.W mgv_object_face2_lines_number-1 ; Anzahl der Linien
-; ** 3. Fläche **
+; 3. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face3_color	; Farbe der Fläche
 	DC.W mgv_object_face3_lines_number-1 ; Anzahl der Linien
 
-; ** 4. Fläche **
+; 4. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face4_color	; Farbe der Fläche
 	DC.W mgv_object_face4_lines_number-1 ; Anzahl der Linien
-; ** 5. Fläche **
+; 5. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face5_color	; Farbe der Fläche
 	DC.W mgv_object_face5_lines_number-1 ; Anzahl der Linien
-; ** 6. Fläche **
+; 6. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face6_color	; Farbe der Fläche
 	DC.W mgv_object_face6_lines_number-1 ; Anzahl der Linien
-; ** 7. Fläche **
+; 7. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face7_color	; Farbe der Fläche
 	DC.W mgv_object_face7_lines_number-1 ; Anzahl der Linien
-; ** 8. Fläche **
+; 8. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face8_color	; Farbe der Fläche
 	DC.W mgv_object_face8_lines_number-1 ; Anzahl der Linien
 
-; ** 9. Fläche **
+; 9. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face9_color	; Farbe der Fläche
 	DC.W mgv_object_face9_lines_number-1 ; Anzahl der Linien
-; ** 10. Fläche **
+; 10. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face10_color	; Farbe der Fläche
 	DC.W mgv_object_face10_lines_number-1 ; Anzahl der Linien
-; ** 11. Fläche **
+; 11. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face11_color	; Farbe der Fläche
 	DC.W mgv_object_face11_lines_number-1 ; Anzahl der Linien
-; ** 12. Fläche **
+; 12. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face12_color	; Farbe der Fläche
 	DC.W mgv_object_face12_lines_number-1 ; Anzahl der Linien
 
-; ** 13. Fläche **
+; 13. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face13_color	; Farbe der Fläche
 	DC.W mgv_object_face13_lines_number-1 ; Anzahl der Linien
-; ** 14. Fläche **
+; 14. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face14_color	; Farbe der Fläche
 	DC.W mgv_object_face14_lines_number-1 ; Anzahl der Linien
-; ** 15. Fläche **
+; 15. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face15_color	; Farbe der Fläche
 	DC.W mgv_object_face15_lines_number-1 ; Anzahl der Linien
-; ** 16. Fläche **
+; 16. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face16_color	; Farbe der Fläche
 	DC.W mgv_object_face16_lines_number-1 ; Anzahl der Linien
 
-; ** 17. Fläche **
+; 17. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face17_color	; Farbe der Fläche
 	DC.W mgv_object_face17_lines_number-1 ; Anzahl der Linien
-; ** 18. Fläche **
+; 18. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face18_color	; Farbe der Fläche
 	DC.W mgv_object_face18_lines_number-1 ; Anzahl der Linien
-; ** 19. Fläche **
+; 19. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face19_color	; Farbe der Fläche
 	DC.W mgv_object_face19_lines_number-1 ; Anzahl der Linien
-; ** 20. Fläche **
+; 20. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face20_color	; Farbe der Fläche
 	DC.W mgv_object_face20_lines_number-1 ; Anzahl der Linien
 
-; ** 21. Fläche **
+; 21. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face21_color	; Farbe der Fläche
 	DC.W mgv_object_face21_lines_number-1 ; Anzahl der Linien
-; ** 22. Fläche **
+; 22. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face22_color	; Farbe der Fläche
 	DC.W mgv_object_face22_lines_number-1 ; Anzahl der Linien
-; ** 23. Fläche **
+; 23. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face23_color	; Farbe der Fläche
 	DC.W mgv_object_face23_lines_number-1 ; Anzahl der Linien
-; ** 24. Fläche **
+; 24. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face24_color	; Farbe der Fläche
 	DC.W mgv_object_face24_lines_number-1 ; Anzahl der Linien
@@ -1826,7 +1825,7 @@ mgv_rot_xy_coords
 mgv_morph_shapes_table
 	DS.B morph_shape_size*mgv_morph_shapes_number
 
-; **** Color-Fader-Cross ****
+; Color-Fader-Cross
 	CNOP 0,4
 cfc_rgb8_color_table_fade_out
 	REPT 8
@@ -1868,7 +1867,7 @@ cfc_rgb8_color_table
 
 	INCLUDE "error-texts.i"
 
-; **** Vert-Textscroll ****
+; Vert-Textscroll
 vts_text
 	REPT vts_text_characters_per_column*vts_text_characters_per_line
 		DC.B " "
@@ -2208,9 +2207,9 @@ vts_text
 	EVEN
 
 
-; ## Grafikdaten nachladen ##
+; Grafikdaten nachladen
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 vts_image_data SECTION vts_gfx,DATA
 	INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/fonts/8x7x2-Font.rawblit"
 	DS.B vts_image_plane_width*vts_image_depth ; Leerzeile

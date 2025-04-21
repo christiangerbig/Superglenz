@@ -5,7 +5,6 @@
 
 
 ; CPU:		68020+
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
@@ -13,7 +12,6 @@
 ; wobei nach 256 Pixeln jedes Sprite wiederholt wird.
 ; Die erste Copperlist gilt für alle Folgeeffekte
 
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -166,7 +164,7 @@ cl2_vstart			EQU beam_position&CL_Y_WRAP
 
 sine_table_length		EQU 512
 
-; **** Hintergrundbild ****
+; Hintergrundbild
 bg_image_x_size			EQU 256
 bg_image_plane_width		EQU bg_image_x_size/8
 bg_image_y_size			EQU 283
@@ -174,7 +172,7 @@ bg_image_depth			EQU 4
 bg_image_x_position		EQU 16
 bg_image_y_position		EQU MINROW
 
-; **** Sprite-Fader ****
+; Sprite-Fader
 sprf_rgb8_start_color		EQU 1
 sprf_rgb8_color_table_offset	EQU 1
 sprf_rgb8_colors_number		EQU spr_colors_number-1
@@ -219,7 +217,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die Größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -229,7 +226,7 @@ cl2_size2			EQU 0
 cl2_size3			EQU copperlist2_size
 
 
-; ** Sprite0-Zusatzstruktur **
+; Sprite0-Zusatzstruktur
 	RSRESET
 
 spr0_extension1	RS.B 0
@@ -239,7 +236,7 @@ spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
-; ** Sprite0-Hauptstruktur **
+; Sprite0-Hauptstruktur
 	RSRESET
 
 spr0_begin			RS.B 0
@@ -250,7 +247,7 @@ spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite0_size			RS.B 0
 
-; ** Sprite1-Zusatzstruktur **
+; Sprite1-Zusatzstruktur
 	RSRESET
 
 spr1_extension1	RS.B 0
@@ -260,7 +257,7 @@ spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
-; ** Sprite1-Hauptstruktur **
+; Sprite1-Hauptstruktur
 	RSRESET
 
 spr1_begin			RS.B 0
@@ -271,7 +268,7 @@ spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite1_size			RS.B 0
 
-; ** Sprite2-Zusatzstruktur **
+; Sprite2-Zusatzstruktur
 	RSRESET
 
 spr2_extension1			RS.B 0
@@ -281,7 +278,7 @@ spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
-; ** Sprite2-Hauptstruktur **
+; Sprite2-Hauptstruktur
 	RSRESET
 
 spr2_begin			RS.B 0
@@ -292,7 +289,7 @@ spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite2_size			RS.B 0
 
-; ** Sprite3-Zusatzstruktur **
+; Sprite3-Zusatzstruktur
 	RSRESET
 
 spr3_extension1	RS.B 0
@@ -302,7 +299,7 @@ spr3_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr3_extension1_size		RS.B 0
 
-; ** Sprite3-Hauptstruktur **
+; Sprite3-Hauptstruktur
 	RSRESET
 
 spr3_begin			RS.B 0
@@ -313,7 +310,7 @@ spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite3_size			RS.B 0
 
-; ** Sprite4-Zusatzstruktur **
+; Sprite4-Zusatzstruktur
 	RSRESET
 
 spr4_extension1	RS.B 0
@@ -323,7 +320,7 @@ spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
-; ** Sprite4-Hauptstruktur **
+; Sprite4-Hauptstruktur
 	RSRESET
 
 spr4_begin			RS.B 0
@@ -334,7 +331,7 @@ spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite4_size			RS.B 0
 
-; ** Sprite5-Zusatzstruktur **
+; Sprite5-Zusatzstruktur
 	RSRESET
 
 spr5_extension1			RS.B 0
@@ -344,7 +341,7 @@ spr5_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr5_extension1_size		RS.B 0
 
-; ** Sprite5-Hauptstruktur **
+; Sprite5-Hauptstruktur
 	RSRESET
 
 spr5_begin			RS.B 0
@@ -355,7 +352,7 @@ spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite5_size			RS.B 0
 
-; ** Sprite6-Zusatzstruktur **
+; Sprite6-Zusatzstruktur
 	RSRESET
 
 spr6_extension1			RS.B 0
@@ -365,7 +362,7 @@ spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
-; ** Sprite6-Hauptstruktur **
+; Sprite6-Hauptstruktur
 	RSRESET
 
 spr6_begin			RS.B 0
@@ -376,7 +373,7 @@ spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite6_size			RS.B 0
 
-; ** Sprite7-Zusatzstruktur **
+; Sprite7-Zusatzstruktur
 	RSRESET
 
 spr7_extension1	RS.B 0
@@ -386,7 +383,7 @@ spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr7_extension1_size		RS.B 0
 
-; ** Sprite7-Hauptstruktur **
+; Sprite7-Hauptstruktur
 	RSRESET
 
 spr7_begin			RS.B 0
@@ -398,7 +395,6 @@ spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
 sprite7_size			RS.B 0
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -438,22 +434,26 @@ spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 
 	INCLUDE "variables-offsets.i"
 
-; **** Sprite-Fader ****
+; Sprite-Fader
 sprf_rgb8_colors_counter	RS.W 1
 sprf_rgb8_copy_colors_active 	RS.W 1
 
-; **** Sprite-Fader-In ****
+; Sprite-Fader-In
 sprfi_rgb8_active		RS.W 1
 sprfi_rgb8_fader_angle		RS.W 1
 
-; **** Sprite-Fader-Out ****
+; Sprite-Fader-Out
 sprfo_rgb8_active		RS.W 1
 sprfo_rgb8_fader_angle		RS.W 1
 
 variables_size			RS.B 0
 
 
+	SECTION code,CODE
+
+
 start_01_wrapper
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -461,16 +461,16 @@ start_01_wrapper
 	CNOP 0,4
 init_main_variables
 
-; **** Sprite-Fader ****
+; Sprite-Fader
 	move.w	#sprf_rgb8_colors_number*3,sprf_rgb8_colors_counter(a3)
 	moveq	#TRUE,d0
 	move.w	d0,sprf_rgb8_copy_colors_active(a3)
 
-; **** Sprite-Fader-In ****
+; Sprite-Fader-In
 	move.w	d0,sprfi_rgb8_active(a3)
 	move.w	#sine_table_length/4,sprfi_rgb8_fader_angle(a3) ; 90 Grad
 
-; **** Sprite-Fader-Out ****
+; Sprite-Fader-Out
 	moveq	#FALSE,d1
 	move.w	d1,sprfo_rgb8_active(a3)
 	move.w	#sine_table_length/4,sprfo_rgb8_fader_angle(a3) ; 90 Grad
@@ -699,7 +699,7 @@ spr_rgb8_color_table
 spr_ptrs_display
 	DS.L spr_number
 
-; **** Sprite-Fader ****
+; Sprite-Fader
 	CNOP 0,4
 sprfi_rgb8_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/256x283x16-Skyline.ct"
@@ -720,9 +720,9 @@ sprfo_rgb8_color_table
 	INCLUDE "error-texts.i"
 
 
-; ## Grafikdaten nachladen ##
+; Grafikdaten nachladen
 
-; **** Hintergrundbild ****
+; Hintergrundbild
 bg_image_data SECTION gfx1,DATA
 	INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/graphics/256x283x16-Skyline.rawblit"
 

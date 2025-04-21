@@ -1,14 +1,13 @@
-; Programm:	014_Morph-Glenz-Vectors
-; Autor:	Christian Gerbig
-; Datum:	05.06.2024
+; 014_Morph-Glenz-Vectors
+; Christian Gerbig
+; 05.06.2024
 
 
 ; Requirements
-; Version:	1.0
-; CPU:		68020+
-; Fast-Memory:	-
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 1.0
+; 68020+
+; AGA PAL
+; 3.0+
 
 ; Morphendes 1x128-Flächen-Glenz auf einem 160x160-Screen.
 ; Der Copper wartet auf den Blitter. 
@@ -16,8 +15,6 @@
 ; Das Playfield ist auf 64 kB aligned damit Blitter-High-Pointer der
 ; Linien-Blits nur 1x initialisiert werden müssen.
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -175,7 +172,7 @@ cl2_vstart			EQU beam_position&$ff
 
 sine_table_length		EQU 512
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 mgv_rot_d			EQU 512
 mgv_rot_xy_center		EQU visible_lines_number/2
 
@@ -513,21 +510,21 @@ mgv_morph_shapes_number		EQU 4
 mgv_morph_speed			EQU 8
 mgv_morph_delay			EQU 6*PAL_FPS
 
-; **** Fill-Blit ****
+; Fill-Blit
 mgv_fill_blit_x_size		EQU visible_pixels_number
 mgv_fill_blit_y_size		EQU visible_lines_number
 mgv_fill_blit_depth		EQU pf1_depth3
 
-; **** Scroll-Playfield-Bottom ****
+; Scroll-Playfield-Bottom
 spb_min_vstart			EQU VSTART_160_LINES
 spb_max_vstop			EQU VSTOP_OVERSCAN_PAL
 spb_y_radius			EQU spb_max_vstop-spb_min_vstart
 spb_y_centre			EQU spb_max_vstop-spb_min_vstart
 
-; **** Scroll-Playfield-Bottom-In ****
+; Scroll-Playfield-Bottom-In
 spbi_y_angle_speed		EQU 4
 
-; **** Scroll-Playfield-Bottom-Out ****
+; Scroll-Playfield-Bottom-Out
 spbo_y_angle_speed		EQU 5
 
 
@@ -538,6 +535,26 @@ spbo_y_angle_speed		EQU 5
 
 
 	INCLUDE "sprite-attributes.i"
+
+
+; Morph-Glenz-Vectors
+	RSRESET
+
+object_info			RS.B 0
+
+object_info_edges		RS.L 1
+object_info_face_color		RS.W 1
+object_info_lines_number 	RS.W 1
+
+object_info_size		RS.B 0
+
+	RSRESET
+
+morph_shape			RS.B 0
+
+morph_shape_object_edges	RS.L 1
+
+morph_shape_size		RS.B 0
 
 
 	RSRESET
@@ -609,7 +626,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU 0
@@ -618,7 +634,6 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -660,7 +675,7 @@ spr7_y_size2			EQU 0
 
 save_a7				RS.L 1
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 mgv_rot_x_angle			RS.W 1
 mgv_rot_y_angle			RS.W 1
 mgv_rot_z_angle			RS.W 1
@@ -678,41 +693,25 @@ mgv_morph_active		RS.W 1
 mgv_morph_shapes_start		RS.W 1
 mgv_morph_delay_counter		RS.W 1
 
-; **** Scroll-Playfield-Bottom-In ****
+; Scroll-Playfield-Bottom-In
 spbi_active			RS.W 1
 spbi_y_angle			RS.W 1
 
-; **** Scroll-Playfield-Bottom-Out ****
+; Scroll-Playfield-Bottom-Out
 spbo_active			RS.W 1
 spbo_y_angle			RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
-; **** Morph-Glenz-Vectors ****
-	RSRESET
-
-object_info			RS.B 0
-
-object_info_edges		RS.L 1
-object_info_face_color		RS.W 1
-object_info_lines_number 	RS.W 1
-
-object_info_size		RS.B 0
-
-	RSRESET
-
-morph_shape			RS.B 0
-
-morph_shape_object_edges	RS.L 1
-
-morph_shape_size		RS.B 0
+	SECTION code,CODE
 
 
 start_014_morph_glenz_vectors
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -720,7 +719,7 @@ start_014_morph_glenz_vectors
 	CNOP 0,4
 init_main_variables
 
-; **** Morphing-Glenz-Vectors ****
+; Morphing-Glenz-Vectors
 	moveq	#TRUE,d0
 	move.w	d0,mgv_rot_x_angle(a3)
 	move.w	d0,mgv_rot_y_angle(a3)
@@ -748,15 +747,15 @@ init_main_variables
 		move.w	#1,mgv_morph_delay_counter(a3) ; Delay-Counter aktivieren
 	ENDC
 
-; **** Scroll-Playfield-Bottom-In ****
+; Scroll-Playfield-Bottom-In
 	move.w	d0,spbi_active(a3)
 	move.w	d0,spbi_y_angle(a3) 	; 0 Grad
 
-; **** Scroll-Playfield-Bottom-Out ****
+; Scroll-Playfield-Bottom-Out
 	move.w	d1,spbo_active(a3)
 	move.w	#sine_table_length/4,spbo_y_angle(a3) ; 90 Grad
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -771,7 +770,7 @@ init_main
 	bsr.s	spb_init_display_window
 	bra	init_second_copperlist
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 	CNOP 0,4
 mgv_init_object_info
 	lea	mgv_object_info+object_info_edges(pc),a0
@@ -808,7 +807,7 @@ mgv_init_morph_shapes
 		CNOP 0,4
 mgv_init_start_shape
 		bsr	mgv_morph_object
-		tst.w	mgv_morph_active(a3) ; Morphing beendet?
+		tst.w	mgv_morph_active(a3) ; Morphing beendet ?
 		beq.s	mgv_init_start_shape
 		rts
 	ENDC
@@ -871,7 +870,7 @@ cl2_init_line_blits_steady
 	COP_MOVEQ FALSE_WORD,BLTALWM
 	COP_MOVEQ 0,BLTCPTH
 	COP_MOVEQ 0,BLTDPTH
-	COP_MOVEQ pf1_plane_width*pf1_depth3,BLTCMOD ;Moduli für interleaved Bitmaps
+	COP_MOVEQ pf1_plane_width*pf1_depth3,BLTCMOD ; Moduli für interleaved Bitmaps
 	COP_MOVEQ pf1_plane_width*pf1_depth3,BLTDMOD
 	COP_MOVEQ FALSE_WORD,BLTBDAT	; Linientextur
 	COP_MOVEQ $8000,BLTADAT		; Linientextur beginnt ab MSB
@@ -899,7 +898,7 @@ cl1_init_line_blits_loop
 	CNOP 0,4
 cl2_init_fill_blit
 	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; Minterm D=A
-	COP_MOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ;Füll-Modus,  Rückwärts
+	COP_MOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ; Füll-Modus,  Rückwärts
 	COP_MOVEQ 0,BLTAPTH
 	COP_MOVEQ 0,BLTAPTL
 	COP_MOVEQ 0,BLTDPTH
@@ -1097,14 +1096,14 @@ mgv_rotation
 	move.w	#mgv_rot_xy_center,a5
 	moveq	#mgv_object_edge_points_number-1,d7
 mgv_rotate_loop
-	move.w	(a0)+,d0		;X
+	move.w	(a0)+,d0		; X
 	move.l	d7,a2		
-	move.w	(a0)+,d1		;Y
-	move.w	(a0)+,d2		;Z
+	move.w	(a0)+,d1		; Y
+	move.w	(a0)+,d2		; Z
 	ROTATE_X_AXIS
 	ROTATE_Y_AXIS
 	ROTATE_Z_AXIS
-; ** Zentralprojektion und Translation **
+; Zentralprojektion und Translation
 	MULSF.W mgv_rot_d,d0,d3 	; X-Projektion
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
@@ -1180,7 +1179,7 @@ mgv_draw_lines
 	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ;Minterm Linien
 	MOVEF.W mgv_object_faces_number-1,d7
 mgv_draw_lines_loop1
-; ** Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen **
+; Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen
 	move.l	(a0)+,a5		; Zeiger auf Startwerte der Punkte
 	move.w	(a5),d4			; P1-Startwert
 	move.w	2(a5),d5		; P2-Startwert
@@ -1400,21 +1399,21 @@ pf1_rgb8_color_table
 	DC.L color00_bits
 	ENDR
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 	CNOP 0,4
 mgv_rgb8_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/1xGlenz-Colorgradient4.ct"
 
 	CNOP 0,2
 mgv_object_coords
-; * Zoom-In *
+; Zoom-In
 	DS.W mgv_object_edge_points_number*3
 
-; ** Formen des Objekts **
-; ** Form 1 **
+; Formen des Objekts
+; Form 1
 	CNOP 0,2
 mgv_object_shape1_coords
-; ** Polygon 2 **
+; Polygon 2
 	DC.W 0,-(65*8),0		; P0
 	DC.W 0,-(50*8),41*8		; P1
 	DC.W 16*8,-(50*8),39*8		; P2
@@ -1482,10 +1481,10 @@ mgv_object_shape1_coords
 	DC.W -(16*8),50*8,39*8		; P64
 	DC.W 0,65*8,0			; P65
 
-; ** Form 2 **
+; Form 2
 	CNOP 0,2
 mgv_object_shape2_coords
-; ** Polygon 1 **
+; Polygon 1
 	DC.W 0,-(65*8),0		; P0
 	DC.W 0,-(32*8),65*8		; P1
 	DC.W 25*8,-(32*8),60*8		; P2
@@ -1553,10 +1552,10 @@ mgv_object_shape2_coords
 	DC.W -(25*8),32*8,60*8		; P46
 	DC.W 0,65*8,0			; P65
 
-; ** Form 3 **
+; Form 3
 	CNOP 0,2
 mgv_object_shape3_coords
-; ** Quader **
+; Quader
 	DC.W 0,-(32*8),0		; P0
 	DC.W 0,-(32*8),50*8		; P1
 	DC.W 25*8,-(32*8),50*8		; P2
@@ -1625,8 +1624,8 @@ mgv_object_shape3_coords
 	DC.W 0,32*8,0			; P65
 
 	IFNE mgv_morph_loop_enabled
-; ** Form 4 **
-; * Zoom-Out *
+; Form 4
+; Zoom-Out
 		CNOP 0,2
 mgv_object_shape4_coords
 		DS.W mgv_object_edge_points_number*3
@@ -1634,565 +1633,565 @@ mgv_object_shape4_coords
 
 	CNOP 0,4
 mgv_object_info
-; ** 1. Fläche **
+; 1. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face1_color	; Farbe der Fläche
 	DC.W mgv_object_face1_lines_number-1 ; Anzahl der Linien
-; ** 2. Fläche **
+; 2. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face2_color 	; Farbe der Fläche
 	DC.W mgv_object_face2_lines_number-1 ; Anzahl der Linien
-; ** 3. Fläche **
+; 3. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face3_color 	; Farbe der Fläche
 	DC.W mgv_object_face3_lines_number-1 ; Anzahl der Linien
-; ** 4. Fläche **
+; 4. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face4_color 	; Farbe der Fläche
 	DC.W mgv_object_face4_lines_number-1 ; Anzahl der Linien
-; ** 5. Fläche **
+; 5. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face5_color 	; Farbe der Fläche
 	DC.W mgv_object_face5_lines_number-1 ; Anzahl der Linien
-; ** 6. Fläche **
+; 6. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face6_color 	; Farbe der Fläche
 	DC.W mgv_object_face6_lines_number-1 ; Anzahl der Linien
-; ** 7. Fläche **
+; 7. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face7_color 	; Farbe der Fläche
 	DC.W mgv_object_face7_lines_number-1 ; Anzahl der Linien
-; ** 8. Fläche **
+; 8. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face8_color 	; Farbe der Fläche
 	DC.W mgv_object_face8_lines_number-1 ; Anzahl der Linien
-; ** 9. Fläche **
+; 9. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face9_color 	; Farbe der Fläche
 	DC.W mgv_object_face9_lines_number-1 ; Anzahl der Linien
-; ** 10. Fläche **
+; 10. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face10_color 	; Farbe der Fläche
 	DC.W mgv_object_face10_lines_number-1 ; Anzahl der Linien
-; ** 11. Fläche **
+; 11. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face11_color 	; Farbe der Fläche
 	DC.W mgv_object_face11_lines_number-1 ; Anzahl der Linien
-; ** 12. Fläche **
+; 12. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face12_color 	; Farbe der Fläche
 	DC.W mgv_object_face12_lines_number-1 ; Anzahl der Linien
-; ** 13. Fläche **
+; 13. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face13_color 	; Farbe der Fläche
 	DC.W mgv_object_face13_lines_number-1 ; Anzahl der Linien
-; ** 14. Fläche **
+; 14. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face14_color 	; Farbe der Fläche
 	DC.W mgv_object_face14_lines_number-1 ; Anzahl der Linien
-; ** 15. Fläche **
+; 15. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face15_color 	; Farbe der Fläche
 	DC.W mgv_object_face15_lines_number-1 ; Anzahl der Linien
-; ** 16. Fläche **
+; 16. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face16_color 	; Farbe der Fläche
 	DC.W mgv_object_face16_lines_number-1 ; Anzahl der Linien
 
-; ** 17. Fläche **
+; 17. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face17_color 	; Farbe der Fläche
 	DC.W mgv_object_face17_lines_number-1 ; Anzahl der Linien
-; ** 18. Fläche **
+; 18. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face18_color 	; Farbe der Fläche
 	DC.W mgv_object_face18_lines_number-1 ; Anzahl der Linien
-; ** 19. Fläche **
+; 19. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face19_color 	; Farbe der Fläche
 	DC.W mgv_object_face19_lines_number-1 ; Anzahl der Linien
 
-; ** 20. Fläche **
+; 20. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face20_color 	; Farbe der Fläche
 	DC.W mgv_object_face20_lines_number-1 ; Anzahl der Linien
-; ** 21. Fläche **
+; 21. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face21_color 	; Farbe der Fläche
 	DC.W mgv_object_face21_lines_number-1 ; Anzahl der Linien
-; ** 22. Fläche **
+; 22. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face22_color 	; Farbe der Fläche
 	DC.W mgv_object_face22_lines_number-1 ; Anzahl der Linien
 
-; ** 23. Fläche **
+; 23. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face23_color 	; Farbe der Fläche
 	DC.W mgv_object_face23_lines_number-1 ; Anzahl der Linien
-; ** 24. Fläche **
+; 24. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face24_color 	; Farbe der Fläche
 	DC.W mgv_object_face24_lines_number-1 ; Anzahl der Linien
-; ** 25. Fläche **
+; 25. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face25_color 	; Farbe der Fläche
 	DC.W mgv_object_face25_lines_number-1 ; Anzahl der Linien
 
-; ** 26. Fläche **
+; 26. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face26_color 	; Farbe der Fläche
 	DC.W mgv_object_face26_lines_number-1 ; Anzahl der Linien
-; ** 27. Fläche **
+; 27. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face27_color 	; Farbe der Fläche
 	DC.W mgv_object_face27_lines_number-1 ; Anzahl der Linien
-; ** 28. Fläche **
+; 28. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face28_color 	; Farbe der Fläche
 	DC.W mgv_object_face28_lines_number-1 ; Anzahl der Linien
 
-; ** 29. Fläche **
+; 29. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face29_color 	; Farbe der Fläche
 	DC.W mgv_object_face29_lines_number-1 ; Anzahl der Linien
-; ** 30. Fläche **
+; 30. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face30_color 	; Farbe der Fläche
 	DC.W mgv_object_face30_lines_number-1 ; Anzahl der Linien
-; ** 31. Fläche **
+; 31. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face31_color 	; Farbe der Fläche
 	DC.W mgv_object_face31_lines_number-1 ; Anzahl der Linien
 
-; ** 32. Fläche **
+; 32. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face32_color 	; Farbe der Fläche
 	DC.W mgv_object_face32_lines_number-1 ; Anzahl der Linien
-; ** 33. Fläche **
+; 33. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face33_color 	; Farbe der Fläche
 	DC.W mgv_object_face33_lines_number-1 ; Anzahl der Linien
-; ** 34. Fläche **
+; 34. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face34_color 	; Farbe der Fläche
 	DC.W mgv_object_face34_lines_number-1 ; Anzahl der Linien
 
-; ** 35. Fläche **
+; 35. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face35_color 	; Farbe der Fläche
 	DC.W mgv_object_face35_lines_number-1 ; Anzahl der Linien
-; ** 36. Fläche **
+; 36. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face36_color 	; Farbe der Fläche
 	DC.W mgv_object_face36_lines_number-1 ; Anzahl der Linien
-; ** 37. Fläche **
+; 37. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face37_color 	; Farbe der Fläche
 	DC.W mgv_object_face37_lines_number-1 ; Anzahl der Linien
 
-; ** 38. Fläche **
+; 38. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face38_color 	; Farbe der Fläche
 	DC.W mgv_object_face38_lines_number-1 ; Anzahl der Linien
-; ** 39. Fläche **
+; 39. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face39_color 	; Farbe der Fläche
 	DC.W mgv_object_face39_lines_number-1 ; Anzahl der Linien
-; ** 40. Fläche **
+; 40. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face40_color 	; Farbe der Fläche
 	DC.W mgv_object_face40_lines_number-1 ; Anzahl der Linien
 
-; ** 41. Fläche **
+; 41. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face41_color 	; Farbe der Fläche
 	DC.W mgv_object_face41_lines_number-1 ; Anzahl der Linien
-; ** 42. Fläche **
+; 42. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face42_color 	; Farbe der Fläche
 	DC.W mgv_object_face42_lines_number-1 ; Anzahl der Linien
-; ** 43. Fläche **
+; 43. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face43_color 	; Farbe der Fläche
 	DC.W mgv_object_face43_lines_number-1 ; Anzahl der Linien
 
-; ** 44. Fläche **
+; 44. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face44_color 	; Farbe der Fläche
 	DC.W mgv_object_face44_lines_number-1 ; Anzahl der Linien
-; ** 45. Fläche **
+; 45. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face45_color 	; Farbe der Fläche
 	DC.W mgv_object_face45_lines_number-1 ; Anzahl der Linien
-; ** 46. Fläche **
+; 46. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face46_color 	; Farbe der Fläche
 	DC.W mgv_object_face46_lines_number-1 ; Anzahl der Linien
 
-; ** 47. Fläche **
+; 47. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face47_color 	; Farbe der Fläche
 	DC.W mgv_object_face47_lines_number-1 ; Anzahl der Linien
-; ** 48. Fläche **
+; 48. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face48_color 	; Farbe der Fläche
 	DC.W mgv_object_face48_lines_number-1 ; Anzahl der Linien
-; ** 49. Fläche **
+; 49. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face49_color 	; Farbe der Fläche
 	DC.W mgv_object_face49_lines_number-1 ; Anzahl der Linien
 
-; ** 50. Fläche **
+; 50. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face50_color 	; Farbe der Fläche
 	DC.W mgv_object_face50_lines_number-1 ; Anzahl der Linien
-; ** 51. Fläche **
+; 51. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face51_color 	; Farbe der Fläche
 	DC.W mgv_object_face51_lines_number-1 ; Anzahl der Linien
-; ** 52. Fläche **
+; 52. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face52_color 	; Farbe der Fläche
 	DC.W mgv_object_face52_lines_number-1 ; Anzahl der Linien
 
-; ** 53. Fläche **
+; 53. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face53_color 	; Farbe der Fläche
 	DC.W mgv_object_face53_lines_number-1 ; Anzahl der Linien
-; ** 54. Fläche **
+; 54. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face54_color 	; Farbe der Fläche
 	DC.W mgv_object_face54_lines_number-1 ; Anzahl der Linien
-; ** 55. Fläche **
+; 55. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face55_color 	; Farbe der Fläche
 	DC.W mgv_object_face55_lines_number-1 ; Anzahl der Linien
 
-; ** 56. Fläche **
+; 56. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face56_color 	; Farbe der Fläche
 	DC.W mgv_object_face56_lines_number-1 ; Anzahl der Linien
-; ** 57. Fläche **
+; 57. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face57_color 	; Farbe der Fläche
 	DC.W mgv_object_face57_lines_number-1 ; Anzahl der Linien
-; ** 58. Fläche **
+; 58. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face58_color 	; Farbe der Fläche
 	DC.W mgv_object_face58_lines_number-1 ; Anzahl der Linien
 
-; ** 59. Fläche **
+; 59. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face59_color 	; Farbe der Fläche
 	DC.W mgv_object_face59_lines_number-1 ; Anzahl der Linien
-; ** 60. Fläche **
+; 60. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face60_color 	; Farbe der Fläche
 	DC.W mgv_object_face60_lines_number-1 ; Anzahl der Linien
-; ** 61. Fläche **
+; 61. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face61_color 	; Farbe der Fläche
 	DC.W mgv_object_face61_lines_number-1 ; Anzahl der Linien
 
-; ** 62. Fläche **
+; 62. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face62_color 	; Farbe der Fläche
 	DC.W mgv_object_face62_lines_number-1 ; Anzahl der Linien
-; ** 63. Fläche **
+; 63. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face63_color 	; Farbe der Fläche
 	DC.W mgv_object_face63_lines_number-1 ; Anzahl der Linien
-; ** 64. Fläche **
+; 64. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face64_color 	; Farbe der Fläche
 	DC.W mgv_object_face64_lines_number-1 ; Anzahl der Linien
 
 
-; ** 65. Fläche **
+; 65. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face65_color 	; Farbe der Fläche
 	DC.W mgv_object_face65_lines_number-1 ; Anzahl der Linien
-; ** 66. Fläche **
+; 66. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face66_color 	; Farbe der Fläche
 	DC.W mgv_object_face66_lines_number-1 ; Anzahl der Linien
-; ** 67. Fläche **
+; 67. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face67_color 	; Farbe der Fläche
 	DC.W mgv_object_face67_lines_number-1 ; Anzahl der Linien
 
-; ** 68. Fläche **
+; 68. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face68_color 	; Farbe der Fläche
 	DC.W mgv_object_face68_lines_number-1 ; Anzahl der Linien
-; ** 69. Fläche **
+; 69. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face69_color 	; Farbe der Fläche
 	DC.W mgv_object_face69_lines_number-1 ; Anzahl der Linien
-; ** 70. Fläche **
+; 70. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face70_color 	; Farbe der Fläche
 	DC.W mgv_object_face70_lines_number-1 ; Anzahl der Linien
 
-; ** 71. Fläche **
+; 71. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face71_color 	; Farbe der Fläche
 	DC.W mgv_object_face71_lines_number-1 ; Anzahl der Linien
-; ** 72. Fläche **
+; 72. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face72_color 	; Farbe der Fläche
 	DC.W mgv_object_face72_lines_number-1 ; Anzahl der Linien
-; ** 73. Fläche **
+; 73. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face73_color 	; Farbe der Fläche
 	DC.W mgv_object_face73_lines_number-1 ; Anzahl der Linien
 
-; ** 74. Fläche **
+; 74. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face74_color 	; Farbe der Fläche
 	DC.W mgv_object_face74_lines_number-1 ; Anzahl der Linien
-; ** 75. Fläche **
+; 75. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face75_color 	; Farbe der Fläche
 	DC.W mgv_object_face75_lines_number-1 ; Anzahl der Linien
-; ** 76. Fläche **
+; 76. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face76_color 	; Farbe der Fläche
 	DC.W mgv_object_face76_lines_number-1 ; Anzahl der Linien
 
-; ** 77. Fläche **
+; 77. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face77_color 	; Farbe der Fläche
 	DC.W mgv_object_face77_lines_number-1 ; Anzahl der Linien
-; ** 78. Fläche **
+; 78. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face78_color 	; Farbe der Fläche
 	DC.W mgv_object_face78_lines_number-1 ; Anzahl der Linien
-; ** 79. Fläche **
+; 79. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face79_color 	; Farbe der Fläche
 	DC.W mgv_object_face79_lines_number-1 ; Anzahl der Linien
 
-; ** 80. Fläche **
+; 80. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face80_color 	; Farbe der Fläche
 	DC.W mgv_object_face80_lines_number-1 ; Anzahl der Linien
-; ** 81. Fläche **
+; 81. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face81_color 	; Farbe der Fläche
 	DC.W mgv_object_face81_lines_number-1 ; Anzahl der Linien
-; ** 82. Fläche **
+; 82. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face82_color 	; Farbe der Fläche
 	DC.W mgv_object_face82_lines_number-1 ; Anzahl der Linien
 
-; ** 83. Fläche **
+; 83. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face83_color 	; Farbe der Fläche
 	DC.W mgv_object_face83_lines_number-1 ; Anzahl der Linien
-; ** 84. Fläche **
+; 84. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face84_color 	; Farbe der Fläche
 	DC.W mgv_object_face84_lines_number-1 ; Anzahl der Linien
-; ** 85. Fläche **
+; 85. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face85_color 	; Farbe der Fläche
 	DC.W mgv_object_face85_lines_number-1 ; Anzahl der Linien
 
-; ** 86. Fläche **
+; 86. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face86_color 	; Farbe der Fläche
 	DC.W mgv_object_face86_lines_number-1 ; Anzahl der Linien
-; ** 87. Fläche **
+; 87. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face87_color 	; Farbe der Fläche
 	DC.W mgv_object_face87_lines_number-1 ; Anzahl der Linien
-; ** 88. Fläche **
+; 88. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face88_color 	; Farbe der Fläche
 	DC.W mgv_object_face88_lines_number-1 ; Anzahl der Linien
 
-; ** 89. Fläche **
+; 89. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face89_color 	; Farbe der Fläche
 	DC.W mgv_object_face89_lines_number-1 ; Anzahl der Linien
-; ** 90. Fläche **
+; 90. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face90_color 	; Farbe der Fläche
 	DC.W mgv_object_face90_lines_number-1 ; Anzahl der Linien
-; ** 91. Fläche **
+; 91. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face91_color 	; Farbe der Fläche
 	DC.W mgv_object_face91_lines_number-1 ; Anzahl der Linien
 
-; ** 92. Fläche **
+; 92. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face92_color 	; Farbe der Fläche
 	DC.W mgv_object_face92_lines_number-1 ; Anzahl der Linien
-; ** 93. Fläche **
+; 93. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face93_color 	; Farbe der Fläche
 	DC.W mgv_object_face93_lines_number-1 ; Anzahl der Linien
-; ** 94. Fläche **
+; 94. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face94_color 	; Farbe der Fläche
 	DC.W mgv_object_face94_lines_number-1 ; Anzahl der Linien
 
-; ** 95. Fläche **
+; 95. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face95_color 	; Farbe der Fläche
 	DC.W mgv_object_face95_lines_number-1 ; Anzahl der Linien
-; ** 96. Fläche **
+; 96. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face96_color 	; Farbe der Fläche
 	DC.W mgv_object_face96_lines_number-1 ; Anzahl der Linien
-; ** 97. Fläche **
+; 97. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face97_color 	; Farbe der Fläche
 	DC.W mgv_object_face97_lines_number-1 ; Anzahl der Linien
 
-; ** 98. Fläche **
+; 98. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face98_color 	; Farbe der Fläche
 	DC.W mgv_object_face98_lines_number-1 ; Anzahl der Linien
-; ** 99. Fläche **
+; 99. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face99_color 	; Farbe der Fläche
 	DC.W mgv_object_face99_lines_number-1 ; Anzahl der Linien
-; ** 100. Fläche **
+; 100. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face100_color 	; Farbe der Fläche
 	DC.W mgv_object_face100_lines_number-1 ; Anzahl der Linien
 
-; ** 101. Fläche **
+; 101. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face101_color 	; Farbe der Fläche
 	DC.W mgv_object_face101_lines_number-1 ; Anzahl der Linien
-; ** 102. Fläche **
+; 102. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face102_color 	; Farbe der Fläche
 	DC.W mgv_object_face102_lines_number-1 ; Anzahl der Linien
-; ** 103. Fläche **
+; 103. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face103_color 	; Farbe der Fläche
 	DC.W mgv_object_face103_lines_number-1 ; Anzahl der Linien
 
-; ** 104. Fläche **
+; 104. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face104_color 	; Farbe der Fläche
 	DC.W mgv_object_face104_lines_number-1 ; Anzahl der Linien
-; ** 105. Fläche **
+; 105. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face105_color 	; Farbe der Fläche
 	DC.W mgv_object_face105_lines_number-1 ; Anzahl der Linien
-; ** 106. Fläche **
+; 106. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face106_color 	; Farbe der Fläche
 	DC.W mgv_object_face106_lines_number-1 ; Anzahl der Linien
 
-; ** 107. Fläche **
+; 107. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face107_color 	; Farbe der Fläche
 	DC.W mgv_object_face107_lines_number-1 ; Anzahl der Linien
-; ** 108. Fläche **
+; 108. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face108_color 	; Farbe der Fläche
 	DC.W mgv_object_face108_lines_number-1 ; Anzahl der Linien
-; ** 109. Fläche **
+; 109. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face109_color 	; Farbe der Fläche
 	DC.W mgv_object_face109_lines_number-1 ; Anzahl der Linien
 
-; ** 110. Fläche **
+; 110. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face110_color 	; Farbe der Fläche
 	DC.W mgv_object_face110_lines_number-1 ; Anzahl der Linien
-; ** 111. Fläche **
+; 111. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face111_color 	; Farbe der Fläche
 	DC.W mgv_object_face111_lines_number-1 ; Anzahl der Linien
-; ** 112. Fläche **
+; 112. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face112_color 	; Farbe der Fläche
 	DC.W mgv_object_face112_lines_number-1 ; Anzahl der Linien
 
 
-; ** 113. Fläche **
+; 113. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face113_color 	; Farbe der Fläche
 	DC.W mgv_object_face113_lines_number-1 ; Anzahl der Linien
 
-; ** 114. Fläche **
+; 114. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face114_color 	; Farbe der Fläche
 	DC.W mgv_object_face114_lines_number-1 ; Anzahl der Linien
 
-; ** 115. Fläche **
+; 115. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face115_color 	; Farbe der Fläche
 	DC.W mgv_object_face115_lines_number-1 ; Anzahl der Linien
 
-; ** 116. Fläche **
+; 116. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face116_color 	; Farbe der Fläche
 	DC.W mgv_object_face116_lines_number-1 ; Anzahl der Linien
 
-; ** 117. Fläche **
+; 117. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face117_color 	; Farbe der Fläche
 	DC.W mgv_object_face117_lines_number-1 ; Anzahl der Linien
 
-; ** 118. Fläche **
+; 118. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face118_color 	; Farbe der Fläche
 	DC.W mgv_object_face118_lines_number-1 ; Anzahl der Linien
 
-; ** 119. Fläche **
+; 119. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face119_color 	; Farbe der Fläche
 	DC.W mgv_object_face119_lines_number-1 ; Anzahl der Linien
 
-; ** 120. Fläche **
+; 120. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face120_color 	; Farbe der Fläche
 	DC.W mgv_object_face120_lines_number-1 ; Anzahl der Linien
 
-; ** 121. Fläche **
+; 121. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face121_color 	; Farbe der Fläche
 	DC.W mgv_object_face121_lines_number-1 ; Anzahl der Linien
 
-; ** 122. Fläche **
+; 122. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face122_color 	; Farbe der Fläche
 	DC.W mgv_object_face122_lines_number-1 ; Anzahl der Linien
 
-; ** 123. Fläche **
+; 123. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face123_color 	; Farbe der Fläche
 	DC.W mgv_object_face123_lines_number-1 ; Anzahl der Linien
 
-; ** 124. Fläche **
+; 124. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face124_color 	; Farbe der Fläche
 	DC.W mgv_object_face124_lines_number-1 ; Anzahl der Linien
 
-; ** 125. Fläche **
+; 125. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face125_color 	; Farbe der Fläche
 	DC.W mgv_object_face125_lines_number-1 ; Anzahl der Linien
 
-; ** 126. Fläche **
+; 126. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face126_color 	; Farbe der Fläche
 	DC.W mgv_object_face126_lines_number-1 ; Anzahl der Linien
 
-; ** 127. Fläche **
+; 127. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face127_color 	; Farbe der Fläche
 	DC.W mgv_object_face127_lines_number-1 ; Anzahl der Linien
 
-; ** 128. Fläche **
+; 128. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object_face128_color 	; Farbe der Fläche
 	DC.W mgv_object_face128_lines_number-1 ; Anzahl der Linien

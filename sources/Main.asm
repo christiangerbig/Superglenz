@@ -1,14 +1,7 @@
-; Programm:	Main
-; Autor:	Christian Gerbig
-; Datum:	17.09.2024
-; Version:	1.5 beta
-
-
 ; Requirements
-; CPU:		68020+
-; Fast-Memory:	-
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 ; History/Changes
@@ -52,8 +45,6 @@
 ; V.1.6
 ; - Mit Acemans Modul "Voyage Fantastique" als Probe
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -218,7 +209,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -227,7 +217,6 @@ cl2_size2			EQU 0
 cl2_size3			EQU copperlist2_size
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -268,6 +257,9 @@ spr7_y_size2			EQU 0
 	INCLUDE "variables-offsets.i"
 
 variables_size RS.B 0
+
+
+	SECTION code,CODE
 
 
 	INCLUDE "sys-wrapper.i"
@@ -356,7 +348,10 @@ nop_second_copperlist		DC.L 0
 	INCLUDE "error-texts.i"
 
 
-	DC.B "$VER: RSE-Superglenz 1.6 beta (9.3.25)",0
+	DC.B "$VER: "
+	DC.B "RSE-Superglenz "
+	DC.B "1.6 beta "
+	DC.B "(9.3.25)",0
 	EVEN
 
 	END

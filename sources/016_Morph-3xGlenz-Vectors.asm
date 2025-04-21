@@ -1,14 +1,13 @@
-; Programm:	016_Morph-Glenz-3xVectors
-; Autor:	Christian Gerbig
-; Datum:	17.04.2024
-; Version:	1.0
+; 016_Morph-Glenz-3xVectors
+; Christian Gerbig
+; 17.04.2024
+; 1.0
 
 
 ; Requirements
-; CPU:		68020+
-; Fast-Memory:	-
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 ; Morphendes 3x20-Flächen-Glenz auf einem 144x144 Screen.
@@ -17,8 +16,6 @@
 ; Das Playfield ist auf 64 kB aligned damit Blitter-High-Pointer der
 ; Linien-Blits nur 1x initialisiert werden müssen.
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -177,7 +174,7 @@ cl2_vstart			EQU beam_position&$ff
 
 sine_table_length		EQU 512
 
-; **** Morph-Glenz-Vectors****
+; Morph-Glenz-Vectors
 mgv_rot_d			EQU 512
 mgv_rot_xy_center		EQU visible_lines_number/2
 mgv_rot_x_angle_speed		EQU 1
@@ -406,21 +403,21 @@ mgv_object3_shape7_y_rot_speed 	EQU 0
 mgv_object3_shape7_z_rot_speed 	EQU -4
 mgv_morph_shape7_delay		EQU 2*PAL_FPS
 
-; **** Fill-Blit ****
+; Fill-Blit
 mgv_fill_blit_x_size		EQU visible_pixels_number
 mgv_fill_blit_y_size		EQU visible_lines_number
 mgv_fill_blit_depth		EQU pf1_depth3
 
-; **** Scroll-Playfield-Bottom ****
+; Scroll-Playfield-Bottom
 spb_min_vstart			EQU VSTART_144_LINES
 spb_max_vstop			EQU VSTOP_OVERSCAN_PAL
 spb_y_radius			EQU spb_max_vstop-spb_min_vstart
 spb_y_centre			EQU spb_max_vstop-spb_min_vstart
 
-; **** Scroll-Playfield-Bottom-In ****
+; Scroll-Playfield-Bottom-In
 spbi_y_angle_speed		EQU 4
 
-; **** Scroll-Playfield-Bottom-Out ****
+; Scroll-Playfield-Bottom-Out
 spbo_y_angle_speed		EQU 5
 
 
@@ -431,6 +428,38 @@ spbo_y_angle_speed		EQU 5
 
 
 	INCLUDE "sprite-attributes.i"
+
+
+; Morph-Glenz-Vectors
+	RSRESET
+
+object_info			RS.B 0
+
+object_info_edges		RS.L 1
+object_info_face_color		RS.W 1
+object_info_lines_number	RS.W 1
+
+object_info_size		RS.B 0
+
+	RSRESET
+
+morph_shape			RS.B 0
+
+morph_shape_object1_edges	RS.L 1
+morph_shape_object2_edges	RS.L 1
+morph_shape_object3_edges	RS.L 1
+morph_shape_object1_x_rot_speed	RS.W 1
+morph_shape_object1_y_rot_speed	RS.W 1
+morph_shape_object1_z_rot_speed	RS.W 1
+morph_shape_object2_x_rot_speed	RS.W 1
+morph_shape_object2_y_rot_speed	RS.W 1
+morph_shape_object2_z_rot_speed	RS.W 1
+morph_shape_object3_x_rot_speed	RS.W 1
+morph_shape_object3_y_rot_speed	RS.W 1
+morph_shape_object3_z_rot_speed	RS.W 1
+morph_shape_delay		RS.W 1
+
+morph_shape_size		RS.B 0
 
 
 	RSRESET
@@ -502,7 +531,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU 0
@@ -511,7 +539,6 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -553,7 +580,7 @@ spr7_y_size2			EQU 0
 
 save_a7				RS.L 1
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 mgv_rot_x_angle			RS.W 1
 mgv_rot_y_angle			RS.W 1
 mgv_rot_z_angle			RS.W 1
@@ -590,53 +617,25 @@ mgv_morph_active		RS.W 1
 mgv_morph_shapes_table_start	RS.W 1
 mgv_morph_delay_counter		RS.W 1
 
-; **** Scroll-Playfield-Bottom-In ****
+; Scroll-Playfield-Bottom-In
 spbi_active			RS.W 1
 spbi_y_angle			RS.W 1
 
-; **** Scroll-Playfield-Bottom-out ****
+; Scroll-Playfield-Bottom-out
 spbo_active			RS.W 1
 spbo_y_angle			RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
-; **** Morph-Glenz-Vectors ****
-	RSRESET
-
-object_info			RS.B 0
-
-object_info_edges		RS.L 1
-object_info_face_color		RS.W 1
-object_info_lines_number	RS.W 1
-
-object_info_size		RS.B 0
-
-	RSRESET
-
-morph_shape			RS.B 0
-
-morph_shape_object1_edges	RS.L 1
-morph_shape_object2_edges	RS.L 1
-morph_shape_object3_edges	RS.L 1
-morph_shape_object1_x_rot_speed	RS.W 1
-morph_shape_object1_y_rot_speed	RS.W 1
-morph_shape_object1_z_rot_speed	RS.W 1
-morph_shape_object2_x_rot_speed	RS.W 1
-morph_shape_object2_y_rot_speed	RS.W 1
-morph_shape_object2_z_rot_speed	RS.W 1
-morph_shape_object3_x_rot_speed	RS.W 1
-morph_shape_object3_y_rot_speed	RS.W 1
-morph_shape_object3_z_rot_speed	RS.W 1
-morph_shape_delay		RS.W 1
-
-morph_shape_size		RS.B 0
+	SECTION code,CODE
 
 
 start_016_morph_3xglenz_vectors
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -644,7 +643,7 @@ start_016_morph_3xglenz_vectors
 	CNOP 0,4
 init_main_variables
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 	moveq	#TRUE,d0
 	move.w	d0,mgv_rot_x_angle(a3)
 	move.w	d0,mgv_rot_y_angle(a3)
@@ -691,15 +690,15 @@ init_main_variables
 		move.w	#1,mgv_morph_delay_counter(a3) ; Delay-Counter aktivieren
 	ENDC 
 
-; **** Scroll-Playfield-Bottom-In ****
+; Scroll-Playfield-Bottom-In
 	move.w	d0,spbi_active(a3)
 	move.w	d0,spbi_y_angle(a3) 	; 0 Grad
 
-; **** Scroll-Playfield-Bottom-Out ****
+; Scroll-Playfield-Bottom-Out
 	move.w	d1,spbo_active(a3)
 	move.w	#sine_table_length/4,spbo_y_angle(a3) ; 90 Grad
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -715,7 +714,7 @@ init_main
 	bsr	spb_init_display_window
 	bra	init_second_copperlist
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 	CNOP 0,4
 mgv_init_objects_info
 	lea	mgv_objects_info+object_info_edges(pc),a0
@@ -732,11 +731,10 @@ mgv_init_objects_info
 	CNOP 0,4
 mgv_init_objects_info_loop
 ; Inöput
-; d7.w	... Anzahl der Flächen
-; a0	... Object-Info-Tabelle
-; a1	... Tabelle mit Eckpunkten
+; d7.w	Anzahl der Flächen
+; a0.l	Object-Info-Tabelle
+; a1.l	Tabelle mit Eckpunkten
 ; Result
-; d0.l	... kein Rückgabewert
 	move.w	object_info_lines_number(a0),d0
 	addq.w	#1+1,d0			; Anzahl der Eckpunkte
 	move.l	a1,(a0)			; Zeiger auf Tabelle mit Eckpunkten eintragen
@@ -876,7 +874,7 @@ mgv_init_morph_shapes
 		CNOP 0,4
 mgv_init_start_shape
 		bsr	mgv_morph_objects
-		tst.w	mgv_morph_active(a3) ; Morphing beendet?
+		tst.w	mgv_morph_active(a3) ; Morphing beendet ?
 		beq.s	mgv_init_start_shape
 		rts
 	ENDC
@@ -885,22 +883,22 @@ mgv_init_start_shape
 mgv_init_color_table
 	lea	pf1_rgb8_color_table(pc),a0
 	lea	mgv_rgb8_color_table(pc),a1
-; ** Reinfarben des 1. Glenz **
+; Reinfarben des 1. Glenz
 	move.l	(a1)+,QUADWORD_SIZE(a0) ; COLOR02
 	move.l	(a1)+,3*LONGWORD_SIZE(a0) ; COLOR03
 	move.l	(a1)+,4*LONGWORD_SIZE(a0) ; COLOR04
 	move.l	(a1)+,5*LONGWORD_SIZE(a0) ; COLOR05
-; ** Reinfarben des 2. Glenz **
+; Reinfarben des 2. Glenz
 	move.l	(a1)+,8*LONGWORD_SIZE(a0) ; COLOR08
 	move.l	(a1)+,9*LONGWORD_SIZE(a0) ; COLOR09
 	move.l	(a1)+,16*LONGWORD_SIZE(a0) ; COLOR16
 	move.l	(a1)+,17*LONGWORD_SIZE(a0) ; COLOR17
-; ** Reinfarben des 3. Glenz **
+; Reinfarben des 3. Glenz
 	move.l	(a1)+,32*LONGWORD_SIZE(a0) ; COLOR32
 	move.l	(a1)+,33*LONGWORD_SIZE(a0) ; COLOR33
 	move.l	(a1)+,64*LONGWORD_SIZE(a0) ; COLOR64
 	move.l	(a1),65*LONGWORD_SIZE(a0) ; COLOR65
-; ** Mischfarben aus 1. und 2. Glenz **
+; Mischfarben aus 1. und 2. Glenz
 	moveq	#2,d6			; COLOR02
 	moveq	#8,d7			; COLOR08
 	bsr	mgv_get_colorvalues_average
@@ -953,7 +951,7 @@ mgv_init_color_table
 	moveq	#16,d6			; COLOR16
 	moveq	#14,d7			; COLOR14
 	bsr	mgv_get_colorvalues_average
-; ** Mischfarben aus 1. und 3. Glenz **
+; Mischfarben aus 1. und 3. Glenz
 	moveq	#2,d6			; COLOR02
 	moveq	#32,d7			; COLOR32
 	bsr	mgv_get_colorvalues_average
@@ -984,7 +982,7 @@ mgv_init_color_table
 	moveq	#5,d6			; COLOR05
 	moveq	#65,d7			; COLOR65
 	bsr	mgv_get_colorvalues_average
-; ** Mischfarben aus 2. und 3. Glenz **
+; Mischfarben aus 2. und 3. Glenz
 	moveq	#08,d6			; COLOR08
 	moveq	#32,d7			; COLOR32
 	bsr	mgv_get_colorvalues_average
@@ -1018,7 +1016,7 @@ mgv_init_color_table
 	moveq	#17,d6			; COLOR17
 	moveq	#65,d7			; COLOR65
 	bsr	mgv_get_colorvalues_average
-; ** Mischfarben aus 1., 2. und 3. Glenz **
+; Mischfarben aus 1., 2. und 3. Glenz
 	moveq	#32,d6			; COLOR32
 	moveq	#10,d7			; COLOR10
 	bsr	mgv_get_colorvalues_average
@@ -1208,11 +1206,10 @@ mgv_init_color_table
 	CNOP 0,4
 mgv_get_colorvalues_average
 ; Input
-; d6.w	... 1. Quellfarbnumbermer
-; d7.w	... 2. Quellfarbnumbermer
-; a0	... Farbtablelle mit RGB8-Werten
+; d6.w	1. Quellfarbnumbermer
+; d7.w	2. Quellfarbnumbermer
+; a0.l	Farbtablelle mit RGB8-Werten
 ; Result
-; d0.l	... Kein Rückgabewert
 	moveq	#0,d0
 	move.b	1(a0,d6.w*4),d0		; 1. Quellfarbe Rotanteil
 	moveq	#0,d1
@@ -1460,21 +1457,21 @@ mgv_pre_rotate_objects
 	MULUF.W morph_shape_size,d0,d1 ; Offset in Morph-Shapes-Tabelle
 	lea	mgv_morph_shapes(pc),a4
 	add.l	d0,a4
-; ** Objekt 1 **
+; Objekt 1
 	move.l	(a4)+,a0		; Koordinaten des Objekts
 	lea	mgv_object1_coords(pc),a1 ; Ziel-Koord.-Tab.
 	lea	mgv_object1_x_pre_rot_angle(a3),a5
 	lea	mgv_object1_x_pre_rot_speed(a3),a6
 	moveq	#mgv_object1_edge_points_number-1,d7
 	bsr.s	mgv_pre_rotation
-; ** Objekt 2 **
+; Objekt 2
 	move.l	(a4)+,a0		; Koordinaten des Objekts
 	lea	mgv_object2_coords(pc),a1 ; Ziel-Koord.-Tab.
 	lea	mgv_object2_x_pre_rot_angle(a3),a5
 	lea	mgv_object2_x_pre_rot_speed(a3),a6
 	moveq	#mgv_object2_edge_points_number-1,d7
 	bsr.s	mgv_pre_rotation
-; ** Objekt 3 **
+; Objekt 3
 	move.l	(a4),a0			; Koordinaten des Objekts
 	lea	mgv_object3_coords(pc),a1 ; Ziel-Koord.-Tab.
 	lea	mgv_object3_x_pre_rot_angle(a3),a5
@@ -1489,13 +1486,12 @@ mgv_pre_rotate_objects_quit
 	CNOP 0,4
 mgv_pre_rotation
 ; Input
-; d7.w	... Anzahl der Punkte
-; a0	... Zeiger auf Koodinaten des Objekts
-; a1	... Zeiger auf Ziel-Koordinaten
-; a5	... Zeiger auf Variable x_rot_angle
-; a6	... Zeiger auf Variable variable_x_rot_speed
+; d7.w	Anzahl der Punkte
+; a0.l	Zeiger auf Koodinaten des Objekts
+; a1.l	Zeiger auf Ziel-Koordinaten
+; a5.l	Zeiger auf Variable x_rot_angle
+; a6.l	Zeiger auf Variable variable_x_rot_speed
 ; Result
-; d0.l	... kein Rückgabewert
 	move.w	(a5),d1			; X-Winkel
 	move.w	d1,d0		
 	lea	sine_table,a2	
@@ -1583,16 +1579,16 @@ mgv_rotate_objects
 	addq.w	#mgv_rot_z_angle_speed,d1 ; nächster Z-Winkel
 	and.w	d3,d1			; Übertrag entfernen
 	move.w	d1,mgv_rot_z_angle(a3) 
-; ** Objekt 1 **
+; Objekt 1
 	lea	mgv_object1_coords(pc),a0
 	lea	mgv_rot_xy_coords(pc),a1
 	moveq	#mgv_object1_edge_points_number-1,d7
 	bsr.s	mgv_rotation
-; ** Objekt 2 **
+; Objekt 2
 	lea	mgv_object2_coords(pc),a0
 	moveq	#mgv_object2_edge_points_number-1,d7
 	bsr.s	mgv_rotation
-; ** Objekt 3 **
+; Objekt 3
 	lea	mgv_object3_coords(pc),a0
 	moveq	#mgv_object3_edge_points_number-1,d7
 	bsr.s	mgv_rotation
@@ -1611,7 +1607,7 @@ mgv_rot_loop
 	ROTATE_X_AXIS
 	ROTATE_Y_AXIS
 	ROTATE_Z_AXIS
-; ** Zentralprojektion und Translation **
+; Zentralprojektion und Translation
 	MULSF.W mgv_rot_d,d0,d3 	; X-Projektion
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
@@ -1688,11 +1684,10 @@ mgv_morph_objects_quit
 	CNOP 0,4
 mgv_morph_objects_loop
 ; Input
-; d7.w	... Anzahl der Koordinaten
-; a0	... Aktuelle Objektdaten
-; a1	... Ziel-Objektdaten
+; d7.w	Anzahl der Koordinaten
+; a0.l	Aktuelle Objektdaten
+; a1.l	Ziel-Objektdaten
 ; Result
-; d0.l	... kein Rückgabewert
 	move.w	(a0),d0			; aktuelle Koordinate
 	cmp.w	(a1)+,d0		; mit Ziel-Koordinate vergleichen
 	beq.s	mgv_morph_objects_skip5
@@ -1727,7 +1722,7 @@ mgv_draw_lines
 	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; Minterm Linien
 	MOVEF.W mgv_objects_faces_number-1,d7
 mgv_draw_lines_loop1
-; ** Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen **
+; Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen
 	move.l	(a0)+,a5		; Zeiger auf Startwerte der Punkte
 	move.w	(a5),d4			; P1-Startwert
 	move.w	2(a5),d5		; P2-Startwert
@@ -1963,27 +1958,27 @@ pf1_rgb8_color_table
 		DC.L color00_bits
 	ENDR
 
-; **** Morph-Glenz-Vectors ****
+; Morph-Glenz-Vectors
 	CNOP 0,4
 mgv_rgb8_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/3xGlenz-Colorgradient.ct"
 
 	CNOP 0,2
 mgv_object1_coords
-; ** Zoom-In **
+; Zoom-In
 	DS.W mgv_object1_edge_points_number*3
 	CNOP 0,2
 mgv_object2_coords
-; ** Zoom-In **
+; Zoom-In
 	DS.W mgv_object2_edge_points_number*3
 	CNOP 0,2
 mgv_object3_coords
-; ** Zoom-In **
+; Zoom-In
 	DS.W mgv_object3_edge_points_number*3
-; ** Form 1 **
+; Form 1
 	CNOP 0,2
 mgv_object1_shape1_coords
-; ** Pyramide **
+; Pyramide
 	DC.W 0,-(38*8),-(10*8)		; P0
 	DC.W 19*8,0,-(24*8)		; P1
 	DC.W 38*8,38*8,-(38*8)		; P2
@@ -1998,16 +1993,16 @@ mgv_object1_shape1_coords
 	DC.W -(19*8),0,24*8		; P11
 	CNOP 0,2
 mgv_object2_shape1_coords
-; ** Kein Objekt **
+; Kein Objekt
 	DS.W mgv_object2_edge_points_number*3
 	CNOP 0,2
 mgv_object3_shape1_coords
-; ** Kein Objekt **
+; Kein Objekt
 	DS.W mgv_object2_edge_points_number*3
-; ** Form 2 **
+; Form 2
 	CNOP 0,2
 mgv_object1_shape2_coords
-; ** Pyramide 70 % **
+; Pyramide 70 %
 	DC.W 0,-(38*8),-(10*8)		; P0
 	DC.W 19*8,0,-(24*8)		; P1
 	DC.W 38*8,38*8,-(38*8)		; P2
@@ -2022,7 +2017,7 @@ mgv_object1_shape2_coords
 	DC.W -(19*8),0,24*8		; P11
 	CNOP 0,2
 mgv_object2_shape2_coords
-; ** Pyramide 50 % **
+; Pyramide 50 %
 	DC.W 0,-(27*8),-(7*8)		; P0
 	DC.W 14*8,0,-(17*8)		; P1
 	DC.W 27*8,27*8,-(27*8)		; P2
@@ -2037,12 +2032,12 @@ mgv_object2_shape2_coords
 	DC.W -(14*8),0,17*8		; P11
 	CNOP 0,2
 mgv_object3_shape2_coords
-; ** Kein Objekt **
+; Kein Objekt
 	DS.W mgv_object2_edge_points_number*3
-; ** Form 3 **
+; Form 3
 	CNOP 0,2
 mgv_object1_shape3_coords
-; ** Pyramide 70% **
+; Pyramide 70%
 	DC.W 0,-(38*8),-(10*8)		; P0
 	DC.W 19*8,0,-(24*8)		; P1
 	DC.W 38*8,38*8,-(38*8)		; P2
@@ -2057,7 +2052,7 @@ mgv_object1_shape3_coords
 	DC.W -(19*8),0,24*8		; P11
 	CNOP 0,2
 mgv_object2_shape3_coords
-; ** Pyramide 50 % **
+; Pyramide 50 %
 	DC.W 0,-(27*8),-(7*8)		; P0
 	DC.W 14*8,0,-(17*8)		; P1
 	DC.W 27*8,27*8,-(27*8)		; P2
@@ -2072,7 +2067,7 @@ mgv_object2_shape3_coords
 	DC.W -(14*8),0,17*8		; P11
 	CNOP 0,2
 mgv_object3_shape3_coords
-; ** Pyramide 30 % **
+; Pyramide 30 %
 	DC.W 0,-(17*8),-(4*8)		; P0
 	DC.W 8*8,0,-(10*8)		; P1
 	DC.W 17*8,17*8,-(17*8)		; P2
@@ -2085,10 +2080,10 @@ mgv_object3_shape3_coords
 	DC.W 0,17*8,17*8		; P9
 	DC.W -(17*8),17*8,17*8		; P10
 	DC.W -(8*8),0,10*8		; P11
-; ** Form 4 **
+; Form 4
 	CNOP 0,2
 mgv_object1_shape4_coords
-; ** Polygon 50 % **
+; Polygon 50 %
 	DC.W 0,-(23*8),7*8		; P0
 	DC.W 12*8,0,7*8			; P1
 	DC.W 23*8,23*8,7*8		; P2
@@ -2103,7 +2098,7 @@ mgv_object1_shape4_coords
 	DC.W -(12*8),0,23*8		; P11
 	CNOP 0,2
 mgv_object2_shape4_coords
-; ** Polygon2 70 % **
+; Polygon2 70 %
 	DC.W 0,-(38*8),-(19*8)		; P0
 	DC.W 58*8,0,-(38*8)		; P1
 	DC.W 39*8,38*8,-(19*8)		; P2
@@ -2118,7 +2113,7 @@ mgv_object2_shape4_coords
 	DC.W -(58*8),0,38*8		; P11
 	CNOP 0,2
 mgv_object3_shape4_coords
-; ** Polygon 50 % **
+; Polygon 50 %
 	DC.W 0,-(23*8),-(23*8)		; P24
 	DC.W 12*8,0,-(23*8)		; P25
 	DC.W 23*8,23*8,-(23*8)		; P26
@@ -2131,10 +2126,10 @@ mgv_object3_shape4_coords
 	DC.W 0,23*8,-(7*8)		; P33
 	DC.W -(23*8),23*8,-(7*8)	; P34
 	DC.W -(12*8),0,-(7*8)		; P35
-; ** Form 5 **
+; Form 5
 	CNOP 0,2
 mgv_object1_shape5_coords
-; ** Polygon 100% **
+; Polygon 100%
 	DC.W 0,-(46*8),-(19*8)		; P0
 	DC.W 23*8,0,-(19*8)		; P1
 	DC.W 46*8,46*8,-(19*8)		; P2
@@ -2149,7 +2144,7 @@ mgv_object1_shape5_coords
 	DC.W -(23*8),0,19*8		; P11
 	CNOP 0,2
 mgv_object2_shape5_coords
-; ** Polygon 100 % **
+; Polygon 100 %
 	DC.W 0,-(46*8),-(19*8)		; P12
 	DC.W 23*8,0,-(19*8)		; P13
 	DC.W 46*8,46*8,-(19*8)		; P14
@@ -2164,7 +2159,7 @@ mgv_object2_shape5_coords
 	DC.W -(23*8),0,19*8		; P23
 	CNOP 0,2
 mgv_object3_shape5_coords
-; ** Polygon 100 % **
+; Polygon 100 %
 	DC.W 0,-(46*8),-(19*8)		; P24
 	DC.W 23*8,0,-(19*8)		; P25
 	DC.W 46*8,46*8,-(19*8)		; P26
@@ -2177,10 +2172,10 @@ mgv_object3_shape5_coords
 	DC.W 0,46*8,19*8		; P33
 	DC.W -(46*8),46*8,19*8		; P34
 	DC.W -(23*8),0,19*8		; P35
-; ** Form 6 **
+; Form 6
 	CNOP 0,2
 mgv_object1_shape6_coords
-; ** Polygon 80% **
+; Polygon 80%
 	DC.W 0,-(37*8),28*8		; P0
 	DC.W 19*8,0,28*8		; P1
 	DC.W 37*8,37*8,28*8		; P2
@@ -2195,7 +2190,7 @@ mgv_object1_shape6_coords
 	DC.W -(19*8),0,45*8		; P11
 	CNOP 0,2
 mgv_object2_shape6_coords
-; ** Polygon 80% **
+; Polygon 80%
 	DC.W 0,-(37*8),-(9*8)		; P0
 	DC.W 19*8,0,-(9*8)		; P1
 	DC.W 37*8,37*8,-(9*8)		; P2
@@ -2210,7 +2205,7 @@ mgv_object2_shape6_coords
 	DC.W -(19*8),0,9*8		; P11
 	CNOP 0,2
 mgv_object3_shape6_coords
-; ** Polygon 80% **
+; Polygon 80%
 	DC.W 0,-(37*8),-(45*8)		; P0
 	DC.W 19*8,0,-(45*8)		; P1
 	DC.W 37*8,37*8,-(45*8)		; P2
@@ -2224,284 +2219,284 @@ mgv_object3_shape6_coords
 	DC.W -(37*8),37*8,-(28*8)	; P10
 	DC.W -(19*8),0,-(28*8)		; P11
 	IFNE mgv_morph_loop_enabled
-; ** Form 7 **
+; Form 7
 		CNOP 0,2
 mgv_object1_shape7_coords
-; ** Zoom-Out **
+; Zoom-Out
 		DS.W mgv_object1_edge_points_number*3
 		CNOP 0,2
 mgv_object2_shape7_coords
-; ** Zoom-Out **
+; Zoom-Out
 		DS.W mgv_object2_edge_points_number*3
 		CNOP 0,2
 mgv_object3_shape7_coords
-; ** Zoom-Out **
+; Zoom-Out
 		DS.W mgv_object3_edge_points_number*3
 	ENDC
 
 	CNOP 0,4
 mgv_objects_info
-; ** Objekt 1 **
-; ** 1. Fläche **
+; Objekt 1
+; 1. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face1_color	; Farbe der Fläche
 	DC.W mgv_object1_face1_lines_number-1 ; Anzahl der Linien
-; ** 2. Fläche **
+; 2. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face2_color 	; Farbe der Fläche
 	DC.W mgv_object1_face2_lines_number-1 ; Anzahl der Linien
-; ** 3. Fläche **
+; 3. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face3_color 	; Farbe der Fläche
 	DC.W mgv_object1_face3_lines_number-1 ; Anzahl der Linien
-; ** 4. Fläche **
+; 4. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face4_color 	; Farbe der Fläche
 	DC.W mgv_object1_face4_lines_number-1 ; Anzahl der Linien
 
-; ** 5. Fläche **
+; 5. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face5_color 	; Farbe der Fläche
 	DC.W mgv_object1_face5_lines_number-1 ; Anzahl der Linien
-; ** 6. Fläche **
+; 6. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face6_color 	; Farbe der Fläche
 	DC.W mgv_object1_face6_lines_number-1 ; Anzahl der Linien
-; ** 7. Fläche **
+; 7. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face7_color 	; Farbe der Fläche
 	DC.W mgv_object1_face7_lines_number-1 ; Anzahl der Linien
-; ** 8. Fläche **
+; 8. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face8_color 	; Farbe der Fläche
 	DC.W mgv_object1_face8_lines_number-1 ; Anzahl der Linien
 
-; ** 9. Fläche **
+; 9. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face9_color 	; Farbe der Fläche
 	DC.W mgv_object1_face9_lines_number-1 ; Anzahl der Linien
-; ** 10. Fläche **
+; 10. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face10_color 	; Farbe der Fläche
 	DC.W mgv_object1_face10_lines_number-1 ; Anzahl der Linien
-; ** 11. Fläche **
+; 11. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face11_color 	; Farbe der Fläche
 	DC.W mgv_object1_face11_lines_number-1 ; Anzahl der Linien
-; ** 12. Fläche **
+; 12. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face12_color 	; Farbe der Fläche
 	DC.W mgv_object1_face12_lines_number-1 ; Anzahl der Linien
 
-; ** 13. Fläche **
+; 13. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face13_color 	; Farbe der Fläche
 	DC.W mgv_object1_face13_lines_number-1 ; Anzahl der Linien
-; ** 14. Fläche **
+; 14. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face14_color 	; Farbe der Fläche
 	DC.W mgv_object1_face14_lines_number-1 ; Anzahl der Linien
-; ** 15. Fläche **
+; 15. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face15_color 	; Farbe der Fläche
 	DC.W mgv_object1_face15_lines_number-1 ; Anzahl der Linien
-; ** 16. Fläche **
+; 16. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face16_color 	; Farbe der Fläche
 	DC.W mgv_object1_face16_lines_number-1 ; Anzahl der Linien
 
-; ** 17. Fläche **
+; 17. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face17_color 	; Farbe der Fläche
 	DC.W mgv_object1_face17_lines_number-1 ; Anzahl der Linien
-; ** 18. Fläche **
+; 18. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face18_color 	; Farbe der Fläche
 	DC.W mgv_object1_face18_lines_number-1 ; Anzahl der Linien
-; ** 19. Fläche **
+; 19. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face19_color 	; Farbe der Fläche
 	DC.W mgv_object1_face19_lines_number-1 ; Anzahl der Linien
-; ** 20. Fläche **
+; 20. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object1_face20_color 	; Farbe der Fläche
 	DC.W mgv_object1_face20_lines_number-1 ; Anzahl der Linien
 
-; ** Objekt 2 **
-; ** 1. Fläche **
+; Objekt 2
+; 1. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face1_color 	; Farbe der Fläche
 	DC.W mgv_object2_face1_lines_number-1 ; Anzahl der Linien
-; ** 2. Fläche **
+; 2. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face2_color 	; Farbe der Fläche
 	DC.W mgv_object2_face2_lines_number-1 ; Anzahl der Linien
-; ** 3. Fläche **
+; 3. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face3_color 	; Farbe der Fläche
 	DC.W mgv_object2_face3_lines_number-1 ; Anzahl der Linien
-; ** 4. Fläche **
+; 4. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face4_color 	; Farbe der Fläche
 	DC.W mgv_object2_face4_lines_number-1 ; Anzahl der Linien
 
-; ** 5. Fläche **
+; 5. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face5_color 	; Farbe der Fläche
 	DC.W mgv_object2_face5_lines_number-1 ; Anzahl der Linien
-; ** 6. Fläche **
+; 6. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face6_color 	; Farbe der Fläche
 	DC.W mgv_object2_face6_lines_number-1 ; Anzahl der Linien
-; ** 7. Fläche **
+; 7. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face7_color 	; Farbe der Fläche
 	DC.W mgv_object2_face7_lines_number-1 ; Anzahl der Linien
-; ** 8. Fläche **
+; 8. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face8_color 	; Farbe der Fläche
 	DC.W mgv_object2_face8_lines_number-1 ; Anzahl der Linien
 
-; ** 9. Fläche **
+; 9. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face9_color 	; Farbe der Fläche
 	DC.W mgv_object2_face9_lines_number-1 ; Anzahl der Linien
-; ** 10. Fläche **
+; 10. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face10_color 	; Farbe der Fläche
 	DC.W mgv_object2_face10_lines_number-1 ; Anzahl der Linien
-; ** 11. Fläche **
+; 11. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face11_color 	; Farbe der Fläche
 	DC.W mgv_object2_face11_lines_number-1 ; Anzahl der Linien
-; ** 12. Fläche **
+; 12. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face12_color 	; Farbe der Fläche
 	DC.W mgv_object2_face12_lines_number-1 ; Anzahl der Linien
 
-; ** 13. Fläche **
+; 13. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face13_color 	; Farbe der Fläche
 	DC.W mgv_object2_face13_lines_number-1 ; Anzahl der Linien
-; ** 14. Fläche **
+; 14. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face14_color 	; Farbe der Fläche
 	DC.W mgv_object2_face14_lines_number-1 ; Anzahl der Linien
-; ** 15. Fläche **
+; 15. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face15_color 	; Farbe der Fläche
 	DC.W mgv_object2_face15_lines_number-1 ; Anzahl der Linien
-; ** 16. Fläche **
+; 16. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face16_color 	; Farbe der Fläche
 	DC.W mgv_object2_face16_lines_number-1 ; Anzahl der Linien
 
-; ** 17. Fläche **
+; 17. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face17_color 	; Farbe der Fläche
 	DC.W mgv_object2_face17_lines_number-1 ; Anzahl der Linien
-; ** 18. Fläche **
+; 18. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face18_color 	; Farbe der Fläche
 	DC.W mgv_object2_face18_lines_number-1 ; Anzahl der Linien
-; ** 19. Fläche **
+; 19. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face19_color 	; Farbe der Fläche
 	DC.W mgv_object2_face19_lines_number-1 ; Anzahl der Linien
-; ** 20. Fläche **
+; 20. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object2_face20_color 	; Farbe der Fläche
 	DC.W mgv_object2_face20_lines_number-1 ; Anzahl der Linien
 
-; ** Objekt 3 **
-; ** 1. Fläche **
+; Objekt 3
+; 1. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face1_color 	; Farbe der Fläche
 	DC.W mgv_object3_face1_lines_number-1 ; Anzahl der Linien
-; ** 2. Fläche **
+; 2. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face2_color 	; Farbe der Fläche
 	DC.W mgv_object3_face2_lines_number-1 ; Anzahl der Linien
-; ** 3. Fläche **
+; 3. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face3_color 	; Farbe der Fläche
 	DC.W mgv_object3_face3_lines_number-1 ; Anzahl der Linien
-; ** 4. Fläche **
+; 4. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face4_color 	; Farbe der Fläche
 	DC.W mgv_object3_face4_lines_number-1 ; Anzahl der Linien
 
-; ** 5. Fläche **
+; 5. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face5_color 	; Farbe der Fläche
 	DC.W mgv_object3_face5_lines_number-1 ; Anzahl der Linien
-; ** 6. Fläche **
+; 6. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face6_color 	; Farbe der Fläche
 	DC.W mgv_object3_face6_lines_number-1 ; Anzahl der Linien
-; ** 7. Fläche **
+; 7. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face7_color 	; Farbe der Fläche
 	DC.W mgv_object3_face7_lines_number-1 ; Anzahl der Linien
-; ** 8. Fläche **
+; 8. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face8_color 	; Farbe der Fläche
 	DC.W mgv_object3_face8_lines_number-1 ; Anzahl der Linien
 
-; ** 9. Fläche **
+; 9. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face9_color 	; Farbe der Fläche
 	DC.W mgv_object3_face9_lines_number-1 ; Anzahl der Linien
-; ** 10. Fläche **
+; 10. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face10_color 	; Farbe der Fläche
 	DC.W mgv_object3_face10_lines_number-1 ; Anzahl der Linien
-; ** 11. Fläche **
+; 11. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face11_color 	; Farbe der Fläche
 	DC.W mgv_object3_face11_lines_number-1 ; Anzahl der Linien
-; ** 12. Fläche **
+; 12. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face12_color 	; Farbe der Fläche
 	DC.W mgv_object3_face12_lines_number-1 ; Anzahl der Linien
 
-; ** 13. Fläche **
+; 13. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face13_color 	; Farbe der Fläche
 	DC.W mgv_object3_face13_lines_number-1 ; Anzahl der Linien
-; ** 14. Fläche **
+; 14. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face14_color 	; Farbe der Fläche
 	DC.W mgv_object3_face14_lines_number-1 ; Anzahl der Linien
-; ** 15. Fläche **
+; 15. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face15_color 	; Farbe der Fläche
 	DC.W mgv_object3_face15_lines_number-1 ; Anzahl der Linien
-; ** 16. Fläche **
+; 16. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face16_color 	; Farbe der Fläche
 	DC.W mgv_object3_face16_lines_number-1 ; Anzahl der Linien
 
-; ** 17. Fläche **
+; 17. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face17_color 	; Farbe der Fläche
 	DC.W mgv_object3_face17_lines_number-1 ; Anzahl der Linien
-; ** 18. Fläche **
+; 18. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face18_color 	; Farbe der Fläche
 	DC.W mgv_object3_face18_lines_number-1 ; Anzahl der Linien
-; ** 19. Fläche **
+; 19. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face19_color 	; Farbe der Fläche
 	DC.W mgv_object3_face19_lines_number-1 ; Anzahl der Linien
-; ** 20. Fläche **
+; 20. Fläche
 	DC.L 0				; Zeiger auf Koords
 	DC.W mgv_object3_face20_color 	; Farbe der Fläche
 	DC.W mgv_object3_face20_lines_number-1 ; Anzahl der Linien
 
 	CNOP 0,2
 mgv_objects_edges
-; ** Objekt 1 **
+; Objekt 1
 	DC.W 0*2,1*2,5*2,0*2		; Flächen vorne
 	DC.W 1*2,2*2,3*2,1*2
 	DC.W 1*2,3*2,5*2,1*2
@@ -2526,7 +2521,7 @@ mgv_objects_edges
 	DC.W 3*2,9*2,10*2,3*2
 	DC.W 3*2,2*2,9*2,3*2
 	DC.W 2*2,8*2,9*2,2*2
-; ** Objekt 2 **
+; Objekt 2
 	DC.W 12*2,13*2,17*2,12*2	; Flächen vorne
 	DC.W 13*2,14*2,15*2,13*2
 	DC.W 13*2,15*2,17*2,13*2
@@ -2551,7 +2546,7 @@ mgv_objects_edges
 	DC.W 15*2,21*2,22*2,15*2
 	DC.W 15*2,14*2,21*2,15*2
 	DC.W 14*2,20*2,21*2,14*2
-; ** Objekt 3 **
+; Objekt 3
 	DC.W 24*2,25*2,29*2,24*2	; Flächen vorne
 	DC.W 25*2,26*2,27*2,25*2
 	DC.W 25*2,27*2,29*2,25*2
