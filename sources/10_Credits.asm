@@ -870,13 +870,13 @@ cl2_init_clear_blit
 	CNOP 0,4
 cl2_init_line_blits_steady
 	COP_WAITBLIT
-	COP_MOVEQ FALSE_WORD,BLTAFWM	; Keine Ausmaskierung
-	COP_MOVEQ FALSE_WORD,BLTALWM
+	COP_MOVEQ -1,BLTAFWM	; Keine Ausmaskierung
+	COP_MOVEQ -1,BLTALWM
 	COP_MOVEQ 0,BLTCPTH
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ extra_pf1_plane_width*extra_pf1_depth,BLTCMOD ; Moduli für interleaved Bitmap
 	COP_MOVEQ extra_pf1_plane_width*extra_pf1_depth,BLTDMOD
-	COP_MOVEQ FALSE_WORD,BLTBDAT	; Linientextur
+	COP_MOVEQ -1,BLTBDAT	; Linientextur
 	COP_MOVEQ $8000,BLTADAT		; Linientextur mit MSB beginnen
 	COP_MOVEQ 0,COP2LCH
 	COP_MOVEQ 0,COP2LCL
