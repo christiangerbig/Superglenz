@@ -7,43 +7,44 @@
 ; History/Changes
 
 ; V.1.0 Beta
-; - Erstes Release
+; - first release
 
 ; V.1.1 Beta
-; - Intro: Bugfix, Starterte des horizontal Faders waren dem Wert -1 zugewiesen
-; - Glenz-Parts 1-3: Bugfix, Für das 3. Playfield waren immer 100 Zeilen zu wenig angegeben -> Guru
-; - Glenz-Part4: Bugfix, Einscrollen jetzt nicht mehr mit Anzeigefehler, Es wurden von der CPU 8 Bytes zu viel gelöscht
-; - Glenz-Part5: Morphing-Delay bei 3. Form verkürzt
-; - Sub-Wrapper: Ist jetzt kein Wrapper mehr
-; - Bugfix, Fehlerabfrage, jetzt wird sofort bei einem Fehler der Glenz-Parts ausgestiegen
-; - Alle Module sind jetzt stumm
+; - Intro: Bugfix, Start values of horizontal faders were -1
+; - Glenz-Parts 1-3: Bugfix, for 3rd playfield missing 100 lines -> Guru
+; - Glenz-Part4: Bugfix, Scroll in without glitches. cpu cleared 8 bytes which were too much
+; - Glenz-Part5: Morphing delay 3rd shape shortened
+; - Sub-Wrapper: no more a wrapper
+; - Bugfix, error handling, exit immediately from any part
+; - all modules muted
 
 ; V.1.2 Beta
-; - Bugfix Spritefield-Display-Bug rechter Rand: Alle Sprites weitere 8 Pixel
-;   nach rechts (X+16).
-; - Neue Glenz-Parts: 48-Faces-Glenz + 128-Faces-Glenz.
+; - Bugfix spritefield display bug right border (all sprites X+16)
+; - New glenz parts: 48 faces glenz + 128 faces glenz
 
 ; V.1.3 Beta
-; - Bugfix: Intro-Part Y-Wrap-Befehl wurde nicht berücksichtigt -> Random-Speicherfehler.
-; - Alle Morphingsequenzen gekürzt und geändert.
-; - End-Part: Dual-Playfield mit Schatten für Abspann-Text.
+; - Bugfix: Intro-Part y wrap command was not considered -> random memory error
+; - All Morphing sequences shortened and changed
+; - End-Part: Dual playfield with shadow for font
 
 ; V.1.4 Beta
-; - End-Part: Cross-Fader für Glenz
-; - Mit überarbeiteten Include-Files (COPCON)
+; - End-Part: Cross fader for glenz
+; - With revised include files (COPCON)
 
 ; V.1.5 Beta
-; - Mit überarbeiteten Include-Dateien
-; - 1-Wrapper: Musik-Fader aktiviert, globale Variablen definiert
-; - Endpart: Magnetic Fox' Modul eingefügt, Vertical-Scroller steuert jetzt den Musik-Fader an.
-; - Global-FXStatus der Musik-Faders beendet das Demo
-; - Parts 013/014: Bewegungen geändert
-; - Bugfix: DIWSTRT/DIWSTOP/DIWHIGH werden für Playfield-Scroller vorinitialisiert,
-;   da LodView(NULL) DIWHIGH=$0000 setzt und sich die Werte von DIWSTRT/DIWHIGH
-;   durch das OS3.x ändern
+; - With revised include files
+; - 1-Wrapper: Music fader activated, global variables defined
+; - Endpart: Magnetic Fox' module included, Vertical-Scroller now triggers music fader.
+; - Global FX state of the music fader ends the demo
+; - Parts 013/014: Movements changed
+; - Bugfix: DIWSTRT/DIWSTOP/DIWHIGH will be pre-initialized, because OS3.x
+;   LoadView(NULL) sets DIWHIGH=$0000
 
-; V.1.6
-; - Mit Acemans Modul "Voyage Fantastique" als Probe
+; V.1.6 beta
+; - with Aceman's module "Voyage Fantastique" as a placeholder
+
+; V.1.7 beta
+; - with Grass' gfx for the intro part and a reduced size of the glenz
 
 
 	MC68040
@@ -308,7 +309,7 @@ init_second_copperlist
 	CNOP 0,4
 main
 	bsr	start_0_pt_replay
-	tst.l	d0			; Ist ein Fehler aufgetreten ?
+	tst.l	d0			; any error ?
 	beq.s	main_skip
 	rts
 	CNOP 0,4
@@ -350,8 +351,8 @@ nop_second_copperlist		DC.L 0
 
 	DC.B "$VER: "
 	DC.B "RSE-Superglenz "
-	DC.B "1.6 beta "
-	DC.B "(9.3.25)",0
+	DC.B "1.7 beta "
+	DC.B "(26.4.25)",0
 	EVEN
 
 	END

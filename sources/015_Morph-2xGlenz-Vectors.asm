@@ -1,20 +1,7 @@
-; 013_Morph-Glenz-2xVectors
-; Christian Gerbig
-; 17.04.2024
-; 1.0
-
-
-; Requirements
-; 68020+
-; AGA PAL
-; 3.0+
-
-
-; Morphendes 2x24-Flächen-Glenz auf einem 192x192-Screen.
-; Der Copper wartet auf den Blitter. 
-; Beam-Position-Timing wegen flexibler Ausführungszeit der Copperliste.
-; Das Playfield ist auf 64 kB aligned damit Blitter-High-Pointer der
-; Linien-Blits nur 1x initialisiert werden müssen.
+; Morphing 2x24 faces glenz on a 192x192 screen
+; Copper waits for blitter
+; Beam position timing
+; 64 kB aligned playfield
 
 
 	MC68040
@@ -74,7 +61,7 @@ requires_multiscan_monitor	EQU FALSE
 
 workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
-text_output_enabled 		EQU FALSE
+text_output_enabled	EQU FALSE
 
 mgv_count_lines_enabled		EQU FALSE
 mgv_premorph_enabled		EQU TRUE
@@ -327,7 +314,7 @@ mgv_morph_shapes_number		EQU 7
 mgv_morph_speed			EQU 8
 mgv_morph_delay			EQU 6*PAL_FPS
 
-; Form 1
+; Shape 1
 mgv_object1_shape1_x_rot_speed	EQU 2
 mgv_object1_shape1_y_rot_speed	EQU 2
 mgv_object1_shape1_z_rot_speed	EQU 1
@@ -335,7 +322,7 @@ mgv_object2_shape1_x_rot_speed	EQU 2
 mgv_object2_shape1_y_rot_speed	EQU 2
 mgv_object2_shape1_z_rot_speed	EQU 1
 
-; Form 2
+; Shape 2
 mgv_object1_shape2_x_rot_speed	EQU 2
 mgv_object1_shape2_y_rot_speed	EQU 2
 mgv_object1_shape2_z_rot_speed	EQU 1
@@ -343,7 +330,7 @@ mgv_object2_shape2_x_rot_speed	EQU 2
 mgv_object2_shape2_y_rot_speed	EQU 2
 mgv_object2_shape2_z_rot_speed	EQU 1
 
-; Form 3
+; Shape 3
 mgv_object1_shape3_x_rot_speed	EQU 2
 mgv_object1_shape3_y_rot_speed	EQU 2
 mgv_object1_shape3_z_rot_speed	EQU 1
@@ -351,7 +338,7 @@ mgv_object2_shape3_x_rot_speed	EQU 1
 mgv_object2_shape3_y_rot_speed	EQU 3
 mgv_object2_shape3_z_rot_speed	EQU 1
 
-; Form 4
+; Shape 4
 mgv_object1_shape4_x_rot_speed	EQU 2
 mgv_object1_shape4_y_rot_speed	EQU 2
 mgv_object1_shape4_z_rot_speed	EQU 1
@@ -359,7 +346,7 @@ mgv_object2_shape4_x_rot_speed	EQU 1
 mgv_object2_shape4_y_rot_speed	EQU 4
 mgv_object2_shape4_z_rot_speed	EQU 1
 
-; Form 5
+; Shape 5
 mgv_object1_shape5_x_rot_speed	EQU 1
 mgv_object1_shape5_y_rot_speed	EQU 2
 mgv_object1_shape5_z_rot_speed	EQU 1
@@ -367,7 +354,7 @@ mgv_object2_shape5_x_rot_speed	EQU 2
 mgv_object2_shape5_y_rot_speed	EQU 2
 mgv_object2_shape5_z_rot_speed	EQU 1
 
-; Form 6
+; Shape 6
 mgv_object1_shape6_x_rot_speed	EQU 2
 mgv_object1_shape6_y_rot_speed	EQU 2
 mgv_object1_shape6_z_rot_speed	EQU 2
@@ -375,7 +362,7 @@ mgv_object2_shape6_x_rot_speed	EQU 2
 mgv_object2_shape6_y_rot_speed	EQU 3
 mgv_object2_shape6_z_rot_speed	EQU 1
 
-; Form 7
+; Shape 7
 mgv_object1_shape7_x_rot_speed	EQU 2
 mgv_object1_shape7_y_rot_speed	EQU 1
 mgv_object1_shape7_z_rot_speed	EQU 1
@@ -454,7 +441,7 @@ cl2_ext1_COP2LCH		RS.L 1
 cl2_ext1_COP2LCL		RS.L 1
 cl2_ext1_COPJMP2		RS.L 1
 
-cl2_extension1_size 		RS.B 0
+cl2_extension1_size	RS.B 0
 
 
 	RSRESET
@@ -471,7 +458,7 @@ cl2_ext2_BLTAMOD		RS.L 1
 cl2_ext2_BLTSIZE		RS.L 1
 cl2_ext2_WAITBLIT		RS.L 1
 
-cl2_extension2_size 		RS.B 0
+cl2_extension2_size	RS.B 0
 
 
 	RSRESET
@@ -488,7 +475,7 @@ cl2_ext3_BLTAMOD		RS.L 1
 cl2_ext3_BLTDMOD		RS.L 1
 cl2_ext3_BLTSIZE		RS.L 1
 
-cl2_extension3_size 		RS.B 0
+cl2_extension3_size	RS.B 0
 
 
 	RSRESET
@@ -632,18 +619,18 @@ init_main_variables
 	ENDC
 	move.w	d0,mgv_morph_shapes_start(a3)
 	IFEQ mgv_premorph_enabled
-		move.w	d1,mgv_morph_delay_counter(a3) ; Delay-Counter aktivieren
+		move.w	d1,mgv_morph_delay_counter(a3) ; activate delay counter
 	ELSE
-		move.w	#1,mgv_morph_delay_counter(a3) ; Delay-Counter aktivieren
+		move.w	#1,mgv_morph_delay_counter(a3) ; activate delay counter
 	ENDC
 
 ; Scroll-Playfield-Bottom-In
 	move.w	d0,spbi_active(a3)
-	move.w	d0,spbi_y_angle(a3)	; 0 Grad
+	move.w	d0,spbi_y_angle(a3)	; 0°
 
 ; Scroll-Playfield-Bottom-Out
 	move.w	d1,spbo_active(a3)
-	move.w	#sine_table_length/4,spbo_y_angle(a3) ; 90 Grad
+	move.w	#sine_table_length/4,spbo_y_angle(a3) ; 90°
 
 ; Main
 	move.w	d1,stop_fx_active(a3)
@@ -677,15 +664,15 @@ mgv_init_objects_info
 	CNOP 0,4
 mgv_init_objects_info_loop
 ; Input
-; d7.w	Anzahl der Flächen
-; a0.l	Object-Info-Tabelle
-; a1.l	Tabelle mit Eckpunkten
+; d7.w	number of faces
+; a0.l	pointer object info table
+; a1.l	pointer edge table
 ; Result
 	move.w	object_info_lines_number(a0),d0
-	addq.w	#1+1,d0			; Anzahl der Eckpunkte
-	move.l	a1,(a0)			; Zeiger auf Tabelle mit Eckpunkten eintragen
-	lea	(a1,d0.w*2),a1		; Zeiger auf Eckpunkte-Tabelle erhöhen
-	add.l	a2,a0			; Object-Info-Struktur der nächsten Fläche
+	addq.w	#1+1,d0			; number of edge points
+	move.l	a1,(a0)			; pointer edge table
+	lea	(a1,d0.w*2),a1		; next pointer edge table
+	add.l	a2,a0			; object info structure next face
 	dbf	d7,mgv_init_objects_info_loop
 	rts
 
@@ -693,9 +680,9 @@ mgv_init_objects_info_loop
 mgv_init_morph_shapes
 	lea	mgv_morph_shapes_table(pc),a0
 	lea	mgv_object1_shape1_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Koords-Tabelle
+	move.l	a1,(a0)+		; pointer coordinates table
 	lea	mgv_object2_shape1_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Koords-Tabelle
+	move.l	a1,(a0)+		; pointer coordinates table
 	move.w	#mgv_object1_shape1_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape1_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape1_z_rot_speed,(a0)+
@@ -704,9 +691,9 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape1_z_rot_speed,(a0)+
 
 	lea	mgv_object1_shape2_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Objekt-Tabelle
+	move.l	a1,(a0)+		; pointer object table
 	lea	mgv_object2_shape2_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Koords-Tabelle
+	move.l	a1,(a0)+		; pointer coordinates table
 	move.w	#mgv_object1_shape2_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape2_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape2_z_rot_speed,(a0)+
@@ -715,9 +702,9 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape2_z_rot_speed,(a0)+
 
 	lea	mgv_object1_shape3_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Objekt-Tabelle
+	move.l	a1,(a0)+		; pointer object table
 	lea	mgv_object2_shape3_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Koords-Tabelle
+	move.l	a1,(a0)+		; pointer coordinates table
 	move.w	#mgv_object1_shape3_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape3_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape3_z_rot_speed,(a0)+
@@ -726,9 +713,9 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape3_z_rot_speed,(a0)+
 
 	lea	mgv_object1_shape4_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Objekt-Tabelle
+	move.l	a1,(a0)+		; pointer object table
 	lea	mgv_object2_shape4_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Koords-Tabelle
+	move.l	a1,(a0)+		; pointer coordinates table
 	move.w	#mgv_object1_shape4_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape4_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape4_z_rot_speed,(a0)+
@@ -737,9 +724,9 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape4_z_rot_speed,(a0)+
 
 	lea	mgv_object1_shape5_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Objekt-Tabelle
+	move.l	a1,(a0)+		; pointer object table
 	lea	mgv_object2_shape5_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Koords-Tabelle
+	move.l	a1,(a0)+		; pointer coordinates table
 	move.w	#mgv_object1_shape5_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape5_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape5_z_rot_speed,(a0)+
@@ -748,9 +735,9 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape5_z_rot_speed,(a0)+
 
 	lea	mgv_object1_shape6_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Objekt-Tabelle
+	move.l	a1,(a0)+		; pointer object table
 	lea	mgv_object2_shape6_coords(pc),a1
-	move.l	a1,(a0)+		; Zeiger auf Koords-Tabelle
+	move.l	a1,(a0)+		; pointer coordinates table
 	move.w	#mgv_object1_shape6_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape6_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape6_z_rot_speed,(a0)+
@@ -762,9 +749,9 @@ mgv_init_morph_shapes
 		move.w	#mgv_object2_shape6_z_rot_speed,(a0)+
 
 		lea	mgv_object1_shape7_coords(pc),a1
-		move.l	a1,(a0)+		; Zeiger auf Objekt-Tabelle
+		move.l	a1,(a0)+		; pointer object table
 		lea	mgv_object2_shape7_coords(pc),a1
-		move.l	a1,(a0)+		; Zeiger auf Koords-Tabelle
+		move.l	a1,(a0)+		; pointer coordinates table
 		move.w	#mgv_object1_shape7_x_rot_speed,(a0)+
 		move.w	#mgv_object1_shape7_y_rot_speed,(a0)+
 		move.w	#mgv_object1_shape7_z_rot_speed,(a0)+
@@ -778,7 +765,7 @@ mgv_init_morph_shapes
 		CNOP 0,4
 mgv_init_start_shape
 		bsr	mgv_morph_objects
-		tst.w	mgv_morph_active(a3) ; Morphing beendet?
+		tst.w	mgv_morph_active(a3) ; morphing finished ?
 		beq.s	mgv_init_start_shape
 		rts
 	ENDC
@@ -796,7 +783,7 @@ mgv_init_color_table
 	move.l	(a1)+,8*LONGWORD_SIZE(a0) ; COLOR08
 	move.l	(a1)+,9*LONGWORD_SIZE(a0) ; COLOR09
 	move.l	(a1)+,16*LONGWORD_SIZE(a0) ; COLOR16
-	move.l	(a1),17*LONGWORD_SIZE(a0) ;C OLOR17
+	move.l	(a1),17*LONGWORD_SIZE(a0) ; COLOR17
 ; Mischfarben aus 1. und 2. Glenz
 	moveq	#2,d6			; COLOR02
 	moveq	#8,d7			; COLOR08
@@ -855,38 +842,39 @@ mgv_init_color_table
 	CNOP 0,4
 mgv_get_colorvalues_average
 ; Input
-; d6.w	1. Quellfarbnumbermer
-; d7.w	2. Quellfarbnumbermer
+; d6.w	1st source color number
+; d7.w	2nd source color number
 ; a0.l	RGB8-Farbtabelle
+; Result
 	moveq	#0,d0
-	move.b	1(a0,d6.w*4),d0		; 1. Quellfarbe Rotanteil
+	move.b	1(a0,d6.w*4),d0		; 1st source color red
 	moveq	#0,d1
-	move.b	2(a0,d6.w*4),d1		; 1. Quellfarbe Grümanteil
+	move.b	2(a0,d6.w*4),d1		; 1st source color green
 	moveq	#0,d2
-	move.b	3(a0,d6.w*4),d2		; 1. Quellfarbe Blauanteil
+	move.b	3(a0,d6.w*4),d2		; 1st source color blue
 	moveq	#0,d3
-	move.b	1(a0,d7.w*4),d3		; 2. Quellfarbe Rotanteil
+	move.b	1(a0,d7.w*4),d3		; 2nd source color red
 	moveq	#0,d4
-	move.b	2(a0,d7.w*4),d4		; 2. Quellfarbe Grümanteil
+	move.b	2(a0,d7.w*4),d4		; 2nd source color grün
 	moveq	#0,d5
-	move.b	3(a0,d7.w*4),d5		; 2. Quellfarbe Blauanteil
-	add.w	d7,d6			; Quellfarbnummern addieren
-	add.w	d3,d0			; Rotanteile addieren
+	move.b	3(a0,d7.w*4),d5		; 2nd source color blau
+	add.w	d7,d6			; mix source colors
+	add.w	d3,d0
 	lsr.w	#1,d0
-	move.b	d0,1(a0,d6.w*4)		; Rotanteil-Mischwert retten
-	add.w	d4,d1			; Grünteile addieren
+	move.b	d0,1(a0,d6.w*4)		; mixed red
+	add.w	d4,d1
 	lsr.w	#1,d1
-	move.b	d1,2(a0,d6.w*4)		; Grünanteil-Mischwert retten
-	add.w	d5,d2			; Blauanteile addieren
+	move.b	d1,2(a0,d6.w*4)		; mixed green
+	add.w	d5,d2			;
 	lsr.w	#1,d2
-	move.b	d2,3(a0,d6.w*4)		; Blauanteil-Mischwert retten
+	move.b	d2,3(a0,d6.w*4)		; mixed blue
 	rts
 
 	CNOP 0,4
 spb_init_display_window
 	move.w	#diwstrt_bits,DIWSTRT-DMACONR(a6)
 	move.w	#diwstop_bits,DIWSTOP-DMACONR(a6)
-	move.w	#diwhigh_bits,DIWHIGH-DMACONR(a6) ; Muss sein, da LoadView() unter OS3.x DIWHIGH=$0000 setzt -> Anzeigefehler
+	move.w	#diwhigh_bits,DIWHIGH-DMACONR(a6) ; OS 3.x LoadView() sets DIWHIGH=$0000 -> display glitches
 	rts
 
 	CNOP 0,4
@@ -926,14 +914,14 @@ cl2_init_colors
 	CNOP 0,4
 cl2_init_line_blits_steady
 	COP_WAITBLIT
-	COP_MOVEQ -1,BLTAFWM	; Keine Ausmaskierung
+	COP_MOVEQ -1,BLTAFWM
 	COP_MOVEQ -1,BLTALWM
 	COP_MOVEQ 0,BLTCPTH
 	COP_MOVEQ 0,BLTDPTH
-	COP_MOVEQ pf1_plane_width*pf1_depth3,BLTCMOD ; Moduli für interleaved Bitmaps
+	COP_MOVEQ pf1_plane_width*pf1_depth3,BLTCMOD ; moduli interleaved bitmaps
 	COP_MOVEQ pf1_plane_width*pf1_depth3,BLTDMOD
-	COP_MOVEQ -1,BLTBDAT	; Linientextur
-	COP_MOVEQ $8000,BLTADAT		; Linientextur beginnt ab MSB
+	COP_MOVEQ -1,BLTBDAT		; line texture
+	COP_MOVEQ $8000,BLTADAT		; line texture starts with MSB
 	COP_MOVEQ 0,COP2LCH
 	COP_MOVEQ 0,COP2LCL
 	COP_MOVEQ 0,COPJMP2
@@ -957,8 +945,8 @@ cl1_init_line_blits_loop
 
 	CNOP 0,4
 cl2_init_fill_blit
-	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; Minterm D=A
-	COP_MOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ; Füll-Modus, Rückwärts
+	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; minterm D=A
+	COP_MOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ; fill mode, backwards
 	COP_MOVEQ 0,BLTAPTH
 	COP_MOVEQ 0,BLTAPTL
 	COP_MOVEQ 0,BLTDPTH
@@ -1003,7 +991,7 @@ beam_routines
 	bsr	scroll_pf_bottom_out
 	bsr	mgv_control_counters
 	jsr	mouse_handler
-	tst.l	d0			; Abbruch ?
+	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
@@ -1026,16 +1014,16 @@ set_playfield1
 	move.l	cl2_display(a3),a0
 	ADDF.W	cl2_BPL1PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
-	moveq	#pf1_depth3-1,d7	; Anzahl der Planes
+	moveq	#pf1_depth3-1,d7
 set_playfield1_loop
 	move.l	(a1)+,d0
-	add.l	d1,d0			; 64 kByte-Alignment
+	add.l	d1,d0			; 64 kB alignment
 	clr.w	d0
-	add.l	d2,d0			; Offset für Bitplane
+	add.l	d2,d0			; bitplanes offset
 	move.w	d0,LONGWORD_SIZE(a0)	; BPLxPTL
-	swap	d0			; High
+	swap	d0			; high
 	move.w	d0,(a0)			; BPLxPTH
-	add.l	d3,d2			; Offset nächste Bitplane
+	add.l	d3,d2			; next bitplane
 	addq.w	#QUADWORD_SIZE,a0
 	dbf	d7,set_playfield1_loop
 	rts
@@ -1062,17 +1050,16 @@ mgv_clear_playfield1
 	add.l	#ALIGN_64KB,d0
 	clr.w	d0
 	move.l	d0,a7
-	ADDF.L	pf1_plane_width*visible_lines_number*pf1_depth3,a7 ; Ende des Playfieldes
+	ADDF.L	pf1_plane_width*visible_lines_number*pf1_depth3,a7 ; end of playfield
 	moveq	#0,d0
 	move.l	d0,a3
 	moveq	#7-1,d7
 mgv_clear_playfield1_loop
 	REPT ((pf1_plane_width*visible_lines_number*pf1_depth3)/56)/7
-		movem.l d0-d6/a0-a6,-(a7) ; 56 Bytes löschen
+		movem.l d0-d6/a0-a6,-(a7) ; clear 56 bytes
 	ENDR
 	dbf	d7,mgv_clear_playfield1_loop
-; Rest 304 Bytes
-	movem.l d0-d6/a0-a6,-(a7)
+	movem.l d0-d6/a0-a6,-(a7)	; clear remaining 304 bytes
 	movem.l d0-d6/a0-a6,-(a7)
 	movem.l d0-d6/a0-a6,-(a7)
 	movem.l d0-d6/a0-a6,-(a7)
@@ -1103,66 +1090,66 @@ mgv_rotate_objects
 	CNOP 0,4
 mgv_rotation
 ; Input
-; d7.w	Anzahl der Punkte
-; a0-l	Koodinaten des Objekts
+; d7.w	number of points
+; a0.l	pointer object table
 ; a1.l	Koordinaten der Linien
-; a5.l	Zeiger auf Variable x_rot_angle
-; a6.l	Zeiger auf Variable variable_x_rot_speed
+; a5.l	pointer variable x_rot_angle
+; a6.l	pointer variable x_rot_speed
 ; Result
-	move.w	(a5),d1			; X-Winkel
+	move.w	(a5),d1			; x angle
 	move.w	d1,d0		
 	lea	sine_table,a2	
 	move.w	(a2,d0.w*2),d4		; sin(a)
 	move.w	#sine_table_length/4,a4
 	MOVEF.W sine_table_length-1,d3
-	add.w	a4,d0			; + 90 Grad
-	swap	d4			; Bits 16-31: sin(a)
-	and.w	d3,d0			; Übertrag entfernen
-	move.w	(a2,d0.w*2),d4		; Bits 0-15: cos(a)
-	add.w	(a6)+,d1		; nächster X-Winkel
-	and.w	d3,d1			; Übertrag entfernen
+	add.w	a4,d0			; + 90°
+	swap	d4			; bits 16..31: sin(a)
+	and.w	d3,d0			; remove overflow
+	move.w	(a2,d0.w*2),d4		; bits 0..15: cos(a)
+	add.w	(a6)+,d1		; next x angle
+	and.w	d3,d1			; remove overflow
 	move.w	d1,(a5)+		
-	move.w	(a5),d1			; Y-Winkel
+	move.w	(a5),d1			; y angle
 	move.w	d1,d0		
 	move.w	(a2,d0.w*2),d5		; sin(b)
-	add.w	a4,d0			; + 90 Grad
-	swap	d5			; Bits 16-31: sin(b)
-	and.w	d3,d0			; Übertrag entfernen
-	move.w	(a2,d0.w*2),d5		; Bits 0-15: cos(b)
-	add.w	(a6)+,d1		; nächster Y-Winkel
-	and.w	d3,d1			; Übertrag entfernen
+	add.w	a4,d0			; + 90°
+	swap	d5			; bits 16..31: sin(b)
+	and.w	d3,d0			; remove overflow
+	move.w	(a2,d0.w*2),d5		; bits 0..15: cos(b)
+	add.w	(a6)+,d1		; next y angle
+	and.w	d3,d1			; remove overflow
 	move.w	d1,(a5)+		
-	move.w	(a5),d1			; Z-Winkel
+	move.w	(a5),d1			; z angle
 	move.w	d1,d0		
 	move.w	(a2,d0.w*2),d6		; sin(c)
-	add.w	a4,d0			; + 90 Grad
-	swap	d6			; Bits 16-31: sin(c)
-	and.w	d3,d0			; Übertrag entfernen
-	move.w	(a2,d0.w*2),d6		; Bits 0-15: cos(c)
-	add.w	(a6),d1			; nächster Z-Winkel
-	and.w	d3,d1			; Übertrag entfernen
+	add.w	a4,d0			; + 90°
+	swap	d6			; bits 16..31: sin(c)
+	and.w	d3,d0			; remove overflow
+	move.w	(a2,d0.w*2),d6		; bits 0..15: cos(c)
+	add.w	(a6),d1			; next z angle
+	and.w	d3,d1			; remove overflow
 	move.w	d1,(a5)		
-	move.w	#mgv_rot_d*8,a4 ;d
+	move.w	#mgv_rot_d*8,a4
 	move.w	#mgv_rot_xy_center,a5
 mgv_rot_loop
-	move.w	(a0)+,d0		;X
+	move.w	(a0)+,d0		; x
 	move.l	d7,a2
-	move.w	(a0)+,d1		;Y
-	move.w	(a0)+,d2		;Z
+	move.w	(a0)+,d1		; y
+	move.w	(a0)+,d2		; z
 	ROTATE_X_AXIS
 	ROTATE_Y_AXIS
 	ROTATE_Z_AXIS
-; Zentralprojektion und Translation
-	MULSF.W mgv_rot_d,d0,d3 	; X-Projektion
+; central projection and translation
+	MULSF.W mgv_rot_d,d0,d3; x projection
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
-	MULSF.W mgv_rot_d,d1,d3 	; Y-Projektion
+	MULSF.W mgv_rot_d,d1,d3; y projection
 	add.w	a5,d0			; x' + X-Mittelpunkt
-	move.w	d0,(a1)+		; X-Pos.
+	move.w	d0,(a1)+		; x position
 	divs.w	d2,d1			; y' = (y*d)/(z+d)
-	move.l	a2,d7			; Schleifenzähler
+	move.l	a2,d7			; loop counter
 	add.w	a5,d1			; y' + Y-Mittelpunkt
-	move.w	d1,(a1)+		; Y-Pos.
+	move.w	d1,(a1)+		; y position
 	dbf	d7,mgv_rot_loop
 	rts
 
@@ -1171,34 +1158,34 @@ mgv_morph_objects
 	tst.w	mgv_morph_active(a3)
 	bne.s	mgv_morph_objects_quit
 	move.w	mgv_morph_shapes_start(a3),d1
-	moveq	#0,d2			; Koordinatenzähler
+	moveq	#0,d2			; coordinates counter
 	moveq	#0,d3
-	move.w	d1,d3			; Startwert
+	move.w	d1,d3			; start
 	MULUF.W morph_shape_size,d3,d0
-	lea	mgv_morph_shapes_table(pc),a2 ; Tabelle mit Adressen der Objekttabellen
-	add.l	d3,a2			; Offset in Morph-Shapes-Tabelle
+	lea	mgv_morph_shapes_table(pc),a2
+	add.l	d3,a2			; offset in morph shapes table
 	lea	mgv_object1_coords(pc),a0
-	move.l	(a2)+,a1		; Zeiger auf Tabelle
+	move.l	(a2)+,a1		; pointer morph shapes table
 	MOVEF.W (mgv_object1_edge_points_number*3)-1,d7
 	bsr.s	mgv_morph_objects_loop
 	lea	mgv_object2_coords(pc),a0
-	move.l	(a2)+,a1		; Zeiger auf Tabelle
+	move.l	(a2)+,a1		; pointer morph shapes table
 	MOVEF.W (mgv_object2_edge_points_number*3)-1,d7
 	bsr.s	mgv_morph_objects_loop
 
-	tst.w	d2			; Morhing beendet ?
+	tst.w	d2			; morphing finished ?
 	bne.s	mgv_morph_objects_quit
-	addq.w	#1,d1			; nächster Eintrag in Objekttablelle
-	cmp.w	#mgv_morph_shapes_number,d1 ; Ende der Tabelle ?
+	addq.w	#1,d1			; next entry in object table
+	cmp.w	#mgv_morph_shapes_number,d1 ; end of table ?
 	IFEQ mgv_morph_loop_enabled
 		bne.s	mgv_morph_objects_skip1
-		moveq	#0,d1		; Neustart
+		moveq	#0,d1		; restart
 mgv_morph_objects_skip1
 	ELSE
 		beq.s	mgv_morph_objects_skip2
 	ENDC
 	move.w	d1,mgv_morph_shapes_start(a3)
-	move.w	#mgv_morph_delay,mgv_morph_delay_counter(a3) ; Zähler zurücksetzen
+	move.w	#mgv_morph_delay,mgv_morph_delay_counter(a3)
 	move.w	(a2)+,mgv_object1_x_rot_speed(a3)
 	move.w	(a2)+,mgv_object1_y_rot_speed(a3)
 	move.w	(a2)+,mgv_object1_z_rot_speed(a3)
@@ -1213,24 +1200,24 @@ mgv_morph_objects_quit
 	CNOP 0,4
 mgv_morph_objects_loop
 ; Input
-; d7.w	Anzahl der Koordinaten
-; a0.l	Aktuelle Objektdaten
-; a1.l	Ziel-Objektdaten
+; d7.w	number of coordinates
+; a0.l	pointer current object
+; a1.l	pointer destination object
 ; Result
-	move.w	(a0),d0			; aktuelle Koordinate
-	cmp.w	(a1)+,d0		; mit Ziel-Koordinate vergleichen
+	move.w	(a0),d0			; current coordinate
+	cmp.w	(a1)+,d0		; destination coordinate reached ?
 	beq.s	mgv_morph_objects_skip5
 	bgt.s	mgv_morph_objects_skip3
-	addq.w	#mgv_morph_speed,d0	; aktuelle Koordinate erhöhen
+	addq.w	#mgv_morph_speed,d0	; increase current coordinate
 	bra.s	mgv_morph_objects_skip4
 	CNOP 0,4
 mgv_morph_objects_skip3
-	subq.w	#mgv_morph_speed,d0	; aktuelle Koordinate verringern
+	subq.w	#mgv_morph_speed,d0	; decrease current coordinate
 mgv_morph_objects_skip4
 	move.w	d0,(a0)		
-	addq.w	#1,d2			; Koordinatenzähler erhöhen
+	addq.w	#1,d2			; increase coordinates counter
 mgv_morph_objects_skip5
-	addq.w	#WORD_SIZE,a0		; Nächste Koordinate
+	addq.w	#WORD_SIZE,a0		; next coordinate
 	dbf	d7,mgv_morph_objects_loop
 	rts
 
@@ -1245,81 +1232,81 @@ mgv_draw_lines
 	add.l	#ALIGN_64KB,d0
 	clr.w	d0
 	move.l	d0,a2
-	sub.l	a4,a4			; Linienzähler zurücksetzen
+	sub.l	a4,a4			; lines counter
 	move.l	cl2_construction2(a3),a6 
 	ADDF.W	cl2_extension3_entry-cl2_extension2_size+cl2_ext2_BLTCON0+WORD_SIZE,a6
-	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; Minterm Linien
+	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line mode
 	MOVEF.W mgv_objects_faces_number-1,d7
 mgv_draw_lines_loop1
-; Z-Koordinate des Vektors N durch das Kreuzprodukt u x v berechnen
-	move.l	(a0)+,a5		; Zeiger auf Startwerte der Punkte
-	move.w	(a5),d4			; P1-Startwert
-	move.w	2(a5),d5		; P2-Startwert
-	move.w	4(a5),d6		; P3-Startwert
-	swap	d7			; Flächenzähler retten
-	movem.w (a1,d5.w*2),d0-d1	; P2(x,y)
-	movem.w (a1,d6.w*2),d2-d3	; P3(x,y)
+; calculate z of  vectors N
+	move.l	(a0)+,a5		; pointer starts
+	move.w	(a5),d4			; p1 starts
+	move.w	2(a5),d5		; p2 starts
+	move.w	4(a5),d6		; p3 starts
+	swap	d7			; save faces counter
+	movem.w (a1,d5.w*2),d0-d1	; p2(x,y)
+	movem.w (a1,d6.w*2),d2-d3	; p3(x,y)
 	sub.w	d0,d2			; xv = xp3-xp2
 	sub.w	(a1,d4.w*2),d0		; xu = xp2-xp1
 	sub.w	d1,d3			; yv = yp3-yp2
 	sub.w	2(a1,d4.w*2),d1		; yu = yp2-yp1
 	muls.w	d3,d0			; xu*yv
-	move.w	(a0)+,d7		; Farbe der Fläche
+	move.w	(a0)+,d7		; face color
 	muls.w	d2,d1			; yu*xv
-	move.w	(a0)+,d6		; Anzahl der Linien
+	move.w	(a0)+,d6		; number of lines
 	sub.l	d0,d1			; zn = (yu*xv)-(xu*yv)
 	bmi.s	mgv_draw_lines_loop2
 	lsr.w	#2,d7			; COLOR02/04 -> COLOR00/01
 	beq	mgv_draw_lines_skip3
-	cmp.w	#1,d7			; Hintere Fläche von Objekt ?
+	cmp.w	#1,d7			; backface ?
 	beq.s	mgv_draw_lines_loop2
 	lsr.w	#2,d7			; COLOR08/16 -> COLOR00/01
 	beq	mgv_draw_lines_skip3
 mgv_draw_lines_loop2
-	move.w	(a5)+,d0		; Startwerte der Punkte P1,P2
+	move.w	(a5)+,d0		; p1,p2 starts
 	move.w	(a5),d2
-	movem.w (a1,d0.w*2),d0-d1	; P1(x,y)
-	movem.w (a1,d2.w*2),d2-d3	; P2(x,y)
+	movem.w (a1,d0.w*2),d0-d1	; p1(x,y)
+	movem.w (a1,d2.w*2),d2-d3	; p2(x,y)
 	GET_LINE_PARAMETERS mgv,AREAFILL,COPPERUSE,,mgv_draw_lines_skip2
-	add.l	a3,d0			; restliche BLTCON0 & BLTCON1-Bits setzen
-	add.l	a2,d1			; + Playfieldadresse
-	cmp.w	#1,d7			; Bitplane1 ?
+	add.l	a3,d0			; remaining BLTCON0 & BLTCON1 bits
+	add.l	a2,d1			; + playfield address
+	cmp.w	#1,d7			; bitplane 1 ?
 	beq.s	mgv_draw_lines_skip1
 	moveq	#pf1_plane_width,d5
-	add.l	d5,d1			; nächste Plane
-	cmp.w	#2,d7			; Bitplane2 ?
+	add.l	d5,d1			; next bitplane
+	cmp.w	#2,d7			; bitplane 2 ?
 	beq.s	mgv_draw_lines_skip1
-	add.l	d5,d1			; nächste Plane
-	cmp.w	#4,d7			; Bitplane3 ?
+	add.l	d5,d1			; next bitplane
+	cmp.w	#4,d7			; bitplane 3 ?
 	beq.s	mgv_draw_lines_skip1
-	add.l	d5,d1			; nächste Plane
-	cmp.w	#8,d7			; Bitplane4 ?
+	add.l	d5,d1			; next bitplane
+	cmp.w	#8,d7			; bitplane 4 ?
 	beq.s	mgv_draw_lines_skip1
-	add.l	d5,d1			; nächste Plane
+	add.l	d5,d1			; next bitplane
 mgv_draw_lines_skip1
-	move.w	d0,cl2_ext2_BLTCON1-cl2_ext2_BLTCON0(a6) ; BLTCON1
+	move.w	d0,cl2_ext2_BLTCON1-cl2_ext2_BLTCON0(a6)
 	swap	d0
 	move.w	d0,(a6)			; BLTCON0
 	MULUF.W 2,d2			; 4*dx
 	move.w	d4,cl2_ext2_BLTBMOD-cl2_ext2_BLTCON0(a6) ; 4*dy
 	sub.w	d2,d4			; (4*dy)-(4*dx)
-	move.w	d1,cl2_ext2_BLTCPTL-cl2_ext2_BLTCON0(a6) ; Playfield lesen
-	addq.w	#1,a4			; Linienzähler erhöhen
-	move.w	d1,cl2_ext2_BLTDPTL-cl2_ext2_BLTCON0(a6) ; Playfield schreiben
+	move.w	d1,cl2_ext2_BLTCPTL-cl2_ext2_BLTCON0(a6) ; playfield read
+	addq.w	#1,a4			; increase lines counter
+	move.w	d1,cl2_ext2_BLTDPTL-cl2_ext2_BLTCON0(a6) ; playfield write
 	addq.w	#1*4,d2			; (4*dx)+(1*4)
 	move.w	d3,cl2_ext2_BLTAPTL-cl2_ext2_BLTCON0(a6) ; (4*dy)-(2*dx)
-	MULUF.W 16,d2			; ((4*dx)+(1*4))*16 = Länge der Linie
+	MULUF.W 16,d2			; ((4*dx)+(1*4))*16 = line length
 	move.w	d4,cl2_ext2_BLTAMOD-cl2_ext2_BLTCON0(a6) ; 4*(dy-dx)
-	addq.w	#2,d2			; Breite = 1 Wort
+	addq.w	#WORD_SIZE,d2		; width
 	move.w	d2,cl2_ext2_BLTSIZE-cl2_ext2_BLTCON0(a6)
 	SUBF.W	cl2_extension2_size,a6
 mgv_draw_lines_skip2
 	dbf	d6,mgv_draw_lines_loop2
 mgv_draw_lines_skip3
-	swap	d7			; Flächenzähler
+	swap	d7			; faces counter
 	dbf	d7,mgv_draw_lines_loop1
 	lea	variables+mgv_lines_counter(pc),a0
-	move.w	a4,(a0)			; Anzahl der Linien
+	move.w	a4,(a0)			; number of lines
 	movem.l (a7)+,a3-a6
 	rts
 	CNOP 0,4
@@ -1329,9 +1316,9 @@ mgv_draw_lines_init
 	add.l	#ALIGN_64KB,d0
 	clr.w	d0
 	move.l	cl2_construction2(a3),a0
-	swap	d0			; High
-	move.w	d0,cl2_extension1_entry+cl2_ext1_BLTCPTH+WORD_SIZE(a0) ; Playfield lesen
-	move.w	d0,cl2_extension1_entry+cl2_ext1_BLTDPTH+WORD_SIZE(a0) ; Playfield schreiben
+	swap	d0			; high
+	move.w	d0,cl2_extension1_entry+cl2_ext1_BLTCPTH+WORD_SIZE(a0) ; playfield read
+	move.w	d0,cl2_extension1_entry+cl2_ext1_BLTDPTH+WORD_SIZE(a0) ; playfield write
 	rts
 
 	CNOP 0,4
@@ -1341,12 +1328,12 @@ mgv_fill_playfield1
 	add.l	#ALIGN_64KB,d0
 	clr.w	d0
 	move.l	cl2_construction2(a3),a0
-	ADDF.L	((pf1_plane_width*visible_lines_number*pf1_depth3)-(pf1_plane_width-(visible_pixels_number/8)))-2,d0 ; Ende des Playfieldes
-	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTAPTL+WORD_SIZE(a0) ; Quelle
-	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTDPTL+WORD_SIZE(a0) ; Ziel
-	swap	d0		; High
-	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTAPTH+WORD_SIZE(a0) ; Quelle
-	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTDPTH+WORD_SIZE(a0) ; Ziel
+	ADDF.L	((pf1_plane_width*visible_lines_number*pf1_depth3)-(pf1_plane_width-(visible_pixels_number/8)))-2,d0 ; end of playfield
+	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTAPTL+WORD_SIZE(a0) ; source
+	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTDPTL+WORD_SIZE(a0) ; destination
+	swap	d0		; high
+	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTAPTH+WORD_SIZE(a0) ; spource
+	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTDPTH+WORD_SIZE(a0) ; destination
 	rts
 
 	CNOP 0,4
@@ -1365,7 +1352,7 @@ mgv_set_second_copperlist_skip
 	MULUF.W cl2_extension2_size,d1,d2
 	sub.l	d1,d0
 	move.w	d0,cl2_extension1_entry+cl2_ext1_COP2LCL+WORD_SIZE(a0)
-	swap	d0			; High
+	swap	d0			; high
 	move.w	d0,cl2_extension1_entry+cl2_ext1_COP2LCH+WORD_SIZE(a0)
 	rts
 
@@ -1375,7 +1362,7 @@ scroll_pf_bottom_in
 	tst.w	spbi_active(a3)
 	bne.s	scroll_pf_bottom_in_quit
 	move.w	spbi_y_angle(a3),d2
-	cmp.w	#sine_table_length/4,d2 ; 90 Grad ?
+	cmp.w	#sine_table_length/4,d2 ; 90° ?
 	ble.s	scroll_pf_bottom_in_skip
 	move.w	#FALSE,spbi_active(a3)
 	bra.s	scroll_pf_bottom_in_quit
@@ -1383,10 +1370,10 @@ scroll_pf_bottom_in
 scroll_pf_bottom_in_skip
 	lea	sine_table,a0
 	move.w	(a0,d2.w*2),d0		; sin(w)
-	muls.w	#spb_y_radius*2,d0 	; y'=(sin(w)*yr)/2^15
+	muls.w	#spb_y_radius*2,d0; y'=(sin(w)*yr)/2^15
 	swap	d0
-	add.w	#spb_y_centre,d0 	; y' + Y-Mittelpunkt
-	addq.w	#spbi_y_angle_speed,d2 	; nächster Y-Winkel
+	add.w	#spb_y_centre,d0	; y' + y centre
+	addq.w	#spbi_y_angle_speed,d2
 	move.w	d2,spbi_y_angle(a3) 
 	MOVEF.W spb_max_VSTOP,d3
 	bsr.s	spb_set_display_window
@@ -1398,7 +1385,7 @@ scroll_pf_bottom_out
 	tst.w	spbo_active(a3)
 	bne.s	scroll_pf_bottom_out_quit
 	move.w	spbo_y_angle(a3),d2
-	cmp.w	#sine_table_length/2,d2	; 180 Grad ?
+	cmp.w	#sine_table_length/2,d2	; 180° ?
 	ble.s	scroll_pf_bottom_out_skip
 	move.w	#FALSE,spbo_active(a3)
 	clr.w	stop_fx_active(a3)
@@ -1409,8 +1396,8 @@ scroll_pf_bottom_out_skip
 	move.w	(a0,d2.w*2),d0		; cos(w)
 	muls.w	#spb_y_radius*2,d0	; y'=(cos(w)*yr)/2^15
 	swap	d0
-	add.w	#spb_y_centre,d0	; y' + Y-Mittelpunkt
-	addq.w	#spbo_y_angle_speed,d2	; nächster Y-Winkel
+	add.w	#spb_y_centre,d0	; y' + y center
+	addq.w	#spbo_y_angle_speed,d2
 	move.w	d2,spbo_y_angle(a3) 
 	MOVEF.W spb_max_VSTOP,d3
 	bsr.s	spb_set_display_window
@@ -1419,23 +1406,27 @@ scroll_pf_bottom_out_quit
 
 	CNOP 0,4
 spb_set_display_window
+; Input
+; d0.w	y offset
+; d3.w	vertical max
+; Result
 	move.l	cl2_construction2(a3),a1
 	moveq	#spb_min_VSTART,d1
-	add.w	d0,d1			; + Y-Offset
-	cmp.w	d3,d1			; VSTART-Maximum erreicht ?
+	add.w	d0,d1			; + y offset
+	cmp.w	d3,d1			; VSTART max ?
 	ble.s	spb_set_display_window_skip1
-	move.w	d3,d1			; VSTART korrigieren
+	move.w	d3,d1			; correct VSTART
 spb_set_display_window_skip1
 	move.b	d1,cl2_DIWSTRT+WORD_SIZE(a1) ; VSTART V7-V0
 	move.w	d1,d2
 	add.w	#visible_lines_number,d2 ; VSTOP
-	cmp.w	d3,d2			; VSTOP-Maximum erreicht ?
+	cmp.w	d3,d2			; VSTOP max ?
 	ble.s	spb_set_display_window_skip2
-	move.w	d3,d2			; VSTOP korrigieren
+	move.w	d3,d2			; correct VSTOP
 spb_set_display_window_skip2
 	move.b	d2,cl2_DIWSTOP+WORD_SIZE(a1) ; VSTOP V7-V0
-	lsr.w	#8,d1			; VSTART V8-Bit in richtige Position bringen
-	move.b	d1,d2			; VSTART V8 + VSTOP V8 Bits
+	lsr.w	#8,d1			; adjust V8 bit
+	move.b	d1,d2			; add V8 bit
 	or.w	#diwhigh_bits&(~(DIWHIGHF_VSTART8|DIWHIGHF_VSTOP8)),d2
 	move.w	d2,cl2_DIWHIGH+WORD_SIZE(a1)
 	rts
@@ -1448,7 +1439,7 @@ mgv_control_counters
 	subq.w	#1,d0
 	bpl.s	mgv_control_counters_skip
 	clr.w	mgv_morph_active(a3)
-	cmp.w	#mgv_morph_shapes_number-1,mgv_morph_shapes_start(a3) ; Ende der Tabelle ?
+	cmp.w	#mgv_morph_shapes_number-1,mgv_morph_shapes_start(a3) ; end of table ?
 	bne.s	mgv_control_counters_skip
 	clr.w	spbo_active(a3)
 mgv_control_counters_skip
@@ -1483,18 +1474,18 @@ mgv_rgb8_color_table
 
 	CNOP 0,2
 mgv_object1_coords
-; * Zoom-In *
+; Zoom-In
 	DS.W mgv_object1_edge_points_number*3
 	CNOP 0,2
 mgv_object2_coords
-; * Zoom-In *
+; Zoom-In
 	DS.W mgv_object2_edge_points_number*3
 
-; Formen der Objekte
-; Form 1
+; Object shapes
+; Shape 1
 	CNOP 0,2
 mgv_object1_shape1_coords
-; Würfel
+; Cube
 	DC.W -(48*8),-(48*8),-(48*8)	; P0
 	DC.W 48*8,-(48*8),-(48*8)	; P1
 	DC.W 48*8,48*8,-(48*8)		; P2
@@ -1511,7 +1502,7 @@ mgv_object1_shape1_coords
 	DC.W 0,67*8,-(24*8)		; P13
 	CNOP 0,2
 mgv_object2_shape1_coords
-; Würfel
+; Cube
 	DC.W 48*8,-(48*8),48*8		; P18
 	DC.W -(48*8),-(48*8),48*8	; P15
 	DC.W -(48*8),48*8,48*8		; P16
@@ -1527,15 +1518,15 @@ mgv_object2_shape1_coords
 	DC.W 0,-(67*8),24*8		; P26
 	DC.W 0,67*8,24*8		; P27
 
-; Form 2
+; Shape 2
 	CNOP 0,2
 mgv_object1_shape2_coords
-; Würfel
+; Cube
 	DC.W -(30*8),-(56*8),-(40*8)	; P0
 	DC.W 30*8,-(56*8),-(40*8)	; P1
 	DC.W 30*8,56*8,-(40*8)		; P2
 	DC.W -(30*8),56*8,-(40*8)	; P3
-	DC.W -(30*8),-(56*8),-(10*8) 	; P4
+	DC.W -(30*8),-(56*8),-(10*8)	; P4
 	DC.W 56*8,0,-(10*8)		; P5
 	DC.W 30*8,56*8,-(10*8)		; P6
 	DC.W -(56*8),0,-(10*8)		; P7
@@ -1547,7 +1538,7 @@ mgv_object1_shape2_coords
 	DC.W -(30*8),56*8,-(10*8)	; P13
 	CNOP 0,2
 mgv_object2_shape2_coords
-; Würfel
+; Cube
 	DC.W 30*8,-(56*8),40*8		; P18
 	DC.W -(30*8),-(56*8),40*8	; P15
 	DC.W -(30*8),56*8,40*8		; P16
@@ -1563,11 +1554,11 @@ mgv_object2_shape2_coords
 	DC.W -(30*8),-(56*8),10*8	; P26
 	DC.W 30*8,56*8,10*8		; P27
 
-; Form 3
+; Shape 3
 	CNOP 0,2
 mgv_object1_shape3_coords
-; Würfel
-	DC.W -(35*8),-(67*8),-(48*8) 	; P0
+; Cube
+	DC.W -(35*8),-(67*8),-(48*8); P0
 	DC.W 35*8,-(67*8),-(48*8)	; P1
 	DC.W 35*8,67*8,-(48*8)		; P2
 	DC.W -(35*8),67*8,-(48*8)	; P3
@@ -1582,13 +1573,13 @@ mgv_object1_shape3_coords
 	DC.W 35*8,-(67*8),48*8		; P12
 	DC.W -(35*8),67*8,48*8		; P13
 mgv_object2_shape3_coords
-; Würfel
+; Cube
 	DC.W 24*8,-(24*8),24*8		; P14
 	DC.W -(24*8),-(24*8),24*8	; P15
 	DC.W -(24*8),24*8,24*8		; P16
 	DC.W 24*8,24*8,24*8		; P17
 	DC.W 24*8,-(24*8),-(24*8)	; P18
-	DC.W -(24*8),-(24*8),-(24*8) 	; P19
+	DC.W -(24*8),-(24*8),-(24*8)	; P19
 	DC.W -(24*8),24*8,-(24*8)	; P19
 	DC.W 24*8,24*8,-(24*8)		; P21
 	DC.W 0,0,24*8			; P22
@@ -1598,11 +1589,11 @@ mgv_object2_shape3_coords
 	DC.W 0,-(24*8),0		; P26
 	DC.W 0,24*8,0			; P27
 
-; Form 4
+; Shape 4
 	CNOP 0,2
 mgv_object1_shape4_coords
-; Würfel
-	DC.W -(52*8),-(52*8),-(52*8) 	; P0
+; Cube
+	DC.W -(52*8),-(52*8),-(52*8); P0
 	DC.W 52*8,-(52*8),-(52*8)	; P1
 	DC.W 52*8,52*8,-(52*8)		; P2
 	DC.W -(52*8),52*8,-(52*8)	; P3
@@ -1617,13 +1608,13 @@ mgv_object1_shape4_coords
 	DC.W 0,-(76*8),0		; P12
 	DC.W 0,76*8,0			; P13
 mgv_object2_shape4_coords
-; Raumschiff
+; Spaceship
 	DC.W 24*8,-(11*8),52*8		; P18
 	DC.W -(24*8),-(11*8),52*8	; P15
 	DC.W -(24*8),11*8,52*8		; P16
 	DC.W 24*8,11*8,52*8		; P17
 	DC.W 19*8,-(4*8),-(33*8)	; P18
-	DC.W -(19*8),-(4*8),-(33*8) 	; P19
+	DC.W -(19*8),-(4*8),-(33*8)	; P19
 	DC.W -(19*8),4*8,-(33*8)	; P19
 	DC.W 19*8,4*8,-(33*8)		; P21
 	DC.W 0,0,52*8			; P22
@@ -1633,11 +1624,11 @@ mgv_object2_shape4_coords
 	DC.W 0,-(11*8),0		; P26
 	DC.W 0,11*8,0			; P27
 
-; Form 5
+; Shape 5
 	CNOP 0,2
 mgv_object1_shape5_coords
-; Würfel
-	DC.W -(48*8),-(48*8),-(11*8) 	; P0
+; Cube
+	DC.W -(48*8),-(48*8),-(11*8); P0
 	DC.W 48*8,-(48*8),-(11*8)	; P1
 	DC.W 48*8,48*8,-(11*8)		; P2
 	DC.W -(48*8),48*8,-(11*8)	; P3
@@ -1652,13 +1643,13 @@ mgv_object1_shape5_coords
 	DC.W 0,-(67*8),0		; P12
 	DC.W 0,67*8,0			; P13
 mgv_object2_shape5_coords
-; Würfel
+; Cube
 	DC.W 48*8,-(11*8),48*8		; P18
 	DC.W -(48*8),-(11*8),48*8	; P15
 	DC.W -(48*8),11*8,48*8		; P16
 	DC.W 48*8,11*8,48*8		; P17
 	DC.W 48*8,-(11*8),-(48*8)	; P18
-	DC.W -(48*8),-(11*8),-(48*8) 	; P19
+	DC.W -(48*8),-(11*8),-(48*8)	; P19
 	DC.W -(48*8),11*8,-(48*8)	; P19
 	DC.W 48*8,11*8,-(48*8)		; P21
 	DC.W 0,0,67*8			; P22
@@ -1668,11 +1659,11 @@ mgv_object2_shape5_coords
 	DC.W 0,-(19*8),0		; P26
 	DC.W 0,19*8,0			; P27
 
-; Form 6
+; Shape 6
 	CNOP 0,2
 mgv_object1_shape6_coords
-; Würfel
-	DC.W -(48*8),-(48*8),-(48*8) 	; P0
+; Cube
+	DC.W -(48*8),-(48*8),-(48*8)	; P0
 	DC.W 48*8,-(48*8),-(48*8)	; P1
 	DC.W 48*8,48*8,-(48*8)		; P2
 	DC.W -(48*8),48*8,-(48*8)	; P3
@@ -1687,7 +1678,7 @@ mgv_object1_shape6_coords
 	DC.W 0,-(48*8),-(35*8)		; P12
 	DC.W 0,48*8,-(35*8)		; P13
 mgv_object2_shape6_coords
-; Würfel
+; Cube
 	DC.W 48*8,-(48*8),48*8		; P18
 	DC.W -(48*8),-(48*8),48*8	; P15
 	DC.W -(48*8),48*8,48*8		; P16
@@ -1704,7 +1695,7 @@ mgv_object2_shape6_coords
 	DC.W 0,48*8,35*8		; P27
 
 	IFNE mgv_morph_loop_enabled
-; Form 7
+; Shape 7
 		CNOP 0,2
 mgv_object1_shape7_coords
 ; Zoom-Out
@@ -1718,273 +1709,273 @@ mgv_object2_shape7_coords
 mgv_objects_info_table
 ; Objekt 1
 ; 1. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face1_color	; Farbe der Fläche
-	DC.W mgv_object1_face1_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face1_color	
+	DC.W mgv_object1_face1_lines_number-1
 ; 2. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face2_color	; Farbe der Fläche
-	DC.W mgv_object1_face2_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face2_color	
+	DC.W mgv_object1_face2_lines_number-1 
 ; 3. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face3_color	; Farbe der Fläche
-	DC.W mgv_object1_face3_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face3_color	
+	DC.W mgv_object1_face3_lines_number-1 
 
 ; 4. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face4_color	; Farbe der Fläche
-	DC.W mgv_object1_face4_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face4_color	
+	DC.W mgv_object1_face4_lines_number-1 
 ; 5. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face5_color	; Farbe der Fläche
-	DC.W mgv_object1_face5_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face5_color	
+	DC.W mgv_object1_face5_lines_number-1 
 ; 6. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face6_color	; Farbe der Fläche
-	DC.W mgv_object1_face6_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face6_color	
+	DC.W mgv_object1_face6_lines_number-1 
 ; 7. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face7_color	; Farbe der Fläche
-	DC.W mgv_object1_face7_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face7_color	
+	DC.W mgv_object1_face7_lines_number-1 
 ; 8. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face8_color	; Farbe der Fläche
-	DC.W mgv_object1_face8_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face8_color	
+	DC.W mgv_object1_face8_lines_number-1 
 
 ; 9. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face9_color	; Farbe der Fläche
-	DC.W mgv_object1_face9_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face9_color	
+	DC.W mgv_object1_face9_lines_number-1 
 ; 10. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face10_color	; Farbe der Fläche
-	DC.W mgv_object1_face10_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face10_color	
+	DC.W mgv_object1_face10_lines_number-1 
 ; 11. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face11_color	; Farbe der Fläche
-	DC.W mgv_object1_face11_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face11_color	
+	DC.W mgv_object1_face11_lines_number-1 
 ; 12. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face12_color	; Farbe der Fläche
-	DC.W mgv_object1_face12_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face12_color	
+	DC.W mgv_object1_face12_lines_number-1 
 
 ; 13. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face13_color	; Farbe der Fläche
-	DC.W mgv_object1_face13_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face13_color	
+	DC.W mgv_object1_face13_lines_number-1 
 ; 14. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face14_color	; Farbe der Fläche
-	DC.W mgv_object1_face14_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face14_color	
+	DC.W mgv_object1_face14_lines_number-1 
 ; 15. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face15_color	; Farbe der Fläche
-	DC.W mgv_object1_face15_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face15_color	
+	DC.W mgv_object1_face15_lines_number-1 
 ; 16. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face16_color	; Farbe der Fläche
-	DC.W mgv_object1_face16_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face16_color	
+	DC.W mgv_object1_face16_lines_number-1 
 
 ; 17. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face17_color	; Farbe der Fläche
-	DC.W mgv_object1_face17_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face17_color	
+	DC.W mgv_object1_face17_lines_number-1 
 ; 18. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face18_color	; Farbe der Fläche
-	DC.W mgv_object1_face18_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face18_color	
+	DC.W mgv_object1_face18_lines_number-1 
 ; 19. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face19_color	; Farbe der Fläche
-	DC.W mgv_object1_face19_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face19_color	
+	DC.W mgv_object1_face19_lines_number-1 
 ; 20. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face20_color	; Farbe der Fläche
-	DC.W mgv_object1_face20_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face20_color	
+	DC.W mgv_object1_face20_lines_number-1 
 
 ; 21. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face21_color	; Farbe der Fläche
-	DC.W mgv_object1_face21_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face21_color	
+	DC.W mgv_object1_face21_lines_number-1 
 ; 22. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face22_color	; Farbe der Fläche
-	DC.W mgv_object1_face22_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face22_color	
+	DC.W mgv_object1_face22_lines_number-1 
 ; 23. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face23_color	; Farbe der Fläche
-	DC.W mgv_object1_face23_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face23_color	
+	DC.W mgv_object1_face23_lines_number-1 
 ; 24. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object1_face24_color	; Farbe der Fläche
-	DC.W mgv_object1_face24_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object1_face24_color	
+	DC.W mgv_object1_face24_lines_number-1 
 
 ; Object2
 ; 1. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face1_color	; Farbe der Fläche
-	DC.W mgv_object2_face1_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face1_color	
+	DC.W mgv_object2_face1_lines_number-1 
 ; 2. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face2_color	; Farbe der Fläche
-	DC.W mgv_object2_face2_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face2_color	
+	DC.W mgv_object2_face2_lines_number-1 
 ; 3. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face3_color	; Farbe der Fläche
-	DC.W mgv_object2_face3_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face3_color	
+	DC.W mgv_object2_face3_lines_number-1 
 
 ; 4. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face4_color	; Farbe der Fläche
-	DC.W mgv_object2_face4_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face4_color	
+	DC.W mgv_object2_face4_lines_number-1 
 ; 5. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face5_color	; Farbe der Fläche
-	DC.W mgv_object2_face5_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face5_color	
+	DC.W mgv_object2_face5_lines_number-1 
 ; 6. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face6_color	; Farbe der Fläche
-	DC.W mgv_object2_face6_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face6_color	
+	DC.W mgv_object2_face6_lines_number-1 
 ; 7. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face7_color	; Farbe der Fläche
-	DC.W mgv_object2_face7_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face7_color	
+	DC.W mgv_object2_face7_lines_number-1 
 ; 8. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face8_color	; Farbe der Fläche
-	DC.W mgv_object2_face8_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face8_color	
+	DC.W mgv_object2_face8_lines_number-1 
 
 ; 9. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face9_color	; Farbe der Fläche
-	DC.W mgv_object2_face9_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face9_color	
+	DC.W mgv_object2_face9_lines_number-1 
 ; 10. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face10_color	; Farbe der Fläche
-	DC.W mgv_object2_face10_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face10_color	
+	DC.W mgv_object2_face10_lines_number-1 
 ; 11. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face11_color	; Farbe der Fläche
-	DC.W mgv_object2_face11_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face11_color	
+	DC.W mgv_object2_face11_lines_number-1 
 ; 12. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face12_color	; Farbe der Fläche
-	DC.W mgv_object2_face12_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face12_color	
+	DC.W mgv_object2_face12_lines_number-1 
 
 ; 13. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face13_color	; Farbe der Fläche
-	DC.W mgv_object2_face13_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face13_color	
+	DC.W mgv_object2_face13_lines_number-1 
 ; 14. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face14_color	; Farbe der Fläche
-	DC.W mgv_object2_face14_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face14_color	
+	DC.W mgv_object2_face14_lines_number-1 
 ; 15. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face15_color	; Farbe der Fläche
-	DC.W mgv_object2_face15_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face15_color	
+	DC.W mgv_object2_face15_lines_number-1 
 ; 16. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face16_color	; Farbe der Fläche
-	DC.W mgv_object2_face16_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face16_color	
+	DC.W mgv_object2_face16_lines_number-1 
 
 ; 17. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face17_color	; Farbe der Fläche
-	DC.W mgv_object2_face17_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face17_color	
+	DC.W mgv_object2_face17_lines_number-1 
 ; 18. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face18_color	; Farbe der Fläche
-	DC.W mgv_object2_face18_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face18_color	
+	DC.W mgv_object2_face18_lines_number-1 
 ; 19. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face19_color	; Farbe der Fläche
-	DC.W mgv_object2_face19_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face19_color	
+	DC.W mgv_object2_face19_lines_number-1 
 ; 20. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face20_color	; Farbe der Fläche
-	DC.W mgv_object2_face20_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face20_color	
+	DC.W mgv_object2_face20_lines_number-1 
 
 ; 21. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face21_color	; Farbe der Fläche
-	DC.W mgv_object2_face21_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face21_color	
+	DC.W mgv_object2_face21_lines_number-1 
 ; 22. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face22_color	; Farbe der Fläche
-	DC.W mgv_object2_face22_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face22_color	
+	DC.W mgv_object2_face22_lines_number-1 
 ; 23. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face23_color	; Farbe der Fläche
-	DC.W mgv_object2_face23_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face23_color	
+	DC.W mgv_object2_face23_lines_number-1 
 ; 24. Fläche
-	DC.L 0				; Zeiger auf Koords
-	DC.W mgv_object2_face24_color	; Farbe der Fläche
-	DC.W mgv_object2_face24_lines_number-1 ; Anzahl der Linien
+	DC.L 0				; pointer coordinates table
+	DC.W mgv_object2_face24_color	
+	DC.W mgv_object2_face24_lines_number-1 
 
 	CNOP 0,2
 mgv_objects_edges
 ; Object1
-	DC.W 0*2,1*2,8*2,0*2		; Fläche vorne, Dreieck 12 Uhr
-	DC.W 1*2,2*2,8*2,1*2		; Fläche vorne, Dreieck 3 Uhr
-	DC.W 2*2,3*2,8*2,2*2		; Fläche vorne, Dreieck 6 Uhr
-	DC.W 3*2,0*2,8*2,3*2		; Fläche vorne, Dreieck 9 Uhr
+	DC.W 0*2,1*2,8*2,0*2		; face front, triangle 12 o'clock
+	DC.W 1*2,2*2,8*2,1*2		; face front, triangle 3 o'clock
+	DC.W 2*2,3*2,8*2,2*2		; face front, triangle 6 o'clock
+	DC.W 3*2,0*2,8*2,3*2		; face front, triangle 9 o'clock
 
-	DC.W 5*2,4*2,9*2,5*2		; Fläche hinten, Dreieck 12 Uhr
-	DC.W 4*2,7*2,9*2,4*2		; Fläche hinten, Dreieck 3 Uhr
-	DC.W 7*2,6*2,9*2,7*2		; Fläche hinten, Dreieck 6 Uhr
-	DC.W 6*2,5*2,9*2,6*2		; Fläche hinten, Dreieck 9 Uhr
+	DC.W 5*2,4*2,9*2,5*2		; face back, triangle 12 o'clock
+	DC.W 4*2,7*2,9*2,4*2		; face back, triangle 3 o'clock
+	DC.W 7*2,6*2,9*2,7*2		; face back, triangle 6 o'clock
+	DC.W 6*2,5*2,9*2,6*2		; face back, triangle 9 o'clock
 
-	DC.W 4*2,0*2,10*2,4*2		; Fläche links, Dreieck 12 Uhr
-	DC.W 0*2,3*2,10*2,0*2		; Fläche links, Dreieck 3 Uhr
-	DC.W 3*2,7*2,10*2,3*2		; Fläche links, Dreieck 6 Uhr
-	DC.W 7*2,4*2,10*2,7*2		; Fläche links, Dreieck 9 Uhr
+	DC.W 4*2,0*2,10*2,4*2		; face left, triangle 12 o'clock
+	DC.W 0*2,3*2,10*2,0*2		; face left, triangle 3 o'clock
+	DC.W 3*2,7*2,10*2,3*2		; face left, triangle 6 o'clock
+	DC.W 7*2,4*2,10*2,7*2		; face left, triangle 9 o'clock
 
-	DC.W 1*2,5*2,11*2,1*2		; Fläche rechts, Dreieck 12 Uhr
-	DC.W 5*2,6*2,11*2,5*2		; Fläche rechts, Dreieck 3 Uhr
-	DC.W 6*2,2*2,11*2,6*2		; Fläche rechts, Dreieck 6 Uhr
-	DC.W 2*2,1*2,11*2,2*2		; Fläche rechts, Dreieck 9 Uhr
+	DC.W 1*2,5*2,11*2,1*2		; face right, triangle 12 o'clock
+	DC.W 5*2,6*2,11*2,5*2		; face right, triangle 3 o'clock
+	DC.W 6*2,2*2,11*2,6*2		; face right, triangle 6 o'clock
+	DC.W 2*2,1*2,11*2,2*2		; face right, triangle 9 o'clock
 
-	DC.W 4*2,5*2,12*2,4*2		; Fläche oben, Dreieck 12 Uhr
-	DC.W 5*2,1*2,12*2,5*2		; Fläche oben, Dreieck 3 Uhr
-	DC.W 1*2,0*2,12*2,1*2		; Fläche oben, Dreieck 6 Uhr
-	DC.W 0*2,4*2,12*2,0*2		; Fläche oben, Dreieck 9 Uhr
+	DC.W 4*2,5*2,12*2,4*2		; face top, triangle 12 o'clock
+	DC.W 5*2,1*2,12*2,5*2		; face top, triangle 3 o'clock
+	DC.W 1*2,0*2,12*2,1*2		; face top, triangle 6 o'clock
+	DC.W 0*2,4*2,12*2,0*2		; face top, triangle 9 o'clock
 
-	DC.W 3*2,2*2,13*2,3*2		; Fläche unten, Dreieck 12 Uhr
-	DC.W 2*2,6*2,13*2,2*2		; Fläche unten, Dreieck 3 Uhr
-	DC.W 6*2,7*2,13*2,6*2		; Fläche unten, Dreieck 6 Uhr
-	DC.W 7*2,3*2,13*2,7*2		; Fläche unten, Dreieck 9 Uhr
+	DC.W 3*2,2*2,13*2,3*2		; face bottom, triangle 12 o'clock
+	DC.W 2*2,6*2,13*2,2*2		; face bottom, triangle 3 o'clock
+	DC.W 6*2,7*2,13*2,6*2		; face bottom, triangle 6 o'clock
+	DC.W 7*2,3*2,13*2,7*2		; face bottom, triangle 9 o'clock
 
 ; Object2
-	DC.W 14*2,15*2,22*2,14*2	; Fläche vorne, Dreieck 12 Uhr
-	DC.W 15*2,16*2,22*2,15*2	; Fläche vorne, Dreieck 3 Uhr
-	DC.W 16*2,17*2,22*2,16*2	; Fläche vorne, Dreieck 6 Uhr
-	DC.W 17*2,14*2,22*2,17*2	; Fläche vorne, Dreieck 9 Uhr
+	DC.W 14*2,15*2,22*2,14*2	; face front, triangle 12 o'clock
+	DC.W 15*2,16*2,22*2,15*2	; face front, triangle 3 o'clock
+	DC.W 16*2,17*2,22*2,16*2	; face front, triangle 6 o'clock
+	DC.W 17*2,14*2,22*2,17*2	; face front, triangle 9 o'clock
 
-	DC.W 19*2,18*2,23*2,19*2	; Fläche hinten, Dreieck 12 Uhr
-	DC.W 18*2,21*2,23*2,18*2	; Fläche hinten, Dreieck 3 Uhr
-	DC.W 21*2,20*2,23*2,21*2	; Fläche hinten, Dreieck 6 Uhr
-	DC.W 20*2,19*2,23*2,20*2	; Fläche hinten, Dreieck 9 Uhr
+	DC.W 19*2,18*2,23*2,19*2	; face back, triangle 12 o'clock
+	DC.W 18*2,21*2,23*2,18*2	; face back, triangle 3 o'clock
+	DC.W 21*2,20*2,23*2,21*2	; face back, triangle 6 o'clock
+	DC.W 20*2,19*2,23*2,20*2	; face back, triangle 9 o'clock
 
-	DC.W 18*2,14*2,24*2,18*2	; Fläche links, Dreieck 12 Uhr
-	DC.W 14*2,17*2,24*2,14*2	; Fläche links, Dreieck 3 Uhr
-	DC.W 17*2,21*2,24*2,17*2	; Fläche links, Dreieck 6 Uhr
-	DC.W 21*2,18*2,24*2,21*2	; Fläche links, Dreieck 9 Uhr
+	DC.W 18*2,14*2,24*2,18*2	; face left, triangle 12 o'clock
+	DC.W 14*2,17*2,24*2,14*2	; face left, triangle 3 o'clock
+	DC.W 17*2,21*2,24*2,17*2	; face left, triangle 6 o'clock
+	DC.W 21*2,18*2,24*2,21*2	; face left, triangle 9 o'clock
 
-	DC.W 15*2,19*2,25*2,15*2	; Fläche rechts, Dreieck 12 Uhr
-	DC.W 19*2,20*2,25*2,19*2	; Fläche rechts, Dreieck 3 Uhr
-	DC.W 20*2,16*2,25*2,20*2	; Fläche rechts, Dreieck 6 Uhr
-	DC.W 16*2,15*2,25*2,16*2	; Fläche rechts, Dreieck 9 Uhr
+	DC.W 15*2,19*2,25*2,15*2	; face right, triangle 12 o'clock
+	DC.W 19*2,20*2,25*2,19*2	; face right, triangle 3 o'clock
+	DC.W 20*2,16*2,25*2,20*2	; face right, triangle 6 o'clock
+	DC.W 16*2,15*2,25*2,16*2	; face right, triangle 9 o'clock
 
-	DC.W 18*2,19*2,26*2,18*2	; Fläche oben, Dreieck 12 Uhr
-	DC.W 19*2,15*2,26*2,19*2	; Fläche oben, Dreieck 3 Uhr
-	DC.W 15*2,14*2,26*2,15*2	; Fläche oben, Dreieck 6 Uhr
-	DC.W 14*2,18*2,26*2,14*2	; Fläche oben, Dreieck 9 Uhr
+	DC.W 18*2,19*2,26*2,18*2	; face top, triangle 12 o'clock
+	DC.W 19*2,15*2,26*2,19*2	; face top, triangle 3 o'clock
+	DC.W 15*2,14*2,26*2,15*2	; face top, triangle 6 o'clock
+	DC.W 14*2,18*2,26*2,14*2	; face top, triangle 9 o'clock
 
-	DC.W 17*2,16*2,27*2,17*2	; Fläche unten, Dreieck 12 Uhr
-	DC.W 16*2,20*2,27*2,16*2	; Fläche unten, Dreieck 3 Uhr
-	DC.W 20*2,21*2,27*2,20*2	; Fläche unten, Dreieck 6 Uhr
-	DC.W 21*2,17*2,27*2,21*2	; Fläche unten, Dreieck 9 Uhr
+	DC.W 17*2,16*2,27*2,17*2	; face bottom, triangle 12 o'clock
+	DC.W 16*2,20*2,27*2,16*2	; face bottom, triangle 3 o'clock
+	DC.W 20*2,21*2,27*2,20*2	; face bottom, triangle 6 o'clock
+	DC.W 21*2,17*2,27*2,21*2	; face bottom, triangle 9 o'clock
 
 	CNOP 0,4
 mgv_rot_xy_coords

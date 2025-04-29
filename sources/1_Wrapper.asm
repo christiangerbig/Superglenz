@@ -1,14 +1,3 @@
-; Programm:	1_Wrapper
-; Autor:	Christian Gerbig
-; Datum:	23.04.2024
-; Version:	1.0
-
-
-; CPU:		68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
-
-
 	MC68040
 
 
@@ -159,13 +148,13 @@ ciab_crb_bits			EQU CIACRBF_LOAD|CIACRBF_RUNMODE ; Oneshot mode
 ciaa_ta_time			EQU 0
 ciaa_tb_time			EQU 0
 	IFEQ pt_ciatiming_enabled
-ciab_ta_time			EQU 14187 ;= 0.709379 MHz * [20000 µs = 50 Hz duration for one frame on a PAL machine]
-;ciab_ta_time			EQU 14318 ;= 0.715909 MHz * [20000 µs = 50 Hz duration for one frame on a NTSC machine]
+ciab_ta_time			EQU 14187 ; = 0.709379 MHz * [20000 µs = 50 Hz duration for one frame on a PAL machine]
+;ciab_ta_time			EQU 14318 ; = 0.715909 MHz * [20000 µs = 50 Hz duration for one frame on a NTSC machine]
 	ELSE
 ciab_ta_time			EQU 0
 	ENDC
-ciab_tb_time			EQU 362 ;= 0.709379 MHz * [511.43 µs = Lowest note period C1 with Tuning=-8 * 2 / PAL clock constant = 907*2/3546895 ticks per second]
-					;= 0.715909 MHz * [506.76 µs = Lowest note period C1 with Tuning=-8 * 2 / NTSC clock constant = 907*2/3579545 ticks per second]
+ciab_tb_time			EQU 362 ; = 0.709379 MHz * [511.43 µs = Lowest note period C1 with Tuning=-8 * 2 / PAL clock constant = 907*2/3546895 ticks per second]
+					; = 0.715909 MHz * [506.76 µs = Lowest note period C1 with Tuning=-8 * 2 / NTSC clock constant = 907*2/3579545 ticks per second]
 ciaa_ta_continuous_enabled	EQU FALSE
 ciaa_tb_continuous_enabled	EQU FALSE
 	IFEQ pt_ciatiming_enabled
@@ -224,7 +213,7 @@ cl1_begin			RS.B 0
 
 cl1_end				RS.L 1
 
-copperlist1_size 		RS.B 0
+copperlist1_size	RS.B 0
 
 
 	RSRESET
@@ -306,15 +295,15 @@ start_1_pt_replay
 	CNOP 0,4
 init_custom_memory_table
 	lea	custom_memory_table(pc),a0
-	move.l	#part_1_audio_memory_size1,(a0)+ ; Speichergröße
+	move.l	#part_1_audio_memory_size1,(a0)+
 	moveq	#CUSTOM_MEMORY_FAST,d2
-	move.l	d2,(a0)+		; Speicherart: vorrangig fast-memory
+	move.l	d2,(a0)+		; type fast memory
 	moveq	#0,d0
-	move.l	d0,(a0)+		; Zeiger auf Speicherbereich = Null
-	move.l	#part_1_audio_memory_size2,(a0)+ ; Speichergröße
+	move.l	d0,(a0)+		; pointer memory block
+	move.l	#part_1_audio_memory_size2,(a0)+
 	moveq	#CUSTOM_MEMORY_CHIP,d2
-	move.l	d0,(a0)+		; Speicherart: chip-memory
-	move.l	d0,(a0)			; Zeiger auf Speicherbereich = Null
+	move.l	d0,(a0)+		; type chip memory
+	move.l	d0,(a0)			; pointer memory block
 	rts
 
 
@@ -361,14 +350,14 @@ init_main
 
 	CNOP 0,4
 pt_decrunch_audio_data
-	lea	pt_auddata,a0		; Quelle: gepackte Daten
+	lea	pt_auddata,a0		; source: crunched data
 	lea	custom_memory_table(pc),a2
-	move.l	cme_memory_pointer(a2),a1 ; Ziel: entpackte Daten
+	move.l	cme_memory_pointer(a2),a1 ; destination: decrunched data
 	move.l	a1,pt_SongDataPointer(a3)
 	movem.l a2-a6,-(a7)
 	jsr	sc_start
 	movem.l (a7)+,a2-a6
-	ADDF.W	custom_memory_entry_size,a2 ; nächster Custom-Memory-Block
+	ADDF.W	custom_memory_entry_size,a2 ; next custom memory block
 	lea	pt_audsmps,a0
 	move.l	cme_memory_pointer(a2),a1
 	move.l	a1,pt_SamplesDataPointer(a3)
@@ -422,21 +411,21 @@ init_second_copperlist
 	CNOP 0,4
 alloc_custom_memory
 	move.l	global_references_table(a3),a2
-	move.l	gr_custom_memory_table(a2),a2 ; Zeiger auf ersten Listeneintrag
+	move.l	gr_custom_memory_table(a2),a2
 	moveq	#custom_memory_number-1,d7
 alloc_custom_memory_loop
-	move.l	(a2)+,d0		; Größe der Speicherbereiches
-	CMPF.L	CUSTOM_MEMORY_CHIP,(a2)+ ; Speichersart: Chip-Memory reservieren ?
+	move.l	(a2)+,d0		; memory block size
+	CMPF.L	CUSTOM_MEMORY_CHIP,(a2)+
 	bne.s	alloc_custom_memory_skip1
 	bsr	do_alloc_chip_memory
-	move.l	d0,(a2)+		; Zeiger auf Speicherbereich
+	move.l	d0,(a2)+		; pointer memory block
 	bne.s	alloc_custom_memory_skip2
 	bsr.s	alloc_custom_memory_fail
 	bra.s	alloc_custom_memory_quit
 	CNOP 0,4
 alloc_custom_memory_skip1
 	bsr	do_alloc_memory
-	move.l	d0,(a2)+		; Zeiger auf Speicherbereich
+	move.l	d0,(a2)+		; pointer memory block
 	bne.s	alloc_custom_memory_skip2
 	bsr.s	alloc_custom_memory_fail
 	bra.s	alloc_custom_memory_quit
@@ -460,7 +449,7 @@ main
 	IFEQ pt_music_fader_enabled
 		CNOP 0,4
 pt_mouse_handler
-		btst	#POTINPB_DATLY,POTINP-DMACONR(a6) ; Rechte Mustaste gedrückt?
+		btst	#POTINPB_DATLY,POTINP-DMACONR(a6) ; RMB pressed ?
 		bne.s	pt_mouse_handler_skip
 		clr.w	pt_music_fader_active(a3)
 pt_mouse_handler_skip
@@ -471,14 +460,14 @@ pt_mouse_handler_skip
 	CNOP 0,4
 free_custom_memory
 	move.l	global_references_table(a3),a2
-	move.l	gr_custom_memory_table(a2),a2 ; Zeiger auf ersten Listeneintrag
+	move.l	gr_custom_memory_table(a2),a2
 	moveq	#custom_memory_number-1,d7
 free_custom_memory_loop
-	move.l	(a2),d0			; Größe der Speicherbereiches
-	addq.w	#QUADWORD_SIZE,a2	; Größe + Speicherart überspringen
-	move.l	(a2)+,d1		; Zeiger auf Speicher-Block
+	move.l	(a2),d0			; memory block size
+	addq.w	#QUADWORD_SIZE,a2	; skip size&type
+	move.l	(a2)+,d1		; pointer memory block
 	beq.s	free_custom_memory_skip
-	move.l	d1,a1			; Zeiger auf Speicher-Block
+	move.l	d1,a1			; pointer memory block
 	CALLEXEC FreeMem
 free_custom_memory_skip
 	dbf	d7,free_custom_memory_loop
@@ -572,7 +561,7 @@ custom_memory_table
 
 	CNOP 0,2
 ; PT-Replay
-pt_global_music_fader_active 	DC.W 0
+pt_global_music_fader_active	DC.W 0
 
 ; Main
 global_stop_fx_active		DC.W 0
@@ -584,7 +573,7 @@ global_stop_fx_active		DC.W 0
 	INCLUDE "error-texts.i"
 
 
-; Audiodaten nachladen
+; audio data
 
 ; PT-Replay
 	IFEQ pt_split_module_enabled

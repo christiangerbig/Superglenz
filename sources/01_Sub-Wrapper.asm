@@ -1,16 +1,5 @@
-; Programm:	01_Sub-Wrapper
-; Autor:	Christian Gerbig
-; Datum:	13.04.2024
-; Version:	1.0
-
-
-; CPU:		68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
-
-; Zusätzliches Playfield in 16 Farben aus vier attached 64-Pixel-Sprites,
-; wobei nach 256 Pixeln jedes Sprite wiederholt wird.
-; Die erste Copperlist gilt für alle Folgeeffekte
+; background in 16 colors with attached sprites
+; 1st copperlist calls 2nd copperlist
 
 
 	MC68040
@@ -226,7 +215,7 @@ cl2_size2			EQU 0
 cl2_size3			EQU copperlist2_size
 
 
-; Sprite0-Zusatzstruktur
+; Sprite0 additional structure
 	RSRESET
 
 spr0_extension1	RS.B 0
@@ -236,7 +225,7 @@ spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
-; Sprite0-Hauptstruktur
+; Sprite0 main structure
 	RSRESET
 
 spr0_begin			RS.B 0
@@ -247,7 +236,7 @@ spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite0_size			RS.B 0
 
-; Sprite1-Zusatzstruktur
+; Sprite1 additional structure
 	RSRESET
 
 spr1_extension1	RS.B 0
@@ -257,7 +246,7 @@ spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
-; Sprite1-Hauptstruktur
+; Sprite1 main structure
 	RSRESET
 
 spr1_begin			RS.B 0
@@ -268,7 +257,7 @@ spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite1_size			RS.B 0
 
-; Sprite2-Zusatzstruktur
+; Sprite2 additional structure
 	RSRESET
 
 spr2_extension1			RS.B 0
@@ -278,7 +267,7 @@ spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
-; Sprite2-Hauptstruktur
+; Sprite2 main structure
 	RSRESET
 
 spr2_begin			RS.B 0
@@ -289,7 +278,7 @@ spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite2_size			RS.B 0
 
-; Sprite3-Zusatzstruktur
+; Sprite3 additional structure
 	RSRESET
 
 spr3_extension1	RS.B 0
@@ -299,7 +288,7 @@ spr3_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr3_extension1_size		RS.B 0
 
-; Sprite3-Hauptstruktur
+; Sprite3 main structure
 	RSRESET
 
 spr3_begin			RS.B 0
@@ -310,7 +299,7 @@ spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite3_size			RS.B 0
 
-; Sprite4-Zusatzstruktur
+; Sprite4 additional structure
 	RSRESET
 
 spr4_extension1	RS.B 0
@@ -320,7 +309,7 @@ spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
-; Sprite4-Hauptstruktur
+; Sprite4 main structure
 	RSRESET
 
 spr4_begin			RS.B 0
@@ -331,7 +320,7 @@ spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite4_size			RS.B 0
 
-; Sprite5-Zusatzstruktur
+; Sprite5 additional structure
 	RSRESET
 
 spr5_extension1			RS.B 0
@@ -341,7 +330,7 @@ spr5_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr5_extension1_size		RS.B 0
 
-; Sprite5-Hauptstruktur
+; Sprite5 main structure
 	RSRESET
 
 spr5_begin			RS.B 0
@@ -352,7 +341,7 @@ spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite5_size			RS.B 0
 
-; Sprite6-Zusatzstruktur
+; Sprite6 additional structure
 	RSRESET
 
 spr6_extension1			RS.B 0
@@ -362,7 +351,7 @@ spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
-; Sprite6-Hauptstruktur
+; Sprite6 main structure
 	RSRESET
 
 spr6_begin			RS.B 0
@@ -373,7 +362,7 @@ spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite6_size			RS.B 0
 
-; Sprite7-Zusatzstruktur
+; Sprite7 additional structure
 	RSRESET
 
 spr7_extension1	RS.B 0
@@ -383,7 +372,7 @@ spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr7_extension1_size		RS.B 0
 
-; Sprite7-Hauptstruktur
+; Sprite7 main structure
 	RSRESET
 
 spr7_begin			RS.B 0
@@ -436,7 +425,7 @@ spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 
 ; Sprite-Fader
 sprf_rgb8_colors_counter	RS.W 1
-sprf_rgb8_copy_colors_active 	RS.W 1
+sprf_rgb8_copy_colors_active	RS.W 1
 
 ; Sprite-Fader-In
 sprfi_rgb8_active		RS.W 1
@@ -468,12 +457,12 @@ init_main_variables
 
 ; Sprite-Fader-In
 	move.w	d0,sprfi_rgb8_active(a3)
-	move.w	#sine_table_length/4,sprfi_rgb8_fader_angle(a3) ; 90 Grad
+	move.w	#sine_table_length/4,sprfi_rgb8_fader_angle(a3) ; 90°
 
 ; Sprite-Fader-Out
 	moveq	#FALSE,d1
 	move.w	d1,sprfo_rgb8_active(a3)
-	move.w	#sine_table_length/4,sprfo_rgb8_fader_angle(a3) ; 90 Grad
+	move.w	#sine_table_length/4,sprfo_rgb8_fader_angle(a3) ; 90°
 	rts
 
 	CNOP 0,4
@@ -586,7 +575,7 @@ beam_routines
 	bsr	sprite_fader_out
 	bsr	sprf_rgb8_copy_color_table
 	bsr	mouse_handler
-	tst.l	d0			; Abbruch ?
+	tst.l	d0			; exit ?
 	bne.s	fast_exit
 	tst.w	sprfi_rgb8_active(a3)
 	beq.s	beam_routines
@@ -606,29 +595,29 @@ sprite_fader_in
 	bne.s	sprite_fader_in_quit
 	move.w	sprfi_rgb8_fader_angle(a3),d2
 	move.w	d2,d0
-	ADDF.W	sprfi_rgb8_fader_angle_speed,d0 ; nächster Winkel
-	cmp.w	#sine_table_length/2,d0 ; Winkel <= 180 Grad ?
+	ADDF.W	sprfi_rgb8_fader_angle_speed,d0
+	cmp.w	#sine_table_length/2,d0 ; <= 180° ?
 	ble.s   sprite_fader_in_skip
-	MOVEF.W sine_table_length/2,d0	; 180 Grad
+	MOVEF.W sine_table_length/2,d0
 sprite_fader_in_skip
 	move.w	d0,sprfi_rgb8_fader_angle(a3) 
-	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB-Zähler
+	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table(pc),a0	
 	move.w	(a0,d2.w*2),d0		; sin(w)
 	MULSF.W sprfi_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	sprfi_rgb8_fader_center,d0
-	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; Puffer für Farbwerte
-	lea	sprfi_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; Sollwerte
-	move.w	d0,a5			; Additions-/Subtraktionswert für Blau
+	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; pointer colors buffer
+	lea	sprfi_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; pointer destination values
+	move.w	d0,a5			; decrease/increase blue
 	swap	d0
 	clr.w	d0
-	move.l	d0,a2			; Additions-/Subtraktionswert für Rot
+	move.l	d0,a2			; decrease/increase red
 	lsr.l	#8,d0
-	move.l	d0,a4			; Additions-/Subtraktionswert für Grün
+	move.l	d0,a4			; decrease/increase green
 	MOVEF.W sprf_rgb8_colors_number-1,d7
 	bsr	sprf_rgb8_fader_loop
-	move.w	d6,sprf_rgb8_colors_counter(a3) ; Fading-In fertig ?
+	move.w	d6,sprf_rgb8_colors_counter(a3) ; fading-in finished ?
 	bne.s	sprite_fader_in_quit
 	move.w	#FALSE,sprfi_rgb8_active(a3)
 sprite_fader_in_quit
@@ -642,29 +631,29 @@ sprite_fader_out
 	bne.s	sprite_fader_out_quit
 	move.w	sprfo_rgb8_fader_angle(a3),d2
 	move.w	d2,d0
-	ADDF.W	sprfo_rgb8_fader_angle_speed,d0 ; nächster Winkel
-	cmp.w	#sine_table_length/2,d0 ; Winkel <= 180 Grad ?
+	ADDF.W	sprfo_rgb8_fader_angle_speed,d0
+	cmp.w	#sine_table_length/2,d0 ; <= 180° ?
 	ble.s	sprite_fader_out_skip
-	MOVEF.W sine_table_length/2,d0 	; 180 Grad
+	MOVEF.W sine_table_length/2,d0
 sprite_fader_out_skip
 	move.w	d0,sprfo_rgb8_fader_angle(a3) 
-	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB-Zähler
+	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table(pc),a0	
 	move.w	(a0,d2.w*2),d0		; sin(w)
 	MULSF.W sprfo_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	sprfo_rgb8_fader_center,d0
-	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; Puffer für Farbwerte
-	lea	sprfo_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; Sollwerte
-	move.w	d0,a5			; Additions-/Subtraktionswert für Blau
+	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; pointer colors buffer
+	lea	sprfo_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; pointer destination values
+	move.w	d0,a5			; decrease/increase blue
 	swap	d0
 	clr.w	d0
-	move.l	d0,a2			; Additions-/Subtraktionswert für Rot
+	move.l	d0,a2			; decrease/increase red
 	lsr.l	#8,d0
-	move.l	d0,a4			; Additions-/Subtraktionswert für Grün
+	move.l	d0,a4			; decrease/increase green
 	MOVEF.W sprf_rgb8_colors_number-1,d7
 	bsr	sprf_rgb8_fader_loop
-	move.w	d6,sprf_rgb8_colors_counter(a3) ; Fading-Out fertig ?
+	move.w	d6,sprf_rgb8_colors_counter(a3) ; fading-in finished ?
 	bne.s	sprite_fader_out_quit
 	move.w	#FALSE,sprfo_rgb8_active(a3)
 sprite_fader_out_quit
