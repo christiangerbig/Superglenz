@@ -12,7 +12,7 @@
 	XDEF start_10_credits
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -32,12 +32,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -174,20 +174,20 @@ vts_image_plane_width		EQU vts_image_x_size/8
 vts_image_depth			EQU 1
 vts_image_colors_number		EQU 2
 
-vts_origin_character_x_size	EQU 8
-vts_origin_character_y_size	EQU 7
+vts_origin_char_x_size		EQU 8
+vts_origin_char_y_size		EQU 7
 vst_origin_charcter_depth	EQU vts_image_depth
 
-vts_text_character_x_size	EQU 8
-vts_text_character_width	EQU vts_text_character_x_size/8
-vts_text_character_y_size	EQU vts_origin_character_y_size+1
-vts_text_character_depth	EQU vts_image_depth
+vts_text_char_x_size		EQU 8
+vts_text_char_width		EQU vts_text_char_x_size/8
+vts_text_char_y_size		EQU vts_origin_char_y_size+1
+vts_text_char_depth		EQU vts_image_depth
 
 vts_vert_scroll_speed		EQU 1
 
-vts_text_character_y_restart	EQU visible_lines_number+vts_text_character_y_size
-vts_text_characters_per_line	EQU (pixel_per_line-32)/vts_text_character_x_size
-vts_text_characters_per_column	EQU (visible_lines_number+vts_text_character_y_size)/vts_text_character_y_size
+vts_text_char_y_restart		EQU visible_lines_number+vts_text_char_y_size
+vts_text_characters_per_line	EQU (pixel_per_line-32)/vts_text_char_x_size
+vts_text_characters_per_column	EQU (visible_lines_number+vts_text_char_y_size)/vts_text_char_y_size
 vts_text_characters_number	EQU vts_text_characters_per_line*vts_text_characters_per_column
 
 ; Morph-Glenz-Vectors
@@ -291,13 +291,13 @@ eh_trigger_number_max		EQU 2
 
 
 pf1_plane_x_offset		EQU 0
-pf1_plane_y_offset		EQU vts_text_character_y_size
+pf1_plane_y_offset		EQU vts_text_char_y_size
 
 pf2_plane_x_offset		EQU 0
-pf2_plane_y_offset		EQU vts_text_character_y_size-1
+pf2_plane_y_offset		EQU vts_text_char_y_size-1
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -330,7 +330,7 @@ morph_shape_size		RS.B 0
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_COPJMP2			RS.L 1
 
@@ -434,8 +434,8 @@ cl2_size3			EQU copperlist2_size
 
 spr0_extension1	RS.B 0
 
-spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr0_ext1_planedata		RS.L 1*(spr_pixel_per_datafetch/16)*visible_lines_number
+spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr0_ext1_planedata		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)*visible_lines_number
 
 spr0_extension1_size		RS.B 0
 
@@ -446,7 +446,7 @@ spr0_begin			RS.B 0
 
 spr0_extension1_entry RS.B spr0_extension1_size
 
-spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr0_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite0_size			RS.B 0
 
@@ -455,8 +455,8 @@ sprite0_size			RS.B 0
 
 spr1_extension1			RS.B 0
 
-spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr1_ext1_planedata		RS.L 1*(spr_pixel_per_datafetch/16)*visible_lines_number
+spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr1_ext1_planedata		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)*visible_lines_number
 
 spr1_extension1_size		RS.B 0
 
@@ -467,7 +467,7 @@ spr1_begin			RS.B 0
 
 spr1_extension1_entry		RS.B spr1_extension1_size
 
-spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr1_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite1_size			RS.B 0
 
@@ -476,7 +476,7 @@ sprite1_size			RS.B 0
 
 spr2_begin			RS.B 0
 
-spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr2_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite2_size			RS.B 0
 
@@ -485,7 +485,7 @@ sprite2_size			RS.B 0
 
 spr3_begin			RS.B 0
 
-spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr3_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite3_size			RS.B 0
 
@@ -494,7 +494,7 @@ sprite3_size			RS.B 0
 
 spr4_begin			RS.B 0
 
-spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr4_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite4_size			RS.B 0
 
@@ -503,7 +503,7 @@ sprite4_size			RS.B 0
 
 spr5_begin			RS.B 0
 
-spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr5_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite5_size			RS.B 0
 
@@ -512,7 +512,7 @@ sprite5_size			RS.B 0
 
 spr6_begin			RS.B 0
 
-spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr6_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite6_size			RS.B 0
 
@@ -521,7 +521,7 @@ sprite6_size			RS.B 0
 
 spr7_begin			RS.B 0
 
-spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr7_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite7_size			RS.B 0
 
@@ -563,7 +563,7 @@ spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -671,6 +671,7 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
+
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
@@ -682,6 +683,7 @@ init_colors
 	CPU_INIT_COLOR_LOW COLOR02,2,pf2_rgb8_color_table
 	rts
 
+
 	CNOP 0,4
 init_sprites
 	bsr.s	spr_init_ptrs_table
@@ -689,6 +691,7 @@ init_sprites
 	bra.s	spr_copy_structures
 
 	INIT_SPRITE_POINTERS_TABLE
+
 
 	CNOP 0,4
 mgv_init_xy_coords
@@ -699,6 +702,7 @@ mgv_init_xy_coords
 	move.l	(a2),a1			; SPR1
 	bsr.s	mgv_init_sprite_header
 	rts
+
 
 	CNOP 0,4
 mgv_init_sprite_header
@@ -718,7 +722,9 @@ mgv_init_sprite_header
 	move.w	d2,spr_pixel_per_datafetch/8(a1) ; SPRxCTL
 	rts
 
+
 	COPY_SPRITE_STRUCTURES
+
 
 ; Vert-Text-Scroll
 	INIT_CHARACTERS_OFFSETS.W vts
@@ -728,6 +734,7 @@ mgv_init_sprite_header
 	INIT_CHARACTERS_Y_POSITIONS vts,text_characters_per_column
 
 	INIT_CHARACTERS_IMAGES vts
+
 
 ; Morph-Glenz-Vectors
 	CNOP 0,4
@@ -791,6 +798,7 @@ init_first_copperlist
 
 	COP_INIT_BITPLANE_POINTERS cl1
 
+
 	CNOP 0,4
 cl1_init_colors
 	COP_INIT_COLOR_HIGH COLOR16,16,spr_rgb8_color_table
@@ -800,6 +808,7 @@ cl1_init_colors
 	rts
 
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
+
 
 	CNOP 0,4
 cl1_set_plane_ptrs
@@ -824,6 +833,7 @@ cl1_set_plane_ptrs_loop2
 	dbf	d7,cl1_set_plane_ptrs_loop2
 	rts
 
+
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_construction2(a3),a0
@@ -844,6 +854,7 @@ init_second_copperlist
 	bsr	mgv_fill_extra_playfield
 	bra	mgv_set_second_copperlist
 
+
 	CNOP 0,4
 cl2_init_clear_blit
 	COP_WAITBLIT
@@ -852,8 +863,9 @@ cl2_init_clear_blit
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ 0,BLTDMOD
-	COP_MOVEQ (mgv_clear_blit_y_size*mgv_clear_blit_depth*64)+(mgv_clear_blit_x_size/16),BLTSIZE
+	COP_MOVEQ (mgv_clear_blit_y_size*mgv_clear_blit_depth*64)+(mgv_clear_blit_x_size/WORD_BITS),BLTSIZE
 	rts
+
 
 	CNOP 0,4
 cl2_init_line_blits_steady
@@ -871,6 +883,7 @@ cl2_init_line_blits_steady
 	COP_MOVEQ 0,COPJMP2
 	rts
 
+
 	CNOP 0,4
 cl2_init_line_blits
 	MOVEF.W	mgv_lines_number_max-1,d7
@@ -887,6 +900,7 @@ cl1_init_line_blits_loop
 	dbf	d7,cl1_init_line_blits_loop
 	rts
 
+
 	CNOP 0,4
 cl2_init_fill_blit
 	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; minterm D=A
@@ -897,7 +911,7 @@ cl2_init_fill_blit
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ 0,BLTAMOD
 	COP_MOVEQ 0,BLTDMOD
-	COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/16),BLTSIZE
+	COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/WORD_BITS),BLTSIZE
 	rts
 
 	COPY_COPPERLIST cl2,2
@@ -957,11 +971,15 @@ beam_routines_exit
 
 	SWAP_COPPERLIST cl2,2
 
+
 	SWAP_SPRITES spr,spr_swap_number
+
 
 	SET_SPRITES spr,spr_swap_number
 
+
 	SWAP_PLAYFIELD pf1,2
+
 
 	CNOP 0,4
 set_playfield1
@@ -980,6 +998,7 @@ set_playfield1_loop
 	dbf	d7,set_playfield1_loop
 	rts
 
+
 	CNOP 0,4
 set_playfield2
 	MOVEF.L (pf2_plane_x_offset/8)+(pf2_plane_y_offset*pf1_plane_width*pf1_depth3),d1
@@ -997,6 +1016,7 @@ set_playfield2_loop
 	dbf	d7,set_playfield2_loop
 	rts
 
+
 	CNOP 0,4
 swap_extra_playfield
 	move.l	extra_pf1(a3),a0
@@ -1009,7 +1029,7 @@ swap_extra_playfield
 vert_text_scroll
 	movem.l a4-a6,-(a7)
 	MOVEF.L vts_text_characters_per_line*SHIRES_PIXEL_FACTOR,d3
-	MOVEF.W vts_text_character_y_restart,d4
+	MOVEF.W vts_text_char_y_restart,d4
 	lea	vts_characters_y_positions(pc),a1
 	lea	vts_characters_image_ptrs(pc),a2
 	move.l	pf1_construction2(a3),a4
@@ -1041,7 +1061,7 @@ vert_text_scroll_loop2
 	sub.l	d3,a2			; restart pointer
 	moveq	#vts_text_characters_per_line-1,d5
 vert_text_scroll_loop3
-	bsr.s	vts_get_new_character_image
+	bsr.s	vts_get_new_char_image
 	move.l	d0,(a2)+		; new character image
 	dbf	d5,vert_text_scroll_loop3
 	add.w	d4,d2			; y restart
@@ -1051,14 +1071,16 @@ vert_text_scroll_skip
 	movem.l (a7)+,a4-a6
 	rts
 
-	GET_NEW_CHARACTER_IMAGE.W vts,vts_check_control_codes,NORESTART
 
-	CNOP 0,4
-vts_check_control_codes
+	GET_NEW_char_IMAGE.W vts,vts_check_control_codes,NORESTART
+
+
 ; Input
 ; d0.b	ASCII-Code
 ; Result
 ; d0.l	Return-Code
+	CNOP 0,4
+vts_check_control_codes
 	cmp.b	#ASCII_CTRL_M,d0
 	beq.s	vts_enable_music_fader
 	cmp.b	#ASCII_CTRL_V,d0
@@ -1102,6 +1124,7 @@ mgv_clear_extra_playfield
 	move.w	d0,cl2_extension1_entry+cl2_ext1_BLTDPTH+WORD_SIZE(a0)
 	rts
 
+
 	CNOP 0,4
 mgv_calculate_rot_y_speed
 	move.w	mgv_rot_y_angle_speed_angle(a3),d2
@@ -1114,6 +1137,7 @@ mgv_calculate_rot_y_speed
 	and.w	#sine_table_length-1,d2 ; remove overflow
 	move.w	d2,mgv_rot_y_angle_speed_angle(a3)
 	rts
+
 
 	CNOP 0,4
 mgv_rotation
@@ -1158,6 +1182,7 @@ mgv_rotate_loop
 	movem.l (a7)+,a4-a6
 	rts
 
+
 	CNOP 0,4
 mgv_morph_object
 	tst.w	mgv_morph_active(a3)
@@ -1201,6 +1226,7 @@ mgv_morph_object_skip5
 	move.w	#FALSE,mgv_morph_active(a3)
 mgv_morph_object_quit
 	rts
+
 
 	CNOP 0,4
 mgv_draw_lines
@@ -1311,6 +1337,7 @@ mgv_fill_extra_playfield
 	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTDPTH+WORD_SIZE(a0) ; destination
 	rts
 
+
 	CNOP 0,4
 mgv_copy_extra_playfield
 	lea	spr_ptrs_construction(pc),a2
@@ -1334,6 +1361,7 @@ mgv_copy_extra_playfield_loop
 	addq.w	#8,a1			; skip bitplane 4
 	dbf	d7,mgv_copy_extra_playfield_loop
 	rts
+
 
 	CNOP 0,4
 mgv_set_second_copperlist
@@ -1395,7 +1423,9 @@ colors_fader_cross_quit
 	movem.l (a7)+,a4-a6
 	rts
 
+
 	RGB8_COLOR_FADER cfc
+
 
 	CNOP 0,4
 cfc_rgb8_copy_color_table
@@ -1496,6 +1526,7 @@ control_counters_skip3
 control_counters_skip4
 	rts
 
+
 	CNOP 0,4
 effects_handler
 	moveq	#INTF_SOFTINT,d1
@@ -1542,9 +1573,11 @@ nmi_int_server
 pf1_rgb8_color_table
 	DC.L color00_bits,$f7e954
 
+
 	CNOP 0,4
 pf2_rgb8_color_table
 	DC.L color00_bits,$000000
+
 
 	CNOP 0,4
 spr_rgb8_color_table
@@ -1552,9 +1585,11 @@ spr_rgb8_color_table
 		DC.L color00_bits
 	ENDR
 
+
 	CNOP 0,4
 spr_ptrs_construction
 	DS.L spr_number
+
 
 	CNOP 0,4
 spr_ptrs_display
@@ -1831,7 +1866,7 @@ cfc_rgb8_color_table
 	REPT 2
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/Colortables/1xGlenz-Colorgradient1.ct"
+	INCLUDE "Superglenz:Colortables/1xGlenz-Colorgradient1.ct"
 	REPT 2
 		DC.L color00_bits
 	ENDR
@@ -1839,7 +1874,7 @@ cfc_rgb8_color_table
 	REPT 2
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/Colortables/1xGlenz-Colorgradient5.ct"
+	INCLUDE "Superglenz:Colortables/1xGlenz-Colorgradient5.ct"
 	REPT 2
 		DC.L color00_bits
 	ENDR
@@ -1847,7 +1882,7 @@ cfc_rgb8_color_table
 	REPT 2
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/Colortables/1xGlenz-Colorgradient4.ct"
+	INCLUDE "Superglenz:Colortables/1xGlenz-Colorgradient4.ct"
 	REPT 2
 		DC.L color00_bits
 	ENDR
@@ -1860,6 +1895,7 @@ cfc_rgb8_color_table
 
 
 	INCLUDE "error-texts.i"
+
 
 ; Vert-Textscroll
 vts_text
@@ -2204,8 +2240,8 @@ vts_text
 ; gfx data
 
 ; Vert-Text-Scroll
-vts_image_data SECTION vts_gfx,DATA
-	INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/fonts/8x7x2-Font.rawblit"
+vts_image_data			SECTION vts_gfx,DATA
+	INCBIN "Superglenz:fonts/8x7x2-Font.rawblit"
 	DS.B vts_image_plane_width*vts_image_depth ; empty line
 
 	END

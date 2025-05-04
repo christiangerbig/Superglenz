@@ -10,7 +10,7 @@
 	XREF nop_second_copperlist
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -30,12 +30,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -318,7 +318,7 @@ hf_colorbanks_number		EQU 240/hf_colors_per_colorbank
 eh_trigger_number_max		EQU 5
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -368,7 +368,7 @@ cl1_extension2_size		RS.B 0
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_extension1_entry		RS.B cl1_extension1_size
 cl1_extension2_entry		RS.B cl1_extension2_size
@@ -469,8 +469,8 @@ cl2_size3			EQU copperlist2_size
 
 spr0_extension1	RS.B 0
 
-spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*title_image_y_size
+spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*title_image_y_size
 
 spr0_extension1_size		RS.B 0
 
@@ -478,8 +478,8 @@ spr0_extension1_size		RS.B 0
 
 spr0_extension2			RS.B 0
 
-spr0_ext2_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr0_ext2_planedata		RS.L (spr_pixel_per_datafetch/16)*rse_letters_image_y_size
+spr0_ext2_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr0_ext2_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*rse_letters_image_y_size
 
 spr0_extension2_size		RS.B 0
 
@@ -489,9 +489,9 @@ spr0_extension2_size		RS.B 0
 spr0_begin			RS.B 0
 
 spr0_extension1_entry		RS.B spr0_extension1_size
-spr0_extension2_entry	RS.B spr0_extension2_size
+spr0_extension2_entry		RS.B spr0_extension2_size
 
-spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr0_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite0_size			RS.B 0
 
@@ -500,8 +500,8 @@ sprite0_size			RS.B 0
 
 spr1_extension1			RS.B 0
 
-spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*title_image_y_size
+spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*title_image_y_size
 
 spr1_extension1_size		RS.B 0
 
@@ -509,8 +509,8 @@ spr1_extension1_size		RS.B 0
 
 spr1_extension2			RS.B 0
 
-spr1_ext2_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr1_ext2_planedata		RS.L (spr_pixel_per_datafetch/16)*rse_letters_image_y_size
+spr1_ext2_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr1_ext2_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*rse_letters_image_y_size
 
 spr1_extension2_size		RS.B 0
 
@@ -522,7 +522,7 @@ spr1_begin			RS.B 0
 spr1_extension1_entry		RS.B spr1_extension1_size
 spr1_extension2_entry		RS.B spr1_extension2_size
 
-spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr1_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite1_size			RS.B 0
 
@@ -531,8 +531,8 @@ sprite1_size			RS.B 0
 
 spr2_extension1	RS.B 0
 
-spr2_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*title_image_y_size
+spr2_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*title_image_y_size
 
 spr2_extension1_size		RS.B 0
 
@@ -540,8 +540,8 @@ spr2_extension1_size		RS.B 0
 
 spr2_extension2	RS.B 0
 
-spr2_ext2_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr2_ext2_planedata		RS.L (spr_pixel_per_datafetch/16)*rse_letters_image_y_size
+spr2_ext2_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr2_ext2_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*rse_letters_image_y_size
 
 spr2_extension2_size		RS.B 0
 
@@ -553,7 +553,7 @@ spr2_begin			RS.B 0
 spr2_extension1_entry		RS.B spr2_extension1_size
 spr2_extension2_entry		RS.B spr2_extension2_size
 
-spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr2_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite2_size			RS.B 0
 
@@ -562,7 +562,7 @@ sprite2_size			RS.B 0
 
 spr3_begin			RS.B 0
 
-spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr3_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite3_size			RS.B 0
 
@@ -571,7 +571,7 @@ sprite3_size			RS.B 0
 
 spr4_begin			RS.B 0
 
-spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr4_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite4_size			RS.B 0
 
@@ -580,7 +580,7 @@ sprite4_size			RS.B 0
 
 spr5_begin			RS.B 0
 
-spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr5_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite5_size			RS.B 0
 
@@ -589,7 +589,7 @@ sprite5_size			RS.B 0
 
 spr6_begin			RS.B 0
 
-spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr6_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite6_size			RS.B 0
 
@@ -598,7 +598,7 @@ sprite6_size			RS.B 0
 
 spr7_begin			RS.B 0
 
-spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr7_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite7_size			RS.B 0
 
@@ -640,7 +640,7 @@ spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -736,12 +736,15 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
+
 	CNOP 0,4
 init_sprites
 	bsr.s	spr_init_ptrs_table
 	bra.s	init_sprites_cluster
 
+
 	INIT_SPRITE_POINTERS_TABLE
+
 
 ; RSE letters
 	CNOP 0,4
@@ -810,8 +813,7 @@ init_sprites_cluster
 	move.l	(a7)+,a4
 	rts
 
-	CNOP 0,4
-copy_sprite_planes
+
 ; Input
 ; d0.w	X position
 ; d1.w	Y position
@@ -821,6 +823,8 @@ copy_sprite_planes
 ; a2.l	Pointer bitplane 1
 ; a4.l	Pointer bitplane 2
 ; Result
+	CNOP 0,4
+copy_sprite_planes
 	add.w	d1,d2			; VSTOP
 	SET_SPRITE_POSITION d0,d1,d2
 	move.w	d1,(a0)			; SPRxPOS
@@ -835,6 +839,7 @@ copy_sprite_planes_loop
 	add.l	d3,a4
 	dbf	d7,copy_sprite_planes_loop
 	rts
+
 
 ; Glenz-Vectors
 	CNOP 0,4
@@ -861,6 +866,7 @@ gv_init_color_table
 	move.l	(a1)+,4*LONGWORD_SIZE(a0) ; COLOR04
 	move.l	(a1),5*LONGWORD_SIZE(a0) ; COLOR05
 	rts
+
 
 ; Horiz-Fader
 	CNOP 0,4
@@ -916,6 +922,7 @@ hf_dim_colors_loop2
 	dbf	d7,hf_dim_colors_loop1
 	rts
 
+
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
@@ -955,12 +962,14 @@ init_colors
 	CPU_INIT_COLOR_LOW COLOR00,32
 	rts
 
+
 	CNOP 0,4
 spb_init_display_window
 	move.w	#diwstrt_bits,DIWSTRT-DMACONR(a6)
 	move.w	#diwstop_bits,DIWSTOP-DMACONR(a6)
 	move.w	#diwhigh_bits,DIWHIGH-DMACONR(a6) ; OS3.x LoadView() sets DIWHIGH=$0000 -> display glitches
 	rts
+
 
 	CNOP 0,4
 init_first_copperlist
@@ -976,11 +985,15 @@ init_first_copperlist
 	bsr	cl1_set_sprite_ptrs
 	bra	cl1_set_plane_ptrs
 
+
 	COP_INIT_PLAYFIELD_REGISTERS cl1
+
 
 	COP_INIT_SPRITE_POINTERS cl1
 
+
 	COP_INIT_BITPLANE_POINTERS cl1
+
 
 	CNOP 0,4
 cl1_init_branches_ptrs1
@@ -1011,6 +1024,7 @@ cl1_init_branches_ptrs1_loop
 	COP_MOVEQ 0,COPJMP2
 	dbf	d7,cl1_init_branches_ptrs1_loop
 	rts
+
 
 	CNOP 0,4
 cl1_init_branches_ptrs2
@@ -1043,6 +1057,7 @@ cl1_init_branches_ptrs2_loop
 	dbf	d7,cl1_init_branches_ptrs2_loop
 	rts
 
+
 	CNOP 0,4
 cl1_reset_pointer
 	move.l	cl1_display(a3),d0
@@ -1054,17 +1069,22 @@ cl1_reset_pointer
 	move.w	d0,(a0)+
 	rts
 
+
 	COP_INIT_COPINT cl1,cl1_HSTART3,cl1_vstart3,YWRAP
+
 
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
+
 	COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
+
 
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_display(a3),a0
 	bsr.s	cl2_init_bplcon41
 	bra.s	cl2_init_bplcon42
+
 
 	CNOP 0,4
 cl2_init_bplcon41
@@ -1075,6 +1095,7 @@ cl2_init_bplcon41_loop
 	dbf	d7,cl2_init_bplcon41_loop
 	COP_MOVEQ 0,COPJMP1
 	rts
+
 
 	CNOP 0,4
 cl2_init_bplcon42
@@ -1130,6 +1151,7 @@ fast_exit
 
 	SWAP_PLAYFIELD pf1,3,pf1_depth3
 
+
 	SET_PLAYFIELD pf1,pf1_depth3
 
 
@@ -1166,6 +1188,7 @@ gv_clear_playfield1_loop
 	move.l	variables+save_a7(pc),a7
 	movem.l (a7)+,a3-a6
 	rts
+
 
 	CNOP 0,4
 gv_rot
@@ -1225,6 +1248,7 @@ gv_rot_loop
 	dbf	d7,gv_rot_loop
 	movem.l (a7)+,a4-a5
 	rts
+
 
 	CNOP 0,4
 gv_draw_lines
@@ -1299,6 +1323,7 @@ gv_draw_lines_init
 	move.w	d0,BLTDMOD-DMACONR(a6)
 	rts
 
+
 	CNOP 0,4
 gv_fill_playfield1
 	move.l	pf1_construction2(a3),a0
@@ -1311,7 +1336,7 @@ gv_fill_playfield1
 	move.l	a0,BLTDPT-DMACONR(a6)	; target
 	moveq	#0,d0
 	move.l	d0,BLTAMOD-DMACONR(a6)	; A&D moduli
-	move.w	#(gv_fill_blit_y_size*gv_fill_blit_depth*64)+(gv_fill_blit_x_size/16),BLTSIZE-DMACONR(a6)
+	move.w	#(gv_fill_blit_y_size*gv_fill_blit_depth*64)+(gv_fill_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
 	rts
 
 
@@ -1338,6 +1363,7 @@ scroll_pf_bottom_in_skip
 scroll_pf_bottom_in_quit
 	rts
 
+
 	CNOP 0,4
 scroll_pf_bottom_out
 	tst.w	spbo_active(a3)
@@ -1362,12 +1388,13 @@ scroll_pf_bottom_out_skip
 scroll_pf_bottom_out_quit
 	rts
 
-	CNOP 0,4
-spb_set_display_window
+
 ; Input
 ; d0.w	y offset
 ; d3.w	y max
 ; Result
+	CNOP 0,4
+spb_set_display_window
 	move.l	cl1_display(a3),a1
 	moveq	#spb_min_VSTART,d1
 	add.w	d0,d1
@@ -1388,6 +1415,7 @@ spb_set_display_window_skip2
 	or.w	#diwhigh_bits&(~(DIWHIGHF_VSTART8|DIWHIGHF_VSTOP8)),d2
 	move.w	d2,cl1_DIWHIGH+WORD_SIZE(a1)
 	rts
+
 
 	CNOP 0,4
 horiz_fader_in1
@@ -1419,6 +1447,7 @@ horiz_fader_in1_loop
 horiz_fader_in1_quit
 	rts
 
+
 	CNOP 0,4
 horiz_fader_in2
 	tst.w	hfi2_active(a3)
@@ -1449,6 +1478,7 @@ horiz_fader_in2_loop
 horiz_fader_in2_quit
 	rts
 
+
 	CNOP 0,4
 horiz_fader_out1
 	tst.w	hfo1_active(a3)
@@ -1477,6 +1507,7 @@ horiz_fader_out1_loop
 	dbf	d7,horiz_fader_out1_loop
 horiz_fader_out1_quit
 	rts
+
 
 	CNOP 0,4
 horiz_fader_out2
@@ -1553,6 +1584,7 @@ eh_start_scroll_pf_bottom_out
 	clr.w	spbo_active(a3)
 	rts
 
+
 	CNOP 0,4
 mouse_handler
 	btst	#CIAB_GAMEPORT0,CIAPRA(a4) ; LMB pressed ?
@@ -1584,78 +1616,79 @@ pf1_rgb8_color_table
 		DC.L color00_bits
 	ENDR
 
+
 	CNOP 0,4
 spr_rgb8_color_table
 	REPT hf_colors_per_colorbank
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
@@ -1678,7 +1711,7 @@ sine_table
 ; Morph-Glenz-Vectors
 	CNOP 0,4
 gv_rgb8_color_table
-	INCLUDE "Blitter.AGA:Grafik/1xGlenz-Colorgradient5.ct"
+	INCLUDE "Blitter.AGA:graphics/1xGlenz-Colorgradient5.ct"
 
 	CNOP 0,2
 gv_object_coords
@@ -1977,6 +2010,7 @@ gv_object_edges
 gv_rot_xy_coords
 	DS.W gv_object_edge_points_number*2
 
+
 ; Horiz-Fader
 hf_bplam_table
 ; from dark to bright
@@ -2016,11 +2050,11 @@ hf_bplam_table
 ; Gfx
 
 ; Title
-title_image_data SECTION title_gfx,DATA
-	INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/graphics/192x39x4-Superglenz.rawblit"
+title_image_data		SECTION title_gfx,DATA
+	INCBIN "Superglenz:graphics/192x39x4-Superglenz.rawblit"
 
 ; RSE letters
-rse_letters_image_data SECTION rse_letters_gfx,DATA
-	INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/graphics/3x64x16x4-RSE.rawblit"
+rse_letters_image_data		SECTION rse_letters_gfx,DATA
+	INCBIN "Superglenz:graphics/3x64x16x4-RSE.rawblit"
 
 	END

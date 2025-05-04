@@ -20,7 +20,7 @@
 	XREF sine_table
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -40,12 +40,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -61,7 +61,7 @@ requires_multiscan_monitor	EQU FALSE
 
 workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
-text_output_enabled	EQU FALSE
+text_output_enabled		EQU FALSE
 
 mgv_count_lines_enabled		EQU FALSE
 mgv_premorph_enabled		EQU TRUE
@@ -388,7 +388,7 @@ spbi_y_angle_speed		EQU 4
 spbo_y_angle_speed		EQU 5
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -482,7 +482,7 @@ cl2_extension3_size	RS.B 0
 
 cl2_begin			RS.B 0
 
-	INCLUDE "copperlist2-offsets.i"
+	INCLUDE "copperlist2.i"
 
 cl2_extension1_entry		RS.B cl2_extension1_size
 cl2_extension2_entry		RS.B cl2_extension2_size*mgv_lines_number_max
@@ -538,7 +538,7 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -661,13 +661,13 @@ mgv_init_objects_info
 	bsr.s	mgv_init_objects_info_loop
 	rts
 
-	CNOP 0,4
-mgv_init_objects_info_loop
 ; Input
 ; d7.w	number of faces
 ; a0.l	pointer object info table
 ; a1.l	pointer edge table
 ; Result
+	CNOP 0,4
+mgv_init_objects_info_loop
 	move.w	object_info_lines_number(a0),d0
 	addq.w	#1+1,d0			; number of edge points
 	move.l	a1,(a0)			; pointer edge table
@@ -839,13 +839,13 @@ mgv_init_color_table
 	bsr.s	mgv_get_colorvalues_average
 	rts
 
-	CNOP 0,4
-mgv_get_colorvalues_average
 ; Input
 ; d6.w	1st source color number
 ; d7.w	2nd source color number
 ; a0.l	RGB8-Farbtabelle
 ; Result
+	CNOP 0,4
+mgv_get_colorvalues_average
 	moveq	#0,d0
 	move.b	1(a0,d6.w*4),d0		; 1st source color red
 	moveq	#0,d1
@@ -870,12 +870,14 @@ mgv_get_colorvalues_average
 	move.b	d2,3(a0,d6.w*4)		; mixed blue
 	rts
 
+
 	CNOP 0,4
 spb_init_display_window
 	move.w	#diwstrt_bits,DIWSTRT-DMACONR(a6)
 	move.w	#diwstop_bits,DIWSTOP-DMACONR(a6)
 	move.w	#diwhigh_bits,DIWHIGH-DMACONR(a6) ; OS 3.x LoadView() sets DIWHIGH=$0000 -> display glitches
 	rts
+
 
 	CNOP 0,4
 init_second_copperlist
@@ -899,7 +901,9 @@ init_second_copperlist
 	bsr	mgv_draw_lines
 	bra	mgv_set_second_copperlist
 
+
 	COP_INIT_PLAYFIELD_REGISTERS cl2
+
 
 	CNOP 0,4
 cl2_init_colors
@@ -909,7 +913,9 @@ cl2_init_colors
 	COP_INIT_COLOR_LOW COLOR00,32,pf1_rgb8_color_table
 	rts
 
+
 	COP_INIT_BITPLANE_POINTERS cl2
+
 
 	CNOP 0,4
 cl2_init_line_blits_steady
@@ -927,6 +933,7 @@ cl2_init_line_blits_steady
 	COP_MOVEQ 0,COPJMP2
 	rts
 
+
 	CNOP 0,4
 cl2_init_line_blits
 	moveq	#mgv_lines_number_max-1,d7
@@ -943,6 +950,7 @@ cl1_init_line_blits_loop
 	dbf	d7,cl1_init_line_blits_loop
 	rts
 
+
 	CNOP 0,4
 cl2_init_fill_blit
 	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; minterm D=A
@@ -953,8 +961,9 @@ cl2_init_fill_blit
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ pf1_plane_width-(visible_pixels_number/8),BLTAMOD
 	COP_MOVEQ pf1_plane_width-(visible_pixels_number/8),BLTDMOD
-	COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/16),BLTSIZE
+	COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/WORD_BITS),BLTSIZE
 	rts
+
 
 	CNOP 0,4
 get_wrapper_view_values
@@ -965,7 +974,9 @@ get_wrapper_view_values
 	or.w	#v_fmode_bits,cl2_FMODE+WORD_SIZE(a0)
 	rts
 
+
 	COP_SET_BITPLANE_POINTERS cl2,construction2,pf1_depth3
+
 
 	COPY_COPPERLIST cl2,2
 
@@ -974,6 +985,7 @@ get_wrapper_view_values
 main
 	bsr.s	beam_routines
 	rts
+
 
 	CNOP 0,4
 beam_routines
@@ -1004,7 +1016,9 @@ beam_routines_exit
 
 	SWAP_COPPERLIST cl2,2
 
+
 	SWAP_PLAYFIELD pf1,3
+
 
 	CNOP 0,4
 set_playfield1
@@ -1053,7 +1067,7 @@ mgv_clear_playfield1
 	ADDF.L	pf1_plane_width*visible_lines_number*pf1_depth3,a7 ; end of playfield
 	moveq	#0,d0
 	move.l	d0,a3
-	moveq	#7-1,d7
+	moveq	#7-1,d7			; number of durations
 mgv_clear_playfield1_loop
 	REPT ((pf1_plane_width*visible_lines_number*pf1_depth3)/56)/7
 		movem.l d0-d6/a0-a6,-(a7) ; clear 56 bytes
@@ -1068,6 +1082,7 @@ mgv_clear_playfield1_loop
 	move.l	variables+save_a7(pc),a7
 	movem.l (a7)+,a3-a6
 	rts
+
 
 	CNOP 0,4
 mgv_rotate_objects
@@ -1087,8 +1102,6 @@ mgv_rotate_objects
 	movem.l (a7)+,a4-a6
 	rts
 
-	CNOP 0,4
-mgv_rotation
 ; Input
 ; d7.w	number of points
 ; a0.l	pointer object table
@@ -1096,6 +1109,8 @@ mgv_rotation
 ; a5.l	pointer variable x_rot_angle
 ; a6.l	pointer variable x_rot_speed
 ; Result
+	CNOP 0,4
+mgv_rotation
 	move.w	(a5),d1			; x angle
 	move.w	d1,d0		
 	lea	sine_table,a2	
@@ -1153,6 +1168,7 @@ mgv_rot_loop
 	dbf	d7,mgv_rot_loop
 	rts
 
+
 	CNOP 0,4
 mgv_morph_objects
 	tst.w	mgv_morph_active(a3)
@@ -1197,13 +1213,13 @@ mgv_morph_objects_skip2
 mgv_morph_objects_quit
 	rts
 
-	CNOP 0,4
-mgv_morph_objects_loop
 ; Input
 ; d7.w	number of coordinates
 ; a0.l	pointer current object
 ; a1.l	pointer destination object
 ; Result
+	CNOP 0,4
+mgv_morph_objects_loop
 	move.w	(a0),d0			; current coordinate
 	cmp.w	(a1)+,d0		; destination coordinate reached ?
 	beq.s	mgv_morph_objects_skip5
@@ -1220,6 +1236,7 @@ mgv_morph_objects_skip5
 	addq.w	#WORD_SIZE,a0		; next coordinate
 	dbf	d7,mgv_morph_objects_loop
 	rts
+
 
 	CNOP 0,4
 mgv_draw_lines
@@ -1321,6 +1338,7 @@ mgv_draw_lines_init
 	move.w	d0,cl2_extension1_entry+cl2_ext1_BLTDPTH+WORD_SIZE(a0) ; playfield write
 	rts
 
+
 	CNOP 0,4
 mgv_fill_playfield1
 	move.l	pf1_construction1(a3),a0
@@ -1335,6 +1353,7 @@ mgv_fill_playfield1
 	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTAPTH+WORD_SIZE(a0) ; spource
 	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTDPTH+WORD_SIZE(a0) ; destination
 	rts
+
 
 	CNOP 0,4
 mgv_set_second_copperlist
@@ -1380,6 +1399,7 @@ scroll_pf_bottom_in_skip
 scroll_pf_bottom_in_quit
 	rts
 
+
 	CNOP 0,4
 scroll_pf_bottom_out
 	tst.w	spbo_active(a3)
@@ -1404,12 +1424,13 @@ scroll_pf_bottom_out_skip
 scroll_pf_bottom_out_quit
 	rts
 
-	CNOP 0,4
-spb_set_display_window
+
 ; Input
 ; d0.w	y offset
 ; d3.w	vertical max
 ; Result
+	CNOP 0,4
+spb_set_display_window
 	move.l	cl2_construction2(a3),a1
 	moveq	#spb_min_VSTART,d1
 	add.w	d0,d1			; + y offset
@@ -1467,10 +1488,11 @@ pf1_rgb8_color_table
 		DC.L color00_bits
 	ENDR
 
+
 ; Morph-Glenz-Vectors
 	CNOP 0,4
 mgv_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/2xGlenz-Colorgradient.ct"
+	INCLUDE "Superglenz:colortables/2xGlenz-Colorgradient.ct"
 
 	CNOP 0,2
 mgv_object1_coords

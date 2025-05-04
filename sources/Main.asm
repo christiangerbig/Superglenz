@@ -58,7 +58,7 @@
 	XREF start_1_pt_replay
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -86,12 +86,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
 SET_SECOND_COPPERLIST		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -103,7 +103,7 @@ requires_030_cpu		EQU FALSE
 requires_040_cpu		EQU FALSE
 requires_060_cpu		EQU FALSE
 requires_fast_memory		EQU FALSE
-requires_multiscan_monitor 	EQU FALSE
+requires_multiscan_monitor	EQU FALSE
 
 workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
@@ -181,7 +181,7 @@ cl1_hstart			EQU $00
 cl1_vstart			EQU beam_position&$ff
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -194,7 +194,7 @@ cl1_vstart			EQU beam_position&$ff
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_end				RS.L 1
 
@@ -255,7 +255,7 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 variables_size RS.B 0
 
@@ -270,11 +270,13 @@ variables_size RS.B 0
 init_main_variables
 	rts
 
+
 	CNOP 0,4
 init_main
 	bsr.s	init_colors
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
+
 
 	CNOP 0,4
 init_colors
@@ -295,7 +297,9 @@ init_first_copperlist
 	COP_LISTEND
 	rts
 
+
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
+
 
 	CNOP 0,4
 init_second_copperlist

@@ -1,7 +1,7 @@
 ; Morphing 1x20 faces glenz on a 256x256 screen
 ; Copper wits for the blitter
 ; Beam position timing
-; 64 kB playfield alignment to speed up line blits
+; 64 kB playfield alignment
 
 
 	MC68040
@@ -20,7 +20,7 @@
 	XREF sine_table
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -40,12 +40,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -255,7 +255,7 @@ spbi_y_angle_speed		EQU 4
 spbo_y_angle_speed		EQU 5
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -342,7 +342,7 @@ cl2_extension3_size		RS.B 0
 
 cl2_begin			RS.B 0
 
-	INCLUDE "copperlist2-offsets.i"
+	INCLUDE "copperlist2.i"
 
 cl2_extension1_entry		RS.B cl2_extension1_size
 cl2_extension2_entry		RS.B cl2_extension2_size*mgv_lines_number_max
@@ -398,7 +398,7 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -486,6 +486,7 @@ init_main_variables
 	move.w	d1,stop_fx_active(a3)
 	rts
 
+
 	CNOP 0,4
 init_main
 	bsr.s	mgv_init_object_info
@@ -496,6 +497,7 @@ init_main
 	bsr.s	mgv_init_color_table
 	bsr	spb_init_display_window
 	bra	init_second_copperlist
+
 
 ; Morph-Glenz-Vectors
 	CNOP 0,4
@@ -543,6 +545,7 @@ mgv_init_start_shape
 		rts
 	ENDC
 
+
 	CNOP 0,4
 mgv_init_color_table
 	lea	pf1_rgb8_color_table(pc),a0
@@ -553,12 +556,14 @@ mgv_init_color_table
 	move.l	(a1),5*LONGWORD_SIZE(a0) ; COLOR05
 	rts
 
+
 	CNOP 0,4
 spb_init_display_window
 	move.w	#diwstrt_bits,DIWSTRT-DMACONR(a6)
 	move.w	#diwstop_bits,DIWSTOP-DMACONR(a6)
 	move.w	#diwhigh_bits,DIWHIGH-DMACONR(a6) ; OS 3.x LoadView() sets DIWHIGH=$0000 -> display glitches
 	rts
+
 
 	CNOP 0,4
 init_second_copperlist
@@ -582,7 +587,9 @@ init_second_copperlist
 	bsr	mgv_draw_lines
 	bra	mgv_set_second_copperlist
 
+
 	COP_INIT_PLAYFIELD_REGISTERS cl2
+
 
 	CNOP 0,4
 cl2_init_colors
@@ -592,7 +599,9 @@ cl2_init_colors
 	COP_INIT_COLOR_LOW COLOR00,8,pf1_rgb8_color_table
 	rts
 
+
 	COP_INIT_BITPLANE_POINTERS cl2
+
 
 	CNOP 0,4
 cl2_init_line_blits_steady
@@ -610,6 +619,7 @@ cl2_init_line_blits_steady
 	COP_MOVEQ 0,COPJMP2
 	rts
 
+
 	CNOP 0,4
 cl2_init_line_blits
 	moveq	#mgv_lines_number_max-1,d7
@@ -626,6 +636,7 @@ cl2_init_line_blits_loop
 	dbf	d7,cl2_init_line_blits_loop
 	rts
 
+
 	CNOP 0,4
 cl2_init_fill_blit
 	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; minterm D=A
@@ -636,8 +647,9 @@ cl2_init_fill_blit
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ pf1_plane_width-(visible_pixels_number/8),BLTAMOD
 	COP_MOVEQ pf1_plane_width-(visible_pixels_number/8),BLTDMOD
-	COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/16),BLTSIZE
+	COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/WORD_BITS),BLTSIZE
 	rts
+
 
 	CNOP 0,4
 get_wrapper_view_values
@@ -648,7 +660,9 @@ get_wrapper_view_values
 	or.w	#v_fmode_bits,cl2_FMODE+WORD_SIZE(a0)
 	rts
 
+
 	COP_SET_BITPLANE_POINTERS cl2,construction2,pf1_depth3
+
 
 	COPY_COPPERLIST cl2,2
 
@@ -685,7 +699,9 @@ beam_routines_exit
 
 	SWAP_COPPERLIST cl2,2
 
+
 	SWAP_PLAYFIELD pf1,3
+
 
 	CNOP 0,4
 set_playfield1
@@ -734,7 +750,7 @@ mgv_clear_playfield1
 	ADDF.L	pf1_plane_width*visible_lines_number*pf1_depth3,a7 ; end of playfield
 	moveq	#0,d0
 	move.l	d0,a3
-	moveq	#7-1,d7
+	moveq	#7-1,d7			; number of runs
 mgv_clear_playfield1_loop
 	REPT ((pf1_plane_width*visible_lines_number*pf1_depth3)/56)/7
 		movem.l d0-d6/a0-a6,-(a7) ; clear 56 bytes
@@ -748,6 +764,7 @@ mgv_clear_playfield1_loop
 	move.l	variables+save_a7(pc),a7
 	movem.l (a7)+,a3-a6
 	rts
+
 
 	CNOP 0,4
 mgv_calculate_rot_xyz_speed
@@ -783,6 +800,7 @@ mgv_calculate_rot_xyz_speed
 	and.w	d3,d2			; remove overflow
 	move.w	d2,mgv_rot_z_angle_speed_angle(a3)
 	rts
+
 
 	CNOP 0,4
 mgv_rotation
@@ -848,6 +866,7 @@ mgv_rotate_loop
 	movem.l (a7)+,a4-a5
 	rts
 
+
 	CNOP 0,4
 mgv_morph_object
 	tst.w	mgv_morph_active(a3)
@@ -892,6 +911,7 @@ mgv_morph_object_skip5
 	move.w	#FALSE,mgv_morph_active(a3)
 mgv_morph_object_quit
 	rts
+
 
 	CNOP 0,4
 mgv_draw_lines
@@ -987,6 +1007,7 @@ mgv_draw_lines_init
 	move.w	d0,cl2_extension1_entry+cl2_ext1_BLTDPTH+WORD_SIZE(a0) ; playfield write
 	rts
 
+
 	CNOP 0,4
 mgv_fill_playfield1
 	move.l	pf1_construction1(a3),a0
@@ -1001,6 +1022,7 @@ mgv_fill_playfield1
 	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTAPTH+WORD_SIZE(a0) ; source
 	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTDPTH+WORD_SIZE(a0) ; destination
 	rts
+
 
 	CNOP 0,4
 mgv_set_second_copperlist
@@ -1046,6 +1068,7 @@ scroll_pf_bottom_in_skip
 scroll_pf_bottom_in_quit
 	rts
 
+
 	CNOP 0,4
 scroll_pf_bottom_out
 	tst.w	spbo_active(a3)
@@ -1070,12 +1093,13 @@ scroll_pf_bottom_out_skip
 scroll_pf_bottom_out_quit
 	rts
 
-	CNOP 0,4
-spb_set_display_window
+
 ; Input
 ; d0.w	y offset
 ; d3.w	y max
 ; Result
+	CNOP 0,4
+spb_set_display_window
 	move.l	cl2_construction2(a3),a1
 	moveq	#spb_min_VSTART,d1
 	add.w	d0,d1			; y offset
@@ -1133,10 +1157,11 @@ pf1_rgb8_color_table
 		DC.L color00_bits
 	ENDR
 
+
 ; Morph-Glenz-Vectors
 	CNOP 0,4
 mgv_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/1xGlenz-Colorgradient1.ct"
+	INCLUDE "Superglenz:colortables/1xGlenz-Colorgradient1.ct"
 
 	CNOP 0,2
 mgv_object_coords

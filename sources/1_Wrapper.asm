@@ -10,7 +10,7 @@
 	XDEF global_stop_fx_active
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -30,9 +30,6 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 WRAPPER				SET 1
 PASS_GLOBAL_REFERENCES		SET 1
@@ -40,6 +37,9 @@ PASS_RETURN_CODE		SET 1
 SET_SECOND_COPPERLIST		SET 1
 CUSTOM_MEMORY_USED		SET 1
 PROTRACKER_VERSION_3		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -71,11 +71,9 @@ pt_track_notes_played_enabled	EQU FALSE
 pt_track_volumes_enabled	EQU FALSE
 pt_track_periods_enabled	EQU FALSE
 pt_track_data_enabled		EQU FALSE
-	IFD PROTRACKER_VERSION_3
 pt_metronome_enabled		EQU FALSE
 pt_metrochanbits		EQU pt_metrochan1
 pt_metrospeedbits		EQU pt_metrospeed4th
-	ENDC
 
 dma_bits			EQU DMAF_COPPER|DMAF_SETCLR
 
@@ -180,7 +178,7 @@ part_1_audio_memory_size1	EQU 11324 ; Song
 part_1_audio_memory_size2	EQU 285900 ; Samples
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -209,7 +207,7 @@ custom_memory_entry_size	RS.B 0
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_end				RS.L 1
 
@@ -270,14 +268,14 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 ; PT-Replay
 	IFD PROTRACKER_VERSION_2 
-		INCLUDE "music-tracker/pt2-variables-offsets.i"
+		INCLUDE "music-tracker/pt2-variables.i"
 	ENDC
 	IFD PROTRACKER_VERSION_3
-		INCLUDE "music-tracker/pt3-variables-offsets.i"
+		INCLUDE "music-tracker/pt3-variables.i"
 	ENDC
 
 variables_size			RS.B 0
@@ -325,12 +323,14 @@ init_main_variables
 	move.w	#FALSE,(a0)
 	rts
 
+
 	CNOP 0,4
 extend_global_references_table
 	move.l	global_references_table(a3),a0
 	lea	custom_memory_table(pc),a1
 	move.l	a1,gr_custom_memory_table(a0)
 	rts
+
 
 	CNOP 0,4
 init_main
@@ -344,6 +344,7 @@ init_main
 	bsr	init_CIA_timers
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
+
 
 ; PT-Replay
 	PT_DETECT_SYS_FREQUENCY
@@ -366,11 +367,15 @@ pt_decrunch_audio_data
 	movem.l (a7)+,a2-a6
 	rts
 
+
 	PT_INIT_REGISTERS
+
 
 	PT_INIT_AUDIO_TEMP_STRUCTURES
 
+
 	PT_EXAMINE_SONG_STRUCTURE
+
 
 	PT_INIT_FINETUNE_TABLE_STARTS
 
@@ -383,6 +388,7 @@ init_colors
 	CPU_SELECT_COLOR_LOW_BANK 0
 	CPU_INIT_COLOR_LOW COLOR00,1,pf1_rgb8_color_table
 	rts
+
 
 	CNOP 0,4
 init_CIA_timers
@@ -399,7 +405,9 @@ init_first_copperlist
 	COP_LISTEND
 	rts
 
+
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
+
 
 	CNOP 0,4
 init_second_copperlist
@@ -446,6 +454,7 @@ alloc_custom_memory_fail
 main
 	jmp	start_10_credits
 
+
 	IFEQ pt_music_fader_enabled
 		CNOP 0,4
 pt_mouse_handler
@@ -485,6 +494,7 @@ ciab_ta_int_server
 	CNOP 0,4
 VERTB_int_server
 	ENDC
+
 
 ; PT-Replay
 	IFEQ pt_music_fader_enabled
@@ -531,6 +541,7 @@ nmi_int_server
 pf1_rgb8_color_table
 	DC.L color00_bits
 
+
 ; PT-Replay
 	INCLUDE "music-tracker/pt-invert-table.i"
 
@@ -539,7 +550,6 @@ pf1_rgb8_color_table
 	IFD PROTRACKER_VERSION_2 
 		INCLUDE "music-tracker/pt2-period-table.i"
 	ENDC
-
 	IFD PROTRACKER_VERSION_3
 		INCLUDE "music-tracker/pt3-period-table.i"
 	ENDC
@@ -549,6 +559,7 @@ pf1_rgb8_color_table
 	INCLUDE "music-tracker/pt-sample-starts-table.i"
 
 	INCLUDE "music-tracker/pt-finetune-starts-table.i"
+
 
 ; Custom Memory
 	CNOP 0,4
@@ -577,13 +588,13 @@ global_stop_fx_active		DC.W 0
 
 ; PT-Replay
 	IFEQ pt_split_module_enabled
-pt_auddata SECTION pt_audio,DATA
-		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.Funky Evening.song.stc"
-pt_audsmps SECTION pt_audio2,DATA_C
-		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.Funky Evening.smps.stc"
+pt_auddata			SECTION pt_audio,DATA
+		INCBIN "Superglenz:modules/MOD.Funky Evening.song.stc"
+pt_audsmps			SECTION pt_audio2,DATA_C
+		INCBIN "Superglenz:modules/MOD.Funky Evening.smps.stc"
 	ELSE
-pt_auddata SECTION pt_audio,DATA_C
-		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.Funky Evening"
+pt_auddata			SECTION pt_audio,DATA_C
+		INCBIN "Superglenz:modules/MOD.Funky Evening"
 	ENDC
 
 	END

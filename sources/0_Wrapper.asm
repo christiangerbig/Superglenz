@@ -9,7 +9,7 @@
 	XDEF sc_start
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -29,9 +29,6 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 WRAPPER				SET 1
 PASS_GLOBAL_REFERENCES		SET 1
@@ -39,6 +36,9 @@ PASS_RETURN_CODE		SET 1
 SET_SECOND_COPPERLIST		SET 1
 CUSTOM_MEMORY_USED		SET 1
 PROTRACKER_VERSION_3		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -70,11 +70,9 @@ pt_track_notes_played_enabled	EQU FALSE
 pt_track_volumes_enabled	EQU FALSE
 pt_track_periods_enabled	EQU FALSE
 pt_track_data_enabled		EQU FALSE
-	IFD PROTRACKER_VERSION_3
 pt_metronome_enabled		EQU FALSE
 pt_metrochanbits		EQU pt_metrochan1
 pt_metrospeedbits		EQU pt_metrospeed4th
-	ENDC
 
 dma_bits			EQU DMAF_COPPER|DMAF_SETCLR
 
@@ -180,7 +178,7 @@ part_0_audio_memory_size1	EQU 28732 ; Song
 part_0_audio_memory_size2	EQU 192246 ; Samples
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -211,7 +209,7 @@ custom_memory_entry_size	RS.B 0
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_end				RS.L 1
 
@@ -272,14 +270,14 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 ; PT-Replay
 	IFD PROTRACKER_VERSION_2 
-		INCLUDE "music-tracker/pt2-variables-offsets.i"
+		INCLUDE "music-tracker/pt2-variables.i"
 	ENDC
 	IFD PROTRACKER_VERSION_3
-		INCLUDE "music-tracker/pt3-variables-offsets.i"
+		INCLUDE "music-tracker/pt3-variables.i"
 	ENDC
 
 variables_size RS.B 0
@@ -299,13 +297,13 @@ init_custom_memory_table
 	lea	custom_memory_table(pc),a0
 	move.l	#part_0_audio_memory_size1,(a0)+
 	moveq	#CUSTOM_MEMORY_FAST,d2
-	move.l	d2,(a0)+		; type fast memory
+	move.l	d2,(a0)+		; type: fast memory
 	moveq	#0,d0
 	move.l	d0,(a0)+		; pointer memory block
 
 	move.l	#part_0_audio_memory_size2,(a0)+
 	moveq	#CUSTOM_MEMORY_CHIP,d2
-	move.l	d2,(a0)+		; type chip memory
+	move.l	d2,(a0)+		; type: chip memory
 	move.l	d0,(a0)			; pointer memory block
 	rts
 
@@ -342,6 +340,7 @@ init_main
 	bsr	init_CIA_timers
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
+
 
 ; PT-Replay
 	PT_DETECT_SYS_FREQUENCY
@@ -381,6 +380,7 @@ init_colors
 	CPU_SELECT_COLOR_LOW_BANK 0
 	CPU_INIT_COLOR_LOW COLOR00,1,pf1_rgb8_color_table
 	rts
+
 
 	CNOP 0,4
 init_CIA_timers
@@ -527,12 +527,12 @@ nmi_int_server
 
 
 ; Stone-Cracker
-	CNOP 0,4
-sc_start
 ; Input
 ; a0.l	crunched data
 ; a1.l	decrunched data
 ; Result
+	CNOP 0,4
+sc_start
 	addq.w	#QUADWORD_SIZE,a0	; skip ID string & security length
 	move.l	a1,a5
 	add.l	(a0)+,a1
@@ -734,6 +734,7 @@ sc_newd1
 	DC.B $08,$07,$06,$05,$04,$03,$02,$01
 	DC.B $88,$87,$86,$85,$84,$83,$82,$81
 
+
 ; PT-Replay
 	INCLUDE "music-tracker/pt-invert-table.i"
 
@@ -752,6 +753,7 @@ sc_newd1
 	INCLUDE "music-tracker/pt-sample-starts-table.i"
 
 	INCLUDE "music-tracker/pt-finetune-starts-table.i"
+
 
 ; Custom Memory
 	CNOP 0,4
@@ -772,13 +774,13 @@ custom_memory_table
 
 ; PT-Replay
 	IFEQ pt_split_module_enabled
-pt_auddata SECTION pt_audio,DATA
-		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.LeVoyageFantastique.song.stc"
-pt_audsmps SECTION pt_audio2,DATA_C
-		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.LeVoyageFantastique.smps.stc"
+pt_auddata			SECTION pt_audio,DATA
+		INCBIN "Superglenz:modules/MOD.LeVoyageFantastique.song.stc"
+pt_audsmps			SECTION pt_audio2,DATA_C
+		INCBIN "Superglenz:modules/MOD.LeVoyageFantastique.smps.stc"
 	ELSE
-pt_auddata SECTION pt_audio,DATA_C
-		INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/modules/MOD.LeVoyageFantastique"
+pt_auddata			SECTION pt_audio,DATA_C
+		INCBIN "Superglenz:modules/MOD.LeVoyageFantastique"
 	ENDC
 
 	END

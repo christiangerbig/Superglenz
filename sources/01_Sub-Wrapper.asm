@@ -1,4 +1,4 @@
-; background in 16 colors with attached sprites
+; overscan background image in 16 colors with attached sprites
 ; 1st copperlist calls 2nd copperlist
 
 
@@ -25,7 +25,7 @@
 	XREF sine_table
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -45,13 +45,13 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
 SET_SECOND_COPPERLIST		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -134,7 +134,7 @@ beam_position			EQU $133
 
 MINROW				EQU VSTART_OVERSCAN_PAL
 
-spr_pixel_per_datafetch	EQU 64		; 4x
+spr_pixel_per_datafetch		EQU 64	; 4x
 
 bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon3_bits1			EQU BPLCON3F_BRDSPRT|BPLCON3F_SPRES0
@@ -153,7 +153,7 @@ cl2_vstart			EQU beam_position&CL_Y_WRAP
 
 sine_table_length		EQU 512
 
-; Hintergrundbild
+; Background-Image
 bg_image_x_size			EQU 256
 bg_image_plane_width		EQU bg_image_x_size/8
 bg_image_y_size			EQU 283
@@ -177,7 +177,7 @@ sprfo_rgb8_fader_center		EQU sprfo_rgb8_fader_speed_max+1
 sprfo_rgb8_fader_angle_speed	EQU 2
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -190,7 +190,7 @@ sprfo_rgb8_fader_angle_speed	EQU 2
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_COPJMP2			RS.L 1
 
@@ -220,8 +220,8 @@ cl2_size3			EQU copperlist2_size
 
 spr0_extension1	RS.B 0
 
-spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
+spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
@@ -232,7 +232,7 @@ spr0_begin			RS.B 0
 
 spr0_extension1_entry		RS.B spr0_extension1_size
 
-spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr0_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite0_size			RS.B 0
 
@@ -241,8 +241,8 @@ sprite0_size			RS.B 0
 
 spr1_extension1	RS.B 0
 
-spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
+spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
@@ -253,7 +253,7 @@ spr1_begin			RS.B 0
 
 spr1_extension1_entry		RS.B spr1_extension1_size
 
-spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr1_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite1_size			RS.B 0
 
@@ -262,8 +262,8 @@ sprite1_size			RS.B 0
 
 spr2_extension1			RS.B 0
 
-spr2_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
+spr2_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
@@ -274,7 +274,7 @@ spr2_begin			RS.B 0
 
 spr2_extension1_entry		RS.B spr2_extension1_size
 
-spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr2_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite2_size			RS.B 0
 
@@ -283,8 +283,8 @@ sprite2_size			RS.B 0
 
 spr3_extension1	RS.B 0
 
-spr3_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr3_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
+spr3_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr3_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr3_extension1_size		RS.B 0
 
@@ -295,7 +295,7 @@ spr3_begin			RS.B 0
 
 spr3_extension1_entry		RS.B spr3_extension1_size
 
-spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr3_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite3_size			RS.B 0
 
@@ -304,8 +304,8 @@ sprite3_size			RS.B 0
 
 spr4_extension1	RS.B 0
 
-spr4_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
+spr4_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
@@ -316,7 +316,7 @@ spr4_begin			RS.B 0
 
 spr4_extension1_entry		RS.B spr4_extension1_size
 
-spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr4_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite4_size			RS.B 0
 
@@ -325,8 +325,8 @@ sprite4_size			RS.B 0
 
 spr5_extension1			RS.B 0
 
-spr5_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr5_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
+spr5_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr5_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr5_extension1_size		RS.B 0
 
@@ -337,7 +337,7 @@ spr5_begin			RS.B 0
 
 spr5_extension1_entry		RS.B spr5_extension1_size
 
-spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr5_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite5_size			RS.B 0
 
@@ -346,8 +346,8 @@ sprite5_size			RS.B 0
 
 spr6_extension1			RS.B 0
 
-spr6_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
+spr6_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
@@ -358,7 +358,7 @@ spr6_begin			RS.B 0
 
 spr6_extension1_entry		RS.B spr6_extension1_size
 
-spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr6_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite6_size			RS.B 0
 
@@ -367,8 +367,8 @@ sprite6_size			RS.B 0
 
 spr7_extension1	RS.B 0
 
-spr7_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
+spr7_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr7_extension1_size		RS.B 0
 
@@ -379,7 +379,7 @@ spr7_begin			RS.B 0
 
 spr7_extension1_entry		RS.B spr7_extension1_size
 
-spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr7_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite7_size			RS.B 0
 
@@ -421,7 +421,7 @@ spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 ; Sprite-Fader
 sprf_rgb8_colors_counter	RS.W 1
@@ -471,12 +471,15 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
+
 	CNOP 0,4
 init_sprites
 	bsr.s	spr_init_ptrs_table
 	bra.s	bg_init_attached_sprites_cluster
 
+
 	INIT_SPRITE_POINTERS_TABLE
+
 
 	INIT_ATTACHED_SPRITES_CLUSTER bg,spr_ptrs_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
 
@@ -494,6 +497,7 @@ init_first_copperlist
 
 	COP_INIT_SPRITE_POINTERS cl1
 
+
 	CNOP 0,4
 cl1_init_colors
 	COP_SELECT_COLOR_HIGH_BANK 4
@@ -504,6 +508,7 @@ cl1_init_colors
 	rts
 
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
+
 
 	CNOP 0,4
 init_second_copperlist
@@ -568,6 +573,7 @@ main
 	bsr.s	beam_routines
 	rts
 
+
 	CNOP 0,4
 beam_routines
 	bsr	wait_beam_position
@@ -587,6 +593,7 @@ exit
 	move.l	nop_second_copperlist,COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
 	rts
+
 
 	CNOP 0,4
 sprite_fader_in
@@ -624,6 +631,7 @@ sprite_fader_in_quit
 	movem.l (a7)+,a4-a6
 	rts
 
+
 	CNOP 0,4
 sprite_fader_out
 	movem.l a4-a6,-(a7)
@@ -660,7 +668,9 @@ sprite_fader_out_quit
 	movem.l (a7)+,a4-a6
 	rts
 
+
 	RGB8_COLOR_FADER sprf
+
 
 	COPY_RGB8_COLORS_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR01_high5,cl1_COLOR01_low5
 
@@ -684,14 +694,16 @@ spr_rgb8_color_table
 		DC.L color00_bits
 	ENDR
 
+
 	CNOP 0,4
 spr_ptrs_display
 	DS.L spr_number
 
+
 ; Sprite-Fader
 	CNOP 0,4
 sprfi_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/Superglenz/colortables/256x283x16-Skyline.ct"
+	INCLUDE "Superglenz:colortables/256x283x16-Skyline.ct"
 
 	CNOP 0,4
 sprfo_rgb8_color_table
@@ -709,10 +721,10 @@ sprfo_rgb8_color_table
 	INCLUDE "error-texts.i"
 
 
-; Grafikdaten nachladen
+; Gfx data
 
-; Hintergrundbild
-bg_image_data SECTION gfx1,DATA
-	INCBIN "Daten:Asm-Sources.AGA/projects/Superglenz/graphics/256x283x16-Skyline.rawblit"
+; Background-Image
+bg_image_data			SECTION gfx1,DATA
+	INCBIN "Superglenz:graphics/256x283x16-Skyline.rawblit"
 
 	END
