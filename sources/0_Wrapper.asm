@@ -693,7 +693,7 @@ sc_bits2
 	jmp	(a6)
 	CNOP	0,4
 sc_pins2
-	moveq	#FALSE,d3
+	moveq	#-1,d3
 	bra.w	sc_ins2
 	CNOP 0,4
 sc_2ins2

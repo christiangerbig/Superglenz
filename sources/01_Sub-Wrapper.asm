@@ -460,8 +460,7 @@ init_main_variables
 	move.w	#sine_table_length/4,sprfi_rgb8_fader_angle(a3) ; 90°
 
 ; Sprite-Fader-Out
-	moveq	#FALSE,d1
-	move.w	d1,sprfo_rgb8_active(a3)
+	move.w	#FALSE,sprfo_rgb8_active(a3)
 	move.w	#sine_table_length/4,sprfo_rgb8_fader_angle(a3) ; 90°
 	rts
 
