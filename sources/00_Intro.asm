@@ -1203,7 +1203,7 @@ gv_rot
 		MOVEF.W sine_table_length,d3
 	ENDC
 	add.w	#sine_table_length/4,d0 ; + 90°
-	swap	d5			; bits 16..31 = sin(b)
+	swap	d5			; high word = sin(b)
 	IFEQ sine_table_length-512
 		and.w	d3,d0		; remove overflow
 	ELSE
@@ -1212,7 +1212,7 @@ gv_rot
 		sub.w	d3,d0		; restart
 gv_rot_skip1
 	ENDC
-	move.w	(a2,d0.w*2),d5		; bits 0..15 = cos(b)
+	move.w	(a2,d0.w*2),d5		; low word = cos(b)
 	addq.w	#gv_rot_y_angle_speed,d1
 	IFEQ sine_table_length-512
 		and.w	d3,d1		; remove overflow
@@ -1298,11 +1298,11 @@ gv_draw_lines_loop2
 	add.l	a4,d1			; next bitplane
 gv_draw_lines_skip1
 	WAITBLIT
-	move.l	d0,BLTCON0-DMACONR(a6)	; bits 0..15: BLTCON1, bits 16..131: BLTCON0
+	move.l	d0,BLTCON0-DMACONR(a6)	; low word: BLTCON1, bits 16..131: BLTCON0
 	move.l	d1,BLTCPT-DMACONR(a6)	; playfield read
 	move.w	d3,BLTAPTL-DMACONR(a6)	; (4*dy)-(2*dx)
 	move.l	d1,BLTDPT-DMACONR(a6)	; playfield write
-	move.l	d4,BLTBMOD-DMACONR(a6)	; bits 0..15: 4*(dy-dx), bits 16..31: 4*dy
+	move.l	d4,BLTBMOD-DMACONR(a6)	; low word: 4*(dy-dx), high word: 4*dy
 	move.w	d2,BLTSIZE-DMACONR(a6)
 gv_draw_lines_skip2
 	dbf	d6,gv_draw_lines_loop2
@@ -1315,7 +1315,7 @@ gv_draw_lines_skip3
 gv_draw_lines_init
 	move.w	#DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
-	move.l	#$ffff8000,BLTBDAT-DMACONR(a6) ; bits 0..15: line texture starts with MSB,  bits 16..31: line texture
+	move.l	#$ffff8000,BLTBDAT-DMACONR(a6) ; low word: line texture starts with MSB,  high word: line texture
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
 	moveq	#pf1_plane_width*pf1_depth3,d0 ; moduli interleaved bitmaps

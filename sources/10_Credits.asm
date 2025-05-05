@@ -1149,7 +1149,7 @@ mgv_rotation
 	move.w	#sine_table_length/4,a4
 	MOVEF.W sine_table_length-1,d3
 	add.w	a4,d0			; + 90°
-	swap	d5			; bits 16..31 = sin(b)
+	swap	d5			; high word = sin(b)
 	and.w	d3,d0			; remove overflow
 	move.w	(a2,d0.w*2),d5		; bits	0..15 = cos(b)
 	add.w	mgv_rot_variable_y_speed(a3),d1

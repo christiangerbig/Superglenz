@@ -1118,9 +1118,9 @@ mgv_rotation
 	move.w	#sine_table_length/4,a4
 	MOVEF.W sine_table_length-1,d3
 	add.w	a4,d0			; + 90°
-	swap	d4			; bits 16..31: sin(a)
+	swap	d4			; high word: sin(a)
 	and.w	d3,d0			; remove overflow
-	move.w	(a2,d0.w*2),d4		; bits 0..15: cos(a)
+	move.w	(a2,d0.w*2),d4		; low word: cos(a)
 	add.w	(a6)+,d1		; next x angle
 	and.w	d3,d1			; remove overflow
 	move.w	d1,(a5)+		
@@ -1128,9 +1128,9 @@ mgv_rotation
 	move.w	d1,d0		
 	move.w	(a2,d0.w*2),d5		; sin(b)
 	add.w	a4,d0			; + 90°
-	swap	d5			; bits 16..31: sin(b)
+	swap	d5			; high word: sin(b)
 	and.w	d3,d0			; remove overflow
-	move.w	(a2,d0.w*2),d5		; bits 0..15: cos(b)
+	move.w	(a2,d0.w*2),d5		; low word: cos(b)
 	add.w	(a6)+,d1		; next y angle
 	and.w	d3,d1			; remove overflow
 	move.w	d1,(a5)+		
@@ -1138,9 +1138,9 @@ mgv_rotation
 	move.w	d1,d0		
 	move.w	(a2,d0.w*2),d6		; sin(c)
 	add.w	a4,d0			; + 90°
-	swap	d6			; bits 16..31: sin(c)
+	swap	d6			; high word: sin(c)
 	and.w	d3,d0			; remove overflow
-	move.w	(a2,d0.w*2),d6		; bits 0..15: cos(c)
+	move.w	(a2,d0.w*2),d6		; low word: cos(c)
 	add.w	(a6),d1			; next z angle
 	and.w	d3,d1			; remove overflow
 	move.w	d1,(a5)		
