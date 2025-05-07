@@ -1499,7 +1499,7 @@ mgv_pre_rotation
 	lea	sine_table,a2	
 	move.w	(a2,d0.w*2),d4		; sin(a)
 	MOVEF.W sine_table_length-1,d3
-	add.w	#sine_table_length/4,d0	; + 90 Grad
+	add.w	#sine_table_length/4,d0	; + 90°
 	swap	d4			; high word: sin(a)
 	and.w	d3,d0			; remove overflow
 	move.w	(a2,d0.w*2),d4		; low word: cos(a)

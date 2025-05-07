@@ -914,7 +914,7 @@ mgv_morph_object
 	MOVEF.W mgv_object_edge_points_number*3-1,d7
 mgv_morph_object_loop
 	move.w	(a0),d0			; current coordinate
-	cmp.w	(a1)+,d0		; target coordinate reached ?
+	cmp.w	(a1)+,d0		; destination coordinate reached ?
 	beq.s	mgv_morph_object_skip3
 	bgt.s	mgv_morph_object_skip1
 	addq.w	#mgv_morph_speed,d0	; increase current coordinate

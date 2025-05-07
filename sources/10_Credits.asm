@@ -1043,7 +1043,7 @@ vert_text_scroll_loop1
 	moveq	#vts_text_characters_per_line-1,d6
 vert_text_scroll_loop2
 	move.w	(a0)+,d0		; x
-	lsr.w	#3,d0			; x/8
+	lsr.w	#3,d0			; byte offset
 	add.w	d1,d0			; xy offset
 	move.l	(a2)+,a5		; character image
 	lea	(a4,d0.w),a6

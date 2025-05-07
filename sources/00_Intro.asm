@@ -1333,7 +1333,7 @@ gv_fill_playfield1
 	move.w	#DMAF_BLITHOG,DMACON-DMACONR(a6)
 	move.l	#((BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16)+(BLTCON1F_DESC+BLTCON1F_EFE),BLTCON0-DMACONR(a6) ; minterm D=A, fill mode, backwards
 	move.l	a0,BLTAPT-DMACONR(a6)	; source
-	move.l	a0,BLTDPT-DMACONR(a6)	; target
+	move.l	a0,BLTDPT-DMACONR(a6)	; destination
 	moveq	#0,d0
 	move.l	d0,BLTAMOD-DMACONR(a6)	; A&D moduli
 	move.w	#(gv_fill_blit_y_size*gv_fill_blit_depth*64)+(gv_fill_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
