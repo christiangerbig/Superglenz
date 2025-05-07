@@ -851,7 +851,7 @@ gv_init_object_info
 gv_init_object_info_loop
 	move.w	object_info_lines_number(a0),d0
 	addq.w	#1+1,d0			; number of edge points
-	move.l	a1,(a0)			; pointer edge table
+	move.l	a1,(a0)			; edge table
 	lea	(a1,d0.w*2),a1		; next edge table
 	add.l	a2,a0			; next object info structure
 	dbf	d7,gv_init_object_info_loop
@@ -1263,7 +1263,7 @@ gv_draw_lines
 	moveq	#gv_object_faces_number-1,d7
 gv_draw_lines_loop1
 ; calculate z of vector N
-	move.l	(a0)+,a5		; pointer p starts
+	move.l	(a0)+,a5		; p starts
 	swap	d7			; save faces counter
 	move.w	(a5),d4			; p1 start
 	move.w	2(a5),d5		; p2 start
@@ -1745,204 +1745,204 @@ gv_object_coords
 	CNOP 0,4
 gv_object_info
 ; 1. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face1_color
 	DC.W gv_object_face1_lines_number-1
 ; 2. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face2_color
 	DC.W gv_object_face2_lines_number-1
 ; 3. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face3_color
 	DC.W gv_object_face3_lines_number-1
 ; 4. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face4_color
 	DC.W gv_object_face4_lines_number-1
 ; 5. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face5_color
 	DC.W gv_object_face5_lines_number-1
 ; 6. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face6_color
 	DC.W gv_object_face6_lines_number-1
 ; 7. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face7_color
 	DC.W gv_object_face7_lines_number-1
 ; 8. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face8_color
 	DC.W gv_object_face8_lines_number-1
 
 ; 9. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face9_color
 	DC.W gv_object_face9_lines_number-1
 ; 10. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face10_color
 	DC.W gv_object_face10_lines_number-1
 ; 11. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face11_color
 	DC.W gv_object_face11_lines_number-1
 ; 12. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face12_color
 	DC.W gv_object_face12_lines_number-1
 
 ; 13. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face13_color
 	DC.W gv_object_face13_lines_number-1
 ; 14. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face14_color
 	DC.W gv_object_face14_lines_number-1
 ; 15. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face15_color
 	DC.W gv_object_face15_lines_number-1
 ; 16. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face16_color
 	DC.W gv_object_face16_lines_number-1
 
 ; 17. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face17_color
 	DC.W gv_object_face17_lines_number-1
 ; 18. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face18_color
 	DC.W gv_object_face18_lines_number-1
 ; 19. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face19_color
 	DC.W gv_object_face19_lines_number-1
 ; 20. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face20_color
 	DC.W gv_object_face20_lines_number-1
 
 ; 21. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face21_color
 	DC.W gv_object_face21_lines_number-1
 ; 22. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face22_color
 	DC.W gv_object_face22_lines_number-1
 ; 23. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face23_color
 	DC.W gv_object_face23_lines_number-1
 ; 24. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face24_color
 	DC.W gv_object_face24_lines_number-1
 
 ; 25. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face25_color
 	DC.W gv_object_face25_lines_number-1
 ; 26. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face26_color
 	DC.W gv_object_face26_lines_number-1
 ; 27. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face27_color
 	DC.W gv_object_face27_lines_number-1
 ; 28. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face28_color
 	DC.W gv_object_face28_lines_number-1
 
 ; 29. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face29_color
 	DC.W gv_object_face29_lines_number-1
 ; 30. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face30_color
 	DC.W gv_object_face30_lines_number-1
 ; 31. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face31_color
 	DC.W gv_object_face31_lines_number-1
 ; 32. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face32_color
 	DC.W gv_object_face32_lines_number-1
 
 ; 33. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face33_color
 	DC.W gv_object_face33_lines_number-1
 ; 34. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face34_color
 	DC.W gv_object_face34_lines_number-1
 ; 35. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face35_color
 	DC.W gv_object_face35_lines_number-1
 ; 36. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face36_color
 	DC.W gv_object_face36_lines_number-1
 
 ; 37. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face37_color
 	DC.W gv_object_face37_lines_number-1
 ; 38. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face38_color
 	DC.W gv_object_face38_lines_number-1
 ; 39. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face39_color
 	DC.W gv_object_face39_lines_number-1
 ; 40. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face40_color
 	DC.W gv_object_face40_lines_number-1
 
 ; 41. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face41_color
 	DC.W gv_object_face41_lines_number-1
 ; 42. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face42_color
 	DC.W gv_object_face42_lines_number-1
 ; 43. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face43_color
 	DC.W gv_object_face43_lines_number-1
 ; 44. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face44_color
 	DC.W gv_object_face44_lines_number-1
 ; 45. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face45_color
 	DC.W gv_object_face45_lines_number-1
 ; 46. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face46_color
 	DC.W gv_object_face46_lines_number-1
 ; 47. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face47_color
 	DC.W gv_object_face47_lines_number-1
 ; 48. face
-	DC.L 0				; pointer face coordinates
+	DC.L 0				; face coordinates
 	DC.W gv_object_face48_color
 	DC.W gv_object_face48_lines_number-1
 

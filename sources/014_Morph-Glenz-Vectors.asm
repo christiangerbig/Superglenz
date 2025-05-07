@@ -770,7 +770,7 @@ mgv_init_object_info
 mgv_init_object_info_loop
 	move.w	object_info_lines_number(a0),d0
 	addq.w	#1+1,d0			; number of edge points
-	move.l	a1,(a0)			; pointer edge table
+	move.l	a1,(a0)			; edge table
 	lea	(a1,d0.w*2),a1		; next edge table
 	add.l	a2,a0			; next object info structure
 	dbf	d7,mgv_init_object_info_loop
@@ -780,16 +780,16 @@ mgv_init_object_info_loop
 mgv_init_morph_shapes
 	lea	mgv_morph_shapes_table(pc),a0
 	lea	mgv_object_shape1_coords(pc),a1
-	move.l	a1,(a0)+		; pointer shape table
+	move.l	a1,(a0)+		; shape table
 	lea	mgv_object_shape2_coords(pc),a1
-	move.l	a1,(a0)+		; pointer shape table
+	move.l	a1,(a0)+		; shape table
 	lea	mgv_object_shape3_coords(pc),a1
 	IFEQ mgv_morph_loop_enabled
-		move.l	a1,(a0)		; pointer shape table
+		move.l	a1,(a0)		; shape table
 	ELSE
-		move.l	a1,(a0)+	; pointer shape table
+		move.l	a1,(a0)+	; shape table
 		lea	mgv_object_shape4_coords(pc),a1
-		move.l	a1,(a0)		; pointer shape table
+		move.l	a1,(a0)		; shape table
 	ENDC
 	rts
 
@@ -1131,7 +1131,7 @@ mgv_morph_object
 	moveq	#0,d2			; coordinates counter
 	lea	mgv_object_coords(pc),a0
 	lea	mgv_morph_shapes_table(pc),a1
-	move.l	(a1,d1.w*4),a1		; pointer shape table
+	move.l	(a1,d1.w*4),a1		; shape table
 	MOVEF.W mgv_object_edge_points_number*3-1,d7
 mgv_morph_object_loop
 	move.w	(a0),d0			; current coordinate
@@ -1186,7 +1186,7 @@ mgv_draw_lines
 	MOVEF.W mgv_object_faces_number-1,d7
 mgv_draw_lines_loop1
 ; calculate z of vector N
-	move.l	(a0)+,a5		; pointer starts table
+	move.l	(a0)+,a5		; starts table
 	move.w	(a5),d4			; p1 start
 	move.w	2(a5),d5		; p2 start
 	move.w	4(a5),d6		; p3 start
@@ -1649,565 +1649,565 @@ mgv_object_shape4_coords
 	CNOP 0,4
 mgv_object_info
 ; 1. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face1_color	
 	DC.W mgv_object_face1_lines_number-1 
 ; 2. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face2_color
 	DC.W mgv_object_face2_lines_number-1 
 ; 3. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face3_color
 	DC.W mgv_object_face3_lines_number-1 
 ; 4. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face4_color
 	DC.W mgv_object_face4_lines_number-1 
 ; 5. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face5_color
 	DC.W mgv_object_face5_lines_number-1 
 ; 6. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face6_color
 	DC.W mgv_object_face6_lines_number-1 
 ; 7. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face7_color
 	DC.W mgv_object_face7_lines_number-1 
 ; 8. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face8_color
 	DC.W mgv_object_face8_lines_number-1 
 ; 9. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face9_color
 	DC.W mgv_object_face9_lines_number-1 
 ; 10. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face10_color
 	DC.W mgv_object_face10_lines_number-1 
 ; 11. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face11_color
 	DC.W mgv_object_face11_lines_number-1 
 ; 12. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face12_color
 	DC.W mgv_object_face12_lines_number-1 
 ; 13. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face13_color
 	DC.W mgv_object_face13_lines_number-1 
 ; 14. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face14_color
 	DC.W mgv_object_face14_lines_number-1 
 ; 15. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face15_color
 	DC.W mgv_object_face15_lines_number-1 
 ; 16. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face16_color
 	DC.W mgv_object_face16_lines_number-1 
 
 ; 17. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face17_color
 	DC.W mgv_object_face17_lines_number-1 
 ; 18. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face18_color
 	DC.W mgv_object_face18_lines_number-1 
 ; 19. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face19_color
 	DC.W mgv_object_face19_lines_number-1 
 
 ; 20. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face20_color
 	DC.W mgv_object_face20_lines_number-1 
 ; 21. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face21_color
 	DC.W mgv_object_face21_lines_number-1 
 ; 22. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face22_color
 	DC.W mgv_object_face22_lines_number-1 
 
 ; 23. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face23_color
 	DC.W mgv_object_face23_lines_number-1 
 ; 24. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face24_color
 	DC.W mgv_object_face24_lines_number-1 
 ; 25. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face25_color
 	DC.W mgv_object_face25_lines_number-1 
 
 ; 26. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face26_color
 	DC.W mgv_object_face26_lines_number-1 
 ; 27. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face27_color
 	DC.W mgv_object_face27_lines_number-1 
 ; 28. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face28_color
 	DC.W mgv_object_face28_lines_number-1 
 
 ; 29. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face29_color
 	DC.W mgv_object_face29_lines_number-1 
 ; 30. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face30_color
 	DC.W mgv_object_face30_lines_number-1 
 ; 31. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face31_color
 	DC.W mgv_object_face31_lines_number-1 
 
 ; 32. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face32_color
 	DC.W mgv_object_face32_lines_number-1 
 ; 33. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face33_color
 	DC.W mgv_object_face33_lines_number-1 
 ; 34. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face34_color
 	DC.W mgv_object_face34_lines_number-1 
 
 ; 35. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face35_color
 	DC.W mgv_object_face35_lines_number-1 
 ; 36. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face36_color
 	DC.W mgv_object_face36_lines_number-1 
 ; 37. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face37_color
 	DC.W mgv_object_face37_lines_number-1 
 
 ; 38. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face38_color
 	DC.W mgv_object_face38_lines_number-1 
 ; 39. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face39_color
 	DC.W mgv_object_face39_lines_number-1 
 ; 40. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face40_color
 	DC.W mgv_object_face40_lines_number-1 
 
 ; 41. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face41_color
 	DC.W mgv_object_face41_lines_number-1 
 ; 42. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face42_color
 	DC.W mgv_object_face42_lines_number-1 
 ; 43. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face43_color
 	DC.W mgv_object_face43_lines_number-1 
 
 ; 44. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face44_color
 	DC.W mgv_object_face44_lines_number-1 
 ; 45. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face45_color
 	DC.W mgv_object_face45_lines_number-1 
 ; 46. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face46_color
 	DC.W mgv_object_face46_lines_number-1 
 
 ; 47. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face47_color
 	DC.W mgv_object_face47_lines_number-1 
 ; 48. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face48_color
 	DC.W mgv_object_face48_lines_number-1 
 ; 49. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face49_color
 	DC.W mgv_object_face49_lines_number-1 
 
 ; 50. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face50_color
 	DC.W mgv_object_face50_lines_number-1 
 ; 51. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face51_color
 	DC.W mgv_object_face51_lines_number-1 
 ; 52. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face52_color
 	DC.W mgv_object_face52_lines_number-1 
 
 ; 53. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face53_color
 	DC.W mgv_object_face53_lines_number-1 
 ; 54. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face54_color
 	DC.W mgv_object_face54_lines_number-1 
 ; 55. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face55_color
 	DC.W mgv_object_face55_lines_number-1 
 
 ; 56. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face56_color
 	DC.W mgv_object_face56_lines_number-1 
 ; 57. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face57_color
 	DC.W mgv_object_face57_lines_number-1 
 ; 58. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face58_color
 	DC.W mgv_object_face58_lines_number-1 
 
 ; 59. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face59_color
 	DC.W mgv_object_face59_lines_number-1 
 ; 60. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face60_color
 	DC.W mgv_object_face60_lines_number-1 
 ; 61. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face61_color
 	DC.W mgv_object_face61_lines_number-1 
 
 ; 62. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face62_color
 	DC.W mgv_object_face62_lines_number-1 
 ; 63. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face63_color
 	DC.W mgv_object_face63_lines_number-1 
 ; 64. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face64_color
 	DC.W mgv_object_face64_lines_number-1 
 
 
 ; 65. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face65_color
 	DC.W mgv_object_face65_lines_number-1 
 ; 66. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face66_color
 	DC.W mgv_object_face66_lines_number-1 
 ; 67. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face67_color
 	DC.W mgv_object_face67_lines_number-1 
 
 ; 68. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face68_color
 	DC.W mgv_object_face68_lines_number-1 
 ; 69. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face69_color
 	DC.W mgv_object_face69_lines_number-1 
 ; 70. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face70_color
 	DC.W mgv_object_face70_lines_number-1 
 
 ; 71. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face71_color
 	DC.W mgv_object_face71_lines_number-1 
 ; 72. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face72_color
 	DC.W mgv_object_face72_lines_number-1 
 ; 73. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face73_color
 	DC.W mgv_object_face73_lines_number-1 
 
 ; 74. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face74_color
 	DC.W mgv_object_face74_lines_number-1 
 ; 75. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face75_color
 	DC.W mgv_object_face75_lines_number-1 
 ; 76. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face76_color
 	DC.W mgv_object_face76_lines_number-1 
 
 ; 77. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face77_color
 	DC.W mgv_object_face77_lines_number-1 
 ; 78. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face78_color
 	DC.W mgv_object_face78_lines_number-1 
 ; 79. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face79_color
 	DC.W mgv_object_face79_lines_number-1 
 
 ; 80. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face80_color
 	DC.W mgv_object_face80_lines_number-1 
 ; 81. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face81_color
 	DC.W mgv_object_face81_lines_number-1 
 ; 82. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face82_color
 	DC.W mgv_object_face82_lines_number-1 
 
 ; 83. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face83_color
 	DC.W mgv_object_face83_lines_number-1 
 ; 84. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face84_color
 	DC.W mgv_object_face84_lines_number-1 
 ; 85. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face85_color
 	DC.W mgv_object_face85_lines_number-1 
 
 ; 86. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face86_color
 	DC.W mgv_object_face86_lines_number-1 
 ; 87. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face87_color
 	DC.W mgv_object_face87_lines_number-1 
 ; 88. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face88_color
 	DC.W mgv_object_face88_lines_number-1 
 
 ; 89. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face89_color
 	DC.W mgv_object_face89_lines_number-1 
 ; 90. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face90_color
 	DC.W mgv_object_face90_lines_number-1 
 ; 91. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face91_color
 	DC.W mgv_object_face91_lines_number-1 
 
 ; 92. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face92_color
 	DC.W mgv_object_face92_lines_number-1 
 ; 93. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face93_color
 	DC.W mgv_object_face93_lines_number-1 
 ; 94. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face94_color
 	DC.W mgv_object_face94_lines_number-1 
 
 ; 95. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face95_color
 	DC.W mgv_object_face95_lines_number-1 
 ; 96. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face96_color
 	DC.W mgv_object_face96_lines_number-1 
 ; 97. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face97_color
 	DC.W mgv_object_face97_lines_number-1 
 
 ; 98. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face98_color
 	DC.W mgv_object_face98_lines_number-1 
 ; 99. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face99_color
 	DC.W mgv_object_face99_lines_number-1 
 ; 100. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face100_color
 	DC.W mgv_object_face100_lines_number-1 
 
 ; 101. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face101_color
 	DC.W mgv_object_face101_lines_number-1 
 ; 102. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face102_color
 	DC.W mgv_object_face102_lines_number-1 
 ; 103. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face103_color
 	DC.W mgv_object_face103_lines_number-1 
 
 ; 104. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face104_color
 	DC.W mgv_object_face104_lines_number-1 
 ; 105. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face105_color
 	DC.W mgv_object_face105_lines_number-1 
 ; 106. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face106_color
 	DC.W mgv_object_face106_lines_number-1 
 
 ; 107. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face107_color
 	DC.W mgv_object_face107_lines_number-1 
 ; 108. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face108_color
 	DC.W mgv_object_face108_lines_number-1 
 ; 109. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face109_color
 	DC.W mgv_object_face109_lines_number-1 
 
 ; 110. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face110_color
 	DC.W mgv_object_face110_lines_number-1 
 ; 111. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face111_color
 	DC.W mgv_object_face111_lines_number-1 
 ; 112. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face112_color
 	DC.W mgv_object_face112_lines_number-1 
 
 
 ; 113. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face113_color
 	DC.W mgv_object_face113_lines_number-1 
 
 ; 114. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face114_color
 	DC.W mgv_object_face114_lines_number-1 
 
 ; 115. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face115_color
 	DC.W mgv_object_face115_lines_number-1 
 
 ; 116. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face116_color
 	DC.W mgv_object_face116_lines_number-1 
 
 ; 117. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face117_color
 	DC.W mgv_object_face117_lines_number-1 
 
 ; 118. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face118_color
 	DC.W mgv_object_face118_lines_number-1 
 
 ; 119. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face119_color
 	DC.W mgv_object_face119_lines_number-1 
 
 ; 120. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face120_color
 	DC.W mgv_object_face120_lines_number-1 
 
 ; 121. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face121_color
 	DC.W mgv_object_face121_lines_number-1 
 
 ; 122. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face122_color
 	DC.W mgv_object_face122_lines_number-1 
 
 ; 123. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face123_color
 	DC.W mgv_object_face123_lines_number-1 
 
 ; 124. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face124_color
 	DC.W mgv_object_face124_lines_number-1 
 
 ; 125. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face125_color
 	DC.W mgv_object_face125_lines_number-1 
 
 ; 126. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face126_color
 	DC.W mgv_object_face126_lines_number-1 
 
 ; 127. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face127_color
 	DC.W mgv_object_face127_lines_number-1 
 
 ; 128. face
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object_face128_color
 	DC.W mgv_object_face128_lines_number-1 
 

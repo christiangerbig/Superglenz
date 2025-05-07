@@ -663,14 +663,14 @@ mgv_init_objects_info
 
 ; Input
 ; d7.w	number of faces
-; a0.l	pointer object info table
-; a1.l	pointer edge table
+; a0.l	Pointer	 object info table
+; a1.l	Pointer	 edge table
 ; Result
 	CNOP 0,4
 mgv_init_objects_info_loop
 	move.w	object_info_lines_number(a0),d0
 	addq.w	#1+1,d0			; number of edge points
-	move.l	a1,(a0)			; pointer edge table
+	move.l	a1,(a0)			; edge table
 	lea	(a1,d0.w*2),a1		; next pointer edge table
 	add.l	a2,a0			; object info structure next face
 	dbf	d7,mgv_init_objects_info_loop
@@ -680,9 +680,9 @@ mgv_init_objects_info_loop
 mgv_init_morph_shapes
 	lea	mgv_morph_shapes_table(pc),a0
 	lea	mgv_object1_shape1_coords(pc),a1
-	move.l	a1,(a0)+		; pointer coordinates table
+	move.l	a1,(a0)+		; coordinates table
 	lea	mgv_object2_shape1_coords(pc),a1
-	move.l	a1,(a0)+		; pointer coordinates table
+	move.l	a1,(a0)+		; coordinates table
 	move.w	#mgv_object1_shape1_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape1_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape1_z_rot_speed,(a0)+
@@ -691,9 +691,9 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape1_z_rot_speed,(a0)+
 
 	lea	mgv_object1_shape2_coords(pc),a1
-	move.l	a1,(a0)+		; pointer object table
+	move.l	a1,(a0)+		; object table
 	lea	mgv_object2_shape2_coords(pc),a1
-	move.l	a1,(a0)+		; pointer coordinates table
+	move.l	a1,(a0)+		; coordinates table
 	move.w	#mgv_object1_shape2_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape2_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape2_z_rot_speed,(a0)+
@@ -702,9 +702,9 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape2_z_rot_speed,(a0)+
 
 	lea	mgv_object1_shape3_coords(pc),a1
-	move.l	a1,(a0)+		; pointer object table
+	move.l	a1,(a0)+		; object table
 	lea	mgv_object2_shape3_coords(pc),a1
-	move.l	a1,(a0)+		; pointer coordinates table
+	move.l	a1,(a0)+		; coordinates table
 	move.w	#mgv_object1_shape3_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape3_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape3_z_rot_speed,(a0)+
@@ -713,9 +713,9 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape3_z_rot_speed,(a0)+
 
 	lea	mgv_object1_shape4_coords(pc),a1
-	move.l	a1,(a0)+		; pointer object table
+	move.l	a1,(a0)+		; object table
 	lea	mgv_object2_shape4_coords(pc),a1
-	move.l	a1,(a0)+		; pointer coordinates table
+	move.l	a1,(a0)+		; coordinates table
 	move.w	#mgv_object1_shape4_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape4_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape4_z_rot_speed,(a0)+
@@ -724,9 +724,9 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape4_z_rot_speed,(a0)+
 
 	lea	mgv_object1_shape5_coords(pc),a1
-	move.l	a1,(a0)+		; pointer object table
+	move.l	a1,(a0)+		; object table
 	lea	mgv_object2_shape5_coords(pc),a1
-	move.l	a1,(a0)+		; pointer coordinates table
+	move.l	a1,(a0)+		; coordinates table
 	move.w	#mgv_object1_shape5_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape5_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape5_z_rot_speed,(a0)+
@@ -735,9 +735,9 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape5_z_rot_speed,(a0)+
 
 	lea	mgv_object1_shape6_coords(pc),a1
-	move.l	a1,(a0)+		; pointer object table
+	move.l	a1,(a0)+		; object table
 	lea	mgv_object2_shape6_coords(pc),a1
-	move.l	a1,(a0)+		; pointer coordinates table
+	move.l	a1,(a0)+		; coordinates table
 	move.w	#mgv_object1_shape6_x_rot_speed,(a0)+
 	move.w	#mgv_object1_shape6_y_rot_speed,(a0)+
 	move.w	#mgv_object1_shape6_z_rot_speed,(a0)+
@@ -749,9 +749,9 @@ mgv_init_morph_shapes
 		move.w	#mgv_object2_shape6_z_rot_speed,(a0)+
 
 		lea	mgv_object1_shape7_coords(pc),a1
-		move.l	a1,(a0)+		; pointer object table
+		move.l	a1,(a0)+		; object table
 		lea	mgv_object2_shape7_coords(pc),a1
-		move.l	a1,(a0)+		; pointer coordinates table
+		move.l	a1,(a0)+		; coordinates table
 		move.w	#mgv_object1_shape7_x_rot_speed,(a0)+
 		move.w	#mgv_object1_shape7_y_rot_speed,(a0)+
 		move.w	#mgv_object1_shape7_z_rot_speed,(a0)+
@@ -1104,10 +1104,10 @@ mgv_rotate_objects
 
 ; Input
 ; d7.w	number of points
-; a0.l	pointer object table
+; a0.l	Pointer	 object table
 ; a1.l	Koordinaten der Linien
-; a5.l	pointer variable x_rot_angle
-; a6.l	pointer variable x_rot_speed
+; a5.l	Pointer	 variable x_rot_angle
+; a6.l	Pointer	 variable x_rot_speed
 ; Result
 	CNOP 0,4
 mgv_rotation
@@ -1181,11 +1181,11 @@ mgv_morph_objects
 	lea	mgv_morph_shapes_table(pc),a2
 	add.l	d3,a2			; offset in morph shapes table
 	lea	mgv_object1_coords(pc),a0
-	move.l	(a2)+,a1		; pointer morph shapes table
+	move.l	(a2)+,a1		; morph shapes table
 	MOVEF.W (mgv_object1_edge_points_number*3)-1,d7
 	bsr.s	mgv_morph_objects_loop
 	lea	mgv_object2_coords(pc),a0
-	move.l	(a2)+,a1		; pointer morph shapes table
+	move.l	(a2)+,a1		; morph shapes table
 	MOVEF.W (mgv_object2_edge_points_number*3)-1,d7
 	bsr.s	mgv_morph_objects_loop
 
@@ -1215,8 +1215,8 @@ mgv_morph_objects_quit
 
 ; Input
 ; d7.w	number of coordinates
-; a0.l	pointer current object
-; a1.l	pointer destination object
+; a0.l	Pointer	 current object
+; a1.l	Pointer	 destination object
 ; Result
 	CNOP 0,4
 mgv_morph_objects_loop
@@ -1256,7 +1256,7 @@ mgv_draw_lines
 	MOVEF.W mgv_objects_faces_number-1,d7
 mgv_draw_lines_loop1
 ; calculate z of  vectors N
-	move.l	(a0)+,a5		; pointer starts
+	move.l	(a0)+,a5		; starts
 	move.w	(a5),d4			; p1 starts
 	move.w	2(a5),d5		; p2 starts
 	move.w	4(a5),d6		; p3 starts
@@ -1731,207 +1731,207 @@ mgv_object2_shape7_coords
 mgv_objects_info_table
 ; Objekt 1
 ; 1. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face1_color	
 	DC.W mgv_object1_face1_lines_number-1
 ; 2. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face2_color	
 	DC.W mgv_object1_face2_lines_number-1 
 ; 3. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face3_color	
 	DC.W mgv_object1_face3_lines_number-1 
 
 ; 4. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face4_color	
 	DC.W mgv_object1_face4_lines_number-1 
 ; 5. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face5_color	
 	DC.W mgv_object1_face5_lines_number-1 
 ; 6. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face6_color	
 	DC.W mgv_object1_face6_lines_number-1 
 ; 7. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face7_color	
 	DC.W mgv_object1_face7_lines_number-1 
 ; 8. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face8_color	
 	DC.W mgv_object1_face8_lines_number-1 
 
 ; 9. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face9_color	
 	DC.W mgv_object1_face9_lines_number-1 
 ; 10. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face10_color	
 	DC.W mgv_object1_face10_lines_number-1 
 ; 11. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face11_color	
 	DC.W mgv_object1_face11_lines_number-1 
 ; 12. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face12_color	
 	DC.W mgv_object1_face12_lines_number-1 
 
 ; 13. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face13_color	
 	DC.W mgv_object1_face13_lines_number-1 
 ; 14. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face14_color	
 	DC.W mgv_object1_face14_lines_number-1 
 ; 15. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face15_color	
 	DC.W mgv_object1_face15_lines_number-1 
 ; 16. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face16_color	
 	DC.W mgv_object1_face16_lines_number-1 
 
 ; 17. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face17_color	
 	DC.W mgv_object1_face17_lines_number-1 
 ; 18. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face18_color	
 	DC.W mgv_object1_face18_lines_number-1 
 ; 19. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face19_color	
 	DC.W mgv_object1_face19_lines_number-1 
 ; 20. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face20_color	
 	DC.W mgv_object1_face20_lines_number-1 
 
 ; 21. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face21_color	
 	DC.W mgv_object1_face21_lines_number-1 
 ; 22. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face22_color	
 	DC.W mgv_object1_face22_lines_number-1 
 ; 23. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face23_color	
 	DC.W mgv_object1_face23_lines_number-1 
 ; 24. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object1_face24_color	
 	DC.W mgv_object1_face24_lines_number-1 
 
 ; Object2
 ; 1. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face1_color	
 	DC.W mgv_object2_face1_lines_number-1 
 ; 2. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face2_color	
 	DC.W mgv_object2_face2_lines_number-1 
 ; 3. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face3_color	
 	DC.W mgv_object2_face3_lines_number-1 
 
 ; 4. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face4_color	
 	DC.W mgv_object2_face4_lines_number-1 
 ; 5. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face5_color	
 	DC.W mgv_object2_face5_lines_number-1 
 ; 6. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face6_color	
 	DC.W mgv_object2_face6_lines_number-1 
 ; 7. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face7_color	
 	DC.W mgv_object2_face7_lines_number-1 
 ; 8. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face8_color	
 	DC.W mgv_object2_face8_lines_number-1 
 
 ; 9. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face9_color	
 	DC.W mgv_object2_face9_lines_number-1 
 ; 10. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face10_color	
 	DC.W mgv_object2_face10_lines_number-1 
 ; 11. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face11_color	
 	DC.W mgv_object2_face11_lines_number-1 
 ; 12. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face12_color	
 	DC.W mgv_object2_face12_lines_number-1 
 
 ; 13. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face13_color	
 	DC.W mgv_object2_face13_lines_number-1 
 ; 14. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face14_color	
 	DC.W mgv_object2_face14_lines_number-1 
 ; 15. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face15_color	
 	DC.W mgv_object2_face15_lines_number-1 
 ; 16. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face16_color	
 	DC.W mgv_object2_face16_lines_number-1 
 
 ; 17. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face17_color	
 	DC.W mgv_object2_face17_lines_number-1 
 ; 18. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face18_color	
 	DC.W mgv_object2_face18_lines_number-1 
 ; 19. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face19_color	
 	DC.W mgv_object2_face19_lines_number-1 
 ; 20. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face20_color	
 	DC.W mgv_object2_face20_lines_number-1 
 
 ; 21. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face21_color	
 	DC.W mgv_object2_face21_lines_number-1 
 ; 22. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face22_color	
 	DC.W mgv_object2_face22_lines_number-1 
 ; 23. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face23_color	
 	DC.W mgv_object2_face23_lines_number-1 
 ; 24. Fläche
-	DC.L 0				; pointer coordinates table
+	DC.L 0				; coordinates table
 	DC.W mgv_object2_face24_color	
 	DC.W mgv_object2_face24_lines_number-1 
 
