@@ -6,10 +6,10 @@
 
 ; History/Changes
 
-; V.1.0 Beta
+; V.1.0 beta
 ; - 1st release
 
-; V.1.1 Beta
+; V.1.1 beta
 ; - Intro: Bugfix, Start values of horizontal faders were -1
 ; - Glenz-Parts 1-3: Bugfix, for 3rd playfield missing 100 lines -> Guru
 ; - Glenz-Part4: Bugfix, Scroll in without glitches. cpu cleared 8 bytes which were too much
@@ -18,20 +18,20 @@
 ; - Bugfix, error handling, exit immediately from any part
 ; - all modules muted
 
-; V.1.2 Beta
+; V.1.2 beta
 ; - Bugfix spritefield display bug right border (all sprites X+16)
 ; - New glenz parts: 48 faces glenz + 128 faces glenz
 
-; V.1.3 Beta
+; V.1.3 beta
 ; - Bugfix: Intro-Part y wrap command was not considered -> random memory error
 ; - All Morphing sequences shortened and changed
 ; - End-Part: Dual playfield with shadow for font
 
-; V.1.4 Beta
+; V.1.4 beta
 ; - End-Part: Cross fader for glenz
 ; - With revised include files (COPCON)
 
-; V.1.5 Beta
+; V.1.5 beta
 ; - With revised include files
 ; - 1-Wrapper: Music fader activated, global variables defined
 ; - Endpart: Magnetic Fox' module included, Vertical-Scroller now triggers music fader.
@@ -45,6 +45,13 @@
 
 ; V.1.7 beta
 ; - with Grass' gfx for the intro part and a reduced size of the glenz
+
+; V.1.8 beta
+; - with Grass' background skyline image
+
+; V.1.9 beta
+; - credits part: with Grass' font, text changed
+
 
 
 	MC68040
@@ -355,8 +362,8 @@ nop_second_copperlist		DC.L 0
 
 	DC.B "$VER: "
 	DC.B "RSE-Superglenz "
-	DC.B "1.7 beta "
-	DC.B "(26.4.25)",0
+	DC.B "1.9 beta "
+	DC.B "(9.5.25)",0
 	EVEN
 
 	END

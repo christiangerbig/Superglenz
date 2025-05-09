@@ -1931,7 +1931,7 @@ vts_text
 	DC.B "                    "
 	DC.B "CODING - DISSIDENT  "
 	DC.B "                    "
-	DC.B "GRAPHICS - NN       "
+	DC.B "GRAPHICS - GRASS    "
 	DC.B "                    "
 	DC.B "MUSIC - MAGNETIC FOX"
 	DC.B "                    "
@@ -2242,6 +2242,5 @@ vts_text
 ; Vert-Text-Scroll
 vts_image_data			SECTION vts_gfx,DATA
 	INCBIN "Superglenz:fonts/8x7x2-Font.rawblit"
-	DS.B vts_image_plane_width*vts_image_depth ; empty line
 
 	END

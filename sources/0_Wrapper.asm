@@ -3,7 +3,7 @@
 
 	XREF color00_bits
 	XREF start_00_intro
-	XREF start_01_wrapper
+	XREF start_01_sub_wrapper
 
 	XDEF start_0_pt_replay
 	XDEF sc_start
@@ -445,7 +445,7 @@ main
 	bsr	start_00_intro
 	tst.l	d0
 	bne.s	main_skip
-	bsr	start_01_wrapper
+	bsr	start_01_sub_wrapper
 main_skip
 	rts
 

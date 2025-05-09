@@ -10,7 +10,7 @@
 	XDEF v_bplcon3_bits2
 	XDEF v_bplcon4_bits
 	XDEF v_fmode_bits
-	XDEF start_01_wrapper
+	XDEF start_01_sub_wrapper
 
 	XREF color00_bits
 	XREF nop_second_copperlist
@@ -441,7 +441,7 @@ variables_size			RS.B 0
 	SECTION code,CODE
 
 
-start_01_wrapper
+start_01_sub_wrapper
 
 
 	INCLUDE "sys-wrapper.i"
