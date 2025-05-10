@@ -52,6 +52,10 @@
 ; V.1.9 beta
 ; - credits part: with Grass' font, text changed
 
+; V.2.0 beta
+; - credits part: bugfix -> guru at automatic return to sys on real A1200/060,
+; data cache relared
+
 
 
 	MC68040

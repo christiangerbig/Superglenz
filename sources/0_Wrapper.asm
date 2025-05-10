@@ -175,7 +175,7 @@ cl1_vstart			EQU beam_position&$ff
 ; Custom Memory
 custom_memory_number		EQU 2
 part_0_audio_memory_size1	EQU 28732 ; Song
-part_0_audio_memory_size2	EQU 192246 ; Samples
+part_0_audio_memory_size2	EQU 220978 ; Samples
 
 
 	INCLUDE "except-vectors.i"

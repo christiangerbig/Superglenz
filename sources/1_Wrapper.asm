@@ -315,12 +315,13 @@ init_main_variables
 	IFD PROTRACKER_VERSION_3
 		PT3_INIT_VARIABLES
 	ENDC
+	moveq	#FALSE,d1
 	lea	pt_global_music_fader_active(pc),a0
-	move.w	#FALSE,(a0)
+	move.w	d1,(a0)
 
 ; Main
 	lea	global_stop_fx_active(pc),a0
-	move.w	#FALSE,(a0)
+	move.w	d1,(a0)
 	rts
 
 
@@ -570,11 +571,12 @@ custom_memory_table
 	INCLUDE "sys-variables.i"
 
 
-	CNOP 0,2
 ; PT-Replay
+	CNOP 0,2
 pt_global_music_fader_active	DC.W 0
 
 ; Main
+	CNOP 0,2
 global_stop_fx_active		DC.W 0
 
 

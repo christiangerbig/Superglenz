@@ -1,3 +1,6 @@
+; 64 kB aligned extra playfield
+
+
 	MC68040
 
 
@@ -96,10 +99,10 @@ pf_depth			EQU pf1_depth3+pf2_depth3
 
 pf_extra_number			EQU 2
 extra_pf1_x_size		EQU 64
-extra_pf1_y_size		EQU 256+2732
+extra_pf1_y_size		EQU 256+2731
 extra_pf1_depth			EQU 3
 extra_pf2_x_size		EQU 64
-extra_pf2_y_size		EQU 256+2732
+extra_pf2_y_size		EQU 256+2731
 extra_pf2_depth			EQU 3
 
 spr_number			EQU 8
@@ -194,8 +197,8 @@ vts_text_characters_number	EQU vts_text_characters_per_line*vts_text_characters_
 mgv_rot_d			EQU 512
 mgv_rot_x_center		EQU extra_pf1_x_size/2
 mgv_rot_y_center		EQU visible_lines_number/2
-mgv_rot_y_angle_speed_radius	EQU 10
-mgv_rot_y_angle_speed_speed	EQU 2
+mgv_rot_y_angle_speed_radius	EQU 8	; 10
+mgv_rot_y_angle_speed_speed	EQU 1	; 2
 
 mgv_object_edge_points_number	EQU 14
 mgv_object_edge_points_per_face	EQU 3
@@ -631,7 +634,7 @@ init_main_variables
 	ENDC
 	move.w	d0,mgv_morph_shapes_table_start(a3)
 	IFEQ mgv_premorph_enabled
-		move.w	d1,mgv_morph_delay_counter(a3) ; activate counter
+		move.w	d1,mgv_morph_delay_counter(a3) ; deactivate counter
 	ELSE
 		move.w	#1,mgv_morph_delay_counter(a3) ; activate counter
 	ENDC
@@ -1103,7 +1106,7 @@ vts_stop_vert_text_scroll
 	rts
 	CNOP 0,4
 vts_stop_colors_fader_cross
-	move.w	#FALSE,cfc_rgb8_color_table_start(a3) ; fade out
+	move.w	#-1,cfc_rgb8_color_table_start(a3) ; fade out
 	tst.w	cfc_rgb8_active(a3)
 	beq.s	vts_stop_colors_fader_cross_quit
 	move.w	#1,cfc_rgb8_fader_delay_counter(a3) ; activate counter
@@ -1392,7 +1395,7 @@ colors_fader_cross
 	move.w	cfc_rgb8_fader_angle(a3),d2
 	move.w	d2,d0
 	ADDF.W	cfc_rgb8_fader_angle_speed,d0
-	cmp.w	#sine_table_length/2,d0 ; <= 180° ?
+	cmp.w	#sine_table_length/2,d0 ; 180° ?
 	ble.s	colors_fader_cross_skip
 	MOVEF.W sine_table_length/2,d0
 colors_fader_cross_skip
@@ -1406,8 +1409,8 @@ colors_fader_cross_skip
 	lea	spr_rgb8_color_table+(cfc_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
 	lea	cfc_rgb8_color_table+(cfc_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; destination values
 	move.w	cfc_rgb8_color_table_start(a3),d1
-	MULUF.W LONGWORD_SIZE,d1	;* 32
-	lea	(a1,d1.w*8),a1
+	MULSF.L 4,d1			; *32
+	lea	(a1,d1.l*8),a1
 	move.w	d0,a5			; decrease/increase blue
 	swap	d0
 	clr.w	d0
@@ -1454,22 +1457,22 @@ cfc_rgb8_copy_color_table_loop
 	move.l	(a0)+,d0		; RGB8
 	move.l	d0,d2		
 	RGB8_TO_RGB4_HIGH d0,d1,d3
-	move.w	d0,(a1)			; COLORxx high
+	move.w	d0,(a1)			; color high
 	IFNE cl1_size1
-		move.w	d0,(a2)		; COLORxx high
+		move.w	d0,(a2)		; color high
 	ENDC
 	IFNE cl1_size2
-		move.w	d0,(a4)		; COLORxx high
+		move.w	d0,(a4)		; color high
 	ENDC
 	RGB8_TO_RGB4_LOW d2,d1,d3
-	move.w	d2,cl1_COLOR18_low1-cl1_COLOR18_high1(a1) ; COLORxx low
+	move.w	d2,cl1_COLOR18_low1-cl1_COLOR18_high1(a1) ; color low
 	addq.w	#LONGWORD_SIZE,a1	; next color register
 	IFNE cl1_size1
-		move.w	d2,cl1_COLOR18_low1-cl1_COLOR18_high1(a2) ; COLORxx low
+		move.w	d2,cl1_COLOR18_low1-cl1_COLOR18_high1(a2) ; color low
 		addq.w	#LONGWORD_SIZE,a2 ; next color register
 	ENDC
 	IFNE cl1_size2
-		move.w	d2,cl1_COLOR18_low1-cl1_COLOR18_high1(a4) ; COLORxx low
+		move.w	d2,cl1_COLOR18_low1-cl1_COLOR18_high1(a4) ; color low
 		addq.w	#LONGWORD_SIZE,a4 ; next color register
 	ENDC
 	IFGT cfc_rgb8_colors_number-32
@@ -1487,13 +1490,14 @@ cfc_rgb8_copy_color_table_skip1
 	dbf	d7,cfc_rgb8_copy_color_table_loop
 	tst.w	cfc_rgb8_colors_counter(a3)
 	bne.s	cfc_rgb8_copy_color_table_quit
-	move.w	#FALSE,cfc_rgb8_copy_colors_active(a3) ; Copying finished
+	move.w	#FALSE,cfc_rgb8_copy_colors_active(a3) ; copying finished
 	move.w	#cfc_rgb8_fader_delay,cfc_rgb8_fader_delay_counter(a3)
 	move.w	cfc_rgb8_color_table_start(a3),d0
+	bmi.s	cfc_rgb8_copy_color_table_quit
 	addq.w  #1,d0			; next color table
 	cmp.w	#cfc_rgb8_color_tables_number,d0 ; end of table ?
 	blt.s   cfc_rgb8_copy_color_table_skip2
-	moveq   #0,d0			; restart
+	moveq   #0,d0			; reset table start
 cfc_rgb8_copy_color_table_skip2
 	move.w	d0,cfc_rgb8_color_table_start(a3)
 cfc_rgb8_copy_color_table_quit
@@ -1505,6 +1509,7 @@ cfc_rgb8_copy_color_table_quit
 
 	CNOP 0,4
 control_counters
+; Morphing-Glenz-Vectors
 	move.w	mgv_morph_delay_counter(a3),d0
 	bmi.s	control_counters_skip2
 	subq.w	#1,d0
@@ -1513,6 +1518,7 @@ control_counters
 control_counters_skip1
 	move.w	d0,mgv_morph_delay_counter(a3) 
 control_counters_skip2
+; Color-Fader-Cross
 	move.w	cfc_rgb8_fader_delay_counter(a3),d0
 	bmi.s	control_counters_skip4
 	subq.w	#1,d0
@@ -1860,8 +1866,6 @@ cfc_rgb8_color_table_fade_out
 	REPT 8
 		DC.L color00_bits
 	ENDR
-
-	CNOP 0,4
 cfc_rgb8_color_table
 	REPT 2
 		DC.L color00_bits

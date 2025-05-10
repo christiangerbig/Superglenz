@@ -169,12 +169,12 @@ sprf_rgb8_colors_number		EQU spr_colors_number-1
 sprfi_rgb8_fader_speed_max	EQU 4
 sprfi_rgb8_fader_radius		EQU sprfi_rgb8_fader_speed_max
 sprfi_rgb8_fader_center		EQU sprfi_rgb8_fader_speed_max+1
-sprfi_rgb8_fader_angle_speed	EQU 2
+sprfi_rgb8_fader_angle_speed	EQU 1
 
-sprfo_rgb8_fader_speed_max	EQU 8
+sprfo_rgb8_fader_speed_max	EQU 10
 sprfo_rgb8_fader_radius		EQU sprfo_rgb8_fader_speed_max
 sprfo_rgb8_fader_center		EQU sprfo_rgb8_fader_speed_max+1
-sprfo_rgb8_fader_angle_speed	EQU 2
+sprfo_rgb8_fader_angle_speed	EQU 1
 
 
 	INCLUDE "except-vectors.i"
