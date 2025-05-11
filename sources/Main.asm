@@ -55,6 +55,8 @@
 ; V.2.0 beta
 ; - credits part: bugfix -> guru at automatic return to sys on real A1200/060,
 ; data cache relared
+; - main part: bugfix: The 1x glenz vectors were checked for colors 16/08 for
+; the backface. Code removed and number of lines corrected
 
 
 

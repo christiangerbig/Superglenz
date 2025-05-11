@@ -63,6 +63,7 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
+; Morph-Glenz-Vectors
 mgv_count_lines_enabled		EQU FALSE
 mgv_premorph_enabled		EQU TRUE
 mgv_morph_loop_enabled		EQU FALSE
@@ -871,22 +872,22 @@ mgv_init_start_shape
 mgv_init_color_table
 	lea	pf1_rgb8_color_table(pc),a0
 	lea	mgv_rgb8_color_table(pc),a1
-; Reinfarben des 1. Glenz
+; Pure colors 1st glenz
 	move.l	(a1)+,QUADWORD_SIZE(a0) ; COLOR02
 	move.l	(a1)+,3*LONGWORD_SIZE(a0) ; COLOR03
 	move.l	(a1)+,4*LONGWORD_SIZE(a0) ; COLOR04
 	move.l	(a1)+,5*LONGWORD_SIZE(a0) ; COLOR05
-; Reinfarben des 2. Glenz
+; Pure colors 2nd glenz
 	move.l	(a1)+,8*LONGWORD_SIZE(a0) ; COLOR08
 	move.l	(a1)+,9*LONGWORD_SIZE(a0) ; COLOR09
 	move.l	(a1)+,16*LONGWORD_SIZE(a0) ; COLOR16
 	move.l	(a1)+,17*LONGWORD_SIZE(a0) ; COLOR17
-; Reinfarben des 3. Glenz
+; Pure colors 3rd glenz
 	move.l	(a1)+,32*LONGWORD_SIZE(a0) ; COLOR32
 	move.l	(a1)+,33*LONGWORD_SIZE(a0) ; COLOR33
 	move.l	(a1)+,64*LONGWORD_SIZE(a0) ; COLOR64
 	move.l	(a1),65*LONGWORD_SIZE(a0) ; COLOR65
-; Mischfarben aus 1. und 2. Glenz
+; Mixed colors 1st and 2nd glenz
 	moveq	#2,d6			; COLOR02
 	moveq	#8,d7			; COLOR08
 	bsr	mgv_get_colorvalues_average
@@ -939,7 +940,7 @@ mgv_init_color_table
 	moveq	#16,d6			; COLOR16
 	moveq	#14,d7			; COLOR14
 	bsr	mgv_get_colorvalues_average
-; Mischfarben aus 1. und 3. Glenz
+; Mixed colors 1st and 3rd glenz
 	moveq	#2,d6			; COLOR02
 	moveq	#32,d7			; COLOR32
 	bsr	mgv_get_colorvalues_average
@@ -970,7 +971,7 @@ mgv_init_color_table
 	moveq	#5,d6			; COLOR05
 	moveq	#65,d7			; COLOR65
 	bsr	mgv_get_colorvalues_average
-; Mischfarben aus 2. und 3. Glenz
+; Mixes colors 2nd and 3rd glenz
 	moveq	#08,d6			; COLOR08
 	moveq	#32,d7			; COLOR32
 	bsr	mgv_get_colorvalues_average
@@ -1004,7 +1005,7 @@ mgv_init_color_table
 	moveq	#17,d6			; COLOR17
 	moveq	#65,d7			; COLOR65
 	bsr	mgv_get_colorvalues_average
-; Mischfarben aus 1., 2. und 3. Glenz
+; Mixed colors 1st, 2nd and 3rd glenz
 	moveq	#32,d6			; COLOR32
 	moveq	#10,d7			; COLOR10
 	bsr	mgv_get_colorvalues_average
@@ -1191,12 +1192,12 @@ mgv_init_color_table
 	bsr.s	mgv_get_colorvalues_average
 	rts
 
-	CNOP 0,4
-mgv_get_colorvalues_average
 ; Input
 ; d6.w	1st source color number
 ; d7.w	2nd source color number
 ; a0.l	Pointer	 color table
+	CNOP 0,4
+mgv_get_colorvalues_average
 ; Result
 	moveq	#0,d0
 	move.b	1(a0,d6.w*4),d0		; 1st source color red
@@ -1729,12 +1730,11 @@ mgv_draw_lines
 	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line mode
 	MOVEF.W mgv_objects_faces_number-1,d7
 mgv_draw_lines_loop1
-; calculate z of vector N
 	move.l	(a0)+,a5		; starts table
 	move.w	(a5),d4			; p1 start
 	move.w	2(a5),d5		; p2 start
 	move.w	4(a5),d6		; p3 start
-	swap	d7			; save faces counter
+	swap	d7			; high word: faces counter
 	movem.w (a1,d5.w*2),d0-d1	; p2(x,y)
 	movem.w (a1,d6.w*2),d2-d3	; p3(x,y)
 	sub.w	d0,d2			; xv = xp3-xp2
@@ -1804,7 +1804,7 @@ mgv_draw_lines_skip1
 mgv_draw_lines_skip2
 	dbf	d6,mgv_draw_lines_loop2
 mgv_draw_lines_skip3
-	swap	d7			; faces couner
+	swap	d7			; low word: faces couner
 	dbf	d7,mgv_draw_lines_loop1
 	lea	variables+mgv_lines_counter(pc),a0
 	move.w	a4,(a0)			; number of lines

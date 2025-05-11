@@ -58,10 +58,12 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
+; Morphing-Glenz-Vectors
 mgv_count_lines_enabled		EQU FALSE
 mgv_premorph_enabled		EQU TRUE
 mgv_morph_loop_enabled		EQU TRUE
 
+; Color-Fader-Cross
 cfc_rgb8_prefade_enabled	EQU FALSE
 
 dma_bits			EQU DMAF_SPRITE|DMAF_BLITTER|DMAF_COPPER|DMAF_RASTER|DMAF_SETCLR
@@ -707,14 +709,14 @@ mgv_init_xy_coords
 	rts
 
 
-	CNOP 0,4
-mgv_init_sprite_header
 ; Input
 ; d0.w	x
 ; d1.w	y
 ; a0.l	Pointer	 1st sprite structure
 ; a1.l	Pointer	 2nd sprite structure
 ; Result
+	CNOP 0,4
+mgv_init_sprite_header
 	MOVEF.W visible_lines_number,d2 ; height
 	add.w	d1,d2			; VSTOP
 	SET_SPRITE_POSITION d0,d1,d2
@@ -959,7 +961,7 @@ beam_routines
 	bsr	cfc_rgb8_copy_color_table
 	bsr	control_counters
 	jsr	mouse_handler
-	tst.l	d0			; Exit ?
+	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
 	move.w	global_stop_fx_active(pc),d0
 	bne.s	beam_routines
@@ -1047,7 +1049,7 @@ vert_text_scroll_loop1
 vert_text_scroll_loop2
 	move.w	(a0)+,d0		; x
 	lsr.w	#3,d0			; byte offset
-	add.w	d1,d0			; xy offset
+	add.w	d1,d0			; x offset + y offset
 	move.l	(a2)+,a5		; character image
 	lea	(a4,d0.w),a6
 	move.b	(a5),(a6)		; copy 8 pixel
@@ -1081,7 +1083,7 @@ vert_text_scroll_skip
 ; Input
 ; d0.b	ASCII-Code
 ; Result
-; d0.l	Return-Code
+; d0.l	Return code
 	CNOP 0,4
 vts_check_control_codes
 	cmp.b	#ASCII_CTRL_M,d0
@@ -1106,7 +1108,7 @@ vts_stop_vert_text_scroll
 	rts
 	CNOP 0,4
 vts_stop_colors_fader_cross
-	move.w	#-1,cfc_rgb8_color_table_start(a3) ; fade out
+	move.w	#-1,cfc_rgb8_color_table_start(a3) ; fade to background color
 	tst.w	cfc_rgb8_active(a3)
 	beq.s	vts_stop_colors_fader_cross_quit
 	move.w	#1,cfc_rgb8_fader_delay_counter(a3) ; activate counter
@@ -1170,7 +1172,7 @@ mgv_rotate_loop
 	move.w	(a0)+,d1		; y
 	move.w	(a0)+,d2		; z
 	ROTATE_Y_AXIS
-; Zentralprojektion und Translation
+; Central projection and translation
 	MULSF.W mgv_rot_d,d0,d3; X-Projektion
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
@@ -1248,12 +1250,11 @@ mgv_draw_lines
 	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; mintern line mode
 	MOVEF.W mgv_object_faces_number-1,d7
 mgv_draw_lines_loop1
-; calculate z of vectors N
 	move.l	(a0)+,a5		; starts table
 	move.w	(a5),d4			; p1 start
 	move.w	2(a5),d5		; p2 start
 	move.w	4(a5),d6		; p3 start
-	swap	d7			; save faces counter
+	swap	d7			; high word: faces counter
 	movem.w (a1,d5.w*2),d0-d1	; p2(x,y)
 	movem.w (a1,d6.w*2),d2-d3	; p3(x,y)
 	sub.w	d0,d2			; xv = xp3-xp2
@@ -1267,10 +1268,6 @@ mgv_draw_lines_loop1
 	sub.l	d0,d1			; zn = (yu*xv)-(xu*yv)
 	bmi.s	mgv_draw_lines_loop2
 	lsr.w	#2,d7			; COLOR02/04 -> COLOR00/01
-	beq	mgv_draw_lines_skip3
-	cmp.w	#1,d7			; backface ?
-	beq.s	mgv_draw_lines_loop2
-	lsr.w	#2,d7			; COLOR08/16 -> COLOR00/01
 	beq	mgv_draw_lines_skip3
 mgv_draw_lines_loop2
 	move.w	(a5)+,d0		; p1,p2 starts
@@ -1307,7 +1304,7 @@ mgv_draw_lines_skip1
 mgv_draw_lines_skip2
 	dbf	d6,mgv_draw_lines_loop2
 mgv_draw_lines_skip3
-	swap	d7			; faces counter
+	swap	d7			; low word: faces counter
 	dbf	d7,mgv_draw_lines_loop1
 	lea	variables+mgv_lines_counter(pc),a0
 	move.w	a4,(a0)			; number of lines
@@ -1320,7 +1317,7 @@ mgv_draw_lines_init
 	add.l	#ALIGN_64KB,d0
 	clr.w	d0
 	move.l	cl2_construction2(a3),a0
-	swap	d0			; High
+	swap	d0			; high
 	move.w	d0,cl2_extension2_entry+cl2_ext2_BLTCPTH+WORD_SIZE(a0) ; playfield read
 	move.w	d0,cl2_extension2_entry+cl2_ext2_BLTDPTH+WORD_SIZE(a0) ; playfield write
 	rts
@@ -1375,7 +1372,7 @@ mgv_set_second_copperlist
 	move.w	mgv_lines_counter(a3),d1
 	IFEQ mgv_count_lines_enabled
 		cmp.w	$140000,d1
-		blt.s	mgv_skip
+		blt.s	mgv_set_second_copperlist_skip
 		move.w	d1,$140000
 mgv_set_second_copperlist_skip
 	ENDC
@@ -1582,7 +1579,7 @@ pf1_rgb8_color_table
 
 	CNOP 0,4
 pf2_rgb8_color_table
-	DC.L color00_bits,$000000
+	DC.L color00_bits,$000000       ; shadow of font
 
 
 	CNOP 0,4

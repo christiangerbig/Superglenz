@@ -63,6 +63,7 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
+; Morph-Glenz-Vectors
 mgv_count_lines_enabled		EQU FALSE
 mgv_premorph_enabled		EQU TRUE
 mgv_morph_loop_enabled		EQU FALSE
@@ -774,17 +775,17 @@ mgv_init_start_shape
 mgv_init_color_table
 	lea	pf1_rgb8_color_table(pc),a0
 	lea	mgv_rgb8_color_table(pc),a1
-; Reinfarben des 1. Glenz
+; Pure colors 1st glenz
 	move.l	(a1)+,QUADWORD_SIZE(a0) ; COLOR02
 	move.l	(a1)+,3*LONGWORD_SIZE(a0) ; COLOR03
 	move.l	(a1)+,4*LONGWORD_SIZE(a0) ; COLOR04
 	move.l	(a1)+,5*LONGWORD_SIZE(a0) ; COLOR05
-; Reinfarben des 2. Glenz
+; Pure colors 2nd glenz
 	move.l	(a1)+,8*LONGWORD_SIZE(a0) ; COLOR08
 	move.l	(a1)+,9*LONGWORD_SIZE(a0) ; COLOR09
 	move.l	(a1)+,16*LONGWORD_SIZE(a0) ; COLOR16
 	move.l	(a1),17*LONGWORD_SIZE(a0) ; COLOR17
-; Mischfarben aus 1. und 2. Glenz
+; Mixed colors 1st and 2nd glenz
 	moveq	#2,d6			; COLOR02
 	moveq	#8,d7			; COLOR08
 	bsr	mgv_get_colorvalues_average
@@ -1154,7 +1155,7 @@ mgv_rot_loop
 	ROTATE_X_AXIS
 	ROTATE_Y_AXIS
 	ROTATE_Z_AXIS
-; central projection and translation
+; Central projection and translation
 	MULSF.W mgv_rot_d,d0,d3; x projection
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
@@ -1255,12 +1256,11 @@ mgv_draw_lines
 	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line mode
 	MOVEF.W mgv_objects_faces_number-1,d7
 mgv_draw_lines_loop1
-; calculate z of  vectors N
 	move.l	(a0)+,a5		; starts
 	move.w	(a5),d4			; p1 starts
 	move.w	2(a5),d5		; p2 starts
 	move.w	4(a5),d6		; p3 starts
-	swap	d7			; save faces counter
+	swap	d7			; high word: faces counter
 	movem.w (a1,d5.w*2),d0-d1	; p2(x,y)
 	movem.w (a1,d6.w*2),d2-d3	; p3(x,y)
 	sub.w	d0,d2			; xv = xp3-xp2
@@ -1320,7 +1320,7 @@ mgv_draw_lines_skip1
 mgv_draw_lines_skip2
 	dbf	d6,mgv_draw_lines_loop2
 mgv_draw_lines_skip3
-	swap	d7			; faces counter
+	swap	d7			; low word: faces counter
 	dbf	d7,mgv_draw_lines_loop1
 	lea	variables+mgv_lines_counter(pc),a0
 	move.w	a4,(a0)			; number of lines

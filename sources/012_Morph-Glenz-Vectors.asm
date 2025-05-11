@@ -63,6 +63,7 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
+; Morph-Glenz-Vectors
 mgv_count_lines_enabled		EQU FALSE
 mgv_premorph_enabled		EQU TRUE
 mgv_morph_loop_enabled		EQU FALSE
@@ -271,7 +272,7 @@ mgv_object_face39_lines_number	EQU 3
 mgv_object_face40_color		EQU 2
 mgv_object_face40_lines_number	EQU 3
 
-mgv_lines_number_max		EQU 99
+mgv_lines_number_max		EQU 96
 
 	IFEQ mgv_morph_loop_enabled
 mgv_morph_shapes_number		EQU 3
@@ -980,7 +981,7 @@ mgv_draw_lines_loop1
 	move.w	(a5),d4			; p1 start
 	move.w	2(a5),d5		; p2 start
 	move.w	4(a5),d6		; p3 start
-	swap	d7			; save faces counter
+	swap	d7			; high word: faces counter
 	movem.w (a1,d5.w*2),d0-d1	; p2(x,y)
 	movem.w (a1,d6.w*2),d2-d3	; p3(x,y)
 	sub.w	d0,d2			; xv = xp3-xp2
@@ -994,10 +995,6 @@ mgv_draw_lines_loop1
 	sub.l	d0,d1			; zn = (yu*xv)-(xu*yv)
 	bmi.s	mgv_draw_lines_loop2
 	lsr.w	#2,d7			; COLOR02/04 -> COLOR00/01
-	beq	mgv_draw_lines_skip3
-	cmp.w	#1,d7			; backface ?
-	beq.s	mgv_draw_lines_loop2
-	lsr.w	#2,d7			; COLOR08/16 -> COLOR00/01
 	beq	mgv_draw_lines_skip3
 mgv_draw_lines_loop2
 	move.w	(a5)+,d0		; p1,p2 starts
@@ -1034,7 +1031,7 @@ mgv_draw_lines_skip1
 mgv_draw_lines_skip2
 	dbf	d6,mgv_draw_lines_loop2
 mgv_draw_lines_skip3
-	swap	d7			; faces counter
+	swap	d7			; low word: faces counter
 	dbf	d7,mgv_draw_lines_loop1
 	lea	variables+mgv_lines_counter(pc),a0
 	move.w	a4,(a0)			; number of lines

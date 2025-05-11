@@ -1262,7 +1262,6 @@ gv_draw_lines
 	move.w	#pf1_plane_width,a4
 	moveq	#gv_object_faces_number-1,d7
 gv_draw_lines_loop1
-; calculate z of vector N
 	move.l	(a0)+,a5		; p starts
 	swap	d7			; save faces counter
 	move.w	(a5),d4			; p1 start
