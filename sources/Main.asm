@@ -53,11 +53,8 @@
 ; - credits part: with Grass' font, text changed
 
 ; V.2.0 beta
-; - credits part: bugfix -> guru at automatic return to sys on real A1200/060,
-; data cache relared
 ; - main part: bugfix: The 1x glenz vectors were checked for colors 16/08 for
-; the backface. Code removed and number of lines corrected
-
+; the backface. Code removed and number of max lines corrected
 
 
 	MC68040
@@ -368,8 +365,8 @@ nop_second_copperlist		DC.L 0
 
 	DC.B "$VER: "
 	DC.B "RSE-Superglenz "
-	DC.B "1.9 beta "
-	DC.B "(9.5.25)",0
+	DC.B "2.0 beta "
+	DC.B "(11.5.25)",0
 	EVEN
 
 	END

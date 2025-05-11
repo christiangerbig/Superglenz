@@ -717,13 +717,13 @@ mgv_init_objects_info
 	bsr.s	mgv_init_objects_info_loop
 	rts
 
-	CNOP 0,4
-mgv_init_objects_info_loop
 ; Input
 ; d7.w	number of faces
 ; a0.l	Pointer	 object info table
 ; a1.l	Pointer	 edge table
 ; Result
+	CNOP 0,4
+mgv_init_objects_info_loop
 	move.w	object_info_lines_number(a0),d0
 	addq.w	#1+1,d0			; number of edge points
 	move.l	a1,(a0)			; edge table
