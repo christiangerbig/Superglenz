@@ -1003,21 +1003,21 @@ cl1_init_branches_ptrs1
 	moveq	#1,d2
 	ror.l	#8,d2			; $01000000
 	move.l	cl2_display(a3),d4
-	swap	d4			; high
+	swap	d4
 	move.w	#COP2LCH,(a0)+
 	moveq	#cl1_subextension1_size,d3
 	move.w	d4,(a0)+
-	swap	d4			; low
+	swap	d4		
 	move.w	#COP2LCL,(a0)+
 	move.w	d4,(a0)+
 	MOVEF.W cl1_display_y_size1-1,d7
 cl1_init_branches_ptrs1_loop
 	move.l	d0,(a0)+		; CWAIT x,y
-	swap	d1			; high
+	swap	d1
 	move.w	#COP1LCH,(a0)+
 	add.l	d2,d0			; next scanline
 	move.w	d1,(a0)+
-	swap	d1			; low
+	swap	d1		
 	move.w	#COP1LCL,(a0)+
 	move.w	d1,(a0)+
 	add.l	d3,d1			; increase jump in cl1
@@ -1035,21 +1035,21 @@ cl1_init_branches_ptrs2
 	ror.l	#8,d2			; $01000000
 	move.l	cl2_display(a3),d4
 	add.l	#cl2_extension2_entry,d4
-	swap	d4			; high
+	swap	d4
 	move.w	#COP2LCH,(a0)+
 	moveq	#cl1_subextension1_size,d3
 	move.w	d4,(a0)+
-	swap	d4			; low
+	swap	d4		
 	move.w	#COP2LCL,(a0)+
 	move.w	d4,(a0)+
 	MOVEF.W cl1_display_y_size2-1,d7
 cl1_init_branches_ptrs2_loop
 	move.l	d0,(a0)+		; CWAIT x,y
-	swap	d1			; high
+	swap	d1
 	move.w	#COP1LCH,(a0)+
 	add.l	d2,d0			; next scanline
 	move.w	d1,(a0)+
-	swap	d1			; low
+	swap	d1		
 	move.w	#COP1LCL,(a0)+
 	move.w	d1,(a0)+
 	add.l	d3,d1			; increase jump in cl1
@@ -1061,10 +1061,10 @@ cl1_init_branches_ptrs2_loop
 	CNOP 0,4
 cl1_reset_pointer
 	move.l	cl1_display(a3),d0
-	swap	d0			; high
+	swap	d0
 	move.w	#COP1LCH,(a0)+
 	move.w	d0,(a0)+
-	swap	d0			; low
+	swap	d0		
 	move.w	#COP1LCL,(a0)+
 	move.w	d0,(a0)+
 	rts
@@ -1203,7 +1203,7 @@ gv_rot
 		MOVEF.W sine_table_length,d3
 	ENDC
 	add.w	#sine_table_length/4,d0 ; + 90°
-	swap	d5			; high word = sin(b)
+	swap	d5 word = sin(b)
 	IFEQ sine_table_length-512
 		and.w	d3,d0		; remove overflow
 	ELSE
@@ -1212,7 +1212,7 @@ gv_rot
 		sub.w	d3,d0		; restart
 gv_rot_skip1
 	ENDC
-	move.w	(a2,d0.w*2),d5		; low word = cos(b)
+	move.w	(a2,d0.w*2),d5	 word = cos(b)
 	addq.w	#gv_rot_y_angle_speed,d1
 	IFEQ sine_table_length-512
 		and.w	d3,d1		; remove overflow
@@ -1258,7 +1258,7 @@ gv_draw_lines
 	lea	gv_rot_xy_coords(pc),a1
 	move.l	pf1_construction2(a3),a2
 	move.l	(a2),a2
-	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line drawing mode
+	move.l	#((BC0F_SRCA|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line drawing mode
 	move.w	#pf1_plane_width,a4
 	moveq	#gv_object_faces_number-1,d7
 gv_draw_lines_loop1
@@ -1297,11 +1297,11 @@ gv_draw_lines_loop2
 	add.l	a4,d1			; next bitplane
 gv_draw_lines_skip1
 	WAITBLIT
-	move.l	d0,BLTCON0-DMACONR(a6)	; low word: BLTCON1, bits 16..131: BLTCON0
+	move.l	d0,BLTCON0-DMACONR(a6) 	; low word: BLTCON1, high word: BLTCON0
 	move.l	d1,BLTCPT-DMACONR(a6)	; playfield read
 	move.w	d3,BLTAPTL-DMACONR(a6)	; (4*dy)-(2*dx)
 	move.l	d1,BLTDPT-DMACONR(a6)	; playfield write
-	move.l	d4,BLTBMOD-DMACONR(a6)	; low word: 4*(dy-dx), high word: 4*dy
+	move.l	d4,BLTBMOD-DMACONR(a6) 	; low word word: 4*(dy-dx), high word: 4*dy
 	move.w	d2,BLTSIZE-DMACONR(a6)
 gv_draw_lines_skip2
 	dbf	d6,gv_draw_lines_loop2
@@ -1312,7 +1312,7 @@ gv_draw_lines_skip3
 	rts
 	CNOP 0,4
 gv_draw_lines_init
-	move.w	#DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6)
+	move.w	#DMAF_BLITHOG|DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
 	move.l	#$ffff8000,BLTBDAT-DMACONR(a6) ; low word: line texture starts with MSB,  high word: line texture
 	moveq	#-1,d0
@@ -1330,7 +1330,7 @@ gv_fill_playfield1
 	ADDF.L	(pf1_plane_width*pf1_y_size3*pf1_depth3)-2,a0 ; end of playfield
 	WAITBLIT
 	move.w	#DMAF_BLITHOG,DMACON-DMACONR(a6)
-	move.l	#((BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16)+(BLTCON1F_DESC+BLTCON1F_EFE),BLTCON0-DMACONR(a6) ; minterm D=A, fill mode, backwards
+	move.l	#((BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16)+(BLTCON1F_DESC+BLTCON1F_EFE),BLTCON0-DMACONR(a6) ; minterm D=A, fill mode, backwards
 	move.l	a0,BLTAPT-DMACONR(a6)	; source
 	move.l	a0,BLTDPT-DMACONR(a6)	; destination
 	moveq	#0,d0

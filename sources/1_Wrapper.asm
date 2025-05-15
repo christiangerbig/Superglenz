@@ -516,7 +516,7 @@ VERTB_int_server
 
 	CNOP 0,4
 pt_SetSoftInterrupt
-	move.w	#INTF_SOFTINT+INTF_SETCLR,_CUSTOM+INTREQ
+	move.w	#INTF_SOFTINT|INTF_SETCLR,_CUSTOM+INTREQ
 	rts
 
 	CNOP 0,4

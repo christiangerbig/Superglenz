@@ -682,7 +682,7 @@ cl1_init_line_blits_loop
 
 	CNOP 0,4
 cl2_init_fill_blit
-	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; minterm D=A
+	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A
 	COP_MOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ; fill mode, backwards
 	COP_MOVEQ 0,BLTAPTH
 	COP_MOVEQ 0,BLTAPTL
@@ -765,7 +765,7 @@ set_playfield1_loop
 	clr.w	d0
 	add.l	d2,d0			; bitplanes offset
 	move.w	d0,LONGWORD_SIZE(a0)	; BPLxPTL
-	swap	d0			; high
+	swap	d0
 	move.w	d0,(a0)			; BPLxPTH
 	add.l	d3,d2			; next bitplane
 	addq.w	#QUADWORD_SIZE,a0
@@ -859,9 +859,9 @@ mgv_rotation
 	move.w	#sine_table_length/4,a4
 	MOVEF.W sine_table_length-1,d3
 	add.w	a4,d0			; + 90°
-	swap	d4			; high word: sin(a)
+	swap	d4 			; high word: sin(a)
 	and.w	d3,d0			; remove overflow
-	move.w	(a2,d0.w*2),d4		; low word: cos(a)
+	move.w	(a2,d0.w*2),d4	 	; low word: cos(a)
 	add.w	mgv_rot_variable_x_speed(a3),d1
 	and.w	d3,d1			; remove overflow
 	move.w	d1,mgv_rot_x_angle(a3) 
@@ -869,9 +869,9 @@ mgv_rotation
 	move.w	d1,d0		
 	move.w	(a2,d0.w*2),d5		; sin(b)
 	add.w	a4,d0			; + 90°
-	swap	d5			; high word: sin(b)
+	swap	d5 			; high word: sin(b)
 	and.w	d3,d0			; remove overflow
-	move.w	(a2,d0.w*2),d5		; low word: cos(b)
+	move.w	(a2,d0.w*2),d5	 	; low word: cos(b)
 	add.w	mgv_rot_variable_y_speed(a3),d1
 	and.w	d3,d1			; remove overflow
 	move.w	d1,mgv_rot_y_angle(a3) 
@@ -879,9 +879,9 @@ mgv_rotation
 	move.w	d1,d0		
 	move.w	(a2,d0.w*2),d6		; sin(c)
 	add.w	a4,d0			; + 90°
-	swap	d6			; high word: sin(c)
+	swap	d6 			; high word: sin(c)
 	and.w	d3,d0			; remove overflow
-	move.w	(a2,d0.w*2),d6		; low word: cos(c)
+	move.w	(a2,d0.w*2),d6	 	; low word: cos(c)
 	add.w	mgv_rot_variable_z_speed(a3),d1
 	and.w	d3,d1			; remove overflow
 	move.w	d1,mgv_rot_z_angle(a3) 
@@ -973,7 +973,7 @@ mgv_draw_lines
 	sub.l	a4,a4			; lines counter
 	move.l	cl2_construction2(a3),a6 
 	ADDF.W	cl2_extension3_entry-cl2_extension2_size+cl2_ext2_BLTCON0+WORD_SIZE,a6
-	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line mode
+	move.l	#((BC0F_SRCA|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line mode
 	MOVEF.W mgv_object_faces_number-1,d7
 mgv_draw_lines_loop1
 ; calculate z of vektors N
@@ -981,7 +981,7 @@ mgv_draw_lines_loop1
 	move.w	(a5),d4			; p1 start
 	move.w	2(a5),d5		; p2 start
 	move.w	4(a5),d6		; p3 start
-	swap	d7			; high word: faces counter
+	swap	d7 			; high word: loop counter
 	movem.w (a1,d5.w*2),d0-d1	; p2(x,y)
 	movem.w (a1,d6.w*2),d2-d3	; p3(x,y)
 	sub.w	d0,d2			; xv = xp3-xp2
@@ -1031,7 +1031,7 @@ mgv_draw_lines_skip1
 mgv_draw_lines_skip2
 	dbf	d6,mgv_draw_lines_loop2
 mgv_draw_lines_skip3
-	swap	d7			; low word: faces counter
+	swap	d7		 	; low word: loop counter
 	dbf	d7,mgv_draw_lines_loop1
 	lea	variables+mgv_lines_counter(pc),a0
 	move.w	a4,(a0)			; number of lines
@@ -1044,7 +1044,7 @@ mgv_draw_lines_init
 	add.l	#ALIGN_64KB,d0
 	clr.w	d0
 	move.l	cl2_construction2(a3),a0
-	swap	d0			; high
+	swap	d0
 	move.w	d0,cl2_extension1_entry+cl2_ext1_BLTCPTH+WORD_SIZE(a0) ; playfield read
 	move.w	d0,cl2_extension1_entry+cl2_ext1_BLTDPTH+WORD_SIZE(a0) ; playfield write
 	rts
@@ -1060,7 +1060,7 @@ mgv_fill_playfield1
 	ADDF.L	((pf1_plane_width*visible_lines_number*pf1_depth3)-(pf1_plane_width-(visible_pixels_number/8)))-2,d0 ; end of playfield
 	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTAPTL+WORD_SIZE(a0) ; source
 	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTDPTL+WORD_SIZE(a0) ; destination
-	swap	d0			; high
+	swap	d0
 	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTAPTH+WORD_SIZE(a0) ; source
 	move.w	d0,cl2_extension3_entry+cl2_ext3_BLTDPTH+WORD_SIZE(a0) ; destination
 	rts
@@ -1082,7 +1082,7 @@ mgv_set_second_copperlist_skip
 	MULUF.W cl2_extension2_size,d1,d2
 	sub.l	d1,d0
 	move.w	d0,cl2_extension1_entry+cl2_ext1_COP2LCL+WORD_SIZE(a0)
-	swap	d0			; high
+	swap	d0
 	move.w	d0,cl2_extension1_entry+cl2_ext1_COP2LCH+WORD_SIZE(a0)
 	rts
 

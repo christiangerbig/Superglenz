@@ -191,9 +191,9 @@ vts_text_char_depth		EQU vts_image_depth
 vts_vert_scroll_speed		EQU 1
 
 vts_text_char_y_restart		EQU visible_lines_number+vts_text_char_y_size
-vts_text_characters_per_line	EQU (pixel_per_line-32)/vts_text_char_x_size
-vts_text_characters_per_column	EQU (visible_lines_number+vts_text_char_y_size)/vts_text_char_y_size
-vts_text_characters_number	EQU vts_text_characters_per_line*vts_text_characters_per_column
+vts_text_chars_per_line	EQU (pixel_per_line-32)/vts_text_char_x_size
+vts_text_chars_per_column	EQU (visible_lines_number+vts_text_char_y_size)/vts_text_char_y_size
+vts_text_chars_number	EQU vts_text_chars_per_line*vts_text_chars_per_column
 
 ; Morph-Glenz-Vectors
 mgv_rot_d			EQU 512
@@ -664,10 +664,10 @@ init_main_variables
 init_main
 	bsr	init_colors
 	bsr.s	init_sprites
-	bsr	vts_init_characters_offsets
-	bsr	vts_init_characters_x_positions
-	bsr	vts_init_characters_y_positions
-	bsr	vts_init_characters_images
+	bsr	vts_init_chars_offsets
+	bsr	vts_init_chars_x_positions
+	bsr	vts_init_chars_y_positions
+	bsr	vts_init_chars_images
 	bsr	mgv_init_object_info
 	bsr	mgv_init_morph_shapes_table
 	IFEQ mgv_premorph_enabled
@@ -712,8 +712,8 @@ mgv_init_xy_coords
 ; Input
 ; d0.w	x
 ; d1.w	y
-; a0.l	Pointer	 1st sprite structure
-; a1.l	Pointer	 2nd sprite structure
+; a0.l	Pointer	1st sprite structure
+; a1.l	Pointer	2nd sprite structure
 ; Result
 	CNOP 0,4
 mgv_init_sprite_header
@@ -732,13 +732,13 @@ mgv_init_sprite_header
 
 
 ; Vert-Text-Scroll
-	INIT_CHARACTERS_OFFSETS.W vts
+	INIT_CHARS_OFFSETS.W vts
 
-	INIT_CHARACTERS_X_POSITIONS vts,LORES,,text_characters_per_line
+	INIT_CHARS_X_POSITIONS vts,LORES,,text_chars_per_line
 
-	INIT_CHARACTERS_Y_POSITIONS vts,text_characters_per_column
+	INIT_CHARS_Y_POSITIONS vts,text_chars_per_column
 
-	INIT_CHARACTERS_IMAGES vts
+	INIT_CHARS_IMAGES vts
 
 
 ; Morph-Glenz-Vectors
@@ -908,7 +908,7 @@ cl1_init_line_blits_loop
 
 	CNOP 0,4
 cl2_init_fill_blit
-	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; minterm D=A
+	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A
 	COP_MOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ; fill mode, backwards
 	COP_MOVEQ 0,BLTAPTH
 	COP_MOVEQ 0,BLTAPTL
@@ -997,7 +997,7 @@ set_playfield1_loop
 	move.l	(a1)+,d0
 	add.l	d1,d0
 	move.w	d0,LONGWORD_SIZE(a0)	; BPLxPTL
-	swap	d0			; high
+	swap	d0
 	move.w	d0,(a0)			; BPLxPTH
 	ADDF.W	QUADWORD_SIZE*2,a0
 	dbf	d7,set_playfield1_loop
@@ -1015,7 +1015,7 @@ set_playfield2_loop
 	move.l	(a1)+,d0
 	add.l	d1,d0
 	move.w	d0,LONGWORD_SIZE(a0)	; BPLxPTL
-	swap	d0			; high
+	swap	d0
 	move.w	d0,(a0)			; BPLxPTH
 	ADDF.W	QUADWORD_SIZE*2,a0
 	dbf	d7,set_playfield2_loop
@@ -1033,19 +1033,19 @@ swap_extra_playfield
 	CNOP 0,4
 vert_text_scroll
 	movem.l a4-a6,-(a7)
-	MOVEF.L vts_text_characters_per_line*SHIRES_PIXEL_FACTOR,d3
+	MOVEF.L vts_text_chars_per_line*SHIRES_PIXEL_FACTOR,d3
 	MOVEF.W vts_text_char_y_restart,d4
-	lea	vts_characters_y_positions(pc),a1
-	lea	vts_characters_image_ptrs(pc),a2
+	lea	vts_chars_y_positions(pc),a1
+	lea	vts_chars_image_ptrs(pc),a2
 	move.l	pf1_construction2(a3),a4
 	move.l	(a4),a4
-	moveq	#vts_text_characters_per_column-1,d7
+	moveq	#vts_text_chars_per_column-1,d7
 vert_text_scroll_loop1
 	move.w	(a1),d1			; y
 	move.w	d1,d2
 	MULUF.W pf1_plane_width*pf1_depth3,d1,d0 ; y offset in playfield
-	lea	vts_characters_x_positions(pc),a0
-	moveq	#vts_text_characters_per_line-1,d6
+	lea	vts_chars_x_positions(pc),a0
+	moveq	#vts_text_chars_per_line-1,d6
 vert_text_scroll_loop2
 	move.w	(a0)+,d0		; x
 	lsr.w	#3,d0			; byte offset
@@ -1064,7 +1064,7 @@ vert_text_scroll_loop2
 	sub.w	vts_variable_vert_scroll_speed(a3),d2 ; decrease x position
 	bpl.s	vert_text_scroll_skip
 	sub.l	d3,a2			; restart pointer
-	moveq	#vts_text_characters_per_line-1,d5
+	moveq	#vts_text_chars_per_line-1,d5
 vert_text_scroll_loop3
 	bsr.s	vts_get_new_char_image
 	move.l	d0,(a2)+		; new character image
@@ -1154,9 +1154,9 @@ mgv_rotation
 	move.w	#sine_table_length/4,a4
 	MOVEF.W sine_table_length-1,d3
 	add.w	a4,d0			; + 90°
-	swap	d5			; high word = sin(b)
+	swap	d5 			; high word: sin(b)
 	and.w	d3,d0			; remove overflow
-	move.w	(a2,d0.w*2),d5		; bits	0..15 = cos(b)
+	move.w	(a2,d0.w*2),d5		; low word: cos(b)
 	add.w	mgv_rot_variable_y_speed(a3),d1
 	and.w	d3,d1			; remove overflow
 	move.w	d1,mgv_rot_y_angle(a3) 
@@ -1247,14 +1247,14 @@ mgv_draw_lines
 	sub.l	a4,a4			; lines counter
 	move.l	cl2_construction2(a3),a6 
 	ADDF.W	cl2_extension4_entry-cl2_extension3_size+cl2_ext3_BLTCON0+WORD_SIZE,a6
-	move.l	#((BC0F_SRCA+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; mintern line mode
+	move.l	#((BC0F_SRCA|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; mintern line mode
 	MOVEF.W mgv_object_faces_number-1,d7
 mgv_draw_lines_loop1
 	move.l	(a0)+,a5		; starts table
 	move.w	(a5),d4			; p1 start
 	move.w	2(a5),d5		; p2 start
 	move.w	4(a5),d6		; p3 start
-	swap	d7			; high word: faces counter
+	swap	d7 			; high word: loop counter
 	movem.w (a1,d5.w*2),d0-d1	; p2(x,y)
 	movem.w (a1,d6.w*2),d2-d3	; p3(x,y)
 	sub.w	d0,d2			; xv = xp3-xp2
@@ -1304,7 +1304,7 @@ mgv_draw_lines_skip1
 mgv_draw_lines_skip2
 	dbf	d6,mgv_draw_lines_loop2
 mgv_draw_lines_skip3
-	swap	d7			; low word: faces counter
+	swap	d7		 	; low word: loop counter
 	dbf	d7,mgv_draw_lines_loop1
 	lea	variables+mgv_lines_counter(pc),a0
 	move.w	a4,(a0)			; number of lines
@@ -1317,7 +1317,7 @@ mgv_draw_lines_init
 	add.l	#ALIGN_64KB,d0
 	clr.w	d0
 	move.l	cl2_construction2(a3),a0
-	swap	d0			; high
+	swap	d0
 	move.w	d0,cl2_extension2_entry+cl2_ext2_BLTCPTH+WORD_SIZE(a0) ; playfield read
 	move.w	d0,cl2_extension2_entry+cl2_ext2_BLTDPTH+WORD_SIZE(a0) ; playfield write
 	rts
@@ -1332,7 +1332,7 @@ mgv_fill_extra_playfield
 	ADDF.L	(extra_pf1_plane_width*visible_lines_number*extra_pf1_depth)-2,d0 ; end of playfield
 	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTAPTL+WORD_SIZE(a0) ; source
 	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTDPTL+WORD_SIZE(a0) ; destination
-	swap	d0			; high
+	swap	d0
 	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTAPTH+WORD_SIZE(a0) ; source
 	move.w	d0,cl2_extension4_entry+cl2_ext4_BLTDPTH+WORD_SIZE(a0) ; destination
 	rts
@@ -1606,20 +1606,20 @@ vts_ascii_end
 	EVEN
 
 	CNOP 0,2
-vts_characters_offsets
+vts_chars_offsets
 	DS.W vts_ascii_end-vts_ascii
 
 	CNOP 0,2
-vts_characters_x_positions
-	DS.W vts_text_characters_per_line
+vts_chars_x_positions
+	DS.W vts_text_chars_per_line
 
 	CNOP 0,2
-vts_characters_y_positions
-	DS.W vts_text_characters_per_column
+vts_chars_y_positions
+	DS.W vts_text_chars_per_column
 
 	CNOP 0,4
-vts_characters_image_ptrs
-	DS.L vts_text_characters_number
+vts_chars_image_ptrs
+	DS.L vts_text_chars_number
 
 
 ; Morph-Glenz-Vectors
@@ -1900,7 +1900,7 @@ cfc_rgb8_color_table
 
 ; Vert-Textscroll
 vts_text
-	REPT vts_text_characters_per_column*vts_text_characters_per_line
+	REPT vts_text_chars_per_column*vts_text_chars_per_line
 		DC.B " "
 	ENDR
 	DC.B "# SUPERGLENZ #      "
