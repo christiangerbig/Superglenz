@@ -2238,7 +2238,7 @@ vts_text
 	EVEN
 
 
-; gfx data
+; Gfx data
 
 ; Vert-Text-Scroll
 vts_image_data			SECTION vts_gfx,DATA

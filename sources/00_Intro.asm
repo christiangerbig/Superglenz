@@ -2046,7 +2046,7 @@ hf_bplam_table
 	EVEN
 
 
-; Gfx
+; Gfx data
 
 ; Title
 title_image_data		SECTION title_gfx,DATA

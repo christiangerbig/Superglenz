@@ -62,6 +62,10 @@ CUSTOM_MEMORY_FAST		EQU $00000001
 pt_ciatiming_enabled		EQU TRUE
 pt_usedfx			EQU %1101010101011110
 pt_usedefx			EQU %0000111000000000
+
+;pt_usedfx			EQU %1011011100011100
+;pt_usedefx			EQU %0000000000000000
+
 pt_mute_enabled			EQU FALSE
 pt_music_fader_enabled		EQU FALSE
 pt_fade_out_delay		EQU 2	; Ticks
