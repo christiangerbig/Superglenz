@@ -868,7 +868,7 @@ cl2_init_clear_blit
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ 0,BLTDMOD
-	COP_MOVEQ (mgv_clear_blit_y_size*mgv_clear_blit_depth*64)+(mgv_clear_blit_x_size/WORD_BITS),BLTSIZE
+	COP_MOVEQ (mgv_clear_blit_y_size*mgv_clear_blit_depth<<6)+(mgv_clear_blit_x_size/WORD_BITS),BLTSIZE
 	rts
 
 
@@ -916,7 +916,7 @@ cl2_init_fill_blit
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ 0,BLTAMOD
 	COP_MOVEQ 0,BLTDMOD
-	COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/WORD_BITS),BLTSIZE
+	COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth<<6)+(mgv_fill_blit_x_size/WORD_BITS),BLTSIZE
 	rts
 
 	COPY_COPPERLIST cl2,2

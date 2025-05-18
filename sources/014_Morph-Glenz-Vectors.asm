@@ -904,7 +904,7 @@ cl2_init_fill_blit
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ pf1_plane_width-(visible_pixels_number/8),BLTAMOD
 	COP_MOVEQ pf1_plane_width-(visible_pixels_number/8),BLTDMOD
-	COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth*64)+(mgv_fill_blit_x_size/WORD_BITS),BLTSIZE
+	COP_MOVEQ (mgv_fill_blit_y_size*mgv_fill_blit_depth<<6)+(mgv_fill_blit_x_size/WORD_BITS),BLTSIZE
 	rts
 
 
