@@ -56,6 +56,12 @@
 ; - main part: bugfix: The 1x glenz vectors were checked for colors 16/08 for
 ; the backface. Code removed and number of max lines corrected
 
+; V.2.1 beta
+; - AceMan's module included
+; - Fx syncronized with music, morphing now triggered by the 8 command of the module
+; - Code optimized
+; - credits: text changed
+
 
 	MC68040
 
@@ -365,8 +371,8 @@ nop_second_copperlist		DC.L 0
 
 	DC.B "$VER: "
 	DC.B "RSE-Superglenz "
-	DC.B "2.0 beta "
-	DC.B "(11.5.25)",0
+	DC.B "2.1 beta "
+	DC.B "(21.5.25)",0
 	EVEN
 
 	END

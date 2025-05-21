@@ -60,23 +60,21 @@ CUSTOM_MEMORY_CHIP		EQU $00000000
 CUSTOM_MEMORY_FAST		EQU $00000001
 
 pt_ciatiming_enabled		EQU TRUE
-pt_usedfx			EQU %1101010101011110
-pt_usedefx			EQU %0000111000000000
-
-;pt_usedfx			EQU %1011011100011100
-;pt_usedefx			EQU %0000000000000000
-
+pt_usedfx			EQU %1111011100011100
+pt_usedefx			EQU %0000100000000000
 pt_mute_enabled			EQU FALSE
 pt_music_fader_enabled		EQU FALSE
-pt_fade_out_delay		EQU 2	; Ticks
+pt_fade_out_delay		EQU 2	; ticks
 pt_split_module_enabled		EQU TRUE
 pt_track_notes_played_enabled	EQU FALSE
 pt_track_volumes_enabled	EQU FALSE
 pt_track_periods_enabled	EQU FALSE
 pt_track_data_enabled		EQU FALSE
+	IFD PROTRACKER_VERSION_3
 pt_metronome_enabled		EQU FALSE
 pt_metrochanbits		EQU pt_metrochan1
 pt_metrospeedbits		EQU pt_metrospeed4th
+	ENDC
 
 dma_bits			EQU DMAF_COPPER|DMAF_SETCLR
 
@@ -178,8 +176,8 @@ cl1_vstart			EQU beam_position&$ff
 
 ; Custom Memory
 custom_memory_number		EQU 2
-part_0_audio_memory_size1	EQU 28732 ; Song
-part_0_audio_memory_size2	EQU 220978 ; Samples
+part_0_audio_memory_size1	EQU 36924 ; Song
+part_0_audio_memory_size2	EQU 348806 ; Samples
 
 
 	INCLUDE "except-vectors.i"
@@ -492,6 +490,7 @@ ciab_ta_int_server
 VERTB_int_server
 	ENDC
 
+
 ; PT-Replay
 	IFEQ pt_music_fader_enabled
 		bsr.s	pt_music_fader
@@ -779,12 +778,12 @@ custom_memory_table
 ; PT-Replay
 	IFEQ pt_split_module_enabled
 pt_auddata			SECTION pt_audio,DATA
-		INCBIN "Superglenz:modules/MOD.LeVoyageFantastique.song.stc"
+		INCBIN "Superglenz:modules/MOD.SuperGlenz.song.stc"
 pt_audsmps			SECTION pt_audio2,DATA_C
-		INCBIN "Superglenz:modules/MOD.LeVoyageFantastique.smps.stc"
+		INCBIN "Superglenz:modules/MOD.SuperGlenz.smps.stc"
 	ELSE
 pt_auddata			SECTION pt_audio,DATA_C
-		INCBIN "Superglenz:modules/MOD.LeVoyageFantastique"
+		INCBIN "Superglenz:modules/MOD.SuperGlenz"
 	ENDC
 
 	END

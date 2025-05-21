@@ -323,7 +323,6 @@ mgv_object2_shape1_z_rot_speed	EQU 0
 mgv_object3_shape1_x_rot_speed	EQU 0
 mgv_object3_shape1_y_rot_speed	EQU 0
 mgv_object3_shape1_z_rot_speed	EQU 0
-mgv_morph_shape1_delay		EQU 2*PAL_FPS
 
 mgv_object1_shape2_x_rot_speed	EQU 0
 mgv_object1_shape2_y_rot_speed	EQU 0
@@ -334,7 +333,6 @@ mgv_object2_shape2_z_rot_speed	EQU 0
 mgv_object3_shape2_x_rot_speed	EQU 0
 mgv_object3_shape2_y_rot_speed	EQU 0
 mgv_object3_shape2_z_rot_speed	EQU 0
-mgv_morph_shape2_delay		EQU 3*PAL_FPS
 
 mgv_object1_shape3_x_rot_speed	EQU 0
 mgv_object1_shape3_y_rot_speed	EQU 0
@@ -345,7 +343,6 @@ mgv_object2_shape3_z_rot_speed	EQU 0
 mgv_object3_shape3_x_rot_speed	EQU 0
 mgv_object3_shape3_y_rot_speed	EQU 0
 mgv_object3_shape3_z_rot_speed	EQU 0
-mgv_morph_shape3_delay		EQU 6*PAL_FPS
 
 mgv_object1_shape4_x_rot_speed	EQU 0
 mgv_object1_shape4_y_rot_speed	EQU 0
@@ -356,7 +353,6 @@ mgv_object2_shape4_z_rot_speed	EQU 0
 mgv_object3_shape4_x_rot_speed	EQU 0
 mgv_object3_shape4_y_rot_speed	EQU 0
 mgv_object3_shape4_z_rot_speed	EQU 0
-mgv_morph_shape4_delay		EQU 6*PAL_FPS
 
 mgv_object1_shape5_x_rot_speed	EQU 0
 mgv_object1_shape5_y_rot_speed	EQU -5
@@ -367,7 +363,6 @@ mgv_object2_shape5_z_rot_speed	EQU 0
 mgv_object3_shape5_x_rot_speed	EQU 0
 mgv_object3_shape5_y_rot_speed	EQU -7
 mgv_object3_shape5_z_rot_speed	EQU 0
-mgv_morph_shape5_delay		EQU 6*PAL_FPS
 
 mgv_object1_shape6_x_rot_speed	EQU 0
 mgv_object1_shape6_y_rot_speed	EQU 0
@@ -378,18 +373,6 @@ mgv_object2_shape6_z_rot_speed	EQU 4
 mgv_object3_shape6_x_rot_speed	EQU 0
 mgv_object3_shape6_y_rot_speed	EQU 0
 mgv_object3_shape6_z_rot_speed	EQU -4
-mgv_morph_shape6_delay		EQU 6*PAL_FPS
-
-mgv_object1_shape7_x_rot_speed	EQU 0
-mgv_object1_shape7_y_rot_speed	EQU 0
-mgv_object1_shape7_z_rot_speed	EQU -4
-mgv_object2_shape7_x_rot_speed	EQU 0
-mgv_object2_shape7_y_rot_speed	EQU 0
-mgv_object2_shape7_z_rot_speed	EQU 4
-mgv_object3_shape7_x_rot_speed	EQU 0
-mgv_object3_shape7_y_rot_speed	EQU 0
-mgv_object3_shape7_z_rot_speed	EQU -4
-mgv_morph_shape7_delay		EQU 2*PAL_FPS
 
 ; Fill-Blit
 mgv_fill_blit_x_size		EQU visible_pixels_number
@@ -403,10 +386,13 @@ spb_y_radius			EQU spb_max_vstop-spb_min_vstart
 spb_y_centre			EQU spb_max_vstop-spb_min_vstart
 
 ; Scroll-Playfield-Bottom-In
-spbi_y_angle_speed		EQU 4
+spbi_y_angle_speed		EQU 2
 
 ; Scroll-Playfield-Bottom-Out
-spbo_y_angle_speed		EQU 5
+spbo_y_angle_speed		EQU 2
+
+; Effects-Handler
+eh_trigger_number_max		EQU 8
 
 
 	INCLUDE "except-vectors.i"
@@ -445,7 +431,6 @@ morph_shape_object2_z_rot_speed	RS.W 1
 morph_shape_object3_x_rot_speed	RS.W 1
 morph_shape_object3_y_rot_speed	RS.W 1
 morph_shape_object3_z_rot_speed	RS.W 1
-morph_shape_delay		RS.W 1
 
 morph_shape_size		RS.B 0
 
@@ -603,7 +588,6 @@ mgv_lines_counter		RS.W 1
 
 mgv_morph_active		RS.W 1
 mgv_morph_shapes_table_start	RS.W 1
-mgv_morph_delay_counter		RS.W 1
 
 ; Scroll-Playfield-Bottom-In
 spbi_active			RS.W 1
@@ -612,6 +596,9 @@ spbi_y_angle			RS.W 1
 ; Scroll-Playfield-Bottom-out
 spbo_active			RS.W 1
 spbo_y_angle			RS.W 1
+
+; Effects-Handler
+eh_trigger_number		RS.W 1
 
 ; Main
 stop_fx_active			RS.W 1
@@ -672,11 +659,6 @@ init_main_variables
 		move.w	d1,mgv_morph_active(a3)
 	ENDC
 	move.w	d0,mgv_morph_shapes_table_start(a3)
-	IFEQ mgv_premorph_enabled
-		move.w	d1,mgv_morph_delay_counter(a3) ; activate counter
-	ELSE
-		move.w	#1,mgv_morph_delay_counter(a3) ; activate counter
-	ENDC 
 
 ; Scroll-Playfield-Bottom-In
 	move.w	d0,spbi_active(a3)
@@ -685,6 +667,9 @@ init_main_variables
 ; Scroll-Playfield-Bottom-Out
 	move.w	d1,spbo_active(a3)
 	move.w	#sine_table_length/4,spbo_y_angle(a3) ; 90°
+
+; Effects-Handler
+	move.w	d0,eh_trigger_number(a3)
 
 ; Main
 	move.w	d1,stop_fx_active(a3)
@@ -735,6 +720,7 @@ mgv_init_objects_info_loop
 	CNOP 0,4
 mgv_init_morph_shapes
 	lea	mgv_morph_shapes(pc),a0
+; Shape 1
 	lea	mgv_object1_shape1_coords(pc),a1
 	move.l	a1,(a0)+
 	lea	mgv_object2_shape1_coords(pc),a1
@@ -750,8 +736,7 @@ mgv_init_morph_shapes
 	move.w	#mgv_object3_shape1_x_rot_speed,(a0)+
 	move.w	#mgv_object3_shape1_y_rot_speed,(a0)+
 	move.w	#mgv_object3_shape1_z_rot_speed,(a0)+
-	move.w	#mgv_morph_shape1_delay,(a0)+
-
+; Shape 2
 	lea	mgv_object1_shape2_coords(pc),a1
 	move.l	a1,(a0)+
 	lea	mgv_object2_shape2_coords(pc),a1
@@ -767,8 +752,7 @@ mgv_init_morph_shapes
 	move.w	#mgv_object3_shape2_x_rot_speed,(a0)+
 	move.w	#mgv_object3_shape2_y_rot_speed,(a0)+
 	move.w	#mgv_object3_shape2_z_rot_speed,(a0)+
-	move.w	#mgv_morph_shape2_delay,(a0)+
-
+; Shape 3
 	lea	mgv_object1_shape3_coords(pc),a1
 	move.l	a1,(a0)+
 	lea	mgv_object2_shape3_coords(pc),a1
@@ -784,8 +768,7 @@ mgv_init_morph_shapes
 	move.w	#mgv_object3_shape3_x_rot_speed,(a0)+
 	move.w	#mgv_object3_shape3_y_rot_speed,(a0)+
 	move.w	#mgv_object3_shape3_z_rot_speed,(a0)+
-	move.w	#mgv_morph_shape3_delay,(a0)+
-
+; Shape 4
 	lea	mgv_object1_shape4_coords(pc),a1
 	move.l	a1,(a0)+
 	lea	mgv_object2_shape4_coords(pc),a1
@@ -801,8 +784,7 @@ mgv_init_morph_shapes
 	move.w	#mgv_object3_shape4_x_rot_speed,(a0)+
 	move.w	#mgv_object3_shape4_y_rot_speed,(a0)+
 	move.w	#mgv_object3_shape4_z_rot_speed,(a0)+
-	move.w	#mgv_morph_shape4_delay,(a0)+
-
+; Shape 5
 	lea	mgv_object1_shape5_coords(pc),a1
 	move.l	a1,(a0)+
 	lea	mgv_object2_shape5_coords(pc),a1
@@ -818,8 +800,7 @@ mgv_init_morph_shapes
 	move.w	#mgv_object3_shape5_x_rot_speed,(a0)+
 	move.w	#mgv_object3_shape5_y_rot_speed,(a0)+
 	move.w	#mgv_object3_shape5_z_rot_speed,(a0)+
-	move.w	#mgv_morph_shape5_delay,(a0)+
-
+; Shape 6
 	lea	mgv_object1_shape6_coords(pc),a1
 	move.l	a1,(a0)+
 	lea	mgv_object2_shape6_coords(pc),a1
@@ -834,29 +815,7 @@ mgv_init_morph_shapes
 	move.w	#mgv_object2_shape6_z_rot_speed,(a0)+
 	move.w	#mgv_object3_shape6_x_rot_speed,(a0)+
 	move.w	#mgv_object3_shape6_y_rot_speed,(a0)+
-	move.w	#mgv_object3_shape6_z_rot_speed,(a0)+
-	IFEQ mgv_morph_loop_enabled
-		move.w	#mgv_morph_shape6_delay,(a0)
-	ELSE
-		move.w	#mgv_morph_shape6_delay,(a0)+
-
-		lea	mgv_object1_shape7_coords(pc),a1
-		move.l	a1,(a0)+
-		lea	mgv_object2_shape7_coords(pc),a1
-		move.l	a1,(a0)+
-		lea	mgv_object3_shape7_coords(pc),a1
-		move.l	a1,(a0)+
-		move.w	#mgv_object1_shape7_x_rot_speed,(a0)+
-		move.w	#mgv_object1_shape7_y_rot_speed,(a0)+
-		move.w	#mgv_object1_shape7_z_rot_speed,(a0)+
-		move.w	#mgv_object2_shape7_x_rot_speed,(a0)+
-		move.w	#mgv_object2_shape7_y_rot_speed,(a0)+
-		move.w	#mgv_object2_shape7_z_rot_speed,(a0)+
-		move.w	#mgv_object3_shape7_x_rot_speed,(a0)+
-		move.w	#mgv_object3_shape7_y_rot_speed,(a0)+
-		move.w	#mgv_object3_shape7_z_rot_speed,(a0)+
-		move.w	#mgv_morph_shape7_delay,(a0)
-	ENDC
+	move.w	#mgv_object3_shape6_z_rot_speed,(a0)
 	rts
 
 	IFEQ mgv_premorph_enabled
@@ -1358,6 +1317,7 @@ beam_routines
 	bsr.s	swap_second_copperlist
 	bsr.s	swap_playfield1
 	bsr	set_playfield1
+	bsr     effects_handler
 	bsr	mgv_clear_playfield1
 	bsr	mgv_pre_rotate_objects
 	bsr	mgv_rotate_objects
@@ -1367,7 +1327,6 @@ beam_routines
 	bsr	mgv_set_second_copperlist
 	bsr	scroll_pf_bottom_in
 	bsr	scroll_pf_bottom_out
-	bsr	mgv_control_counters
 	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
@@ -1640,10 +1599,10 @@ mgv_morph_objects_skip1
 	ELSE
 		beq	mgv_morph_objects_skip2
 	ENDC
-	moveq	#0,d2			; coordinates counter
 	moveq	#0,d3
 	move.w	d1,d3			; start
-	MULUF.W morph_shape_size,d3,d0
+	MULUF.W morph_shape_size,d3,d0,d2
+	moveq	#0,d2			; coordinates counter
 	lea	mgv_morph_shapes(pc),a2
 	add.l	d3,a2			; offset in morph shapes table
 	lea	mgv_object1_coords(pc),a0
@@ -1670,8 +1629,7 @@ mgv_morph_objects_skip1
 	move.w	(a2)+,mgv_object2_z_pre_rot_speed(a3)
 	move.w	(a2)+,mgv_object3_x_pre_rot_speed(a3)
 	move.w	(a2)+,mgv_object3_y_pre_rot_speed(a3)
-	move.w	(a2)+,mgv_object3_z_pre_rot_speed(a3)
-	move.w	(a2),mgv_morph_delay_counter(a3) ; reset counter
+	move.w	(a2),mgv_object3_z_pre_rot_speed(a3)
 	moveq	#0,d0
 	move.w	d0,mgv_pre_rotate_active(a3)
 	move.w	d0,mgv_object1_x_pre_rot_angle(a3)
@@ -1892,7 +1850,7 @@ scroll_pf_bottom_out
 	cmp.w	#sine_table_length/2,d2	; 180° ?
 	ble.s	scroll_pf_bottom_out_skip
 	move.w	#FALSE,spbo_active(a3)
-	clr.w	stop_fx_active(a3)
+;	clr.w	stop_fx_active(a3)
 	bra.s	scroll_pf_bottom_out_quit
 	CNOP 0,4
 scroll_pf_bottom_out_skip
@@ -1937,19 +1895,50 @@ spb_set_display_window_skip2
 
 
 	CNOP 0,4
-mgv_control_counters
-	move.w	mgv_morph_delay_counter(a3),d0
-	bmi.s	mgv_control_counters_quit
+effects_handler
+	moveq	#INTF_SOFTINT,d1
+	and.w	INTREQR-DMACONR(a6),d1
+	beq.s	effects_handler_quit
+	move.w	eh_trigger_number(a3),d0
+	cmp.w	#eh_trigger_number_max,d0
+	bgt.s	effects_handler_quit
+	move.w	d1,INTREQ-DMACONR(a6)
+	addq.w	#1,d0
+	move.w	d0,eh_trigger_number(a3)
 	subq.w	#1,d0
-	bpl.s	mgv_control_counters_skip
+	beq.s	eh_start_scroll_pf_bottom_in
+	subq.w	#1,d0
+	beq.s	eh_start_morphing
+	subq.w	#1,d0
+	beq.s	eh_start_morphing
+	subq.w	#1,d0
+	beq.s	eh_start_morphing
+	subq.w	#1,d0
+	beq.s	eh_start_morphing
+	subq.w	#1,d0
+	beq.s	eh_start_morphing
+	subq.w	#1,d0
+	beq.s	eh_start_scroll_pf_bottom_out
+	subq.w	#1,d0
+	beq.s	eh_stop_all
+effects_handler_quit
+	rts
+	CNOP 0,4
+eh_start_scroll_pf_bottom_in
+	clr.w	spbi_active(a3)
+	rts
+	CNOP 0,4
+eh_start_morphing
 	clr.w	mgv_morph_active(a3)
 	move.w	#FALSE,mgv_pre_rotate_active(a3)
-	cmp.w	#mgv_morph_shapes_number-1,mgv_morph_shapes_table_start(a3) ; end of table ?
-	bne.s	mgv_control_counters_skip
+	rts
+	CNOP 0,4
+eh_start_scroll_pf_bottom_out
 	clr.w	spbo_active(a3)
-mgv_control_counters_skip
-	move.w	d0,mgv_morph_delay_counter(a3) 
-mgv_control_counters_quit
+	rts
+	CNOP 0,4
+eh_stop_all
+	clr.w	stop_fx_active(a3)
 	rts
 
 
@@ -2238,22 +2227,6 @@ mgv_object3_shape6_coords
 	DC.W 0,37*8,-(28*8)		; P9
 	DC.W -(37*8),37*8,-(28*8)	; P10
 	DC.W -(19*8),0,-(28*8)		; P11
-	IFNE mgv_morph_loop_enabled
-
-; Shape 7
-		CNOP 0,2
-mgv_object1_shape7_coords
-; Zoom-Out
-		DS.W mgv_object1_edge_points_number*3
-		CNOP 0,2
-mgv_object2_shape7_coords
-; Zoom-Out
-		DS.W mgv_object2_edge_points_number*3
-		CNOP 0,2
-mgv_object3_shape7_coords
-; Zoom-Out
-		DS.W mgv_object3_edge_points_number*3
-	ENDC
 
 	CNOP 0,4
 mgv_objects_info

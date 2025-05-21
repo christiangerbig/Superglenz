@@ -104,6 +104,7 @@ disk_memory_size		EQU 0
 extra_memory_size		EQU 0
 
 chip_memory_size		EQU 0
+
 ciaa_ta_time			EQU 0
 ciaa_tb_time			EQU 0
 ciab_ta_time			EQU 0
@@ -308,7 +309,7 @@ spb_y_centre			EQU spb_max_vstop-spb_min_vstart
 spbi_y_angle_speed		EQU 3
 
 ; Scroll-Playfield-Bottom-Out
-spbo_y_angle_speed		EQU 2
+spbo_y_angle_speed		EQU 8
 
 ; Horiz-Fader
 hf_colors_per_colorbank		EQU 16

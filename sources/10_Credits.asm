@@ -1935,7 +1935,7 @@ vts_text
 	DC.B "GRAPHICS - GRASS    "
 	DC.B "                    "
 	DC.B "MUSIC - MAGNETIC FOX"
-	DC.B "                    "
+	DC.B "        ACEMAN      "
 	DC.B "                    "
 	DC.B "                    "
 	DC.B "                    "
