@@ -114,7 +114,7 @@ ciaa_tb_continuous_enabled	EQU FALSE
 ciab_ta_continuous_enabled	EQU FALSE
 ciab_tb_continuous_enabled	EQU FALSE
 
-beam_position			EQU $135
+beam_position			EQU $131
 
 pixel_per_line			EQU 192
 visible_pixels_number		EQU 192
@@ -155,7 +155,7 @@ cl2_display_width2		EQU cl2_display_x_size2/8
 cl1_hstart1			EQU display_window_hstart-(4*CMOVE_SLOT_PERIOD)-4
 cl1_vstart1			EQU VSTART_192_LINES+8
 cl1_hstart2			EQU display_window_hstart-(4*CMOVE_SLOT_PERIOD)-4
-cl1_vstart2			EQU VSTART_192_LINES+120
+cl1_vstart2			EQU VSTART_192_LINES+124
 cl1_HSTART3			EQU $00
 cl1_vstart3			EQU beam_position&$ff
 
@@ -170,11 +170,11 @@ title_image_y_size		EQU 39
 
 ; RSE letters
 rse_letters_image_x_position1	EQU display_window_hstart+28
-rse_letters_image_y_position1	EQU VSTART_192_LINES+120
+rse_letters_image_y_position1	EQU VSTART_192_LINES+124
 rse_letters_image_x_position2	EQU display_window_hstart+88
-rse_letters_image_y_position2	EQU VSTART_192_LINES+160
+rse_letters_image_y_position2	EQU VSTART_192_LINES+164
 rse_letters_image_x_position3	EQU display_window_hstart+148
-rse_letters_image_y_position3	EQU VSTART_192_LINES+120
+rse_letters_image_y_position3	EQU VSTART_192_LINES+124
 rse_letters_image_x_size	EQU 192
 rse_letters_image_width		EQU rse_letters_image_x_size/8
 rse_letters_image_y_size	EQU 16
@@ -309,7 +309,7 @@ spb_y_centre			EQU spb_max_vstop-spb_min_vstart
 spbi_y_angle_speed		EQU 3
 
 ; Scroll-Playfield-Bottom-Out
-spbo_y_angle_speed		EQU 8
+spbo_y_angle_speed		EQU 10
 
 ; Horiz-Fader
 hf_colors_per_colorbank		EQU 16
@@ -1142,6 +1142,7 @@ beam_routines
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 fast_exit
+	WAITBLIT
 	move.l	nop_second_copperlist,COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
 	move.l	nop_first_copperlist,COP1LC-DMACONR(a6)
@@ -1381,7 +1382,7 @@ scroll_pf_bottom_out_skip
 	muls.w	#spb_y_radius*2,d0	; y'=(cos(w)*yr)/2^15
 	swap	d0
 	add.w	#spb_y_centre,d0	; y' + y center
-	addq.w	#spbo_y_angle_speed,d2
+	add.w	#spbo_y_angle_speed,d2
 	move.w	d2,spbo_y_angle(a3) 
 	MOVEF.W spb_max_VSTOP,d3
 	bsr.s	spb_set_display_window

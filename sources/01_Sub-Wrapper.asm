@@ -130,7 +130,7 @@ ciaa_tb_continuous_enabled	EQU FALSE
 ciab_ta_continuous_enabled	EQU FALSE
 ciab_tb_continuous_enabled	EQU FALSE
 
-beam_position			EQU $133
+beam_position			EQU $131
 
 MINROW				EQU VSTART_OVERSCAN_PAL
 
@@ -158,7 +158,7 @@ bg_image_x_size			EQU 256
 bg_image_plane_width		EQU bg_image_x_size/8
 bg_image_y_size			EQU 283
 bg_image_depth			EQU 4
-bg_image_x_position		EQU 16
+bg_image_x_position		EQU 18
 bg_image_y_position		EQU MINROW
 
 ; Sprite-Fader
@@ -167,7 +167,7 @@ sprf_rgb8_color_table_offset	EQU 1
 sprf_rgb8_colors_number		EQU spr_colors_number-1
 
 ; Sprite-Fader-In
-sprfi_rgb8_fader_speed_max	EQU 4
+sprfi_rgb8_fader_speed_max	EQU 8
 sprfi_rgb8_fader_radius		EQU sprfi_rgb8_fader_speed_max
 sprfi_rgb8_fader_center		EQU sprfi_rgb8_fader_speed_max+1
 sprfi_rgb8_fader_angle_speed	EQU 1

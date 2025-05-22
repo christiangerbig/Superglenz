@@ -58,9 +58,10 @@
 
 ; V.2.1 beta
 ; - AceMan's module included
-; - Fx syncronized with music, morphing now triggered by the 8 command of the module
-; - Code optimized
+; - fx syncronized with music, morphing now triggered by the 8 command of the module
+; - code optimized
 ; - credits: text changed
+; - generally all parts changed to beam position $131
 
 
 	MC68040
@@ -185,7 +186,7 @@ ciaa_tb_continuous_enabled	EQU FALSE
 ciab_ta_continuous_enabled	EQU FALSE
 ciab_tb_continuous_enabled	EQU FALSE
 
-beam_position			EQU $136
+beam_position			EQU $131
 
 bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon3_bits1			EQU 0
@@ -372,7 +373,7 @@ nop_second_copperlist		DC.L 0
 	DC.B "$VER: "
 	DC.B "RSE-Superglenz "
 	DC.B "2.1 beta "
-	DC.B "(21.5.25)",0
+	DC.B "(22.5.25)",0
 	EVEN
 
 	END

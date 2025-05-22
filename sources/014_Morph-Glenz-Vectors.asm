@@ -66,7 +66,6 @@ text_output_enabled		EQU FALSE
 ; Morph-Glenz-Vectors
 mgv_count_lines_enabled		EQU FALSE
 mgv_premorph_enabled		EQU TRUE
-mgv_morph_loop_enabled		EQU FALSE
 
 dma_bits			EQU DMAF_BLITTER|DMAF_RASTER|DMAF_BLITHOG|DMAF_SETCLR
 
@@ -125,7 +124,7 @@ ciaa_tb_continuous_enabled	EQU FALSE
 ciab_ta_continuous_enabled	EQU FALSE
 ciab_tb_continuous_enabled	EQU FALSE
 
-beam_position			EQU $133
+beam_position			EQU $131
 
 pixel_per_line			EQU 192
 visible_pixels_number		EQU 160
@@ -491,11 +490,7 @@ mgv_object_face128_lines_number	EQU 3
 mgv_lines_number_max		EQU 288
 mgv_glenz_colors_number		EQU 4
 
-	IFEQ mgv_morph_loop_enabled
-mgv_morph_shapes_number		EQU 3
-	ELSE
 mgv_morph_shapes_number		EQU 4
-	ENDC
 mgv_morph_speed			EQU 8
 
 ; Fill-Blit
@@ -783,22 +778,12 @@ mgv_init_object_info_loop
 	CNOP 0,4
 mgv_init_morph_shapes
 	lea	mgv_morph_shapes_table(pc),a0
-; Shape 1
 	lea	mgv_object_shape1_coords(pc),a1
 	move.l	a1,(a0)+		; shape table
-; Shape 2
 	lea	mgv_object_shape2_coords(pc),a1
 	move.l	a1,(a0)+		; shape table
-; Shape 3
 	lea	mgv_object_shape3_coords(pc),a1
-	IFEQ mgv_morph_loop_enabled
-		move.l	a1,(a0)		; shape table
-	ELSE
-		move.l	a1,(a0)+	; shape table
-; Shape 4
-;		lea	mgv_object_shape4_coords(pc),a1
-;		move.l	a1,(a0)		; shape table
-	ENDC
+	move.l	a1,(a0)			; shape table
 	rts
 
 	IFEQ mgv_premorph_enabled
@@ -1161,13 +1146,7 @@ mgv_morph_object_skip3
 	bne.s	mgv_morph_object_quit
 	addq.w	#1,d1			; next entry in object table
 	cmp.w	#mgv_morph_shapes_number,d1 ; end of table ?
-	IFEQ mgv_morph_loop_enabled
-		bne.s	mgv_morph_object_skip4
-		moveq	#0,d1		; restart
-mgv_morph_object_skip4
-	ELSE
-		beq.s	mgv_morph_object_skip5
-	ENDC
+	beq.s	mgv_morph_object_skip5
 	move.w	d1,mgv_morph_shapes_start(a3)
 mgv_morph_object_skip5
 	move.w	#FALSE,mgv_morph_active(a3)
@@ -1289,9 +1268,9 @@ mgv_set_second_copperlist
 	moveq	#0,d1
 	move.w	mgv_lines_counter(a3),d1
 	IFEQ mgv_count_lines_enabled
-		cmp.w	$140000,d1
+		cmp.w	$1a0000,d1
 		blt.s	mgv_set_second_copperlist_skip
-		move.w	d1,$140000
+		move.w	d1,$1a0000
 mgv_set_second_copperlist_skip
 	ENDC
 	MULUF.W cl2_extension2_size,d1,d2
@@ -1657,14 +1636,6 @@ mgv_object_shape3_coords
 	DC.W -(50*8),32*8,50*8		; P63
 	DC.W -(25*8),32*8,50*8		; P64
 	DC.W 0,32*8,0			; P65
-
-	IFNE mgv_morph_loop_enabled
-; Shape 4
-; Zoom-Out
-;		CNOP 0,2
-;mgv_object_shape4_coords
-;		DS.W mgv_object_edge_points_number*3
-	ENDC
 
 	CNOP 0,4
 mgv_object_info

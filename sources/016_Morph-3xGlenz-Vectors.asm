@@ -66,7 +66,6 @@ text_output_enabled		EQU FALSE
 ; Morph-Glenz-Vectors
 mgv_count_lines_enabled		EQU FALSE
 mgv_premorph_enabled		EQU TRUE
-mgv_morph_loop_enabled		EQU FALSE
 
 dma_bits			EQU DMAF_BLITTER|DMAF_RASTER|DMAF_BLITHOG|DMAF_SETCLR
 
@@ -126,7 +125,7 @@ ciaa_tb_continuous_enabled	EQU FALSE
 ciab_ta_continuous_enabled	EQU FALSE
 ciab_tb_continuous_enabled	EQU FALSE
 
-beam_position			EQU $133
+beam_position			EQU $131
 
 pixel_per_line			EQU 192
 visible_pixels_number		EQU 144
@@ -165,9 +164,9 @@ sine_table_length		EQU 512
 ; Morph-Glenz-Vectors
 mgv_rot_d			EQU 512
 mgv_rot_xy_center		EQU visible_lines_number/2
-mgv_rot_x_angle_speed		EQU 1
-mgv_rot_y_angle_speed		EQU 2
-mgv_rot_z_angle_speed		EQU 2
+mgv_rot_x_angle_speed		EQU 2 ; 1
+mgv_rot_y_angle_speed		EQU 3 ; 2
+mgv_rot_z_angle_speed		EQU 3 ; 2
 
 mgv_object1_edge_points_number	EQU 12
 mgv_object1_edge_points_face	EQU 3
@@ -307,11 +306,7 @@ mgv_objects_faces_number	EQU mgv_object1_faces_number+mgv_object2_faces_number+m
 
 mgv_lines_number_max		EQU 162
 
-	IFEQ mgv_morph_loop_enabled
-mgv_morph_shapes_number		EQU 6
-	ELSE
 mgv_morph_shapes_number		EQU 7
-	ENDC
 mgv_morph_speed			EQU 8
 
 mgv_object1_shape1_x_rot_speed	EQU 0
@@ -1592,13 +1587,7 @@ mgv_morph_objects
 	bne	mgv_morph_objects_quit
 	move.w	mgv_morph_shapes_table_start(a3),d1
 	cmp.w	#mgv_morph_shapes_number,d1 ; end of table ?
-	IFEQ mgv_morph_loop_enabled
-		bne.s	mgv_morph_objects_skip1
-		moveq	#0,d1		; restart
-mgv_morph_objects_skip1
-	ELSE
-		beq	mgv_morph_objects_skip2
-	ENDC
+	beq	mgv_morph_objects_skip2
 	moveq	#0,d3
 	move.w	d1,d3			; start
 	MULUF.W morph_shape_size,d3,d0,d2
@@ -1805,9 +1794,9 @@ mgv_set_second_copperlist
 	moveq	#0,d1
 	move.w	mgv_lines_counter(a3),d1
 	IFEQ mgv_count_lines_enabled
-		cmp.w	$140000,d1
+		cmp.w	$1a0000,d1
 		blt.s	mgv_set_second_copperlist_skip
-		move.w	d1,$140000
+		move.w	d1,$1a0000
 mgv_set_second_copperlist_skip
 	ENDC
 	MULUF.W cl2_extension2_size,d1,d2
@@ -1850,7 +1839,6 @@ scroll_pf_bottom_out
 	cmp.w	#sine_table_length/2,d2	; 180° ?
 	ble.s	scroll_pf_bottom_out_skip
 	move.w	#FALSE,spbo_active(a3)
-;	clr.w	stop_fx_active(a3)
 	bra.s	scroll_pf_bottom_out_quit
 	CNOP 0,4
 scroll_pf_bottom_out_skip
@@ -2231,259 +2219,259 @@ mgv_object3_shape6_coords
 	CNOP 0,4
 mgv_objects_info
 ; Objekt 1
-; 1. Fläche
+; 1. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face1_color	
 	DC.W mgv_object1_face1_lines_number-1 
-; 2. Fläche
+; 2. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face2_color
 	DC.W mgv_object1_face2_lines_number-1 
-; 3. Fläche
+; 3. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face3_color
 	DC.W mgv_object1_face3_lines_number-1 
-; 4. Fläche
+; 4. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face4_color
 	DC.W mgv_object1_face4_lines_number-1 
 
-; 5. Fläche
+; 5. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face5_color
 	DC.W mgv_object1_face5_lines_number-1 
-; 6. Fläche
+; 6. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face6_color
 	DC.W mgv_object1_face6_lines_number-1 
-; 7. Fläche
+; 7. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face7_color
 	DC.W mgv_object1_face7_lines_number-1 
-; 8. Fläche
+; 8. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face8_color
 	DC.W mgv_object1_face8_lines_number-1 
 
-; 9. Fläche
+; 9. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face9_color
 	DC.W mgv_object1_face9_lines_number-1 
-; 10. Fläche
+; 10. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face10_color
 	DC.W mgv_object1_face10_lines_number-1 
-; 11. Fläche
+; 11. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face11_color
 	DC.W mgv_object1_face11_lines_number-1 
-; 12. Fläche
+; 12. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face12_color
 	DC.W mgv_object1_face12_lines_number-1 
 
-; 13. Fläche
+; 13. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face13_color
 	DC.W mgv_object1_face13_lines_number-1 
-; 14. Fläche
+; 14. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face14_color
 	DC.W mgv_object1_face14_lines_number-1 
-; 15. Fläche
+; 15. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face15_color
 	DC.W mgv_object1_face15_lines_number-1 
-; 16. Fläche
+; 16. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face16_color
 	DC.W mgv_object1_face16_lines_number-1 
 
-; 17. Fläche
+; 17. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face17_color
 	DC.W mgv_object1_face17_lines_number-1 
-; 18. Fläche
+; 18. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face18_color
 	DC.W mgv_object1_face18_lines_number-1 
-; 19. Fläche
+; 19. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face19_color
 	DC.W mgv_object1_face19_lines_number-1 
-; 20. Fläche
+; 20. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object1_face20_color
 	DC.W mgv_object1_face20_lines_number-1 
 
 ; Objekt 2
-; 1. Fläche
+; 1. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face1_color
 	DC.W mgv_object2_face1_lines_number-1 
-; 2. Fläche
+; 2. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face2_color
 	DC.W mgv_object2_face2_lines_number-1 
-; 3. Fläche
+; 3. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face3_color
 	DC.W mgv_object2_face3_lines_number-1 
-; 4. Fläche
+; 4. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face4_color
 	DC.W mgv_object2_face4_lines_number-1 
 
-; 5. Fläche
+; 5. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face5_color
 	DC.W mgv_object2_face5_lines_number-1 
-; 6. Fläche
+; 6. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face6_color
 	DC.W mgv_object2_face6_lines_number-1 
-; 7. Fläche
+; 7. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face7_color
 	DC.W mgv_object2_face7_lines_number-1 
-; 8. Fläche
+; 8. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face8_color
 	DC.W mgv_object2_face8_lines_number-1 
 
-; 9. Fläche
+; 9. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face9_color
 	DC.W mgv_object2_face9_lines_number-1 
-; 10. Fläche
+; 10. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face10_color
 	DC.W mgv_object2_face10_lines_number-1 
-; 11. Fläche
+; 11. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face11_color
 	DC.W mgv_object2_face11_lines_number-1 
-; 12. Fläche
+; 12. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face12_color
 	DC.W mgv_object2_face12_lines_number-1 
 
-; 13. Fläche
+; 13. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face13_color
 	DC.W mgv_object2_face13_lines_number-1 
-; 14. Fläche
+; 14. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face14_color
 	DC.W mgv_object2_face14_lines_number-1 
-; 15. Fläche
+; 15. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face15_color
 	DC.W mgv_object2_face15_lines_number-1 
-; 16. Fläche
+; 16. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face16_color
 	DC.W mgv_object2_face16_lines_number-1 
 
-; 17. Fläche
+; 17. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face17_color
 	DC.W mgv_object2_face17_lines_number-1 
-; 18. Fläche
+; 18. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face18_color
 	DC.W mgv_object2_face18_lines_number-1 
-; 19. Fläche
+; 19. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face19_color
 	DC.W mgv_object2_face19_lines_number-1 
-; 20. Fläche
+; 20. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object2_face20_color
 	DC.W mgv_object2_face20_lines_number-1 
 
 ; Objekt 3
-; 1. Fläche
+; 1. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face1_color
 	DC.W mgv_object3_face1_lines_number-1 
-; 2. Fläche
+; 2. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face2_color
 	DC.W mgv_object3_face2_lines_number-1 
-; 3. Fläche
+; 3. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face3_color
 	DC.W mgv_object3_face3_lines_number-1 
-; 4. Fläche
+; 4. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face4_color
 	DC.W mgv_object3_face4_lines_number-1 
 
-; 5. Fläche
+; 5. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face5_color
 	DC.W mgv_object3_face5_lines_number-1 
-; 6. Fläche
+; 6. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face6_color
 	DC.W mgv_object3_face6_lines_number-1 
-; 7. Fläche
+; 7. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face7_color
 	DC.W mgv_object3_face7_lines_number-1 
-; 8. Fläche
+; 8. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face8_color
 	DC.W mgv_object3_face8_lines_number-1 
 
-; 9. Fläche
+; 9. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face9_color
 	DC.W mgv_object3_face9_lines_number-1 
-; 10. Fläche
+; 10. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face10_color
 	DC.W mgv_object3_face10_lines_number-1 
-; 11. Fläche
+; 11. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face11_color
 	DC.W mgv_object3_face11_lines_number-1 
-; 12. Fläche
+; 12. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face12_color
 	DC.W mgv_object3_face12_lines_number-1 
 
-; 13. Fläche
+; 13. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face13_color
 	DC.W mgv_object3_face13_lines_number-1 
-; 14. Fläche
+; 14. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face14_color
 	DC.W mgv_object3_face14_lines_number-1 
-; 15. Fläche
+; 15. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face15_color
 	DC.W mgv_object3_face15_lines_number-1 
-; 16. Fläche
+; 16. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face16_color
 	DC.W mgv_object3_face16_lines_number-1 
 
-; 17. Fläche
+; 17. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face17_color
 	DC.W mgv_object3_face17_lines_number-1 
-; 18. Fläche
+; 18. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face18_color
 	DC.W mgv_object3_face18_lines_number-1 
-; 19. Fläche
+; 19. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face19_color
 	DC.W mgv_object3_face19_lines_number-1 
-; 20. Fläche
+; 20. face
 	DC.L 0				; coordinates table
 	DC.W mgv_object3_face20_color
 	DC.W mgv_object3_face20_lines_number-1 
