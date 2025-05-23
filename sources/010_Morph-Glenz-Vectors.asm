@@ -15,7 +15,6 @@
 	XREF v_bplcon4_bits
 	XREF v_fmode_bits
 	XREF color00_bits
-	XREF nop_second_copperlist
 	XREF mouse_handler
 	XREF sine_table
 
@@ -243,7 +242,7 @@ spb_y_radius			EQU spb_max_vstop-spb_min_vstart
 spb_y_centre			EQU spb_max_vstop-spb_min_vstart
 
 ; Scroll-Playfield-Bottom-In
-spbi_y_angle_speed		EQU 6
+spbi_y_angle_speed		EQU 5
 
 ; Scroll-Playfield-Bottom-Out
 spbo_y_angle_speed		EQU 5
@@ -428,6 +427,8 @@ spbo_y_angle			RS.W 1
 eh_trigger_number		RS.W 1
 
 ; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -561,7 +562,7 @@ init_second_copperlist
 	bsr	cl2_init_line_blits_steady
 	bsr	cl2_init_line_blits
 	bsr	cl2_init_fill_blit
-	COP_LISTEND
+	COP_LISTEND SAVETAIL
 	bsr	get_wrapper_view_values
 	bsr	cl2_set_plane_ptrs
 	bsr	copy_second_copperlist
@@ -678,7 +679,7 @@ beam_routines
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
-	move.l	nop_second_copperlist(pc),COP2LC-DMACONR(a6)
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
@@ -1166,19 +1167,19 @@ mgv_object_coords
 	CNOP 0,2
 mgv_object_shape1_coords
 ; Polygon
-; 70 %
-	DC.W 0,-(58*8),-(29*8)		; P0
-	DC.W 29*8,0,-(29*8)		; P1
-	DC.W 58*8,58*8,-(29*8)		; P2
-	DC.W 0,58*8,-(29*8)		; P3
-	DC.W -(58*8),58*8,-(29*8)	; P4
-	DC.W -(29*8),0,-(29*8)		; P5
-	DC.W 0,-(58*8),29*8		; P6
-	DC.W 29*8,0,29*8		; P7
-	DC.W 58*8,58*8,29*8		; P8
-	DC.W 0,58*8,29*8		; P9
-	DC.W -(58*8),58*8,29*8		; P10
-	DC.W -(29*8),0,29*8		; P11
+; 90 %
+	DC.W 0,-(75*8),-(38*8)		; P0
+	DC.W 38*8,0,-(38*8)		; P1
+	DC.W 75*8,75*8,-(38*8)		; P2
+	DC.W 0,75*8,-(38*8)		; P3
+	DC.W -(75*8),75*8,-(38*8)	; P4
+	DC.W -(38*8),0,-(38*8)		; P5
+	DC.W 0,-(75*8),38*8		; P6
+	DC.W 38*8,0,38*8		; P7
+	DC.W 75*8,75*8,38*8		; P8
+	DC.W 0,75*8,38*8		; P9
+	DC.W -(75*8),75*8,38*8		; P10
+	DC.W -(38*8),0,38*8		; P11
 
 ; Shape 2
 	CNOP 0,2
@@ -1346,6 +1347,7 @@ mgv_morph_shapes_table
 	INCLUDE "error-texts.i"
 
 	END
+
 ; Polygon
 ; 100 %
 	DC.W 0,-(83*8),-(42*8)		; P0
@@ -1360,33 +1362,3 @@ mgv_morph_shapes_table
 	DC.W 0,83*8,42*8		; P9
 	DC.W -(83*8),83*8,42*8		; P10
 	DC.W -(42*8),0,42*8		; P11
-
-; 90 %
-	DC.W 0,-(75*8),-(38*8)		; P0
-	DC.W 38*8,0,-(38*8)		; P1
-	DC.W 75*8,75*8,-(38*8)		; P2
-	DC.W 0,75*8,-(38*8)		; P3
-	DC.W -(75*8),75*8,-(38*8)	; P4
-	DC.W -(38*8),0,-(38*8)		; P5
-	DC.W 0,-(75*8),38*8		; P6
-	DC.W 38*8,0,38*8		; P7
-	DC.W 75*8,75*8,38*8		; P8
-	DC.W 0,75*8,38*8		; P9
-	DC.W -(75*8),75*8,38*8		; P10
-	DC.W -(38*8),0,38*8		; P11
-
-; 80 %
-	DC.W 0,-(66*8),-(34*8)		; P0
-	DC.W 34*8,0,-(34*8)		; P1
-	DC.W 66*8,66*8,-(34*8)		; P2
-	DC.W 0,66*8,-(34*8)		; P3
-	DC.W -(66*8),66*8,-(34*8)	; P4
-	DC.W -(34*8),0,-(34*8)		; P5
-	DC.W 0,-(66*8),34*8		; P6
-	DC.W 34*8,0,34*8		; P7
-	DC.W 66*8,66*8,34*8		; P8
-	DC.W 0,66*8,34*8		; P9
-	DC.W -(66*8),66*8,34*8		; P10
-	DC.W -(34*8),0,34*8		; P11
-
-

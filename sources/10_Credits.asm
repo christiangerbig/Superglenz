@@ -5,8 +5,6 @@
 
 
 	XREF color00_bits
-	XREF nop_first_copperlist
-	XREF nop_second_copperlist
 	XREF mouse_handler
 	XREF sine_table
 	XREF pt_global_music_fader_active
@@ -269,7 +267,7 @@ mgv_morph_shapes_number		EQU 4
 mgv_morph_shapes_number		EQU 5
 	ENDC
 mgv_morph_speed			EQU 8
-mgv_morph_delay			EQU 3*PAL_FPS
+mgv_morph_delay			EQU 3*PAL_FPS ; 3 seconds
 
 ; Fill-Blit
 mgv_fill_blit_x_size		EQU extra_pf1_x_size
@@ -346,7 +344,7 @@ copperlist1_size		RS.B 0
 
 	RSRESET
 
-cl2_extension1	RS.B 0
+cl2_extension1			RS.B 0
 
 cl2_ext1_WAITBLIT		RS.L 1
 cl2_ext1_BLTCON0		RS.L 1
@@ -438,7 +436,7 @@ cl2_size3			EQU copperlist2_size
 ; Sprite0 additional structure
 	RSRESET
 
-spr0_extension1	RS.B 0
+spr0_extension1			RS.B 0
 
 spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 spr0_ext1_planedata		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)*visible_lines_number
@@ -599,6 +597,10 @@ cfc_rgb8_copy_colors_active	RS.W 1
 
 ; Effects-Handler
 eh_trigger_number		RS.W 1
+
+; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 
 variables_size			RS.B 0
 
@@ -847,7 +849,7 @@ init_second_copperlist
 	bsr	cl2_init_line_blits_steady
 	bsr	cl2_init_line_blits
 	bsr	cl2_init_fill_blit
-	COP_LISTEND
+	COP_LISTEND SAVETAIL
 	bsr	copy_second_copperlist
 	bsr	swap_second_copperlist
 	bsr	mgv_clear_extra_playfield
@@ -967,9 +969,9 @@ beam_routines
 	move.w	global_stop_fx_active(pc),d0
 	bne.s	beam_routines
 beam_routines_exit
-	move.l	nop_second_copperlist,COP2LC-DMACONR(a6)
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
-	move.l	nop_first_copperlist,COP1LC-DMACONR(a6)
+	move.l	cl_end(a3),COP1LC-DMACONR(a6)
 	move.w	d0,COPJMP1-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
@@ -1858,6 +1860,7 @@ mgv_rot_xy_coords
 mgv_morph_shapes_table
 	DS.B morph_shape_size*mgv_morph_shapes_number
 
+
 ; Color-Fader-Cross
 	CNOP 0,4
 cfc_rgb8_color_table_fade_out
@@ -1912,7 +1915,7 @@ vts_text
 	DC.B "                    "
 	DC.B "                    "
 	DC.B "                    "
-	DC.B "IS OUR CONTRICUTION "
+	DC.B "IS OUR CONTRIBUTION "
 	DC.B "                    "
 	DC.B "TO NORDLICHT 2025   "
 	DC.B "                    "

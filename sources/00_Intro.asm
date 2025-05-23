@@ -6,8 +6,6 @@
 	XDEF sine_table
 
 	XREF color00_bits
-	XREF nop_first_copperlist
-	XREF nop_second_copperlist
 
 
 	INCDIR "include3.5:"
@@ -674,6 +672,8 @@ hfo2_active			RS.W 1
 eh_trigger_number		RS.W 1
 
 ; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -982,7 +982,7 @@ init_first_copperlist
 	bsr	cl1_init_branches_ptrs2
 	bsr	cl1_reset_pointer
 	bsr	cl1_init_copper_interrupt
-	COP_LISTEND
+	COP_LISTEND SAVETAIL
 	bsr	cl1_set_sprite_ptrs
 	bra	cl1_set_plane_ptrs
 
@@ -1133,7 +1133,7 @@ beam_routines
 	bsr	gv_clear_playfield1
 	bsr	gv_draw_lines
 	bsr	gv_fill_playfield1
-	bsr	gv_rot
+	bsr	gv_rotation
 	bsr	scroll_pf_bottom_in
 	bsr	scroll_pf_bottom_out
 	bsr	mouse_handler
@@ -1143,9 +1143,9 @@ beam_routines
 	bne.s	beam_routines
 fast_exit
 	WAITBLIT
-	move.l	nop_second_copperlist,COP2LC-DMACONR(a6)
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
-	move.l	nop_first_copperlist,COP1LC-DMACONR(a6)
+	move.l	cl_end(a3),COP1LC-DMACONR(a6)
 	move.w	d0,COPJMP1-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
@@ -1193,7 +1193,7 @@ gv_clear_playfield1_loop
 
 
 	CNOP 0,4
-gv_rot
+gv_rotation
 	movem.l a4-a5,-(a7)
 	move.w	gv_rot_y_angle(a3),d1
 	move.w	d1,d0		
@@ -1210,9 +1210,9 @@ gv_rot
 		and.w	d3,d0		; remove overflow
 	ELSE
 		cmp.w	d3,d0		; 360° ?
-		blt.s	gv_rot_skip1
+		blt.s	gv_rotation_skip1
 		sub.w	d3,d0		; restart
-gv_rot_skip1
+gv_rotation_skip1
 	ENDC
 	move.w	(a2,d0.w*2),d5	 word = cos(b)
 	addq.w	#gv_rot_y_angle_speed,d1
@@ -1220,9 +1220,9 @@ gv_rot_skip1
 		and.w	d3,d1		; remove overflow
 	ELSE
 		cmp.w	d3,d1		; 360° ?
-		blt.s	gv_rot_skip2
+		blt.s	gv_rotation_skip2
 		sub.w	d3,d1		; restart
-gv_rot_skip2
+gv_rotation_skip2
 	ENDC
 	move.w	d1,gv_rot_y_angle(a3) 
 	lea	gv_object_coords(pc),a0
@@ -1230,7 +1230,7 @@ gv_rot_skip2
 	move.w	#gv_rot_d*8,a4
 	move.w	#gv_rot_xy_center,a5
 	moveq	#gv_object_edge_points_number-1,d7
-gv_rot_loop
+gv_rotation_loop
 	move.w	(a0)+,d0		; x
 	move.l	d7,a2		
 	move.w	(a0)+,d1		; y
@@ -1247,7 +1247,7 @@ gv_rot_loop
 	move.l	a2,d7			; loop counter
 	add.w	a5,d1			; y' + y center
 	move.w	d1,(a1)+		; y position
-	dbf	d7,gv_rot_loop
+	dbf	d7,gv_rotation_loop
 	movem.l (a7)+,a4-a5
 	rts
 

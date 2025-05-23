@@ -63,13 +63,15 @@
 ; - credits: text changed
 ; - generally all parts changed to beam position $131
 
+; V2.2 beta
+; - Bugfix: noop cl not global anymore, because the 68060 data cache can't
+; handle the content of global variables
+
 
 	MC68040
 
 
 	XDEF color00_bits
-	XDEF nop_first_copperlist
-	XDEF nop_second_copperlist
  
 	XREF start_0_pt_replay
 	XREF start_1_pt_replay
@@ -308,8 +310,6 @@ init_colors
 	CNOP 0,4
 init_first_copperlist
 	move.l	cl1_display(a3),a0
-	lea	nop_first_copperlist(pc),a1
-	move.l	a0,(a1)
 	bsr.s	cl1_init_playfield_props
 	COP_LISTEND
 	rts
@@ -321,8 +321,6 @@ init_first_copperlist
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_display(a3),a0
-	lea	nop_second_copperlist(pc),a1
-	move.l	a0,(a1)
 	COP_LISTEND
 	rts
 
@@ -359,11 +357,6 @@ pf1_rgb8_color_table
 	INCLUDE "sys-variables.i"
 
 
-	CNOP 0,4
-nop_first_copperlist		DC.L 0
-nop_second_copperlist		DC.L 0
-
-
 	INCLUDE "sys-names.i"
 
 
@@ -372,8 +365,8 @@ nop_second_copperlist		DC.L 0
 
 	DC.B "$VER: "
 	DC.B "RSE-Superglenz "
-	DC.B "2.1 beta "
-	DC.B "(22.5.25)",0
+	DC.B "2.2 beta "
+	DC.B "(23.5.25)",0
 	EVEN
 
 	END

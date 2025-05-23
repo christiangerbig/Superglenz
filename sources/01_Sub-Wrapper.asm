@@ -13,7 +13,6 @@
 	XDEF start_01_sub_wrapper
 
 	XREF color00_bits
-	XREF nop_second_copperlist
 	XREF start_010_morph_glenz_vectors
 	XREF start_011_morph_glenz_vectors
 	XREF start_012_morph_glenz_vectors
@@ -167,7 +166,7 @@ sprf_rgb8_color_table_offset	EQU 1
 sprf_rgb8_colors_number		EQU spr_colors_number-1
 
 ; Sprite-Fader-In
-sprfi_rgb8_fader_speed_max	EQU 8
+sprfi_rgb8_fader_speed_max	EQU 48
 sprfi_rgb8_fader_radius		EQU sprfi_rgb8_fader_speed_max
 sprfi_rgb8_fader_center		EQU sprfi_rgb8_fader_speed_max+1
 sprfi_rgb8_fader_angle_speed	EQU 1
@@ -437,6 +436,10 @@ sprfi_rgb8_fader_angle		RS.W 1
 sprfo_rgb8_active		RS.W 1
 sprfo_rgb8_fader_angle		RS.W 1
 
+; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
+
 variables_size			RS.B 0
 
 
@@ -514,7 +517,7 @@ cl1_init_colors
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_display(a3),a0
-	COP_LISTEND
+	COP_LISTEND SAVETAIL
 	rts
 
 
@@ -591,7 +594,7 @@ beam_routines
 fast_exit
 	move.w	custom_error_code(a3),d1
 exit
-	move.l	nop_second_copperlist,COP2LC-DMACONR(a6)
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
 	rts
 

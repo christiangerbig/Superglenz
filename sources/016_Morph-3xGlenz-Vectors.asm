@@ -15,7 +15,6 @@
 	XREF v_bplcon4_bits
 	XREF v_fmode_bits
 	XREF color00_bits
-	XREF nop_second_copperlist
 	XREF mouse_handler
 	XREF sine_table
 
@@ -596,6 +595,8 @@ spbo_y_angle			RS.W 1
 eh_trigger_number		RS.W 1
 
 ; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -1195,7 +1196,7 @@ init_second_copperlist
 	bsr	cl2_init_line_blits_steady
 	bsr	cl2_init_line_blits
 	bsr	cl2_init_fill_blit
-	COP_LISTEND
+	COP_LISTEND SAVETAIL
 	bsr	get_wrapper_view_values
 	bsr	cl2_set_plane_ptrs
 	bsr	copy_second_copperlist
@@ -1328,7 +1329,7 @@ beam_routines
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
-	move.l	nop_second_copperlist,COP2LC-DMACONR(a6)
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
