@@ -67,6 +67,13 @@
 ; - Bugfix: noop cl not global anymore, because the 68060 data cache can't
 ; handle the content of global variables
 
+; V.1.0
+; - Sub wrapper: Background fading in & out speeded up
+; - Credits part: Text changed
+; - Fader enabled
+; - Workbench message handler enabled
+; - ADF created
+
 
 	MC68040
 
@@ -124,8 +131,8 @@ requires_060_cpu		EQU FALSE
 requires_fast_memory		EQU FALSE
 requires_multiscan_monitor	EQU FALSE
 
-workbench_start_enabled		EQU FALSE
-screen_fader_enabled		EQU FALSE
+workbench_start_enabled		EQU TRUE
+screen_fader_enabled		EQU TRUE
 text_output_enabled		EQU FALSE
 
 dma_bits			EQU DMAF_COPPER|DMAF_MASTER|DMAF_SETCLR
@@ -365,8 +372,8 @@ pf1_rgb8_color_table
 
 	DC.B "$VER: "
 	DC.B "RSE-Superglenz "
-	DC.B "2.2 beta "
-	DC.B "(23.5.25)",0
+	DC.B "1.0 "
+	DC.B "(24.5.25)",0
 	EVEN
 
 	END

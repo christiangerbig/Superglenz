@@ -65,7 +65,7 @@ pt_usedfx			EQU %1101011100001000
 pt_usedefx			EQU %0011000000000000
 pt_mute_enabled			EQU FALSE
 pt_music_fader_enabled		EQU TRUE
-pt_fade_out_delay		EQU 3	; Ticks
+pt_fade_out_delay		EQU 3	; ticks
 pt_split_module_enabled		EQU TRUE
 pt_track_notes_played_enabled	EQU FALSE
 pt_track_volumes_enabled	EQU FALSE
