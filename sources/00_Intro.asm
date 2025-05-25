@@ -178,9 +178,9 @@ rse_letters_image_width		EQU rse_letters_image_x_size/8
 rse_letters_image_y_size	EQU 16
 
 ; Glenz-Vectors
-gv_rot_d			EQU 512+512
-gv_rot_xy_center		EQU visible_lines_number/2
-gv_rot_y_angle_speed		EQU 4
+gv_distance			EQU 512+512
+gv_xy_center			EQU visible_lines_number/2
+gv_y_angle_speed		EQU 4
 
 gv_object_edge_points_number	EQU 26
 gv_object_edge_points_per_face	EQU 3
@@ -644,9 +644,9 @@ spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 save_a7				RS.L 1
 
 ; Glenz-Vectors
-gv_rot_x_angle			RS.W 1
-gv_rot_y_angle			RS.W 1
-gv_rot_z_angle			RS.W 1
+gv_x_angle			RS.W 1
+gv_y_angle			RS.W 1
+gv_z_angle			RS.W 1
 
 ; Scroll-Playfield-Bottom-In
 spbi_active			RS.W 1
@@ -693,9 +693,9 @@ init_main_variables
 
 ; Glenz-Vectors
 	moveq	#TRUE,d0
-	move.w	d0,gv_rot_x_angle(a3)
-	move.w	d0,gv_rot_y_angle(a3)
-	move.w	d0,gv_rot_z_angle(a3)
+	move.w	d0,gv_x_angle(a3)
+	move.w	d0,gv_y_angle(a3)
+	move.w	d0,gv_z_angle(a3)
 
 ; Scroll-Playfield-Bottom-In
 	moveq	#FALSE,d1
@@ -1195,7 +1195,7 @@ gv_clear_playfield1_loop
 	CNOP 0,4
 gv_rotation
 	movem.l a4-a5,-(a7)
-	move.w	gv_rot_y_angle(a3),d1
+	move.w	gv_y_angle(a3),d1
 	move.w	d1,d0		
 	lea	sine_table(pc),a2	
 	move.w	(a2,d0.w*2),d5		; sin(b)
@@ -1205,7 +1205,7 @@ gv_rotation
 		MOVEF.W sine_table_length,d3
 	ENDC
 	add.w	#sine_table_length/4,d0 ; + 90°
-	swap	d5 word = sin(b)
+	swap	d5			; high word: sin(b)
 	IFEQ sine_table_length-512
 		and.w	d3,d0		; remove overflow
 	ELSE
@@ -1214,8 +1214,8 @@ gv_rotation
 		sub.w	d3,d0		; restart
 gv_rotation_skip1
 	ENDC
-	move.w	(a2,d0.w*2),d5	 word = cos(b)
-	addq.w	#gv_rot_y_angle_speed,d1
+	move.w	(a2,d0.w*2),d5	 	; low word: cos(b)
+	addq.w	#gv_y_angle_speed,d1
 	IFEQ sine_table_length-512
 		and.w	d3,d1		; remove overflow
 	ELSE
@@ -1224,11 +1224,11 @@ gv_rotation_skip1
 		sub.w	d3,d1		; restart
 gv_rotation_skip2
 	ENDC
-	move.w	d1,gv_rot_y_angle(a3) 
+	move.w	d1,gv_y_angle(a3) 
 	lea	gv_object_coords(pc),a0
-	lea	gv_rot_xy_coords(pc),a1
-	move.w	#gv_rot_d*8,a4
-	move.w	#gv_rot_xy_center,a5
+	lea	gv_xy_coords(pc),a1
+	move.w	#gv_distance*8,a4
+	move.w	#gv_xy_center,a5
 	moveq	#gv_object_edge_points_number-1,d7
 gv_rotation_loop
 	move.w	(a0)+,d0		; x
@@ -1237,10 +1237,10 @@ gv_rotation_loop
 	move.w	(a0)+,d2		; z
 	ROTATE_Y_AXIS
 ; Zentralprojektion und Translation
-	MULSF.W gv_rot_d,d0,d3	; x projection
+	MULSF.W gv_distance,d0,d3	; x projection
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
-	MULSF.W gv_rot_d,d1,d3	; y projection
+	MULSF.W gv_distance,d1,d3	; y projection
 	add.w	a5,d0			; x' + x center
 	move.w	d0,(a1)+		; x position
 	divs.w	d2,d1			; y' = (y*d)/(z+d)
@@ -1257,7 +1257,7 @@ gv_draw_lines
 	movem.l a3-a5,-(a7)
 	bsr	gv_draw_lines_init
 	lea	gv_object_info(pc),a0
-	lea	gv_rot_xy_coords(pc),a1
+	lea	gv_xy_coords(pc),a1
 	move.l	pf1_construction2(a3),a2
 	move.l	(a2),a2
 	move.l	#((BC0F_SRCA|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line drawing mode
@@ -2008,7 +2008,7 @@ gv_object_edges
 	DC.W 25*2,22*2,23*2,25*2	; face 46 unten, triangle 10,5 o'clock
 
 	CNOP 0,2
-gv_rot_xy_coords
+gv_xy_coords
 	DS.W gv_object_edge_points_number*2
 
 

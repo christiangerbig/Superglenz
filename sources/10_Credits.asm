@@ -195,11 +195,11 @@ vts_text_chars_per_column	EQU (visible_lines_number+vts_text_char_y_size)/vts_te
 vts_text_chars_number		EQU vts_text_chars_per_line*vts_text_chars_per_column
 
 ; Morph-Glenz-Vectors
-mgv_rot_d			EQU 512
-mgv_rot_x_center		EQU extra_pf1_x_size/2
-mgv_rot_y_center		EQU visible_lines_number/2
-mgv_rot_y_angle_speed_radius	EQU 8	; 10
-mgv_rot_y_angle_speed_speed	EQU 1	; 2
+mgv_distance			EQU 512
+mgv_x_center			EQU extra_pf1_x_size/2
+mgv_y_center			EQU visible_lines_number/2
+mgv_y_anglespeed_radius		EQU 8
+mgv_y_anglespeed_speed		EQU 1
 
 mgv_object_edge_points_number	EQU 14
 mgv_object_edge_points_per_face	EQU 3
@@ -577,9 +577,9 @@ vts_variable_vert_scroll_speed	RS.W 1
 vts_text_table_start		RS.W 1
 
 ; Morph-Glenz-Vectors
-mgv_rot_y_angle			RS.W 1
-mgv_rot_variable_y_speed	RS.W 1
-mgv_rot_y_angle_speed_angle	RS.W 1
+mgv_y_angle			RS.W 1
+mgv_variable_y_speed		RS.W 1
+mgv_y_anglespeed_angle		RS.W 1
 
 mgv_lines_counter		RS.W 1
 
@@ -625,9 +625,9 @@ init_main_variables
 	move.w	d0,vts_text_table_start(a3)
 
 ; Morphing-Glenz-Vectors
-	move.w	d0,mgv_rot_y_angle(a3)
-	move.w	d0,mgv_rot_variable_y_speed(a3)
-	move.w	d0,mgv_rot_y_angle_speed_angle(a3)
+	move.w	d0,mgv_y_angle(a3)
+	move.w	d0,mgv_variable_y_speed(a3)
+	move.w	d0,mgv_y_anglespeed_angle(a3)
 
 	move.w	d0,mgv_lines_counter(a3)
 
@@ -952,7 +952,7 @@ beam_routines
 	bsr	swap_extra_playfield
 	bsr	effects_handler
 	bsr	mgv_clear_extra_playfield
-	bsr	mgv_calculate_rot_y_speed
+	bsr	mgv_calculate_y_speed
 	bsr	mgv_rotation
 	bsr	mgv_morph_object
 	bsr	mgv_draw_lines
@@ -1134,23 +1134,23 @@ mgv_clear_extra_playfield
 
 
 	CNOP 0,4
-mgv_calculate_rot_y_speed
-	move.w	mgv_rot_y_angle_speed_angle(a3),d2
+mgv_calculate_y_speed
+	move.w	mgv_y_anglespeed_angle(a3),d2
 	lea	sine_table,a0
 	move.w	(a0,d2.w*2),d0		; sin(w)
-	MULSF.W mgv_rot_y_angle_speed_radius*2,d0,d1 ; y_speed = (r*sin(w))/2^15
+	MULSF.W mgv_y_anglespeed_radius*2,d0,d1 ; y_speed = (r*sin(w))/2^15
 	swap	d0
-	move.w	d0,mgv_rot_variable_y_speed(a3)
-	addq.w	#mgv_rot_y_angle_speed_speed,d2
+	move.w	d0,mgv_variable_y_speed(a3)
+	addq.w	#mgv_y_anglespeed_speed,d2
 	and.w	#sine_table_length-1,d2 ; remove overflow
-	move.w	d2,mgv_rot_y_angle_speed_angle(a3)
+	move.w	d2,mgv_y_anglespeed_angle(a3)
 	rts
 
 
 	CNOP 0,4
 mgv_rotation
 	movem.l a4-a6,-(a7)
-	move.w	mgv_rot_y_angle(a3),d1
+	move.w	mgv_y_angle(a3),d1
 	move.w	d1,d0		
 	lea	sine_table,a2
 	move.w	(a2,d0.w*2),d5		; sin(b)
@@ -1160,33 +1160,33 @@ mgv_rotation
 	swap	d5 			; high word: sin(b)
 	and.w	d3,d0			; remove overflow
 	move.w	(a2,d0.w*2),d5		; low word: cos(b)
-	add.w	mgv_rot_variable_y_speed(a3),d1
+	add.w	mgv_variable_y_speed(a3),d1
 	and.w	d3,d1			; remove overflow
-	move.w	d1,mgv_rot_y_angle(a3) 
+	move.w	d1,mgv_y_angle(a3) 
 	lea	mgv_object_coords(pc),a0
-	lea	mgv_rot_xy_coords(pc),a1
-	move.w	#mgv_rot_d*8,a4 ;d
-	move.w	#mgv_rot_x_center,a5
-	move.w	#mgv_rot_y_center,a6
+	lea	mgv_xy_coords(pc),a1
+	move.w	#mgv_distance*8,a4
+	move.w	#mgv_x_center,a5
+	move.w	#mgv_y_center,a6
 	moveq	#mgv_object_edge_points_number-1,d7
-mgv_rotate_loop
+mgv_rotation_loop
 	move.w	(a0)+,d0		; x
 	move.l	d7,a2		
 	move.w	(a0)+,d1		; y
 	move.w	(a0)+,d2		; z
 	ROTATE_Y_AXIS
 ; Central projection and translation
-	MULSF.W mgv_rot_d,d0,d3; X-Projektion
+	MULSF.W mgv_distance,d0,d3	; x projection
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
-	MULSF.W mgv_rot_d,d1,d3		; y projection
+	MULSF.W mgv_distance,d1,d3	; y projection
 	add.w	a5,d0			; x' + x center
 	move.w	d0,(a1)+		; x position
 	divs.w	d2,d1			; y'= (y*d)/(z+d)
 	move.l	a2,d7			; loop counter
 	add.w	a6,d1			; y' + y center
 	move.w	d1,(a1)+		; y position
-	dbf	d7,mgv_rotate_loop
+	dbf	d7,mgv_rotation_loop
 	movem.l (a7)+,a4-a6
 	rts
 
@@ -1241,7 +1241,7 @@ mgv_draw_lines
 	movem.l a3-a6,-(a7)
 	bsr	mgv_draw_lines_init
 	lea	mgv_object_info(pc),a0
-	lea	mgv_rot_xy_coords(pc),a1
+	lea	mgv_xy_coords(pc),a1
 	move.l	extra_pf1(a3),a2
 	move.l	(a2),d0
 	add.l	#ALIGN_64KB,d0
@@ -1853,7 +1853,7 @@ mgv_object_edges
 	DC.W 7*2,3*2,13*2,7*2		; face bottom, triangle 9 o'clock
 
 	CNOP 0,2
-mgv_rot_xy_coords
+mgv_xy_coords
 	DS.W mgv_object_edge_points_number*2
 
 	CNOP 0,4

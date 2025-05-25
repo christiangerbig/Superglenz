@@ -161,11 +161,11 @@ cl2_vstart			EQU beam_position&$ff
 sine_table_length		EQU 512
 
 ; Morph-Glenz-Vectors
-mgv_rot_d			EQU 512
-mgv_rot_xy_center		EQU visible_lines_number/2
-mgv_rot_x_angle_speed		EQU 2 ; 1
-mgv_rot_y_angle_speed		EQU 3 ; 2
-mgv_rot_z_angle_speed		EQU 3 ; 2
+mgv_distance			EQU 512
+mgv_xy_center			EQU visible_lines_number/2
+mgv_x_angle_speed		EQU 2
+mgv_y_angle_speed		EQU 3
+mgv_z_angle_speed		EQU 3
 
 mgv_object1_edge_points_number	EQU 12
 mgv_object1_edge_points_face	EQU 3
@@ -308,65 +308,65 @@ mgv_lines_number_max		EQU 162
 mgv_morph_shapes_number		EQU 7
 mgv_morph_speed			EQU 8
 
-mgv_object1_shape1_x_rot_speed	EQU 0
-mgv_object1_shape1_y_rot_speed	EQU 0
-mgv_object1_shape1_z_rot_speed	EQU 0
-mgv_object2_shape1_x_rot_speed	EQU 0
-mgv_object2_shape1_y_rot_speed	EQU 0
-mgv_object2_shape1_z_rot_speed	EQU 0
-mgv_object3_shape1_x_rot_speed	EQU 0
-mgv_object3_shape1_y_rot_speed	EQU 0
-mgv_object3_shape1_z_rot_speed	EQU 0
+mgv_object1_shape1_x_speed	EQU 0
+mgv_object1_shape1_y_speed	EQU 0
+mgv_object1_shape1_z_speed	EQU 0
+mgv_object2_shape1_x_speed	EQU 0
+mgv_object2_shape1_y_speed	EQU 0
+mgv_object2_shape1_z_speed	EQU 0
+mgv_object3_shape1_x_speed	EQU 0
+mgv_object3_shape1_y_speed	EQU 0
+mgv_object3_shape1_z_speed	EQU 0
 
-mgv_object1_shape2_x_rot_speed	EQU 0
-mgv_object1_shape2_y_rot_speed	EQU 0
-mgv_object1_shape2_z_rot_speed	EQU 0
-mgv_object2_shape2_x_rot_speed	EQU 0
-mgv_object2_shape2_y_rot_speed	EQU 0
-mgv_object2_shape2_z_rot_speed	EQU 0
-mgv_object3_shape2_x_rot_speed	EQU 0
-mgv_object3_shape2_y_rot_speed	EQU 0
-mgv_object3_shape2_z_rot_speed	EQU 0
+mgv_object1_shape2_x_speed	EQU 0
+mgv_object1_shape2_y_speed	EQU 0
+mgv_object1_shape2_z_speed	EQU 0
+mgv_object2_shape2_x_speed	EQU 0
+mgv_object2_shape2_y_speed	EQU 0
+mgv_object2_shape2_z_speed	EQU 0
+mgv_object3_shape2_x_speed	EQU 0
+mgv_object3_shape2_y_speed	EQU 0
+mgv_object3_shape2_z_speed	EQU 0
 
-mgv_object1_shape3_x_rot_speed	EQU 0
-mgv_object1_shape3_y_rot_speed	EQU 0
-mgv_object1_shape3_z_rot_speed	EQU 0
-mgv_object2_shape3_x_rot_speed	EQU 0
-mgv_object2_shape3_y_rot_speed	EQU 0
-mgv_object2_shape3_z_rot_speed	EQU 0
-mgv_object3_shape3_x_rot_speed	EQU 0
-mgv_object3_shape3_y_rot_speed	EQU 0
-mgv_object3_shape3_z_rot_speed	EQU 0
+mgv_object1_shape3_x_speed	EQU 0
+mgv_object1_shape3_y_speed	EQU 0
+mgv_object1_shape3_z_speed	EQU 0
+mgv_object2_shape3_x_speed	EQU 0
+mgv_object2_shape3_y_speed	EQU 0
+mgv_object2_shape3_z_speed	EQU 0
+mgv_object3_shape3_x_speed	EQU 0
+mgv_object3_shape3_y_speed	EQU 0
+mgv_object3_shape3_z_speed	EQU 0
 
-mgv_object1_shape4_x_rot_speed	EQU 0
-mgv_object1_shape4_y_rot_speed	EQU 0
-mgv_object1_shape4_z_rot_speed	EQU 0
-mgv_object2_shape4_x_rot_speed	EQU 0
-mgv_object2_shape4_y_rot_speed	EQU 0
-mgv_object2_shape4_z_rot_speed	EQU 0
-mgv_object3_shape4_x_rot_speed	EQU 0
-mgv_object3_shape4_y_rot_speed	EQU 0
-mgv_object3_shape4_z_rot_speed	EQU 0
+mgv_object1_shape4_x_speed	EQU 0
+mgv_object1_shape4_y_speed	EQU 0
+mgv_object1_shape4_z_speed	EQU 0
+mgv_object2_shape4_x_speed	EQU 0
+mgv_object2_shape4_y_speed	EQU 0
+mgv_object2_shape4_z_speed	EQU 0
+mgv_object3_shape4_x_speed	EQU 0
+mgv_object3_shape4_y_speed	EQU 0
+mgv_object3_shape4_z_speed	EQU 0
 
-mgv_object1_shape5_x_rot_speed	EQU 0
-mgv_object1_shape5_y_rot_speed	EQU -5
-mgv_object1_shape5_z_rot_speed	EQU 0
-mgv_object2_shape5_x_rot_speed	EQU 0
-mgv_object2_shape5_y_rot_speed	EQU -6
-mgv_object2_shape5_z_rot_speed	EQU 0
-mgv_object3_shape5_x_rot_speed	EQU 0
-mgv_object3_shape5_y_rot_speed	EQU -7
-mgv_object3_shape5_z_rot_speed	EQU 0
+mgv_object1_shape5_x_speed	EQU 0
+mgv_object1_shape5_y_speed	EQU -5
+mgv_object1_shape5_z_speed	EQU 0
+mgv_object2_shape5_x_speed	EQU 0
+mgv_object2_shape5_y_speed	EQU -6
+mgv_object2_shape5_z_speed	EQU 0
+mgv_object3_shape5_x_speed	EQU 0
+mgv_object3_shape5_y_speed	EQU -7
+mgv_object3_shape5_z_speed	EQU 0
 
-mgv_object1_shape6_x_rot_speed	EQU 0
-mgv_object1_shape6_y_rot_speed	EQU 0
-mgv_object1_shape6_z_rot_speed	EQU -4
-mgv_object2_shape6_x_rot_speed	EQU 0
-mgv_object2_shape6_y_rot_speed	EQU 0
-mgv_object2_shape6_z_rot_speed	EQU 4
-mgv_object3_shape6_x_rot_speed	EQU 0
-mgv_object3_shape6_y_rot_speed	EQU 0
-mgv_object3_shape6_z_rot_speed	EQU -4
+mgv_object1_shape6_x_speed	EQU 0
+mgv_object1_shape6_y_speed	EQU 0
+mgv_object1_shape6_z_speed	EQU -4
+mgv_object2_shape6_x_speed	EQU 0
+mgv_object2_shape6_y_speed	EQU 0
+mgv_object2_shape6_z_speed	EQU 4
+mgv_object3_shape6_x_speed	EQU 0
+mgv_object3_shape6_y_speed	EQU 0
+mgv_object3_shape6_z_speed	EQU -4
 
 ; Fill-Blit
 mgv_fill_blit_x_size		EQU visible_pixels_number
@@ -416,15 +416,15 @@ morph_shape			RS.B 0
 morph_shape_object1_edges	RS.L 1
 morph_shape_object2_edges	RS.L 1
 morph_shape_object3_edges	RS.L 1
-morph_shape_object1_x_rot_speed	RS.W 1
-morph_shape_object1_y_rot_speed	RS.W 1
-morph_shape_object1_z_rot_speed	RS.W 1
-morph_shape_object2_x_rot_speed	RS.W 1
-morph_shape_object2_y_rot_speed	RS.W 1
-morph_shape_object2_z_rot_speed	RS.W 1
-morph_shape_object3_x_rot_speed	RS.W 1
-morph_shape_object3_y_rot_speed	RS.W 1
-morph_shape_object3_z_rot_speed	RS.W 1
+morph_shape_object1_x_speed	RS.W 1
+morph_shape_object1_y_speed	RS.W 1
+morph_shape_object1_z_speed	RS.W 1
+morph_shape_object2_x_speed	RS.W 1
+morph_shape_object2_y_speed	RS.W 1
+morph_shape_object2_z_speed	RS.W 1
+morph_shape_object3_x_speed	RS.W 1
+morph_shape_object3_y_speed	RS.W 1
+morph_shape_object3_z_speed	RS.W 1
 
 morph_shape_size		RS.B 0
 
@@ -548,35 +548,35 @@ spr7_y_size2			EQU 0
 save_a7				RS.L 1
 
 ; Morph-Glenz-Vectors
-mgv_rot_x_angle			RS.W 1
-mgv_rot_y_angle			RS.W 1
-mgv_rot_z_angle			RS.W 1
+mgv_x_angle			RS.W 1
+mgv_y_angle			RS.W 1
+mgv_z_angle			RS.W 1
 
-mgv_pre_rotate_active		RS.W 1
+mgv_prerotation_active		RS.W 1
 
-mgv_object1_x_pre_rot_angle	RS.W 1
-mgv_object1_y_pre_rot_angle	RS.W 1
-mgv_object1_z_pre_rot_angle	RS.W 1
+mgv_object1_x_prerotation_angle	RS.W 1
+mgv_object1_y_prerotation_angle	RS.W 1
+mgv_object1_z_prerotation_angle	RS.W 1
 
-mgv_object2_x_pre_rot_angle	RS.W 1
-mgv_object2_y_pre_rot_angle	RS.W 1
-mgv_object2_z_pre_rot_angle	RS.W 1
+mgv_object2_x_prerotation_angle	RS.W 1
+mgv_object2_y_prerotation_angle	RS.W 1
+mgv_object2_z_prerotation_angle	RS.W 1
 
-mgv_object3_x_pre_rot_angle	RS.W 1
-mgv_object3_y_pre_rot_angle	RS.W 1
-mgv_object3_z_pre_rot_angle	RS.W 1
+mgv_object3_x_prerotation_angle	RS.W 1
+mgv_object3_y_prerotation_angle	RS.W 1
+mgv_object3_z_prerotation_angle	RS.W 1
 
-mgv_object1_x_pre_rot_speed	RS.W 1
-mgv_object1_y_pre_rot_speed	RS.W 1
-mgv_object1_z_pre_rot_speed	RS.W 1
+mgv_object1_x_prerotation_speed	RS.W 1
+mgv_object1_y_prerotation_speed	RS.W 1
+mgv_object1_z_prerotation_speed	RS.W 1
 
-mgv_object2_x_pre_rot_speed	RS.W 1
-mgv_object2_y_pre_rot_speed	RS.W 1
-mgv_object2_z_pre_rot_speed	RS.W 1
+mgv_object2_x_prerotation_speed	RS.W 1
+mgv_object2_y_prerotation_speed	RS.W 1
+mgv_object2_z_prerotation_speed	RS.W 1
 
-mgv_object3_x_pre_rot_speed	RS.W 1
-mgv_object3_y_pre_rot_speed	RS.W 1
-mgv_object3_z_pre_rot_speed	RS.W 1
+mgv_object3_x_prerotation_speed	RS.W 1
+mgv_object3_y_prerotation_speed	RS.W 1
+mgv_object3_z_prerotation_speed	RS.W 1
 
 mgv_lines_counter		RS.W 1
 
@@ -616,36 +616,36 @@ init_main_variables
 
 ; Morph-Glenz-Vectors
 	moveq	#TRUE,d0
-	move.w	d0,mgv_rot_x_angle(a3)
-	move.w	d0,mgv_rot_y_angle(a3)
-	move.w	d0,mgv_rot_z_angle(a3)
+	move.w	d0,mgv_x_angle(a3)
+	move.w	d0,mgv_y_angle(a3)
+	move.w	d0,mgv_z_angle(a3)
 
 	moveq	#FALSE,d1
-	move.w	d1,mgv_pre_rotate_active(a3)
+	move.w	d1,mgv_prerotation_active(a3)
 
-	move.w	d0,mgv_object1_x_pre_rot_angle(a3)
-	move.w	d0,mgv_object1_y_pre_rot_angle(a3)
-	move.w	d0,mgv_object1_z_pre_rot_angle(a3)
+	move.w	d0,mgv_object1_x_prerotation_angle(a3)
+	move.w	d0,mgv_object1_y_prerotation_angle(a3)
+	move.w	d0,mgv_object1_z_prerotation_angle(a3)
 
-	move.w	d0,mgv_object2_x_pre_rot_angle(a3)
-	move.w	d0,mgv_object2_y_pre_rot_angle(a3)
-	move.w	d0,mgv_object2_z_pre_rot_angle(a3)
+	move.w	d0,mgv_object2_x_prerotation_angle(a3)
+	move.w	d0,mgv_object2_y_prerotation_angle(a3)
+	move.w	d0,mgv_object2_z_prerotation_angle(a3)
 
-	move.w	d0,mgv_object3_x_pre_rot_angle(a3)
-	move.w	d0,mgv_object3_y_pre_rot_angle(a3)
-	move.w	d0,mgv_object3_z_pre_rot_angle(a3)
+	move.w	d0,mgv_object3_x_prerotation_angle(a3)
+	move.w	d0,mgv_object3_y_prerotation_angle(a3)
+	move.w	d0,mgv_object3_z_prerotation_angle(a3)
 
-	move.w	d0,mgv_object1_x_pre_rot_speed(a3)
-	move.w	d0,mgv_object1_y_pre_rot_speed(a3)
-	move.w	d0,mgv_object1_z_pre_rot_speed(a3)
+	move.w	d0,mgv_object1_x_prerotation_speed(a3)
+	move.w	d0,mgv_object1_y_prerotation_speed(a3)
+	move.w	d0,mgv_object1_z_prerotation_speed(a3)
 
-	move.w	d0,mgv_object2_x_pre_rot_speed(a3)
-	move.w	d0,mgv_object2_y_pre_rot_speed(a3)
-	move.w	d0,mgv_object2_z_pre_rot_speed(a3)
+	move.w	d0,mgv_object2_x_prerotation_speed(a3)
+	move.w	d0,mgv_object2_y_prerotation_speed(a3)
+	move.w	d0,mgv_object2_z_prerotation_speed(a3)
 
-	move.w	d0,mgv_object3_x_pre_rot_speed(a3)
-	move.w	d0,mgv_object3_y_pre_rot_speed(a3)
-	move.w	d0,mgv_object3_z_pre_rot_speed(a3)
+	move.w	d0,mgv_object3_x_prerotation_speed(a3)
+	move.w	d0,mgv_object3_y_prerotation_speed(a3)
+	move.w	d0,mgv_object3_z_prerotation_speed(a3)
 
 	move.w	d0,mgv_lines_counter(a3)
 
@@ -723,15 +723,15 @@ mgv_init_morph_shapes
 	move.l	a1,(a0)+
 	lea	mgv_object3_shape1_coords(pc),a1
 	move.l	a1,(a0)+
-	move.w	#mgv_object1_shape1_x_rot_speed,(a0)+
-	move.w	#mgv_object1_shape1_y_rot_speed,(a0)+
-	move.w	#mgv_object1_shape1_z_rot_speed,(a0)+
-	move.w	#mgv_object2_shape1_x_rot_speed,(a0)+
-	move.w	#mgv_object2_shape1_y_rot_speed,(a0)+
-	move.w	#mgv_object2_shape1_z_rot_speed,(a0)+
-	move.w	#mgv_object3_shape1_x_rot_speed,(a0)+
-	move.w	#mgv_object3_shape1_y_rot_speed,(a0)+
-	move.w	#mgv_object3_shape1_z_rot_speed,(a0)+
+	move.w	#mgv_object1_shape1_x_speed,(a0)+
+	move.w	#mgv_object1_shape1_y_speed,(a0)+
+	move.w	#mgv_object1_shape1_z_speed,(a0)+
+	move.w	#mgv_object2_shape1_x_speed,(a0)+
+	move.w	#mgv_object2_shape1_y_speed,(a0)+
+	move.w	#mgv_object2_shape1_z_speed,(a0)+
+	move.w	#mgv_object3_shape1_x_speed,(a0)+
+	move.w	#mgv_object3_shape1_y_speed,(a0)+
+	move.w	#mgv_object3_shape1_z_speed,(a0)+
 ; Shape 2
 	lea	mgv_object1_shape2_coords(pc),a1
 	move.l	a1,(a0)+
@@ -739,15 +739,15 @@ mgv_init_morph_shapes
 	move.l	a1,(a0)+
 	lea	mgv_object3_shape2_coords(pc),a1
 	move.l	a1,(a0)+
-	move.w	#mgv_object1_shape2_x_rot_speed,(a0)+
-	move.w	#mgv_object1_shape2_y_rot_speed,(a0)+
-	move.w	#mgv_object1_shape2_z_rot_speed,(a0)+
-	move.w	#mgv_object2_shape2_x_rot_speed,(a0)+
-	move.w	#mgv_object2_shape2_y_rot_speed,(a0)+
-	move.w	#mgv_object2_shape2_z_rot_speed,(a0)+
-	move.w	#mgv_object3_shape2_x_rot_speed,(a0)+
-	move.w	#mgv_object3_shape2_y_rot_speed,(a0)+
-	move.w	#mgv_object3_shape2_z_rot_speed,(a0)+
+	move.w	#mgv_object1_shape2_x_speed,(a0)+
+	move.w	#mgv_object1_shape2_y_speed,(a0)+
+	move.w	#mgv_object1_shape2_z_speed,(a0)+
+	move.w	#mgv_object2_shape2_x_speed,(a0)+
+	move.w	#mgv_object2_shape2_y_speed,(a0)+
+	move.w	#mgv_object2_shape2_z_speed,(a0)+
+	move.w	#mgv_object3_shape2_x_speed,(a0)+
+	move.w	#mgv_object3_shape2_y_speed,(a0)+
+	move.w	#mgv_object3_shape2_z_speed,(a0)+
 ; Shape 3
 	lea	mgv_object1_shape3_coords(pc),a1
 	move.l	a1,(a0)+
@@ -755,15 +755,15 @@ mgv_init_morph_shapes
 	move.l	a1,(a0)+
 	lea	mgv_object3_shape3_coords(pc),a1
 	move.l	a1,(a0)+
-	move.w	#mgv_object1_shape3_x_rot_speed,(a0)+
-	move.w	#mgv_object1_shape3_y_rot_speed,(a0)+
-	move.w	#mgv_object1_shape3_z_rot_speed,(a0)+
-	move.w	#mgv_object2_shape3_x_rot_speed,(a0)+
-	move.w	#mgv_object2_shape3_y_rot_speed,(a0)+
-	move.w	#mgv_object2_shape3_z_rot_speed,(a0)+
-	move.w	#mgv_object3_shape3_x_rot_speed,(a0)+
-	move.w	#mgv_object3_shape3_y_rot_speed,(a0)+
-	move.w	#mgv_object3_shape3_z_rot_speed,(a0)+
+	move.w	#mgv_object1_shape3_x_speed,(a0)+
+	move.w	#mgv_object1_shape3_y_speed,(a0)+
+	move.w	#mgv_object1_shape3_z_speed,(a0)+
+	move.w	#mgv_object2_shape3_x_speed,(a0)+
+	move.w	#mgv_object2_shape3_y_speed,(a0)+
+	move.w	#mgv_object2_shape3_z_speed,(a0)+
+	move.w	#mgv_object3_shape3_x_speed,(a0)+
+	move.w	#mgv_object3_shape3_y_speed,(a0)+
+	move.w	#mgv_object3_shape3_z_speed,(a0)+
 ; Shape 4
 	lea	mgv_object1_shape4_coords(pc),a1
 	move.l	a1,(a0)+
@@ -771,15 +771,15 @@ mgv_init_morph_shapes
 	move.l	a1,(a0)+
 	lea	mgv_object3_shape4_coords(pc),a1
 	move.l	a1,(a0)+
-	move.w	#mgv_object1_shape4_x_rot_speed,(a0)+
-	move.w	#mgv_object1_shape4_y_rot_speed,(a0)+
-	move.w	#mgv_object1_shape4_z_rot_speed,(a0)+
-	move.w	#mgv_object2_shape4_x_rot_speed,(a0)+
-	move.w	#mgv_object2_shape4_y_rot_speed,(a0)+
-	move.w	#mgv_object2_shape4_z_rot_speed,(a0)+
-	move.w	#mgv_object3_shape4_x_rot_speed,(a0)+
-	move.w	#mgv_object3_shape4_y_rot_speed,(a0)+
-	move.w	#mgv_object3_shape4_z_rot_speed,(a0)+
+	move.w	#mgv_object1_shape4_x_speed,(a0)+
+	move.w	#mgv_object1_shape4_y_speed,(a0)+
+	move.w	#mgv_object1_shape4_z_speed,(a0)+
+	move.w	#mgv_object2_shape4_x_speed,(a0)+
+	move.w	#mgv_object2_shape4_y_speed,(a0)+
+	move.w	#mgv_object2_shape4_z_speed,(a0)+
+	move.w	#mgv_object3_shape4_x_speed,(a0)+
+	move.w	#mgv_object3_shape4_y_speed,(a0)+
+	move.w	#mgv_object3_shape4_z_speed,(a0)+
 ; Shape 5
 	lea	mgv_object1_shape5_coords(pc),a1
 	move.l	a1,(a0)+
@@ -787,15 +787,15 @@ mgv_init_morph_shapes
 	move.l	a1,(a0)+
 	lea	mgv_object3_shape5_coords(pc),a1
 	move.l	a1,(a0)+
-	move.w	#mgv_object1_shape5_x_rot_speed,(a0)+
-	move.w	#mgv_object1_shape5_y_rot_speed,(a0)+
-	move.w	#mgv_object1_shape5_z_rot_speed,(a0)+
-	move.w	#mgv_object2_shape5_x_rot_speed,(a0)+
-	move.w	#mgv_object2_shape5_y_rot_speed,(a0)+
-	move.w	#mgv_object2_shape5_z_rot_speed,(a0)+
-	move.w	#mgv_object3_shape5_x_rot_speed,(a0)+
-	move.w	#mgv_object3_shape5_y_rot_speed,(a0)+
-	move.w	#mgv_object3_shape5_z_rot_speed,(a0)+
+	move.w	#mgv_object1_shape5_x_speed,(a0)+
+	move.w	#mgv_object1_shape5_y_speed,(a0)+
+	move.w	#mgv_object1_shape5_z_speed,(a0)+
+	move.w	#mgv_object2_shape5_x_speed,(a0)+
+	move.w	#mgv_object2_shape5_y_speed,(a0)+
+	move.w	#mgv_object2_shape5_z_speed,(a0)+
+	move.w	#mgv_object3_shape5_x_speed,(a0)+
+	move.w	#mgv_object3_shape5_y_speed,(a0)+
+	move.w	#mgv_object3_shape5_z_speed,(a0)+
 ; Shape 6
 	lea	mgv_object1_shape6_coords(pc),a1
 	move.l	a1,(a0)+
@@ -803,15 +803,15 @@ mgv_init_morph_shapes
 	move.l	a1,(a0)+
 	lea	mgv_object3_shape6_coords(pc),a1
 	move.l	a1,(a0)+
-	move.w	#mgv_object1_shape6_x_rot_speed,(a0)+
-	move.w	#mgv_object1_shape6_y_rot_speed,(a0)+
-	move.w	#mgv_object1_shape6_z_rot_speed,(a0)+
-	move.w	#mgv_object2_shape6_x_rot_speed,(a0)+
-	move.w	#mgv_object2_shape6_y_rot_speed,(a0)+
-	move.w	#mgv_object2_shape6_z_rot_speed,(a0)+
-	move.w	#mgv_object3_shape6_x_rot_speed,(a0)+
-	move.w	#mgv_object3_shape6_y_rot_speed,(a0)+
-	move.w	#mgv_object3_shape6_z_rot_speed,(a0)
+	move.w	#mgv_object1_shape6_x_speed,(a0)+
+	move.w	#mgv_object1_shape6_y_speed,(a0)+
+	move.w	#mgv_object1_shape6_z_speed,(a0)+
+	move.w	#mgv_object2_shape6_x_speed,(a0)+
+	move.w	#mgv_object2_shape6_y_speed,(a0)+
+	move.w	#mgv_object2_shape6_z_speed,(a0)+
+	move.w	#mgv_object3_shape6_x_speed,(a0)+
+	move.w	#mgv_object3_shape6_y_speed,(a0)+
+	move.w	#mgv_object3_shape6_z_speed,(a0)
 	rts
 
 	IFEQ mgv_premorph_enabled
@@ -1315,8 +1315,8 @@ beam_routines
 	bsr	set_playfield1
 	bsr     effects_handler
 	bsr	mgv_clear_playfield1
-	bsr	mgv_pre_rotate_objects
-	bsr	mgv_rotate_objects
+	bsr	mgv_prerotation_objects
+	bsr	mgv_objects_rotation
 	bsr	mgv_morph_objects
 	bsr	mgv_draw_lines
 	bsr	mgv_fill_playfield1
@@ -1405,10 +1405,10 @@ mgv_clear_playfield1_loop
 
 
 	CNOP 0,4
-mgv_pre_rotate_objects
+mgv_prerotation_objects
 	movem.l a4-a6,-(a7)
-	tst.w	mgv_pre_rotate_active(a3)
-	bne.s	mgv_pre_rotate_objects_quit
+	tst.w	mgv_prerotation_active(a3)
+	bne.s	mgv_prerotation_objects_quit
 	moveq	#0,d0
 	move.w	mgv_morph_shapes_table_start(a3),d0
 	subq.w	#1,d0
@@ -1418,25 +1418,25 @@ mgv_pre_rotate_objects
 ; Objekt 1
 	move.l	(a4)+,a0		; object coordinates table
 	lea	mgv_object1_coords(pc),a1
-	lea	mgv_object1_x_pre_rot_angle(a3),a5
-	lea	mgv_object1_x_pre_rot_speed(a3),a6
+	lea	mgv_object1_x_prerotation_angle(a3),a5
+	lea	mgv_object1_x_prerotation_speed(a3),a6
 	moveq	#mgv_object1_edge_points_number-1,d7
-	bsr.s	mgv_pre_rotation
+	bsr.s	mgv_prerotation
 ; Objekt 2
 	move.l	(a4)+,a0		; object coordinates table
 	lea	mgv_object2_coords(pc),a1
-	lea	mgv_object2_x_pre_rot_angle(a3),a5
-	lea	mgv_object2_x_pre_rot_speed(a3),a6
+	lea	mgv_object2_x_prerotation_angle(a3),a5
+	lea	mgv_object2_x_prerotation_speed(a3),a6
 	moveq	#mgv_object2_edge_points_number-1,d7
-	bsr.s	mgv_pre_rotation
+	bsr.s	mgv_prerotation
 ; Objekt 3
 	move.l	(a4),a0			; object coordinates table
 	lea	mgv_object3_coords(pc),a1
-	lea	mgv_object3_x_pre_rot_angle(a3),a5
-	lea	mgv_object3_x_pre_rot_speed(a3),a6
+	lea	mgv_object3_x_prerotation_angle(a3),a5
+	lea	mgv_object3_x_prerotation_speed(a3),a6
 	moveq	#mgv_object3_edge_points_number-1,d7
-	bsr.s	mgv_pre_rotation
-mgv_pre_rotate_objects_quit
+	bsr.s	mgv_prerotation
+mgv_prerotation_objects_quit
 	movem.l (a7)+,a4-a6
 	rts
 
@@ -1445,11 +1445,11 @@ mgv_pre_rotate_objects_quit
 ; d7.w	number of points
 ; a0.l	Pointer	object coordinates table
 ; a1.l	Pointer	destination coordinates table
-; a5.l	Pointer	variable x_rot_angle
-; a6.l	Pointer	variable x_rot_speed
+; a5.l	Pointer	variable x_angle
+; a6.l	Pointer	variable x_speed
 ; Result
 	CNOP 0,4
-mgv_pre_rotation
+mgv_prerotation
 	move.w	(a5),d1			; x angle
 	move.w	d1,d0		
 	lea	sine_table,a2	
@@ -1482,7 +1482,7 @@ mgv_pre_rotation
 	add.w	(a6),d1			; next z angle
 	and.w	d3,d1			; remove overflow
 	move.w	d1,(a5)		
-mgv_pre_rot_loop
+mgv_prerotation_loop
 	move.w	(a0)+,d0		; x
 	move.l	d7,a2		
 	move.w	(a0)+,d1		; y
@@ -1498,14 +1498,14 @@ mgv_pre_rot_loop
 	and.b	d3,d2
 	move.l	a2,d7			; loop counter
 	move.w	d2,(a1)+		; z position
-	dbf	d7,mgv_pre_rot_loop
+	dbf	d7,mgv_prerotation_loop
 	rts
 
 
 	CNOP 0,4
-mgv_rotate_objects
+mgv_objects_rotation
 	movem.l a4-a5,-(a7)
-	move.w	mgv_rot_x_angle(a3),d1
+	move.w	mgv_x_angle(a3),d1
 	move.w	d1,d0		
 	lea	sine_table,a2	
 	move.w	(a2,d0.w*2),d4		; sin(a)
@@ -1515,32 +1515,32 @@ mgv_rotate_objects
 	swap	d4 			; high word: sin(a)
 	and.w	d3,d0			; remove overflow
 	move.w	(a2,d0.w*2),d4	 	; low word: cos(a)
-	addq.w	#mgv_rot_x_angle_speed,d1
+	addq.w	#mgv_x_angle_speed,d1
 	and.w	d3,d1			; remove overflow
-	move.w	d1,mgv_rot_x_angle(a3) 
-	move.w	mgv_rot_y_angle(a3),d1
+	move.w	d1,mgv_x_angle(a3) 
+	move.w	mgv_y_angle(a3),d1
 	move.w	d1,d0		
 	move.w	(a2,d0.w*2),d5		; sin(b)
 	add.w	a4,d0			; + 90°
 	swap	d5 			; high word: sin(b)
 	and.w	d3,d0			; remove overflow
 	move.w	(a2,d0.w*2),d5	 	; low word: cos(b)
-	addq.w	#mgv_rot_y_angle_speed,d1
+	addq.w	#mgv_y_angle_speed,d1
 	and.w	d3,d1			; remove overflow
-	move.w	d1,mgv_rot_y_angle(a3) 
-	move.w	mgv_rot_z_angle(a3),d1
+	move.w	d1,mgv_y_angle(a3) 
+	move.w	mgv_z_angle(a3),d1
 	move.w	d1,d0		
 	move.w	(a2,d0.w*2),d6		; sin(c)
 	add.w	a4,d0			; + 90°
 	swap	d6 			; high word: sin(c)
 	and.w	d3,d0			; remove overflow
 	move.w	(a2,d0.w*2),d6		; low word: cos(c)
-	addq.w	#mgv_rot_z_angle_speed,d1
+	addq.w	#mgv_z_angle_speed,d1
 	and.w	d3,d1			; remove overflow
-	move.w	d1,mgv_rot_z_angle(a3) 
+	move.w	d1,mgv_z_angle(a3) 
 ; Object 1
 	lea	mgv_object1_coords(pc),a0
-	lea	mgv_rot_xy_coords(pc),a1
+	lea	mgv_xy_coords(pc),a1
 	moveq	#mgv_object1_edge_points_number-1,d7
 	bsr.s	mgv_rotation
 ; Object 2
@@ -1557,9 +1557,9 @@ mgv_rotate_objects
 
 	CNOP 0,4
 mgv_rotation
-	move.w	#mgv_rot_d*8,a4
-	move.w	#mgv_rot_xy_center,a5
-mgv_rot_loop
+	move.w	#mgv_distance*8,a4
+	move.w	#mgv_xy_center,a5
+mgv_rotation_loop
 	move.w	(a0)+,d0		; x
 	move.l	d7,a2		
 	move.w	(a0)+,d1		; y
@@ -1568,17 +1568,17 @@ mgv_rot_loop
 	ROTATE_Y_AXIS
 	ROTATE_Z_AXIS
 ; Central projection and translation
-	MULSF.W mgv_rot_d,d0,d3; x projection
+	MULSF.W mgv_distance,d0,d3	; x projection
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
-	MULSF.W mgv_rot_d,d1,d3; y projection
+	MULSF.W mgv_distance,d1,d3	; y projection
 	add.w	a5,d0			; x' + x enter
 	move.w	d0,(a1)+		; x position
 	divs.w	d2,d1			; y' = (y*d)/(z+d)
 	move.l	a2,d7			; loop counter
 	add.w	a5,d1			; y' + y center
 	move.w	d1,(a1)+		; y position
-	dbf	d7,mgv_rot_loop
+	dbf	d7,mgv_rotation_loop
 	rts
 
 
@@ -1611,26 +1611,26 @@ mgv_morph_objects
 	bne.s	mgv_morph_objects_quit
 	addq.w	#1,d1			; next entry in object table
 	move.w	d1,mgv_morph_shapes_table_start(a3) 
-	move.w	(a2)+,mgv_object1_x_pre_rot_speed(a3)
-	move.w	(a2)+,mgv_object1_y_pre_rot_speed(a3)
-	move.w	(a2)+,mgv_object1_z_pre_rot_speed(a3)
-	move.w	(a2)+,mgv_object2_x_pre_rot_speed(a3)
-	move.w	(a2)+,mgv_object2_y_pre_rot_speed(a3)
-	move.w	(a2)+,mgv_object2_z_pre_rot_speed(a3)
-	move.w	(a2)+,mgv_object3_x_pre_rot_speed(a3)
-	move.w	(a2)+,mgv_object3_y_pre_rot_speed(a3)
-	move.w	(a2),mgv_object3_z_pre_rot_speed(a3)
+	move.w	(a2)+,mgv_object1_x_prerotation_speed(a3)
+	move.w	(a2)+,mgv_object1_y_prerotation_speed(a3)
+	move.w	(a2)+,mgv_object1_z_prerotation_speed(a3)
+	move.w	(a2)+,mgv_object2_x_prerotation_speed(a3)
+	move.w	(a2)+,mgv_object2_y_prerotation_speed(a3)
+	move.w	(a2)+,mgv_object2_z_prerotation_speed(a3)
+	move.w	(a2)+,mgv_object3_x_prerotation_speed(a3)
+	move.w	(a2)+,mgv_object3_y_prerotation_speed(a3)
+	move.w	(a2),mgv_object3_z_prerotation_speed(a3)
 	moveq	#0,d0
-	move.w	d0,mgv_pre_rotate_active(a3)
-	move.w	d0,mgv_object1_x_pre_rot_angle(a3)
-	move.w	d0,mgv_object1_y_pre_rot_angle(a3)
-	move.w	d0,mgv_object1_z_pre_rot_angle(a3)
-	move.w	d0,mgv_object2_x_pre_rot_angle(a3)
-	move.w	d0,mgv_object2_y_pre_rot_angle(a3)
-	move.w	d0,mgv_object2_z_pre_rot_angle(a3)
-	move.w	d0,mgv_object3_x_pre_rot_angle(a3)
-	move.w	d0,mgv_object3_y_pre_rot_angle(a3)
-	move.w	d0,mgv_object3_z_pre_rot_angle(a3)
+	move.w	d0,mgv_prerotation_active(a3)
+	move.w	d0,mgv_object1_x_prerotation_angle(a3)
+	move.w	d0,mgv_object1_y_prerotation_angle(a3)
+	move.w	d0,mgv_object1_z_prerotation_angle(a3)
+	move.w	d0,mgv_object2_x_prerotation_angle(a3)
+	move.w	d0,mgv_object2_y_prerotation_angle(a3)
+	move.w	d0,mgv_object2_z_prerotation_angle(a3)
+	move.w	d0,mgv_object3_x_prerotation_angle(a3)
+	move.w	d0,mgv_object3_y_prerotation_angle(a3)
+	move.w	d0,mgv_object3_z_prerotation_angle(a3)
 mgv_morph_objects_skip2
 	move.w	#FALSE,mgv_morph_active(a3)
 mgv_morph_objects_quit
@@ -1666,7 +1666,7 @@ mgv_draw_lines
 	movem.l a3-a6,-(a7)
 	bsr	mgv_draw_lines_init
 	lea	mgv_objects_info(pc),a0
-	lea	mgv_rot_xy_coords(pc),a1
+	lea	mgv_xy_coords(pc),a1
 	move.l	pf1_construction1(a3),a2
 	move.l	(a2),d0
 	add.l	#ALIGN_64KB,d0
@@ -1712,7 +1712,7 @@ mgv_draw_lines_loop2
 	movem.w (a1,d2.w*2),d2-d3	; p2(x,y)
 	GET_LINE_PARAMETERS mgv,AREAFILL,COPPERUSE,,mgv_draw_lines_skip2
 	add.l	a3,d0			; remaining BLTCON0 & BLTCON1 bits
-	add.l	a2,d1			; + playfield address
+	add.l	a2,d1			; add playfield address
 	cmp.w	#1,d7			; bitplane 1 ?
 	beq.s	mgv_draw_lines_skip1
 	moveq	#pf1_plane_width,d5
@@ -1919,7 +1919,7 @@ eh_start_scroll_pf_bottom_in
 	CNOP 0,4
 eh_start_morphing
 	clr.w	mgv_morph_active(a3)
-	move.w	#FALSE,mgv_pre_rotate_active(a3)
+	move.w	#FALSE,mgv_prerotation_active(a3)
 	rts
 	CNOP 0,4
 eh_start_scroll_pf_bottom_out
@@ -2556,7 +2556,7 @@ mgv_objects_edges
 	DC.W 26*2,32*2,33*2,26*2
 
 	CNOP 0,2
-mgv_rot_xy_coords
+mgv_xy_coords
 	DS.W mgv_objects_edge_points_number*2
 
 	CNOP 0,4
