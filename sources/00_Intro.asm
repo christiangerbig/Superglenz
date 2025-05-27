@@ -1337,7 +1337,7 @@ gv_fill_playfield1
 	move.l	a0,BLTDPT-DMACONR(a6)	; destination
 	moveq	#0,d0
 	move.l	d0,BLTAMOD-DMACONR(a6)	; A&D moduli
-	move.w	#(gv_fill_blit_y_size*gv_fill_blit_depth<<6)+(gv_fill_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
+	move.w	#((gv_fill_blit_y_size*gv_fill_blit_depth)<<6)+(gv_fill_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
 	rts
 
 
