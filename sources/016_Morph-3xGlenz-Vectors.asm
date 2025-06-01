@@ -146,7 +146,7 @@ diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hst
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
 ddfstrt_bits			EQU DDFSTART_192_PIXEL_4X
 ddfstop_bits			EQU DDFSTOP_192_PIXEL_4X
-bplcon0_bits			EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon1_bits			EQU $4488
 bplcon2_bits			EQU 0
 bplcon3_bits1			EQU 0
@@ -155,7 +155,7 @@ bplcon4_bits			EQU 0
 diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)|(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)|((display_window_vstart&$700)>>8)
 fmode_bits			EQU FMODEF_BPL32|FMODEF_BPAGEM
 
-cl2_hstart			EQU $00
+cl2_hstart			EQU 0
 cl2_vstart			EQU beam_position&$ff
 
 sine_table_length		EQU 512
@@ -1192,13 +1192,13 @@ init_second_copperlist
 	move.l	cl2_construction2(a3),a0
 	bsr.s	cl2_init_playfield_props
 	bsr	cl2_init_colors
-	bsr	cl2_init_plane_ptrs
+	bsr	cl2_init_bitplane_pointers
 	bsr	cl2_init_line_blits_steady
 	bsr	cl2_init_line_blits
 	bsr	cl2_init_fill_blit
 	COP_LISTEND SAVETAIL
-	bsr	get_wrapper_view_values
-	bsr	cl2_set_plane_ptrs
+	bsr	get_wrappingper_view_values
+	bsr	cl2_set_bitplane_pointers
 	bsr	copy_second_copperlist
 	bsr	swap_second_copperlist
 	bsr	mgv_fill_playfield1
@@ -1286,7 +1286,7 @@ cl2_init_fill_blit
 
 
 	CNOP 0,4
-get_wrapper_view_values
+get_wrappingper_view_values
 	move.l	cl2_construction2(a3),a0
 	or.w	#v_bplcon0_bits,cl2_BPLCON0+WORD_SIZE(a0)
 	or.w	#v_bplcon3_bits1,cl2_BPLCON3_1+WORD_SIZE(a0)

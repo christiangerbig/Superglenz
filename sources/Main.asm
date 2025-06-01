@@ -23,7 +23,7 @@
 ; - New glenz parts: 48 faces glenz + 128 faces glenz
 
 ; V.1.3 beta
-; - Bugfix: Intro-Part y wrap command was not considered -> random memory error
+; - Bugfix: Intro-Part y wrapping command was not considered -> random memory error
 ; - All Morphing sequences shortened and changed
 ; - End-Part: Dual playfield with shadow for font
 
@@ -203,7 +203,7 @@ bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0
 color00_bits			EQU $23388e
 
-cl1_hstart			EQU $00
+cl1_hstart			EQU 0
 cl1_vstart			EQU beam_position&$ff
 
 

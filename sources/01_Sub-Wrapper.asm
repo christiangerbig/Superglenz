@@ -10,7 +10,7 @@
 	XDEF v_bplcon3_bits2
 	XDEF v_bplcon4_bits
 	XDEF v_fmode_bits
-	XDEF start_01_sub_wrapper
+	XDEF start_01_sub_wrappingper
 
 	XREF color00_bits
 	XREF start_010_morph_glenz_vectors
@@ -147,8 +147,8 @@ v_bplcon3_bits2			EQU bplcon3_bits2
 v_bplcon4_bits			EQU bplcon4_bits
 v_fmode_bits			EQU fmode_bits
 
-cl2_hstart			EQU $00
-cl2_vstart			EQU beam_position&CL_Y_WRAP
+cl2_hstart			EQU 0
+cl2_vstart			EQU beam_position&CL_Y_WRAPPING
 
 sine_table_length		EQU 512
 
@@ -446,7 +446,7 @@ variables_size			RS.B 0
 	SECTION code,CODE
 
 
-start_01_sub_wrapper
+start_01_sub_wrappingper
 
 
 	INCLUDE "sys-wrapper.i"
@@ -478,24 +478,24 @@ init_main
 
 	CNOP 0,4
 init_sprites
-	bsr.s	spr_init_ptrs_table
+	bsr.s	spr_init_pointers_table
 	bra.s	bg_init_attached_sprites_cluster
 
 
 	INIT_SPRITE_POINTERS_TABLE
 
 
-	INIT_ATTACHED_SPRITES_CLUSTER bg,spr_ptrs_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
+	INIT_ATTACHED_SPRITES_CLUSTER bg,spr_pointers_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
 
 
 	CNOP 0,4
 init_first_copperlist
 	move.l	cl1_display(a3),a0
 	bsr.s	cl1_init_playfield_props
-	bsr.s	cl1_init_sprite_ptrs
+	bsr.s	cl1_init_sprite_pointers
 	bsr	cl1_init_colors
 	COP_MOVEQ 0,COPJMP2
-	bra	cl1_set_sprite_ptrs
+	bra	cl1_set_sprite_pointers
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANKSPR
 
@@ -700,7 +700,7 @@ spr_rgb8_color_table
 
 
 	CNOP 0,4
-spr_ptrs_display
+spr_pointers_display
 	DS.L spr_number
 
 

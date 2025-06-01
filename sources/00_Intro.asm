@@ -154,7 +154,7 @@ cl1_hstart1			EQU display_window_hstart-(4*CMOVE_SLOT_PERIOD)-4
 cl1_vstart1			EQU VSTART_192_LINES+8
 cl1_hstart2			EQU display_window_hstart-(4*CMOVE_SLOT_PERIOD)-4
 cl1_vstart2			EQU VSTART_192_LINES+124
-cl1_HSTART3			EQU $00
+cl1_HSTART3			EQU 0
 cl1_vstart3			EQU beam_position&$ff
 
 sine_table_length		EQU 512
@@ -740,7 +740,7 @@ init_main
 
 	CNOP 0,4
 init_sprites
-	bsr.s	spr_init_ptrs_table
+	bsr.s	spr_init_pointers_table
 	bra.s	init_sprites_cluster
 
 
@@ -755,7 +755,7 @@ init_sprites_cluster
 	moveq	#title_image_y_position,d1
 	MOVEF.W title_image_y_size,d2
 	moveq	#((title_image_x_size-spr_x_size2)/8)+title_image_width,d3
-	lea	spr_ptrs_display(pc),a1
+	lea	spr_pointers_display(pc),a1
 	move.l	(a1)+,a0		; SPR0 structure
 	lea	title_image_data+((spr_x_size2/8)*0),a2 ; bitplane 1
 	lea	title_image_width(a2),a4 ; bitplane 2
@@ -784,7 +784,7 @@ init_sprites_cluster
 	MOVEF.W rse_letters_image_y_position1,d1
 	MOVEF.W rse_letters_image_y_size,d2
 	moveq	#((rse_letters_image_x_size-spr_x_size2)/8)+rse_letters_image_width,d3
-	lea	spr_ptrs_display(pc),a1
+	lea	spr_pointers_display(pc),a1
 	move.l	(a1)+,a0		; SPR0 structure
 	ADDF.W	spr0_extension2_entry,a0
 	lea	rse_letters_image_data+((spr_x_size2/8)*0),a2 ; bitplane 1
@@ -976,15 +976,15 @@ spb_init_display_window
 init_first_copperlist
 	move.l	cl1_display(a3),a0
 	bsr.s	cl1_init_playfield_props
-	bsr	cl1_init_sprite_ptrs
-	bsr	cl1_init_plane_ptrs
-	bsr	cl1_init_branches_ptrs1
-	bsr	cl1_init_branches_ptrs2
+	bsr	cl1_init_sprite_pointers
+	bsr	cl1_init_bitplane_pointers
+	bsr	cl1_init_branches_pointers1
+	bsr	cl1_init_branches_pointers2
 	bsr	cl1_reset_pointer
 	bsr	cl1_init_copper_interrupt
 	COP_LISTEND SAVETAIL
-	bsr	cl1_set_sprite_ptrs
-	bra	cl1_set_plane_ptrs
+	bsr	cl1_set_sprite_pointers
+	bra	cl1_set_bitplane_pointers
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -997,12 +997,11 @@ init_first_copperlist
 
 
 	CNOP 0,4
-cl1_init_branches_ptrs1
+cl1_init_branches_pointers1
 	move.l	#(((cl1_vstart1<<24)|(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d0 ; CWAIT
 	move.l	cl1_display(a3),d1
 	add.l	#cl1_extension1_entry+cl1_ext1_subextension1_entry+cl1_subextension1_size,d1
-	moveq	#1,d2
-	ror.l	#8,d2			; $01000000
+	move.l	#$01000000,d2
 	move.l	cl2_display(a3),d4
 	swap	d4
 	move.w	#COP2LCH,(a0)+
@@ -1012,7 +1011,7 @@ cl1_init_branches_ptrs1
 	move.w	#COP2LCL,(a0)+
 	move.w	d4,(a0)+
 	MOVEF.W cl1_display_y_size1-1,d7
-cl1_init_branches_ptrs1_loop
+cl1_init_branches_pointers1_loop
 	move.l	d0,(a0)+		; CWAIT x,y
 	swap	d1
 	move.w	#COP1LCH,(a0)+
@@ -1023,17 +1022,16 @@ cl1_init_branches_ptrs1_loop
 	move.w	d1,(a0)+
 	add.l	d3,d1			; increase jump in cl1
 	COP_MOVEQ 0,COPJMP2
-	dbf	d7,cl1_init_branches_ptrs1_loop
+	dbf	d7,cl1_init_branches_pointers1_loop
 	rts
 
 
 	CNOP 0,4
-cl1_init_branches_ptrs2
+cl1_init_branches_pointers2
 	move.l	#(((cl1_vstart2<<24)+(((cl1_hstart2/4)*2)<<16))|$10000)|$fffe,d0 ; CWAIT
 	move.l	cl1_display(a3),d1
 	add.l	#cl1_extension2_entry+cl1_ext2_subextension1_entry+cl1_subextension1_size,d1
-	moveq	#1,d2
-	ror.l	#8,d2			; $01000000
+	move.l	#$01000000,d2
 	move.l	cl2_display(a3),d4
 	add.l	#cl2_extension2_entry,d4
 	swap	d4
@@ -1044,7 +1042,7 @@ cl1_init_branches_ptrs2
 	move.w	#COP2LCL,(a0)+
 	move.w	d4,(a0)+
 	MOVEF.W cl1_display_y_size2-1,d7
-cl1_init_branches_ptrs2_loop
+cl1_init_branches_pointers2_loop
 	move.l	d0,(a0)+		; CWAIT x,y
 	swap	d1
 	move.w	#COP1LCH,(a0)+
@@ -1055,7 +1053,7 @@ cl1_init_branches_ptrs2_loop
 	move.w	d1,(a0)+
 	add.l	d3,d1			; increase jump in cl1
 	COP_MOVEQ 0,COPJMP2
-	dbf	d7,cl1_init_branches_ptrs2_loop
+	dbf	d7,cl1_init_branches_pointers2_loop
 	rts
 
 
@@ -1696,7 +1694,7 @@ spr_rgb8_color_table
 
 
 	CNOP 0,4
-spr_ptrs_display
+spr_pointers_display
 	DS.L spr_number
 
 

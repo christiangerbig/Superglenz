@@ -3,7 +3,7 @@
 
 	XREF color00_bits
 	XREF start_00_intro
-	XREF start_01_sub_wrapper
+	XREF start_01_sub_wrappingper
 
 	XDEF start_0_pt_replay
 	XDEF sc_start
@@ -171,7 +171,7 @@ bplcon3_bits1			EQU 0
 bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0
 
-cl1_hstart			EQU $00
+cl1_hstart			EQU 0
 cl1_vstart			EQU beam_position&$ff
 
 ; Custom Memory
@@ -447,7 +447,7 @@ main
 	bsr	start_00_intro
 	tst.l	d0
 	bne.s	main_skip
-	bsr	start_01_sub_wrapper
+	bsr	start_01_sub_wrappingper
 main_skip
 	rts
 

@@ -167,7 +167,7 @@ bplcon4_bits			EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)|(BPLCON4F_ESPRM4
 diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)|(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)|((display_window_vstart&$700)>>8)
 fmode_bits			EQU FMODEF_BPL32|FMODEF_BPAGEM|FMODEF_SPR32|FMODEF_SPAGEM|FMODEF_SSCAN2
 
-cl2_hstart			EQU $00
+cl2_hstart			EQU 0
 cl2_vstart			EQU beam_position&$ff
 
 sine_table_length		EQU 512
@@ -694,7 +694,7 @@ init_colors
 
 	CNOP 0,4
 init_sprites
-	bsr.s	spr_init_ptrs_table
+	bsr.s	spr_init_pointers_table
 	bsr.s	mgv_init_xy_coords
 	bra.s	spr_copy_structures
 
@@ -705,7 +705,7 @@ init_sprites
 mgv_init_xy_coords
 	move.w	#HSTART_320_PIXEL*SHIRES_PIXEL_FACTOR,d0 ; x
 	MOVEF.W display_window_vstart,d1 ; y
-	lea	spr_ptrs_construction(pc),a2
+	lea	spr_pointers_construction(pc),a2
 	move.l	(a2)+,a0		; SPR0
 	move.l	(a2),a1			; SPR1
 	bsr.s	mgv_init_sprite_header
@@ -793,12 +793,12 @@ mgv_init_start_shape
 init_first_copperlist
 	move.l	cl1_display(a3),a0
 	bsr.s	cl1_init_playfield_props
-	bsr	cl1_init_sprite_ptrs
+	bsr	cl1_init_sprite_pointers
 	bsr	cl1_init_colors
-	bsr	cl1_init_plane_ptrs
+	bsr	cl1_init_bitplane_pointers
 	COP_MOVEQ 0,COPJMP2
-	bsr	cl1_set_sprite_ptrs
-	bra	cl1_set_plane_ptrs
+	bsr	cl1_set_sprite_pointers
+	bra	cl1_set_bitplane_pointers
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
 
@@ -819,26 +819,26 @@ cl1_init_colors
 
 
 	CNOP 0,4
-cl1_set_plane_ptrs
+cl1_set_bitplane_pointers
 	move.l	cl1_display(a3),a0
 	ADDF.W	cl1_BPL1PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
 	moveq	#pf1_depth3-1,d7
-cl1_set_plane_ptrs_loop1
+cl1_set_bitplane_pointers_loop1
 	move.w	(a1)+,(a0)		; BPLxPTH
 	ADDF.W	QUADWORD_SIZE*2,a0
 	move.w	(a1)+,LONGWORD_SIZE-(QUADWORD_SIZE*2)(a0) ; BPLxPTL
-	dbf	d7,cl1_set_plane_ptrs_loop1
+	dbf	d7,cl1_set_bitplane_pointers_loop1
 
 	move.l	cl1_display(a3),a0
 	ADDF.W	cl1_BPL2PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
 	moveq	#pf2_depth3-1,d7
-cl1_set_plane_ptrs_loop2
+cl1_set_bitplane_pointers_loop2
 	move.w	(a1)+,(a0)		; BPLxPTH
 	ADDF.W	QUADWORD_SIZE*2,a0
 	move.w	(a1)+,LONGWORD_SIZE-(QUADWORD_SIZE*2)(a0) ; BPLxPTL
-	dbf	d7,cl1_set_plane_ptrs_loop2
+	dbf	d7,cl1_set_bitplane_pointers_loop2
 	rts
 
 
@@ -944,8 +944,8 @@ no_sync_routines
 beam_routines
 	bsr	wait_beam_position
 	bsr.s	swap_second_copperlist
-	bsr	spr_swap_structures
-	bsr	spr_set_sprite_ptrs
+	bsr	swap_sprite_structures
+	bsr	set_sprite_pointers
 	bsr	swap_playfield1
 	bsr	set_playfield1
 	bsr	set_playfield2
@@ -980,10 +980,10 @@ beam_routines_exit
 	SWAP_COPPERLIST cl2,2
 
 
-	SWAP_SPRITES spr,spr_swap_number
+	SWAP_SPRITES spr_swap_number
 
 
-	SET_SPRITES spr,spr_swap_number
+	SET_SPRITES spr_swap_number
 
 
 	SWAP_PLAYFIELD pf1,2
@@ -1039,7 +1039,7 @@ vert_text_scroll
 	MOVEF.L vts_text_chars_per_line*SHIRES_PIXEL_FACTOR,d3
 	MOVEF.W vts_text_char_y_restart,d4
 	lea	vts_chars_y_positions(pc),a1
-	lea	vts_chars_image_ptrs(pc),a2
+	lea	vts_chars_image_pointers(pc),a2
 	move.l	pf1_construction2(a3),a4
 	move.l	(a4),a4
 	moveq	#vts_text_chars_per_column-1,d7
@@ -1343,7 +1343,7 @@ mgv_fill_extra_playfield
 
 	CNOP 0,4
 mgv_copy_extra_playfield
-	lea	spr_ptrs_construction(pc),a2
+	lea	spr_pointers_construction(pc),a2
 	move.l	(a2)+,a0		; 1st sprite structure
 	ADDF.W	(spr_pixel_per_datafetch/4),a0 ; skip sprite header
 	move.l	(a2),a1			; 2nd sprite structure
@@ -1593,12 +1593,12 @@ spr_rgb8_color_table
 
 
 	CNOP 0,4
-spr_ptrs_construction
+spr_pointers_construction
 	DS.L spr_number
 
 
 	CNOP 0,4
-spr_ptrs_display
+spr_pointers_display
 	DS.L spr_number
 
 
@@ -1621,7 +1621,7 @@ vts_chars_y_positions
 	DS.W vts_text_chars_per_column
 
 	CNOP 0,4
-vts_chars_image_ptrs
+vts_chars_image_pointers
 	DS.L vts_text_chars_number
 
 
