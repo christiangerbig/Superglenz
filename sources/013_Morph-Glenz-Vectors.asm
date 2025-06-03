@@ -156,7 +156,7 @@ diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display
 fmode_bits			EQU FMODEF_BPL32|FMODEF_BPAGEM
 
 cl2_hstart			EQU 0
-cl2_vstart			EQU beam_position&$ff
+cl2_vstart			EQU beam_position&CL_Y_WRAPPING
 
 sine_table_length		EQU 512
 
@@ -628,10 +628,12 @@ init_second_copperlist
 	bsr	cl2_set_bitplane_pointers
 	bsr	copy_second_copperlist
 	bsr	swap_second_copperlist
+	bsr	set_second_copperlist
 	bsr	mgv_fill_playfield1
 	bsr	mgv_draw_lines
 	bsr	mgv_set_second_copperlist
 	bsr	swap_second_copperlist
+	bsr	set_second_copperlist
 	bsr	mgv_fill_playfield1
 	bsr	mgv_draw_lines
 	bra	mgv_set_second_copperlist
@@ -722,6 +724,7 @@ main
 beam_routines
 	bsr	wait_beam_position
 	bsr.s	swap_second_copperlist
+	bsr.s	set_second_copperlist
 	bsr.s	swap_playfield1
 	bsr	set_playfield1
 	bsr	effects_handler
@@ -747,6 +750,9 @@ beam_routines_exit
 
 
 	SWAP_COPPERLIST cl2,2
+
+
+	SET_COPPERLIST cl2
 
 
 	SWAP_PLAYFIELD pf1,3

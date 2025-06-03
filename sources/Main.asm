@@ -204,7 +204,7 @@ bplcon4_bits			EQU 0
 color00_bits			EQU $23388e
 
 cl1_hstart			EQU 0
-cl1_vstart			EQU beam_position&$ff
+cl1_vstart			EQU beam_position&CL_Y_WRAPPING
 
 
 	INCLUDE "except-vectors.i"

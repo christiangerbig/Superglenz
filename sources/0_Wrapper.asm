@@ -172,7 +172,7 @@ bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0
 
 cl1_hstart			EQU 0
-cl1_vstart			EQU beam_position&$ff
+cl1_vstart			EQU beam_position&CL_Y_WRAPPING
 
 ; Custom Memory
 custom_memory_number		EQU 2

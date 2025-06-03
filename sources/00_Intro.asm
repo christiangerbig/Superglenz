@@ -154,8 +154,8 @@ cl1_hstart1			EQU display_window_hstart-(4*CMOVE_SLOT_PERIOD)-4
 cl1_vstart1			EQU VSTART_192_LINES+8
 cl1_hstart2			EQU display_window_hstart-(4*CMOVE_SLOT_PERIOD)-4
 cl1_vstart2			EQU VSTART_192_LINES+124
-cl1_HSTART3			EQU 0
-cl1_vstart3			EQU beam_position&$ff
+cl1_hstart3			EQU 0
+cl1_vstart3			EQU beam_position&CL_Y_WRAPPING
 
 sine_table_length		EQU 512
 
@@ -1069,7 +1069,7 @@ cl1_reset_pointer
 	rts
 
 
-	COP_INIT_COPINT cl1,cl1_HSTART3,cl1_vstart3,YWRAP
+	COP_INIT_COPINT cl1,cl1_hstart3,cl1_vstart3,YWRAP
 
 
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
