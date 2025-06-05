@@ -1081,28 +1081,28 @@ cl1_reset_pointer
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_display(a3),a0
-	bsr.s	cl2_init_bplcon41
-	bra.s	cl2_init_bplcon42
+	bsr.s	cl2_init_bplcon4_chunky1
+	bra.s	cl2_init_bplcon4_chunky2
 
 
 	CNOP 0,4
-cl2_init_bplcon41
+cl2_init_bplcon4_chunky1
 	move.l	#(BPLCON4<<16)|bplcon4_bits,d0
 	moveq	#cl2_display_width1-1,d7 ; number of columns
-cl2_init_bplcon41_loop
+cl2_init_bplcon4_chunky1_loop
 	move.l	d0,(a0)+		; BPLCON4
-	dbf	d7,cl2_init_bplcon41_loop
+	dbf	d7,cl2_init_bplcon4_chunky1_loop
 	COP_MOVEQ 0,COPJMP1
 	rts
 
 
 	CNOP 0,4
-cl2_init_bplcon42
+cl2_init_bplcon4_chunky2
 	move.l	#(BPLCON4<<16)|bplcon4_bits,d0
 	moveq	#cl2_display_width2-1,d7 ; number of columns
-cl2_init_bplcon42_loop
+cl2_init_bplcon4_chunky2_loop
 	move.l	d0,(a0)+		; BPLCON4
-	dbf	d7,cl2_init_bplcon42_loop
+	dbf	d7,cl2_init_bplcon4_chunky2_loop
 	COP_MOVEQ 0,COPJMP1
 	rts
 
