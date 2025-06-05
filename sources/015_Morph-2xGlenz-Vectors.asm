@@ -973,7 +973,7 @@ beam_routines
 	bsr.s	set_second_copperlist
 	bsr.s	swap_playfield1
 	bsr	set_playfield1
-	bsr     effects_handler
+	bsr	effects_handler
 	bsr	mgv_clear_playfield1
 	bsr	mgv_objects_rotation
 	bsr	mgv_morph_objects
