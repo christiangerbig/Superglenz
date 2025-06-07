@@ -569,11 +569,11 @@ mgv_init_object_info_loop
 	CNOP 0,4
 mgv_init_morph_shapes
 	lea	mgv_morph_shapes_table(pc),a0
-	lea	mgv_object_shape1_coords(pc),a1
+	lea	mgv_object_shape1_coordinates(pc),a1
 	move.l	a1,(a0)+		; shape table
-	lea	mgv_object_shape2_coords(pc),a1
+	lea	mgv_object_shape2_coordinates(pc),a1
 	move.l	a1,(a0)+		; shape table
-	lea	mgv_object_shape3_coords(pc),a1
+	lea	mgv_object_shape3_coordinates(pc),a1
 	move.l	a1,(a0)			; shape table
 	rts
 
@@ -889,8 +889,8 @@ mgv_rotation
 	add.w	mgv_variable_z_speed(a3),d1
 	and.w	d3,d1			; remove overflow
 	move.w	d1,mgv_z_angle(a3) 
-	lea	mgv_object_coords(pc),a0
-	lea	mgv_xy_coords(pc),a1
+	lea	mgv_object_coordinates(pc),a0
+	lea	mgv_xy_coordinates(pc),a1
 	move.w	#mgv_distance*8,a4
 	move.w	#mgv_xy_center,a5
 	moveq	#mgv_object_edge_points_number-1,d7
@@ -924,7 +924,7 @@ mgv_morph_object
 	bne.s	mgv_morph_object_quit
 	move.w	mgv_morph_shapes_start(a3),d1
 	moveq	#0,d2			; coordinates counter
-	lea	mgv_object_coords(pc),a0
+	lea	mgv_object_coordinates(pc),a0
 	lea	mgv_morph_shapes_table(pc),a1
 	move.l	(a1,d1.w*4),a1		; shape table
 	MOVEF.W mgv_object_edge_points_number*3-1,d7
@@ -961,7 +961,7 @@ mgv_draw_lines
 	movem.l a3-a6,-(a7)
 	bsr	mgv_draw_lines_init
 	lea	mgv_object_info(pc),a0
-	lea	mgv_xy_coords(pc),a1
+	lea	mgv_xy_coordinates(pc),a1
 	move.l	pf1_construction1(a3),a2
 	move.l	(a2),d0
 	add.l	#ALIGN_64KB,d0
@@ -1222,14 +1222,14 @@ mgv_rgb8_color_table
 	INCLUDE "Superglenz:colortables/1xGlenz-Colorgradient3.ct"
 
 	CNOP 0,2
-mgv_object_coords
+mgv_object_coordinates
 ; Zoom-In
 	DS.W mgv_object_edge_points_number*3
 
 ; Object shapes
 ; Shape 1
 	CNOP 0,2
-mgv_object_shape1_coords
+mgv_object_shape1_coordinates
 ; Polygon 90%
 	DC.W 0,-(77*8),0		; P0
 	DC.W -(36*8),-23*8,-(88*8)	; P1
@@ -1260,7 +1260,7 @@ mgv_object_shape1_coords
 
 ; Shape 2
 	CNOP 0,2
-mgv_object_shape2_coords
+mgv_object_shape2_coordinates
 ; Diamond
 ; 90 %
 	DC.W 0,-(81*8),0		; P0
@@ -1292,7 +1292,7 @@ mgv_object_shape2_coords
 
 ; Shape 3
 	CNOP 0,2
-mgv_object_shape3_coords
+mgv_object_shape3_coordinates
 ; Polygon2
 	DC.W 0,-(17*8),0		; P0
 	DC.W -(40*8),-17*8,-(98*8)	; P1
@@ -1546,7 +1546,7 @@ mgv_object_edges
 	DC.W 25*2,22*2,23*2,25*2
 
 	CNOP 0,2
-mgv_xy_coords
+mgv_xy_coordinates
 	DS.W mgv_object_edge_points_number*2
 
 	CNOP 0,4

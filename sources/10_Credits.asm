@@ -695,14 +695,14 @@ init_colors
 	CNOP 0,4
 init_sprites
 	bsr.s	spr_init_pointers_table
-	bsr.s	mgv_init_xy_coords
+	bsr.s	mgv_init_xy_coordinates
 	bra.s	spr_copy_structures
 
 	INIT_SPRITE_POINTERS_TABLE
 
 
 	CNOP 0,4
-mgv_init_xy_coords
+mgv_init_xy_coordinates
 	move.w	#HSTART_320_PIXEL*SHIRES_PIXEL_FACTOR,d0 ; x
 	MOVEF.W display_window_vstart,d1 ; y
 	lea	spr_pointers_construction(pc),a2
@@ -763,18 +763,18 @@ mgv_init_object1_info_loop
 	CNOP 0,4
 mgv_init_morph_shapes_table
 	lea	mgv_morph_shapes_table(pc),a0
-	lea	mgv_object_shape1_coords(pc),a1
+	lea	mgv_object_shape1_coordinates(pc),a1
 	move.l	a1,(a0)+		; shapes table
-	lea	mgv_object_shape2_coords(pc),a1
+	lea	mgv_object_shape2_coordinates(pc),a1
 	move.l	a1,(a0)+		; shapes table
-	lea	mgv_object_shape3_coords(pc),a1
+	lea	mgv_object_shape3_coordinates(pc),a1
 	move.l	a1,(a0)+		; shapes table
-	lea	mgv_object_shape4_coords(pc),a1
+	lea	mgv_object_shape4_coordinates(pc),a1
 	IFEQ mgv_morph_loop_enabled
 		move.l	a1,(a0)		; shapes table
 	ELSE
 		move.l	a1,(a0)+	; shapes table
-		lea	mgv_object_shape5_coords(pc),a1
+		lea	mgv_object_shape5_coordinates(pc),a1
 		move.l	a1,(a0)		; shapes table
 	ENDC
 	rts
@@ -1169,8 +1169,8 @@ mgv_rotation
 	add.w	mgv_variable_y_speed(a3),d1
 	and.w	d3,d1			; remove overflow
 	move.w	d1,mgv_y_angle(a3) 
-	lea	mgv_object_coords(pc),a0
-	lea	mgv_xy_coords(pc),a1
+	lea	mgv_object_coordinates(pc),a0
+	lea	mgv_xy_coordinates(pc),a1
 	move.w	#mgv_distance*8,a4
 	move.w	#mgv_x_center,a5
 	move.w	#mgv_y_center,a6
@@ -1203,7 +1203,7 @@ mgv_morph_object
 	bne.s	mgv_morph_object_quit
 	move.w	mgv_morph_shapes_table_start(a3),d1
 	moveq	#0,d2			; coordinates counter
-	lea	mgv_object_coords(pc),a0
+	lea	mgv_object_coordinates(pc),a0
 	lea	mgv_morph_shapes_table(pc),a1
 	move.l	(a1,d1.w*4),a1		; shape table
 	MOVEF.W mgv_object_edge_points_number*3-1,d7
@@ -1247,7 +1247,7 @@ mgv_draw_lines
 	movem.l a3-a6,-(a7)
 	bsr	mgv_draw_lines_init
 	lea	mgv_object_info(pc),a0
-	lea	mgv_xy_coords(pc),a1
+	lea	mgv_xy_coordinates(pc),a1
 	move.l	extra_pf1(a3),a2
 	move.l	(a2),d0
 	add.l	#ALIGN_64KB,d0
@@ -1633,14 +1633,14 @@ vts_chars_image_pointers
 
 ; Morph-Glenz-Vectors
 	CNOP 0,2
-mgv_object_coords
+mgv_object_coordinates
 ; Zoom-In
 	DS.W mgv_object_edge_points_number*3
 
 ; Object shapes
 ; Shape1 1
 	CNOP 0,2
-mgv_object_shape1_coords
+mgv_object_shape1_coordinates
 ; Cuboid 1
 	DC.W -(20*8),-(120*8),-(20*8)	; P0
 	DC.W 20*8,-(120*8),-(20*8)	; P1
@@ -1659,7 +1659,7 @@ mgv_object_shape1_coords
 
 ; Shape 2
 	CNOP 0,2
-mgv_object_shape2_coords
+mgv_object_shape2_coordinates
 ; Pyramide
 	DC.W -(10*8),-(20*8),-(10*8)	; P0
 	DC.W 10*8,-(20*8),-(10*8)	; P1
@@ -1678,7 +1678,7 @@ mgv_object_shape2_coords
 
 ; Shape 3
 	CNOP 0,2
-mgv_object_shape3_coords
+mgv_object_shape3_coordinates
 ; Wedge 1
 	DC.W -(20*8),-(80*8),-(20*8); P0
 	DC.W 20*8,-(80*8),-(20*8)	; P1
@@ -1697,7 +1697,7 @@ mgv_object_shape3_coords
 
 ; Shape 4
 	CNOP 0,2
-mgv_object_shape4_coords
+mgv_object_shape4_coordinates
 ; Wedge 2
 	DC.W -(20*8),-(10*8),-(20*8)	; P0
 	DC.W 20*8,-(10*8),-(20*8)	; P1
@@ -1717,7 +1717,7 @@ mgv_object_shape4_coords
 
 ; Shape 5
 		CNOP 0,2
-mgv_object_shape5_coords
+mgv_object_shape5_coordinates
 ; Zoom-Out
 		DS.W mgv_object_edge_points_number*3
 	ENDC
@@ -1859,7 +1859,7 @@ mgv_object_edges
 	DC.W 7*2,3*2,13*2,7*2		; face bottom, triangle 9 o'clock
 
 	CNOP 0,2
-mgv_xy_coords
+mgv_xy_coordinates
 	DS.W mgv_object_edge_points_number*2
 
 	CNOP 0,4

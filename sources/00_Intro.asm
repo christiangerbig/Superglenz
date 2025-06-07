@@ -1223,8 +1223,8 @@ gv_rotation_skip1
 gv_rotation_skip2
 	ENDC
 	move.w	d1,gv_y_angle(a3) 
-	lea	gv_object_coords(pc),a0
-	lea	gv_xy_coords(pc),a1
+	lea	gv_object_coordinates(pc),a0
+	lea	gv_xy_coordinates(pc),a1
 	move.w	#gv_distance*8,a4
 	move.w	#gv_xy_center,a5
 	moveq	#gv_object_edge_points_number-1,d7
@@ -1255,7 +1255,7 @@ gv_draw_lines
 	movem.l a3-a5,-(a7)
 	bsr	gv_draw_lines_init
 	lea	gv_object_info(pc),a0
-	lea	gv_xy_coords(pc),a1
+	lea	gv_xy_coordinates(pc),a1
 	move.l	pf1_construction2(a3),a2
 	move.l	(a2),a2
 	move.l	#((BC0F_SRCA|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line drawing mode
@@ -1713,7 +1713,7 @@ gv_rgb8_color_table
 	INCLUDE "Blitter.AGA:graphics/1xGlenz-Colorgradient5.ct"
 
 	CNOP 0,2
-gv_object_coords
+gv_object_coordinates
 	DC.W 0,-(36*8),0		; P0
 	DC.W -(19*8),-(36*8),-(48*8)	; P1
 	DC.W 19*8,-(36*8),-(48*8)	; P2
@@ -2006,7 +2006,7 @@ gv_object_edges
 	DC.W 25*2,22*2,23*2,25*2	; face 46 unten, triangle 10,5 o'clock
 
 	CNOP 0,2
-gv_xy_coords
+gv_xy_coordinates
 	DS.W gv_object_edge_points_number*2
 
 
