@@ -144,9 +144,9 @@ pf1_plane_moduli		EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetc
 
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
-ddfstrt_bits			EQU DDFSTART_320_PIXEL
+ddfstrt_bits			EQU DDFSTRT_320_PIXEL
 ddfstop_bits			EQU DDFSTOP_256_PIXEL_LALGN_4X
-bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon1_bits			EQU $8800
 bplcon2_bits			EQU 0
 bplcon3_bits1			EQU 0
@@ -271,7 +271,7 @@ mgv_fill_blit_depth		EQU pf1_depth3
 spb_min_vstart			EQU VSTART_256_LINES
 spb_max_vstop			EQU VSTOP_OVERSCAN_PAL
 spb_y_radius			EQU spb_max_vstop-spb_min_vstart
-spb_y_centre			EQU spb_max_vstop-spb_min_vstart
+spb_y_center			EQU spb_max_vstop-spb_min_vstart
 
 ; Scroll-Playfield-Bottom-In
 spbi_y_angle_speed		EQU 4
@@ -1077,7 +1077,7 @@ scroll_pf_bottom_in_skip
 	move.w	(a0,d2.w*2),d0		; sin(w)
 	muls.w	#spb_y_radius*2,d0	; y'=(sin(w)*yr)/2^15
 	swap	d0
-	add.w	#spb_y_centre,d0	; y' + y center
+	add.w	#spb_y_center,d0	; y' + y center
 	addq.w	#spbi_y_angle_speed,d2
 	move.w	d2,spbi_y_angle(a3) 
 	MOVEF.W spb_max_VSTOP,d3
@@ -1102,7 +1102,7 @@ scroll_pf_bottom_out_skip
 	move.w	(a0,d2.w*2),d0		; cos(w)
 	muls.w	#spb_y_radius*2,d0	; y'=(cos(w)*yr)/2^15
 	swap	d0
-	add.w	#spb_y_centre,d0	; y' + y center
+	add.w	#spb_y_center,d0	; y' + y center
 	addq.w	#spbo_y_angle_speed,d2
 	move.w	d2,spbo_y_angle(a3) 
 	MOVEF.W spb_max_VSTOP,d3

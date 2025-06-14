@@ -133,9 +133,9 @@ pf1_plane_moduli		EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetc
 
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
-ddfstrt_bits			EQU DDFSTART_192_PIXEL_4X
+ddfstrt_bits			EQU DDFSTRT_192_PIXEL_4X
 ddfstop_bits			EQU DDFSTOP_192_PIXEL_4X
-bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon1_bits			EQU 0
 bplcon2_bits			EQU 0
 bplcon3_bits1			EQU BPLCON3F_SPRES0
@@ -301,7 +301,7 @@ gv_fill_blit_depth		EQU pf1_depth3
 spb_min_vstart			EQU VSTART_192_LINES
 spb_max_vstop			EQU VSTOP_OVERSCAN_PAL
 spb_y_radius			EQU spb_max_vstop-spb_min_vstart
-spb_y_centre			EQU spb_max_vstop-spb_min_vstart
+spb_y_center			EQU spb_max_vstop-spb_min_vstart
 
 ; Scroll-Playfield-Bottom-In
 spbi_y_angle_speed		EQU 3
@@ -1000,7 +1000,7 @@ init_first_copperlist
 cl1_init_branches_pointers1
 	move.l	#(((cl1_vstart1<<24)|(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d0 ; CWAIT
 	move.l	cl1_display(a3),d1
-	add.l	#cl1_extension1_entry+cl1_ext1_subextension1_entry+cl1_subextension1_size,d1
+	ADDF.L	cl1_extension1_entry+cl1_ext1_subextension1_entry+cl1_subextension1_size,d1
 	move.l	#$01000000,d2
 	move.l	cl2_display(a3),d4
 	swap	d4
@@ -1030,10 +1030,10 @@ cl1_init_branches_pointers1_loop
 cl1_init_branches_pointers2
 	move.l	#(((cl1_vstart2<<24)+(((cl1_hstart2/4)*2)<<16))|$10000)|$fffe,d0 ; CWAIT
 	move.l	cl1_display(a3),d1
-	add.l	#cl1_extension2_entry+cl1_ext2_subextension1_entry+cl1_subextension1_size,d1
+	ADDF.L	cl1_extension2_entry+cl1_ext2_subextension1_entry+cl1_subextension1_size,d1
 	move.l	#$01000000,d2
 	move.l	cl2_display(a3),d4
-	add.l	#cl2_extension2_entry,d4
+	ADDF.L	cl2_extension2_entry,d4
 	swap	d4
 	move.w	#COP2LCH,(a0)+
 	moveq	#cl1_subextension1_size,d3
@@ -1354,7 +1354,7 @@ scroll_pf_bottom_in_skip
 	move.w	(a0,d2.w*2),d0		; sin(w)
 	muls.w	#spb_y_radius*2,d0	; y'=(sin(w)*yr)/2^15
 	swap	d0
-	add.w	#spb_y_centre,d0	; y' + y center
+	add.w	#spb_y_center,d0	; y' + y center
 	addq.w	#spbi_y_angle_speed,d2
 	move.w	d2,spbi_y_angle(a3) 
 	MOVEF.W spb_max_VSTOP,d3
@@ -1379,7 +1379,7 @@ scroll_pf_bottom_out_skip
 	move.w	(a0,d2.w*2),d0		; cos(w)
 	muls.w	#spb_y_radius*2,d0	; y'=(cos(w)*yr)/2^15
 	swap	d0
-	add.w	#spb_y_centre,d0	; y' + y center
+	add.w	#spb_y_center,d0	; y' + y center
 	add.w	#spbo_y_angle_speed,d2
 	move.w	d2,spbo_y_angle(a3) 
 	MOVEF.W spb_max_VSTOP,d3
