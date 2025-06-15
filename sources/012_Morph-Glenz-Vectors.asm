@@ -690,7 +690,7 @@ cl2_init_fill_blit
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ pf1_plane_width-(visible_pixels_number/8),BLTAMOD
 	COP_MOVEQ pf1_plane_width-(visible_pixels_number/8),BLTDMOD
-	COP_MOVEQ ((mgv_fill_blit_y_size*mgv_fill_blit_depth)<<6)+(mgv_fill_blit_x_size/WORD_BITS),BLTSIZE
+	COP_MOVEQ ((mgv_fill_blit_y_size*mgv_fill_blit_depth)<<6)|(mgv_fill_blit_x_size/WORD_BITS),BLTSIZE
 	rts
 
 
@@ -970,7 +970,7 @@ mgv_draw_lines
 	sub.l	a4,a4			; lines counter
 	move.l	cl2_construction2(a3),a6 
 	ADDF.W	cl2_extension3_entry-cl2_extension2_size+cl2_ext2_BLTCON0+WORD_SIZE,a6
-	move.l	#((BC0F_SRCA|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line mode
+	move.l	#((BC0F_SRCA|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC)<<16)|(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line mode
 	MOVEF.W mgv_object_faces_number-1,d7
 mgv_draw_lines_loop1
 ; calculate z of vektors N

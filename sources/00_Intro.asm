@@ -1028,7 +1028,7 @@ cl1_init_branches_pointers1_loop
 
 	CNOP 0,4
 cl1_init_branches_pointers2
-	move.l	#(((cl1_vstart2<<24)+(((cl1_hstart2/4)*2)<<16))|$10000)|$fffe,d0 ; CWAIT
+	move.l	#(((cl1_vstart2<<24)|(((cl1_hstart2/4)*2)<<16))|$10000)|$fffe,d0 ; CWAIT
 	move.l	cl1_display(a3),d1
 	ADDF.L	cl1_extension2_entry+cl1_ext2_subextension1_entry+cl1_subextension1_size,d1
 	move.l	#$01000000,d2
@@ -1258,7 +1258,7 @@ gv_draw_lines
 	lea	gv_xy_coordinates(pc),a1
 	move.l	pf1_construction2(a3),a2
 	move.l	(a2),a2
-	move.l	#((BC0F_SRCA|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC)<<16)+(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line drawing mode
+	move.l	#((BC0F_SRCA|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC)<<16)|(BLTCON1F_LINE+BLTCON1F_SING),a3 ; minterm line drawing mode
 	move.w	#pf1_plane_width,a4
 	moveq	#gv_object_faces_number-1,d7
 gv_draw_lines_loop1
@@ -1330,12 +1330,12 @@ gv_fill_playfield1
 	ADDF.L	(pf1_plane_width*pf1_y_size3*pf1_depth3)-2,a0 ; end of playfield
 	WAITBLIT
 	move.w	#DMAF_BLITHOG,DMACON-DMACONR(a6)
-	move.l	#((BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16)+(BLTCON1F_DESC+BLTCON1F_EFE),BLTCON0-DMACONR(a6) ; minterm D=A, fill mode, backwards
+	move.l	#((BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16)|(BLTCON1F_DESC+BLTCON1F_EFE),BLTCON0-DMACONR(a6) ; minterm D=A, fill mode, backwards
 	move.l	a0,BLTAPT-DMACONR(a6)	; source
 	move.l	a0,BLTDPT-DMACONR(a6)	; destination
 	moveq	#0,d0
 	move.l	d0,BLTAMOD-DMACONR(a6)	; A&D moduli
-	move.w	#((gv_fill_blit_y_size*gv_fill_blit_depth)<<6)+(gv_fill_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
+	move.w	#((gv_fill_blit_y_size*gv_fill_blit_depth)<<6)|(gv_fill_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
 	rts
 
 
