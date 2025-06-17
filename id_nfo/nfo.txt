@@ -15,7 +15,7 @@
                         :                         :
                         .     ! SUPERGLENZ !      .
 
-               Type -> Intro                   Code -> Dissident
+               Type -> Demo                    Code -> Dissident
        Release Date -> 26th July 2025       Graphic -> Gr4ss
         Released At -> Nordlicht              Music -> AceMan
             Minimum -> AGA 020 PAL              `----> Magnetic Fox

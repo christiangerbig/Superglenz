@@ -74,6 +74,11 @@
 ; - Workbench message handler enabled
 ; - ADF created
 
+; V.1.1
+; - new includes used
+; - final version
+; - credits part: text changed
+
 
 	MC68040
 
@@ -372,8 +377,8 @@ pf1_rgb8_color_table
 
 	DC.B "$VER: "
 	DC.B "RSE-Superglenz "
-	DC.B "1.0 "
-	DC.B "(24.5.25)",0
+	DC.B "1.1 "
+	DC.B "(17.6.25)",0
 	EVEN
 
 	END

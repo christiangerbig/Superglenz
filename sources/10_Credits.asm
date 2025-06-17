@@ -2163,7 +2163,7 @@ vts_text
 	DC.B "                    "
 	DC.B "                    "
 	DC.B "                    "
-	DC.B "ALL PARTS RUNNING   "
+	DC.B "ALL PARTS RUN       "
 	DC.B "                    "
 	DC.B "IN 50 FPS ON A      "
 	DC.B "                    "
