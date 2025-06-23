@@ -1,4 +1,4 @@
-CD Daten:Asm-Sources.AGA/projects/Superglenz/modules
+CD Superglenz:modules
 
 stc "mod.SuperGlenz.song" -fd -p0 -o0
 stc "mod.SuperGlenz.smps" -fd -p0 -o0
