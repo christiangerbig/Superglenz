@@ -280,7 +280,7 @@ mgv_clear_blit_y_size		EQU visible_lines_number
 mgv_clear_blit_depth		EQU extra_pf1_depth
 
 ; Colors-Fader-Cross
-cfc_rgb8_start_color		EQU 18
+cfc_rgb8_start_color		EQU 2
 cfc_rgb8_color_table_offset	EQU 2
 cfc_rgb8_colors_number		EQU 4
 cfc_rgb8_color_tables_number	EQU 3
@@ -531,38 +531,38 @@ sprite7_size			RS.B 0
 
 
 spr0_x_size1			EQU spr_x_size1
-spr0_y_size1			EQU sprite0_size/(spr_x_size1/8)
+spr0_y_size1			EQU sprite0_size/(spr_x_size1/4)
 spr1_x_size1			EQU spr_x_size1
-spr1_y_size1			EQU sprite1_size/(spr_x_size1/8)
+spr1_y_size1			EQU sprite1_size/(spr_x_size1/4)
 spr2_x_size1			EQU spr_x_size1
-spr2_y_size1			EQU sprite2_size/(spr_x_size1/8)
+spr2_y_size1			EQU sprite2_size/(spr_x_size1/4)
 spr3_x_size1			EQU spr_x_size1
-spr3_y_size1			EQU sprite3_size/(spr_x_size1/8)
+spr3_y_size1			EQU sprite3_size/(spr_x_size1/4)
 spr4_x_size1			EQU spr_x_size1
-spr4_y_size1			EQU sprite4_size/(spr_x_size1/8)
+spr4_y_size1			EQU sprite4_size/(spr_x_size1/4)
 spr5_x_size1			EQU spr_x_size1
-spr5_y_size1			EQU sprite5_size/(spr_x_size1/8)
+spr5_y_size1			EQU sprite5_size/(spr_x_size1/4)
 spr6_x_size1			EQU spr_x_size1
-spr6_y_size1			EQU sprite6_size/(spr_x_size1/8)
+spr6_y_size1			EQU sprite6_size/(spr_x_size1/4)
 spr7_x_size1			EQU spr_x_size1
-spr7_y_size1			EQU sprite7_size/(spr_x_size1/8)
+spr7_y_size1			EQU sprite7_size/(spr_x_size1/4)
 
 spr0_x_size2			EQU spr_x_size2
-spr0_y_size2			EQU sprite0_size/(spr_x_size2/8)
+spr0_y_size2			EQU sprite0_size/(spr_x_size2/4)
 spr1_x_size2			EQU spr_x_size2
-spr1_y_size2			EQU sprite1_size/(spr_x_size2/8)
+spr1_y_size2			EQU sprite1_size/(spr_x_size2/4)
 spr2_x_size2			EQU spr_x_size2
-spr2_y_size2			EQU sprite2_size/(spr_x_size2/8)
+spr2_y_size2			EQU sprite2_size/(spr_x_size2/4)
 spr3_x_size2			EQU spr_x_size2
-spr3_y_size2			EQU sprite3_size/(spr_x_size2/8)
+spr3_y_size2			EQU sprite3_size/(spr_x_size2/4)
 spr4_x_size2			EQU spr_x_size2
-spr4_y_size2			EQU sprite4_size/(spr_x_size2/8)
+spr4_y_size2			EQU sprite4_size/(spr_x_size2/4)
 spr5_x_size2			EQU spr_x_size2
-spr5_y_size2			EQU sprite5_size/(spr_x_size2/8)
+spr5_y_size2			EQU sprite5_size/(spr_x_size2/4)
 spr6_x_size2			EQU spr_x_size2
-spr6_y_size2			EQU sprite6_size/(spr_x_size2/8)
+spr6_y_size2			EQU sprite6_size/(spr_x_size2/4)
 spr7_x_size2			EQU spr_x_size2
-spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
+spr7_y_size2			EQU sprite7_size/(spr_x_size2/4)
 
 
 	RSRESET
@@ -1445,18 +1445,18 @@ cfc_rgb8_copy_color_table
 	bne.s	cfc_rgb8_copy_color_table_quit
 	move.w	#RB_NIBBLES_MASK,d3
 	IFGT cfc_rgb8_colors_number-32
-		moveq	#cfc_rgb8_start_xolor*8,d4 ; color register counter
+		moveq	#cfc_rgb8_start_color<<3,d4 ; color register counter
 	ENDC
 	lea	spr_rgb8_color_table+(cfc_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
 	move.l	cl1_display(a3),a1 
-	ADDF.W	cl1_COLOR18_high1+WORD_SIZE,a1
+	ADDF.W	cl1_COLOR16_high1+(cfc_rgb8_start_color*LONGWORD_SIZE)+WORD_SIZE,a1
 	IFNE cl1_size1
 		move.l	cl1_construction1(a3),a2
-		ADDF.W	cl1_COLOR18_high1+WORD_SIZE,a2
+		ADDF.W	cl1_COLOR16_high1+(cfc_rgb8_start_color*LONGWORD_SIZE)+WORD_SIZE,a2
 	ENDC
 	IFNE cl1_size2
 		move.l	cl1_construction2(a3),a4
-		ADDF.W	cl1_COLOR18_high1+WORD_SIZE,a4
+		ADDF.W	cl1_COLOR16_high1+(cfc_rgb8_start_color*LONGWORD_SIZE)+WORD_SIZE,a4
 	ENDC
 	MOVEF.W cfc_rgb8_colors_number-1,d7
 cfc_rgb8_copy_color_table_loop
