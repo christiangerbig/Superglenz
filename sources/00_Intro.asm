@@ -1012,7 +1012,7 @@ cl1_init_branches_pointers1
 	move.w	d4,(a0)+
 	MOVEF.W cl1_display_y_size1-1,d7
 cl1_init_branches_pointers1_loop
-	move.l	d0,(a0)+		; CWAIT x,y
+	move.l	d0,(a0)+		; CWAIT
 	swap	d1
 	move.w	#COP1LCH,(a0)+
 	add.l	d2,d0			; next scanline
@@ -1043,7 +1043,7 @@ cl1_init_branches_pointers2
 	move.w	d4,(a0)+
 	MOVEF.W cl1_display_y_size2-1,d7
 cl1_init_branches_pointers2_loop
-	move.l	d0,(a0)+		; CWAIT x,y
+	move.l	d0,(a0)+		; CWAIT
 	swap	d1
 	move.w	#COP1LCH,(a0)+
 	add.l	d2,d0			; next scanline
@@ -1234,7 +1234,7 @@ gv_rotation_loop
 	move.w	(a0)+,d1		; y
 	move.w	(a0)+,d2		; z
 	ROTATE_Y_AXIS
-; Zentralprojektion und Translation
+; Central projection and translation
 	MULSF.W gv_distance,d0,d3	; x projection
 	add.w	a4,d2			; z+d
 	divs.w	d2,d0			; x' = (x*d)/(z+d)
