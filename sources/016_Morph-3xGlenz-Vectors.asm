@@ -700,8 +700,8 @@ mgv_init_objects_info
 
 ; Input
 ; d7.w	number of faces
-; a0.l	Pointer	object info table
-; a1.l	Pointer	edge table
+; a0.l		object info table
+; a1.l		edge table
 ; Result
 	CNOP 0,4
 mgv_init_objects_info_loop
@@ -1150,7 +1150,7 @@ mgv_init_color_table
 ; Input
 ; d6.w	1st source color number
 ; d7.w	2nd source color number
-; a0.l	Pointer	color table
+; a0.l		color table
 	CNOP 0,4
 mgv_get_colorvalues_average
 ; Result
@@ -1449,10 +1449,10 @@ mgv_prerotation_objects_quit
 
 ; Input
 ; d7.w	number of points
-; a0.l	Pointer	object coordinates table
-; a1.l	Pointer	destination coordinates table
-; a5.l	Pointer	variable x_angle
-; a6.l	Pointer	variable x_speed
+; a0.l		object coordinates table
+; a1.l		destination coordinates table
+; a5.l		variable x_angle
+; a6.l		variable x_speed
 ; Result
 	CNOP 0,4
 mgv_prerotation
@@ -1644,8 +1644,8 @@ mgv_morph_objects_quit
 
 ; Input
 ; d7.w	number of coordinates
-; a0.l	Pointer	current coordinates table
-; a1.l	Pointer	destination coordinatws table
+; a0.l		current coordinates table
+; a1.l		destination coordinatws table
 ; Result
 	CNOP 0,4
 mgv_morph_objects_loop
@@ -1940,7 +1940,7 @@ eh_stop_all
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-nmi_int_server
+nmi_server
 	rts
 
 

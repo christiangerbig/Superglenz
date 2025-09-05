@@ -821,8 +821,8 @@ init_sprites_cluster
 ; d2.w	Height
 ; d7.w	Height of single sprite
 ; a0.l	Sprite structure
-; a2.l	Pointer bitplane 1
-; a4.l	Pointer bitplane 2
+; a2.l	 bitplane 1
+; a4.l	 bitplane 2
 ; Result
 	CNOP 0,4
 copy_sprite_planes
@@ -1599,7 +1599,7 @@ mh_exit_demo
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-nmi_int_server
+nmi_server
 	rts
 
 

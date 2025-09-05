@@ -715,8 +715,8 @@ mgv_init_xy_coordinates
 ; Input
 ; d0.w	x
 ; d1.w	y
-; a0.l	Pointer	1st sprite structure
-; a1.l	Pointer	2nd sprite structure
+; a0.l		1st sprite structure
+; a1.l		2nd sprite structure
 ; Result
 	CNOP 0,4
 mgv_init_sprite_header
@@ -1571,7 +1571,7 @@ eh_start_vert_text_scroll
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-nmi_int_server
+nmi_server
 	rts
 
 

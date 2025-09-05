@@ -655,8 +655,8 @@ mgv_init_objects_info
 
 ; Input
 ; d7.w	number of faces
-; a0.l	Pointer	object info table
-; a1.l	Pointer	edge table
+; a0.l		object info table
+; a1.l		edge table
 ; Result
 	CNOP 0,4
 mgv_init_objects_info_loop
@@ -1087,10 +1087,10 @@ mgv_objects_rotation
 
 ; Input
 ; d7.w	number of points
-; a0.l	Pointer	object table
+; a0.l		object table
 ; a1.l	Koordinaten der Linien
-; a5.l	Pointer	variable x_angle
-; a6.l	Pointer	variable x_speed
+; a5.l		variable x_angle
+; a6.l		variable x_speed
 ; Result
 	CNOP 0,4
 mgv_rotation
@@ -1191,8 +1191,8 @@ mgv_morph_objects_quit
 
 ; Input
 ; d7.w	number of coordinates
-; a0.l	Pointer	current object
-; a1.l	Pointer	destination object
+; a0.l		current object
+; a1.l		destination object
 ; Result
 	CNOP 0,4
 mgv_morph_objects_loop
@@ -1472,7 +1472,7 @@ eh_start_scroll_pf_bottom_out
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-nmi_int_server
+nmi_server
 	rts
 
 
