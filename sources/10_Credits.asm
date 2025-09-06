@@ -1588,7 +1588,7 @@ pf1_rgb8_color_table
 
 	CNOP 0,4
 pf2_rgb8_color_table
-	DC.L color00_bits,$000000       ; shadow of font
+	DC.L color00_bits,$000000 ; shadow of font
 
 
 	CNOP 0,4

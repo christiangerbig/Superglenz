@@ -959,7 +959,7 @@ beam_routines_exit
 	SET_COPPERLIST cl2
 
 
-        SWAP_PLAYFIELD pf1,3
+	SWAP_PLAYFIELD pf1,3
 
 
 	CNOP 0,4
