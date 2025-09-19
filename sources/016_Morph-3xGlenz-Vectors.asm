@@ -1169,10 +1169,10 @@ mgv_get_colorvalues_average
 	add.w	d7,d6
 	add.w	d3,d0
 	lsr.w	#1,d0
-	move.b	d0,1(a0,d6.w*4)		; mixed red
+	move.b	d0,BYTE_SIZE(a0,d6.w*4)		; mixed red
 	add.w	d4,d1
 	lsr.w	#1,d1
-	move.b	d1,2(a0,d6.w*4)		; mixed green
+	move.b	d1,WORD_SIZE(a0,d6.w*4)		; mixed green
 	add.w	d5,d2
 	lsr.w	#1,d2
 	move.b	d2,3(a0,d6.w*4)		; mixed blue
