@@ -1155,15 +1155,15 @@ mgv_init_color_table
 mgv_get_colorvalues_average
 ; Result
 	moveq	#0,d0
-	move.b	1(a0,d6.w*4),d0		; 1st source color red
+	move.b	BYTE_SIZE(a0,d6.w*4),d0	; 1st source color red
 	moveq	#0,d1
-	move.b	2(a0,d6.w*4),d1		; 1st source color green
+	move.b	WORD_SIZE(a0,d6.w*4),d1	; 1st source color green
 	moveq	#0,d2
 	move.b	3(a0,d6.w*4),d2		; 1st source color blue
 	moveq	#0,d3
-	move.b	1(a0,d7.w*4),d3		; 2nd source color red
+	move.b	BYTE_SIZE(a0,d7.w*4),d3	; 2nd source color red
 	moveq	#0,d4
-	move.b	2(a0,d7.w*4),d4		; 2nd source color green
+	move.b	WORD_SIZE(a0,d7.w*4),d4	; 2nd source color green
 	moveq	#0,d5
 	move.b	3(a0,d7.w*4),d5		; 2nd source color blue
 	add.w	d7,d6
@@ -1686,15 +1686,15 @@ mgv_draw_lines
 mgv_draw_lines_loop1
 	move.l	(a0)+,a5		; starts table
 	move.w	(a5),d4			; p1 start
-	move.w	2(a5),d5		; p2 start
-	move.w	4(a5),d6		; p3 start
+	move.w	WORD_SIZE(a5),d5	; p2 start
+	move.w	LONGWORD_SIZE(a5),d6	; p3 start
 	swap	d7 			; high word: loop counter
 	movem.w (a1,d5.w*2),d0-d1	; p2(x,y)
 	movem.w (a1,d6.w*2),d2-d3	; p3(x,y)
 	sub.w	d0,d2			; xv = xp3-xp2
 	sub.w	(a1,d4.w*2),d0		; xu = xp2-xp1
 	sub.w	d1,d3			; yv = yp3-yp2
-	sub.w	2(a1,d4.w*2),d1		; yu = yp2-yp1
+	sub.w	WORD_SIZE(a1,d4.w*2),d1	; yu = yp2-yp1
 	muls.w	d3,d0			; xu*yv
 	move.w	(a0)+,d7		; face color
 	muls.w	d2,d1			; yu*xv

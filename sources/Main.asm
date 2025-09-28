@@ -19,7 +19,7 @@
 ; - all modules muted
 
 ; V.1.2 beta
-; - Bugfix spritefield display bug right border (all sprites X+16)
+; - Bugfix spritefield display bug right border (all sprites x+16)
 ; - New glenz parts: 48 faces glenz + 128 faces glenz
 
 ; V.1.3 beta
