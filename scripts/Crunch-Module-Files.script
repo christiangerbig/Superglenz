@@ -1,4 +1,4 @@
-CD Superglenz:modules
+CD Superglenz:trackermodules
 
 stc "mod.SuperGlenz.song" -fd -p0 -o0
 stc "mod.SuperGlenz.smps" -fd -p0 -o0

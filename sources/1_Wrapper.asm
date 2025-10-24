@@ -591,12 +591,12 @@ global_stop_fx_active		DC.W 0
 ; PT-Replay
 	IFEQ pt_split_module_enabled
 pt_auddata			SECTION pt_audio,DATA
-		INCBIN "Superglenz:modules/MOD.Funky Evening.song.stc"
+		INCBIN "Superglenz:trackermodules/MOD.Funky Evening.song.stc"
 pt_audsmps			SECTION pt_audio2,DATA_C
-		INCBIN "Superglenz:modules/MOD.Funky Evening.smps.stc"
+		INCBIN "Superglenz:trackermodules/MOD.Funky Evening.smps.stc"
 	ELSE
 pt_auddata			SECTION pt_audio,DATA_C
-		INCBIN "Superglenz:modules/MOD.Funky Evening"
+		INCBIN "Superglenz:trackermodules/MOD.Funky Evening"
 	ENDC
 
 	END

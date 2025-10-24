@@ -778,12 +778,12 @@ custom_memory_table
 ; PT-Replay
 	IFEQ pt_split_module_enabled
 pt_auddata			SECTION pt_audio,DATA
-		INCBIN "Superglenz:modules/MOD.SuperGlenz.song.stc"
+		INCBIN "Superglenz:trackermodules/MOD.SuperGlenz.song.stc"
 pt_audsmps			SECTION pt_audio2,DATA_C
-		INCBIN "Superglenz:modules/MOD.SuperGlenz.smps.stc"
+		INCBIN "Superglenz:trackermodules/MOD.SuperGlenz.smps.stc"
 	ELSE
 pt_auddata			SECTION pt_audio,DATA_C
-		INCBIN "Superglenz:modules/MOD.SuperGlenz"
+		INCBIN "Superglenz:trackermodules/MOD.SuperGlenz"
 	ENDC
 
 	END

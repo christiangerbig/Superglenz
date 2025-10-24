@@ -38,7 +38,7 @@
 ; - Global FX state of the music fader ends the demo
 ; - Parts 013/014: Movements changed
 ; - Bugfix: DIWSTRT/DIWSTOP/DIWHIGH will be pre-initialized, because OS3.x
-; LoadView(NULL) sets DIWHIGH=$0000
+; LoadView(NULL) sets DIWHIGH = $0000
 
 ; V.1.6 beta
 ; - with Aceman's module "Voyage Fantastique" as a placeholder

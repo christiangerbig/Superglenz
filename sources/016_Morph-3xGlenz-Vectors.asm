@@ -1183,7 +1183,7 @@ mgv_get_colorvalues_average
 spb_init_display_window
 	move.w	#diwstrt_bits,DIWSTRT-DMACONR(a6)
 	move.w	#diwstop_bits,DIWSTOP-DMACONR(a6)
-	move.w	#diwhigh_bits,DIWHIGH-DMACONR(a6) ; OS3.x LoadView() sets DIWHIGH=$0000 setzt -> display glitches
+	move.w	#diwhigh_bits,DIWHIGH-DMACONR(a6) ; OS3.x LoadView() sets DIWHIGH = $0000 setzt -> display glitches
 	rts
 
 
@@ -1275,7 +1275,7 @@ cl1_init_line_blits_loop
 
 	CNOP 0,4
 cl2_init_fill_blit
-	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A
+	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D = A
 	COP_MOVEQ BLTCON1F_DESC+BLTCON1F_EFE,BLTCON1 ; fill mode, backwards
 	COP_MOVEQ 0,BLTAPTH
 	COP_MOVEQ 0,BLTAPTL
@@ -1827,7 +1827,7 @@ scroll_pf_bottom_in
 scroll_pf_bottom_in_skip
 	lea	sine_table,a0
 	move.w	(a0,d2.w*2),d0		; sin(w)
-	muls.w	#spb_y_radius*2,d0	; y'=(sin(w)*yr)/2^15
+	muls.w	#spb_y_radius*2,d0	; y' = (sin(w)*yr)/2^15
 	swap	d0
 	add.w	#spb_y_center,d0	; y' + y center
 	addq.w	#spbi_y_angle_speed,d2
@@ -1851,7 +1851,7 @@ scroll_pf_bottom_out
 scroll_pf_bottom_out_skip
 	lea	sine_table,a0
 	move.w	(a0,d2.w*2),d0		; cos(w)
-	muls.w	#spb_y_radius*2,d0	; y'=(cos(w)*yr)/2^15
+	muls.w	#spb_y_radius*2,d0	; y' = (cos(w)*yr)/2^15
 	swap	d0
 	add.w	#spb_y_center,d0	; y' + y center
 	addq.w	#spbo_y_angle_speed,d2

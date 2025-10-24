@@ -968,7 +968,7 @@ init_colors
 spb_init_display_window
 	move.w	#diwstrt_bits,DIWSTRT-DMACONR(a6)
 	move.w	#diwstop_bits,DIWSTOP-DMACONR(a6)
-	move.w	#diwhigh_bits,DIWHIGH-DMACONR(a6) ; OS3.x LoadView() sets DIWHIGH=$0000 -> display glitches
+	move.w	#diwhigh_bits,DIWHIGH-DMACONR(a6) ; OS3.x LoadView() sets DIWHIGH = $0000 -> display glitches
 	rts
 
 
@@ -1330,7 +1330,7 @@ gv_fill_playfield1
 	ADDF.L	(pf1_plane_width*pf1_y_size3*pf1_depth3)-2,a0 ; end of playfield
 	WAITBLIT
 	move.w	#DMAF_BLITHOG,DMACON-DMACONR(a6)
-	move.l	#((BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16)|(BLTCON1F_DESC+BLTCON1F_EFE),BLTCON0-DMACONR(a6) ; minterm D=A, fill mode, backwards
+	move.l	#((BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16)|(BLTCON1F_DESC+BLTCON1F_EFE),BLTCON0-DMACONR(a6) ; minterm D = A, fill mode, backwards
 	move.l	a0,BLTAPT-DMACONR(a6)	; source
 	move.l	a0,BLTDPT-DMACONR(a6)	; destination
 	moveq	#0,d0
@@ -1352,7 +1352,7 @@ scroll_pf_bottom_in
 scroll_pf_bottom_in_skip
 	lea	sine_table(pc),a0	
 	move.w	(a0,d2.w*2),d0		; sin(w)
-	muls.w	#spb_y_radius*2,d0	; y'=(sin(w)*yr)/2^15
+	muls.w	#spb_y_radius*2,d0	; y' = (sin(w)*yr)/2^15
 	swap	d0
 	add.w	#spb_y_center,d0	; y' + y center
 	addq.w	#spbi_y_angle_speed,d2
@@ -1377,7 +1377,7 @@ scroll_pf_bottom_out
 scroll_pf_bottom_out_skip
 	lea	sine_table(pc),a0	
 	move.w	(a0,d2.w*2),d0		; cos(w)
-	muls.w	#spb_y_radius*2,d0	; y'=(cos(w)*yr)/2^15
+	muls.w	#spb_y_radius*2,d0	; y' = (cos(w)*yr)/2^15
 	swap	d0
 	add.w	#spb_y_center,d0	; y' + y center
 	add.w	#spbo_y_angle_speed,d2
@@ -1441,7 +1441,7 @@ horiz_fader_in1_loop
 	lsr.b	#4,d1
 	or.b	d1,d0
 	move.b	d0,(a1)
-	subq.w	#LONGWORD_SIZE,a1	; next column in cl
+	subq.w	#LONGWORD_SIZE,a1	; next column
 	dbf	d7,horiz_fader_in1_loop
 horiz_fader_in1_quit
 	rts
@@ -1472,7 +1472,7 @@ horiz_fader_in2_loop
 	lsr.b	#4,d1
 	or.b	d1,d0
 	move.b	d0,(a1)
-	subq.w	#LONGWORD_SIZE,a1	; next column in cl
+	subq.w	#LONGWORD_SIZE,a1	; next column
 	dbf	d7,horiz_fader_in2_loop
 horiz_fader_in2_quit
 	rts
@@ -1502,7 +1502,7 @@ horiz_fader_out1_loop
 	lsr.b	#4,d1
 	or.b	d1,d0
 	move.b	d0,(a1)
-	addq.w	#LONGWORD_SIZE,a1	; next column in cl
+	addq.w	#LONGWORD_SIZE,a1	; next column
 	dbf	d7,horiz_fader_out1_loop
 horiz_fader_out1_quit
 	rts
@@ -1532,7 +1532,7 @@ horiz_fader_out2_loop
 	lsr.b	#4,d1
 	or.b	d1,d0
 	move.b	d0,(a1)
-	addq.w	#LONGWORD_SIZE,a1	; next column in cl
+	addq.w	#LONGWORD_SIZE,a1	; next column
 	dbf	d7,horiz_fader_out2_loop
 horiz_fader_out2_quit
 	rts

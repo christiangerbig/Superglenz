@@ -615,7 +615,7 @@ sprite_fader_in_skip
 	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table(pc),a0	
 	move.w	(a0,d2.w*2),d0		; sin(w)
-	MULSF.W sprfi_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
+	MULSF.W sprfi_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	sprfi_rgb8_fader_center,d0
 	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
@@ -652,7 +652,7 @@ sprite_fader_out_skip
 	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table(pc),a0	
 	move.w	(a0,d2.w*2),d0		; sin(w)
-	MULSF.W sprfo_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
+	MULSF.W sprfo_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	sprfo_rgb8_fader_center,d0
 	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
