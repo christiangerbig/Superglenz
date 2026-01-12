@@ -1177,7 +1177,7 @@ eh_start_scroll_pf_bottom_out
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-nmi_server
+nmi_interrupt_server
 	rts
 
 

@@ -351,7 +351,7 @@ main_skip
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-nmi_server
+nmi_interrupt_server
 	rts
 
 

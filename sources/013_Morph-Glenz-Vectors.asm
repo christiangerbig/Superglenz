@@ -1204,7 +1204,7 @@ eh_start_scroll_pf_bottom_out
 
 
 	CNOP 0,4
-nmi_server
+nmi_interrupt_server
 	rts
 
 
