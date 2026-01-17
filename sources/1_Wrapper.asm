@@ -344,7 +344,8 @@ init_main
 	bsr	init_colors
 	bsr	init_CIA_timers
 	bsr	init_first_copperlist
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 ; PT-Replay
@@ -498,7 +499,8 @@ vertb_interrupt_server
 ; PT-Replay
 	IFEQ pt_music_fader_enabled
 		bsr.s	pt_music_fader
-		bra.s	pt_PlayMusic
+		bsr.s	pt_PlayMusic
+		rts
 
 		PT_FADE_OUT_VOLUME global_stop_fx_active,GLOBALVAR
 

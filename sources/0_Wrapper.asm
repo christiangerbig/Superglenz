@@ -341,7 +341,8 @@ init_main
 	bsr	init_colors
 	bsr	init_CIA_timers
 	bsr	init_first_copperlist
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 ; PT-Replay
@@ -492,7 +493,8 @@ vertb_interrupt_server
 ; PT-Replay
 	IFEQ pt_music_fader_enabled
 		bsr.s	pt_music_fader
-		bra.s	pt_PlayMusic
+		bsr.s	pt_PlayMusic
+		rts
 
 		PT_FADE_OUT_VOLUME
 
@@ -695,7 +697,7 @@ sc_bits2
 	CNOP	0,4
 sc_pins2
 	moveq	#-1,d3
-	bra.w	sc_ins2
+	bra	sc_ins2
 	CNOP 0,4
 sc_2ins2
 	rol.w	#8,d6

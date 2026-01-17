@@ -526,7 +526,8 @@ init_main
 	ENDC
 	bsr	mgv_init_color_table
 	bsr	spb_init_display_window
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 ; Morph-Glenz-Vectors
@@ -607,7 +608,8 @@ init_second_copperlist
 	bsr	set_second_copperlist
 	bsr	mgv_fill_playfield1
 	bsr	mgv_draw_lines
-	bra	mgv_set_second_copperlist
+	bsr	mgv_set_second_copperlist
+	rts
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl2

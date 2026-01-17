@@ -473,13 +473,15 @@ init_main_variables
 init_main
 	bsr.s	init_sprites
 	bsr	init_first_copperlist
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 	CNOP 0,4
 init_sprites
 	bsr.s	spr_init_pointers_table
-	bra.s	bg_init_attached_sprites_cluster
+	bsr.s	bg_init_attached_sprites_cluster
+	rts
 
 
 	INIT_SPRITE_POINTERS_TABLE
@@ -495,7 +497,8 @@ init_first_copperlist
 	bsr.s	cl1_init_sprite_pointers
 	bsr	cl1_init_colors
 	COP_MOVEQ 0,COPJMP2
-	bra	cl1_set_sprite_pointers
+	bsr	cl1_set_sprite_pointers
+	rts
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANKSPR
 

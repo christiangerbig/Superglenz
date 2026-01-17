@@ -735,13 +735,15 @@ init_main
 	bsr	init_colors
 	bsr	spb_init_display_window
 	bsr	init_first_copperlist
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 	CNOP 0,4
 init_sprites
 	bsr.s	spr_init_pointers_table
-	bra.s	init_sprites_cluster
+	bsr.s	init_sprites_cluster
+	rts
 
 
 	INIT_SPRITE_POINTERS_TABLE
@@ -984,7 +986,8 @@ init_first_copperlist
 	bsr	cl1_init_copper_interrupt
 	COP_LISTEND SAVETAIL
 	bsr	cl1_set_sprite_pointers
-	bra	cl1_set_bitplane_pointers
+	bsr	cl1_set_bitplane_pointers
+	rts
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -1082,7 +1085,8 @@ cl1_reset_pointer
 init_second_copperlist
 	move.l	cl2_display(a3),a0
 	bsr.s	cl2_init_bplcon4_chunky1
-	bra.s	cl2_init_bplcon4_chunky2
+	bsr.s	cl2_init_bplcon4_chunky2
+	rts
 
 
 	CNOP 0,4
@@ -1110,7 +1114,8 @@ cl2_init_bplcon4_chunky2_loop
 	CNOP 0,4
 main
 	bsr.s	no_sync_routines
-	bra.s	beam_routines
+	bsr.s	beam_routines
+	rts
 
 
 	CNOP 0,4

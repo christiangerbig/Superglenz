@@ -677,7 +677,8 @@ init_main
 		bsr	mgv_init_start_shape
 	ENDC
 	bsr	init_first_copperlist
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 	CNOP 0,4
@@ -696,7 +697,8 @@ init_colors
 init_sprites
 	bsr.s	spr_init_pointers_table
 	bsr.s	mgv_init_xy_coordinates
-	bra.s	spr_copy_structures
+	bsr.s	spr_copy_structures
+	rts
 
 	INIT_SPRITE_POINTERS_TABLE
 
@@ -798,7 +800,8 @@ init_first_copperlist
 	bsr	cl1_init_bitplane_pointers
 	COP_MOVEQ 0,COPJMP2
 	bsr	cl1_set_sprite_pointers
-	bra	cl1_set_bitplane_pointers
+	bsr	cl1_set_bitplane_pointers
+	rts
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
 
@@ -862,7 +865,8 @@ init_second_copperlist
 	bsr	mgv_clear_extra_playfield
 	bsr	mgv_draw_lines
 	bsr	mgv_fill_extra_playfield
-	bra	mgv_set_second_copperlist
+	bsr	mgv_set_second_copperlist
+	rts
 
 
 	CNOP 0,4
@@ -930,16 +934,16 @@ cl2_init_fill_blit
 	CNOP 0,4
 main
 	bsr.s	no_sync_routines
-	bra.s	beam_routines
+	bsr.s	beam_routines
+	rts
 
 
 	CNOP 0,4
 no_sync_routines
 	IFEQ cfc_rgb8_prefade_enabled
-		bra	cfc_rgb8_init_start_colors
-	ELSE
-		rts
+		bsr	cfc_rgb8_init_start_colors
 	ENDC
+	rts
 
 
 	CNOP 0,4
