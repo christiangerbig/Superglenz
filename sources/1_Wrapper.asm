@@ -1,10 +1,12 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF start_10_credits
 	XREF sc_start
 
+; Exports
 	XDEF start_1_pt_replay
 	XDEF pt_global_music_fader_active
 	XDEF global_stop_fx_active
@@ -37,7 +39,6 @@ SYS_TAKEN_OVER			SET 1
 WRAPPER				SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
-SET_SECOND_COPPERLIST		SET 1
 CUSTOM_MEMORY_USED		SET 1
 PROTRACKER_VERSION_3		SET 1
 
@@ -226,9 +227,10 @@ copperlist2_size		RS.B 0
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
+
 cl2_size1			EQU 0
 cl2_size2			EQU 0
-cl2_size3			EQU copperlist2_size
+cl2_size3			EQU 0
 
 
 spr0_x_size1			EQU spr_x_size1
@@ -344,7 +346,6 @@ init_main
 	bsr	init_colors
 	bsr	init_CIA_timers
 	bsr	init_first_copperlist
-	bsr	init_second_copperlist
 	rts
 
 
@@ -409,13 +410,6 @@ init_first_copperlist
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
-
-
-	CNOP 0,4
-init_second_copperlist
-	move.l	cl2_display(a3),a0
-	COP_LISTEND
-	rts
 
 
 	CNOP 0,4

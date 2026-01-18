@@ -4,12 +4,14 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF mouse_handler
 	XREF sine_table
 	XREF pt_global_music_fader_active
 	XREF global_stop_fx_active
 
+; Exports
 	XDEF start_10_credits
 
 
@@ -39,6 +41,7 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -852,16 +855,16 @@ init_second_copperlist
 	bsr	cl2_init_line_blits_steady
 	bsr	cl2_init_line_blits
 	bsr	cl2_init_fill_blit
-	COP_LISTEND SAVETAIL
+	COP_LISTEND
+	move.l	a0,cl_end(a3)
 	bsr	copy_second_copperlist
+
 	bsr	swap_second_copperlist
-	bsr	set_second_copperlist
 	bsr	mgv_clear_extra_playfield
 	bsr	mgv_draw_lines
 	bsr	mgv_fill_extra_playfield
 	bsr	mgv_set_second_copperlist
 	bsr	swap_second_copperlist
-	bsr	set_second_copperlist
 	bsr	mgv_clear_extra_playfield
 	bsr	mgv_draw_lines
 	bsr	mgv_fill_extra_playfield

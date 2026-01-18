@@ -1,5 +1,6 @@
 ; Morphing glenz with 1x36 faces on a 256x256-Screen
-; Copper waits for Blitter
+; Copper waits for the blitter
+; CPU clears the whole playfield
 ; Beam position timing
 ; 64 kB aligned playfield
 
@@ -7,8 +8,7 @@
 	MC68040
 
 
-	XDEF start_011_morph_glenz_vectors
-
+; Imports
 	XREF v_bplcon0_bits
 	XREF v_bplcon3_bits1
 	XREF v_bplcon3_bits2
@@ -17,6 +17,9 @@
 	XREF color00_bits
 	XREF mouse_handler
 	XREF sine_table
+
+; Exports
+	XDEF start_011_morph_glenz_vectors
 
 
 	INCDIR "include3.5:"
@@ -45,6 +48,7 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -595,17 +599,17 @@ init_second_copperlist
 	bsr	cl2_init_line_blits_steady
 	bsr	cl2_init_line_blits
 	bsr	cl2_init_fill_blit
-	COP_LISTEND SAVETAIL
-	bsr	get_wrappingper_view_values
+	COP_LISTEND
+	move.l	a0,cl_end(a3)
+	bsr	get_wrapper_view_values
 	bsr	cl2_set_bitplane_pointers
 	bsr	copy_second_copperlist
+
 	bsr	swap_second_copperlist
-	bsr	set_second_copperlist
 	bsr	mgv_fill_playfield1
 	bsr	mgv_draw_lines
 	bsr	mgv_set_second_copperlist
 	bsr	swap_second_copperlist
-	bsr	set_second_copperlist
 	bsr	mgv_fill_playfield1
 	bsr	mgv_draw_lines
 	bsr	mgv_set_second_copperlist
@@ -676,7 +680,7 @@ cl2_init_fill_blit
 
 
 	CNOP 0,4
-get_wrappingper_view_values
+get_wrapper_view_values
 	move.l	cl2_construction2(a3),a0
 	or.w	#v_bplcon0_bits,cl2_BPLCON0+WORD_SIZE(a0)
 	or.w	#v_bplcon3_bits1,cl2_BPLCON3_1+WORD_SIZE(a0)
@@ -714,7 +718,7 @@ beam_routines
 	bsr	mgv_set_second_copperlist
 	bsr	scroll_pf_bottom_in
 	bsr	scroll_pf_bottom_out
-	bsr	mouse_handler
+	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s   beam_routines_exit
 	tst.w	stop_fx_active(a3)

@@ -1,10 +1,12 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF start_00_intro
-	XREF start_01_sub_wrappingper
+	XREF start_01_sub_wrapper
 
+; Exports
 	XDEF start_0_pt_replay
 	XDEF sc_start
 
@@ -36,7 +38,7 @@ SYS_TAKEN_OVER			SET 1
 WRAPPER				SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
-SET_SECOND_COPPERLIST		SET 1
+START_SECOND_COPPERLIST		SET 1
 CUSTOM_MEMORY_USED		SET 1
 PROTRACKER_VERSION_3		SET 1
 
@@ -218,21 +220,13 @@ cl1_end				RS.L 1
 copperlist1_size		RS.B 0
 
 
-	RSRESET
-
-cl2_begin			RS.B 0
-
-cl2_end				RS.L 1
-
-copperlist2_size		RS.B 0
-
-
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
+
 cl2_size1			EQU 0
 cl2_size2			EQU 0
-cl2_size3			EQU copperlist2_size
+cl2_size3			EQU 0
 
 
 spr0_x_size1			EQU spr_x_size1
@@ -341,7 +335,6 @@ init_main
 	bsr	init_colors
 	bsr	init_CIA_timers
 	bsr	init_first_copperlist
-	bsr	init_second_copperlist
 	rts
 
 
@@ -402,12 +395,6 @@ init_first_copperlist
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
 
-	CNOP 0,4
-init_second_copperlist
-	move.l	cl2_display(a3),a0
-	COP_LISTEND
-	rts
-
 
 	CNOP 0,4
 alloc_custom_memory
@@ -448,7 +435,7 @@ main
 	bsr	start_00_intro
 	tst.l	d0
 	bne.s	main_skip
-	bsr	start_01_sub_wrappingper
+	bsr	start_01_sub_wrapper
 main_skip
 	rts
 

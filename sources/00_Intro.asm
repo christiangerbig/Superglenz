@@ -1,11 +1,13 @@
 	MC68040
 
 
+; Imports
+	XREF color00_bits
+
+; Exports
 	XDEF start_00_intro
 	XDEF mouse_handler
 	XDEF sine_table
-
-	XREF color00_bits
 
 
 	INCDIR "include3.5:"
@@ -34,6 +36,7 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -984,7 +987,8 @@ init_first_copperlist
 	bsr	cl1_init_branches_pointers2
 	bsr	cl1_reset_pointer
 	bsr	cl1_init_copper_interrupt
-	COP_LISTEND SAVETAIL
+	COP_LISTEND
+	move.l	a0,cl_end(a3)		; store pointer to CWAIT end of copperlist
 	bsr	cl1_set_sprite_pointers
 	bsr	cl1_set_bitplane_pointers
 	rts
@@ -1141,11 +1145,10 @@ beam_routines
 	bsr	scroll_pf_bottom_out
 	bsr	mouse_handler
 	tst.l	d0			; exit ?
-	bne.s	fast_exit
+	bne.s	beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
-fast_exit
-	WAITBLIT
+beam_routines_exit
 	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
 	move.l	cl_end(a3),COP1LC-DMACONR(a6)

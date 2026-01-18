@@ -82,11 +82,12 @@
 
 	MC68040
 
-
-	XDEF color00_bits
- 
+; Imports
 	XREF start_0_pt_replay
 	XREF start_1_pt_replay
+
+; Exports
+	XDEF color00_bits
 
 
 	INCDIR "include3.5:"
@@ -122,7 +123,7 @@
 
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
-SET_SECOND_COPPERLIST		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"

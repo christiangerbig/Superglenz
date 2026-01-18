@@ -5,13 +5,7 @@
 	MC68040
 
 
-	XDEF v_bplcon0_bits
-	XDEF v_bplcon3_bits1
-	XDEF v_bplcon3_bits2
-	XDEF v_bplcon4_bits
-	XDEF v_fmode_bits
-	XDEF start_01_sub_wrappingper
-
+; Imports
 	XREF color00_bits
 	XREF start_010_morph_glenz_vectors
 	XREF start_011_morph_glenz_vectors
@@ -22,6 +16,14 @@
 	XREF start_016_morph_3xglenz_vectors
 	XREF mouse_handler
 	XREF sine_table
+
+; Exports
+	XDEF v_bplcon0_bits
+	XDEF v_bplcon3_bits1
+	XDEF v_bplcon3_bits2
+	XDEF v_bplcon4_bits
+	XDEF v_fmode_bits
+	XDEF start_01_sub_wrapper
 
 
 	INCDIR "include3.5:"
@@ -50,7 +52,7 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
-SET_SECOND_COPPERLIST		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -446,7 +448,7 @@ variables_size			RS.B 0
 	SECTION code,CODE
 
 
-start_01_sub_wrappingper
+start_01_sub_wrapper
 
 
 	INCLUDE "sys-wrapper.i"
@@ -520,7 +522,8 @@ cl1_init_colors
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_display(a3),a0
-	COP_LISTEND SAVETAIL
+	COP_LISTEND
+	move.l	a0,cl_end(a3)
 	rts
 
 
@@ -530,49 +533,49 @@ main
 	bsr	beam_routines
 	move.l	(a7)+,a0
 	tst.l	d0
-	bne	exit
+	bne	beam_routines_exit2
 
 	movem.l a0/a3-a6,-(a7)
 	bsr	start_010_morph_glenz_vectors
 	movem.l (a7)+,a0/a3-a6
 	tst.l	d0
-	bne	exit
+	bne	beam_routines_exit2
 
 	movem.l a0/a3-a6,-(a7)
 	bsr	start_011_morph_glenz_vectors
 	movem.l (a7)+,a0/a3-a6
 	tst.l	d0
-	bne	exit
+	bne	beam_routines_exit2
 
 	movem.l a0/a3-a6,-(a7)
 	bsr	start_012_morph_glenz_vectors
 	movem.l (a7)+,a0/a3-a6
 	tst.l	d0
-	bne.s	exit
+	bne.s	beam_routines_exit2
 
 	movem.l a0/a3-a6,-(a7)
 	bsr	start_013_morph_glenz_vectors
 	movem.l (a7)+,a0/a3-a6
 	tst.l	d0
-	bne.s	exit
+	bne.s	beam_routines_exit2
 
 	movem.l a0/a3-a6,-(a7)
 	bsr	start_014_morph_glenz_vectors
 	movem.l (a7)+,a0/a3-a6
 	tst.l	d0
-	bne.s	exit
+	bne.s	beam_routines_exit2
 
 	movem.l a0/a3-a6,-(a7)
 	bsr	start_015_morph_2xglenz_vectors
 	movem.l (a7)+,a0/a3-a6
 	tst.l	d0
-	bne.s	exit
+	bne.s	beam_routines_exit2
 
 	movem.l a0/a3-a6,-(a7)
 	jsr	start_016_morph_3xglenz_vectors
 	movem.l (a7)+,a0/a3-a6
 	tst.l	d0
-	bne.s	exit
+	bne.s	beam_routines_exit2
 
 	move.w	#sprf_rgb8_colors_number*3,sprf_rgb8_colors_counter(a3)
 	clr.w	sprf_rgb8_copy_colors_active(a3)
@@ -589,14 +592,14 @@ beam_routines
 	bsr	sprf_rgb8_copy_color_table
 	bsr	mouse_handler
 	tst.l	d0			; exit ?
-	bne.s	fast_exit
+	bne.s	beam_routines_exit1
 	tst.w	sprfi_rgb8_active(a3)
 	beq.s	beam_routines
 	tst.w	sprfo_rgb8_active(a3)
 	beq.s	beam_routines
-fast_exit
+beam_routines_exit1
 	move.w	custom_error_code(a3),d1
-exit
+beam_routines_exit2
 	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
 	rts
