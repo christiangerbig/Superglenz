@@ -1143,7 +1143,7 @@ beam_routines
 	bsr	gv_rotation
 	bsr	scroll_pf_bottom_in
 	bsr	scroll_pf_bottom_out
-	bsr	mouse_handler
+	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
 	tst.w	stop_fx_active(a3)

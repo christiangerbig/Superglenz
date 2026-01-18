@@ -590,7 +590,7 @@ beam_routines
 	bsr	sprite_fader_in
 	bsr	sprite_fader_out
 	bsr	sprf_rgb8_copy_color_table
-	bsr	mouse_handler
+	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit1
 	tst.w	sprfi_rgb8_active(a3)
@@ -619,7 +619,7 @@ sprite_fader_in
 sprite_fader_in_skip
 	move.w	d0,sprfi_rgb8_fader_angle(a3) 
 	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB counter
-	lea	sine_table(pc),a0	
+	lea	sine_table,a0	
 	move.w	(a0,d2.w*2),d0		; sin(w)
 	MULSF.W sprfi_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
@@ -656,7 +656,7 @@ sprite_fader_out
 sprite_fader_out_skip
 	move.w	d0,sprfo_rgb8_fader_angle(a3) 
 	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB counter
-	lea	sine_table(pc),a0	
+	lea	sine_table,a0	
 	move.w	(a0,d2.w*2),d0		; sin(w)
 	MULSF.W sprfo_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0

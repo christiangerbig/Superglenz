@@ -1031,7 +1031,7 @@ mgv_clear_playfield1_loop
 	CNOP 0,4
 mgv_calculate_xyz_speed
 	move.w	mgv_x_angle_speed_angle(a3),d2
-	lea	sine_table(pc),a0
+	lea	sine_table,a0
 	move.w	(a0,d2.w*2),d0		; sin(w)
 	MULSF.W mgv_x_angle_speed_radius*2,d0,d1 ; x speed = (r*sin(w))/2^15
 	swap	d0
@@ -1069,7 +1069,7 @@ mgv_rotation
 	movem.l a4-a5,-(a7)
 	move.w	mgv_x_angle(a3),d1
 	move.w	d1,d0		
-	lea	sine_table(pc),a2	
+	lea	sine_table,a2	
 	move.w	(a2,d0.w*2),d4		; sin(a)
 	move.w	#sine_table_length/4,a4
 	MOVEF.W sine_table_length-1,d3
