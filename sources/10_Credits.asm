@@ -976,7 +976,7 @@ beam_routines
 	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
-	move.w	global_stop_fx_active(pc),d0
+	move.w	global_stop_fx_active,d0
 	bne.s	beam_routines
 beam_routines_exit
 	move.l	cl_end(a3),COP2LC-DMACONR(a6)
@@ -1112,7 +1112,7 @@ vts_check_control_codes
 	CNOP 0,4
 vts_enable_music_fader
 	move.l	a0,d0
-	lea	pt_global_music_fader_active(pc),a0
+	lea	pt_global_music_fader_active,a0
 	clr.w	(a0)
 	move.l	d0,a0
 	moveq	#RETURN_OK,d0
