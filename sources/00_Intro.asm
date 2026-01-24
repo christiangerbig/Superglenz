@@ -94,8 +94,8 @@ spr_x_size1			EQU 0
 spr_x_size2			EQU 64
 spr_depth			EQU 2
 spr_colors_number		EQU 0	; 16
-spr_odd_color_table_select	EQU 1
-spr_even_color_table_select	EQU 1
+spr_odd_color_table_select	EQU 1	; COLOR16..COLOR31
+spr_even_color_table_select	EQU 1	; COLOR16..COLOR31
 spr_used_number			EQU 3
 
 audio_memory_size		EQU 0
@@ -1629,73 +1629,73 @@ spr_rgb8_color_table
 	REPT hf_colors_per_colorbank
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Superglenz.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
@@ -2058,7 +2058,7 @@ hf_bplam_table
 
 ; Title
 title_image_data		SECTION title_gfx,DATA
-	INCBIN "Superglenz:graphics/192x39x4-Superglenz.rawblit"
+	INCBIN "Superglenz:graphics/192x39x4-Title.rawblit"
 
 ; RSE letters
 rse_letters_image_data		SECTION rse_letters_gfx,DATA

@@ -113,8 +113,8 @@ spr_x_size1			EQU 64
 spr_x_size2			EQU 64
 spr_depth			EQU 2
 spr_colors_number		EQU 16
-spr_odd_color_table_select	EQU 1
-spr_even_color_table_select	EQU 1
+spr_odd_color_table_select	EQU 1	; COLOR16..COLOR31
+spr_even_color_table_select	EQU 1	; COLOR16..COLOR31
 spr_used_number			EQU 2
 spr_swap_number			EQU 2
 
