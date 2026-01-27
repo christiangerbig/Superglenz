@@ -1595,11 +1595,11 @@ eh_start_scroll_pf_bottom_out
 	CNOP 0,4
 mouse_handler
 	btst	#CIAB_GAMEPORT0,CIAPRA(a4) ; LMB pressed ?
-	beq.s	mh_exit_demo
+	beq.s	mouse_handler_skip
 	moveq	#RETURN_OK,d0
 	rts
 	CNOP 0,4
-mh_exit_demo
+mouse_handler_skip
 	moveq	#RETURN_WARN,d0		; exit
 	rts
 
