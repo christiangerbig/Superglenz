@@ -1583,8 +1583,9 @@ eh_start_horiz_fader_in2
 	rts
 	CNOP 0,4
 eh_start_horiz_fader_out
-	clr.w	hfo1_active(a3)
-	clr.w	hfo2_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,hfo1_active(a3)
+	move.w	d0,hfo2_active(a3)
 	rts
 	CNOP 0,4
 eh_start_scroll_pf_bottom_out

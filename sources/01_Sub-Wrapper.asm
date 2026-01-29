@@ -578,8 +578,9 @@ main
 	bne.s	beam_routines_exit2
 
 	move.w	#sprf_rgb8_colors_number*3,sprf_rgb8_colors_counter(a3)
-	clr.w	sprf_rgb8_copy_colors_active(a3)
-	clr.w	sprfo_rgb8_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,sprf_rgb8_copy_colors_active(a3)
+	move.w	d0,sprfo_rgb8_active(a3)
 	bsr.s	beam_routines
 	rts
 
