@@ -652,7 +652,7 @@ cl2_init_line_blits_steady
 	CNOP 0,4
 cl2_init_line_blits
 	moveq	#mgv_lines_number_max-1,d7
-cl1_init_line_blits_loop
+cl2_init_line_blits_loop
 	COP_MOVEQ 0,BLTCON0
 	COP_MOVEQ 0,BLTCON1
 	COP_MOVEQ 0,BLTCPTL
@@ -662,7 +662,7 @@ cl1_init_line_blits_loop
 	COP_MOVEQ 0,BLTAMOD
 	COP_MOVEQ 0,BLTSIZE
 	COP_WAITBLIT
-	dbf	d7,cl1_init_line_blits_loop
+	dbf	d7,cl2_init_line_blits_loop
 	rts
 
 
