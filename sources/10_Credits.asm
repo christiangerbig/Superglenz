@@ -101,7 +101,7 @@ pf_colors_number		EQU pf1_colors_number+pf2_colors_number
 pf_depth			EQU pf1_depth3+pf2_depth3
 
 pf_extra_number			EQU 2
-extra_pf1_x_size		EQU 64
+extra_pf1_x_size		EQU 64	; double buffering
 extra_pf1_y_size		EQU 256+2731
 extra_pf1_depth			EQU 3
 extra_pf2_x_size		EQU 64
@@ -957,9 +957,9 @@ beam_routines
 	bsr	set_second_copperlist
 	bsr	swap_sprite_structures
 	bsr	set_sprite_pointers
-	bsr	swap_playfield1
-	bsr	set_playfield1
-	bsr	set_playfield2
+	bsr	pf1_swap_playfields
+	bsr	pf1_set_playfield
+	bsr	pf2_set_playfield
 	bsr	swap_extra_playfield
 	bsr	effects_handler
 	bsr	mgv_clear_extra_playfield
@@ -1000,42 +1000,42 @@ beam_routines_exit
 	SET_SPRITES spr_swap_number
 
 
-	SWAP_PLAYFIELD pf1,2
+	SWAP_PLAYFIELD_BUFFERS pf1,2
 
 
 	CNOP 0,4
-set_playfield1
+pf1_set_playfield
 	MOVEF.L (pf1_plane_x_offset/8)+(pf1_plane_y_offset*pf1_plane_width*pf1_depth3),d1
 	move.l	cl1_display(a3),a0
 	ADDF.W	cl1_BPL1PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
 	moveq	#pf1_depth3-1,d7
-set_playfield1_loop
+pf1_set_playfield_loop
 	move.l	(a1)+,d0
 	add.l	d1,d0
 	move.w	d0,LONGWORD_SIZE(a0)	; BPLxPTL
 	swap	d0
 	move.w	d0,(a0)			; BPLxPTH
 	ADDF.W	QUADWORD_SIZE*2,a0
-	dbf	d7,set_playfield1_loop
+	dbf	d7,pf1_set_playfield_loop
 	rts
 
 
 	CNOP 0,4
-set_playfield2
+pf2_set_playfield
 	MOVEF.L (pf2_plane_x_offset/8)+(pf2_plane_y_offset*pf1_plane_width*pf1_depth3),d1
 	move.l	cl1_display(a3),a0
 	ADDF.W	cl1_BPL2PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
 	moveq	#pf2_depth3-1,d7
-set_playfield2_loop
+pf2_set_playfield_loop
 	move.l	(a1)+,d0
 	add.l	d1,d0
 	move.w	d0,LONGWORD_SIZE(a0)	; BPLxPTL
 	swap	d0
 	move.w	d0,(a0)			; BPLxPTH
 	ADDF.W	QUADWORD_SIZE*2,a0
-	dbf	d7,set_playfield2_loop
+	dbf	d7,pf2_set_playfield_loop
 	rts
 
 

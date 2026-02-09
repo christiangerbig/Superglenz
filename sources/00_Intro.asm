@@ -1131,8 +1131,8 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_copint
-	bsr.s	swap_playfield1
-	bsr	set_playfield1
+	bsr.s	pf1_swap_playfields
+	bsr	pf1_set_playfield
 	bsr	effects_handler
 	bsr	horiz_fader_in1
 	bsr	horiz_fader_in2
@@ -1158,7 +1158,7 @@ beam_routines_exit
 	rts
 
 
-	SWAP_PLAYFIELD pf1,3,pf1_depth3
+	SWAP_PLAYFIELD_BUFFERS pf1,3,pf1_depth3
 
 
 	SET_PLAYFIELD pf1,pf1_depth3

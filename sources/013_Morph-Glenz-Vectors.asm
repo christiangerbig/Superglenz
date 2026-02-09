@@ -732,8 +732,8 @@ beam_routines
 	bsr	wait_beam_position
 	bsr.s	swap_second_copperlist
 	bsr.s	set_second_copperlist
-	bsr.s	swap_playfield1
-	bsr	set_playfield1
+	bsr.s	pf1_swap_playfields
+	bsr	pf1_set_playfield
 	bsr	effects_handler
 	bsr	mgv_clear_playfield1
 	bsr	mgv_calculate_xyz_speed
@@ -762,11 +762,11 @@ beam_routines_exit
 	SET_COPPERLIST cl2
 
 
-	SWAP_PLAYFIELD pf1,3
+	SWAP_PLAYFIELD_BUFFERS pf1,3
 
 
 	CNOP 0,4
-set_playfield1
+pf1_set_playfield
 	move.l	#ALIGN_64KB,d1
 	moveq	#0,d2
 	moveq	#pf1_plane_width,d3
@@ -774,7 +774,7 @@ set_playfield1
 	ADDF.W	cl2_BPL1PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
 	moveq	#pf1_depth3-1,d7
-set_playfield1_loop
+pf1_set_playfield_loop
 	move.l	(a1)+,d0
 	add.l	d1,d0			; 64 kB alignment
 	clr.w	d0
@@ -784,7 +784,7 @@ set_playfield1_loop
 	move.w	d0,(a0)			; BPLxPTH
 	add.l	d3,d2			; next bitplane
 	addq.w	#QUADWORD_SIZE,a0
-	dbf	d7,set_playfield1_loop
+	dbf	d7,pf1_set_playfield_loop
 	rts
 
 
