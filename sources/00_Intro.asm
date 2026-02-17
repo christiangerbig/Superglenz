@@ -1,3 +1,12 @@
+; Requirements
+; 68020+
+; AGA PAL
+; 3.0+
+
+
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 	MC68040
 
 
@@ -738,8 +747,8 @@ init_main
 	bsr	hf_dim_colors
 	bsr	init_colors
 	bsr	spb_init_display_window
-	bsr	init_first_copperlist
-	bsr	init_second_copperlist
+	bsr	cl1_init_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 
@@ -979,7 +988,7 @@ spb_init_display_window
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_sprite_pointers
@@ -1087,7 +1096,7 @@ cl1_reset_pointer
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_display(a3),a0
 	bsr.s	cl2_init_bplcon4_chunky1
 	bsr.s	cl2_init_bplcon4_chunky2
@@ -1631,73 +1640,73 @@ spr_rgb8_color_table
 	REPT hf_colors_per_colorbank
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
-	INCLUDE "Superglenz:colortables/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
+	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
 		DC.L color00_bits
 	ENDR

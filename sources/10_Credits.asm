@@ -1,3 +1,12 @@
+; Requirements
+; 68020+
+; AGA PAL
+; 3.0+
+
+
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 ; 64 kB aligned extra playfield
 
 
@@ -680,8 +689,8 @@ init_main
 	IFEQ mgv_premorph_enabled
 		bsr	mgv_init_start_shape
 	ENDC
-	bsr	init_first_copperlist
-	bsr	init_second_copperlist
+	bsr	cl1_init_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 
@@ -796,7 +805,7 @@ mgv_init_start_shape
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_sprite_pointers
@@ -850,7 +859,7 @@ cl1_set_bitplane_pointers_loop2
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_construction2(a3),a0
 	bsr.s	cl2_init_clear_blit
 	bsr	cl2_init_line_blits_steady

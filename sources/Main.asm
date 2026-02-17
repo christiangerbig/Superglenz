@@ -4,6 +4,9 @@
 ; 3.0+
 
 
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 ; History/Changes
 
 ; V.1.0 beta
@@ -307,8 +310,8 @@ init_main_variables
 	CNOP 0,4
 init_main
 	bsr.s	init_colors
-	bsr	init_first_copperlist
-	bsr	init_second_copperlist
+	bsr	cl1_init_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 
@@ -323,7 +326,7 @@ init_colors
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0
 	bsr.s	cl1_init_playfield_props
 	COP_LISTEND
@@ -334,7 +337,7 @@ init_first_copperlist
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_display(a3),a0
 	COP_LISTEND
 	rts

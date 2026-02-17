@@ -1,3 +1,12 @@
+; Requirements
+; 68020+
+; AGA PAL
+; 3.0+
+
+
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 ; Morphing 1x20 faces glenz on a 256x256 screen
 ; Copper waits for the blitter
 ; CPU clears the whole playfield
@@ -499,7 +508,7 @@ init_main
 	ENDC
 	bsr.s	mgv_init_color_table
 	bsr	spb_init_display_window
-	bsr	init_second_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 
@@ -560,7 +569,7 @@ spb_init_display_window
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_construction2(a3),a0
 	bsr.s	cl2_init_playfield_props
 	bsr	cl2_init_colors
@@ -1168,7 +1177,7 @@ pf1_rgb8_color_table
 ; Morph-Glenz-Vectors
 	CNOP 0,4
 mgv_rgb8_color_table
-	INCLUDE "Superglenz:colortables/1xGlenz-Colorgradient1.ct"
+	INCLUDE "Superglenz:colorpalettes/1xGlenz-Colorgradient1.ct"
 
 	CNOP 0,2
 mgv_object_coordinates

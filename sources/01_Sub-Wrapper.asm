@@ -1,4 +1,13 @@
-; overscan background image in 16 colors with attached sprites
+; Requirements
+; 68020+
+; AGA PAL
+; 3.0+
+
+
+; Code optimized for O.M.A. 2.0 Assembler
+
+
+; Overscan background image in 16 colors with attached sprites
 ; 1st copperlist calls 2nd copperlist
 
 
@@ -474,8 +483,8 @@ init_main_variables
 	CNOP 0,4
 init_main
 	bsr.s	init_sprites
-	bsr	init_first_copperlist
-	bsr	init_second_copperlist
+	bsr	cl1_init_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 
@@ -493,7 +502,7 @@ init_sprites
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0
 	bsr.s	cl1_init_playfield_props
 	bsr.s	cl1_init_sprite_pointers
@@ -520,7 +529,7 @@ cl1_init_colors
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_display(a3),a0
 	COP_LISTEND
 	move.l	a0,cl_end(a3)
@@ -714,7 +723,7 @@ spr_pointers_display
 ; Sprite-Fader
 	CNOP 0,4
 sprfi_rgb8_color_table
-	INCLUDE "Superglenz:colortables/256x283x16-Skyline.ct"
+	INCLUDE "Superglenz:colorpalettes/256x283x16-Skyline.ct"
 
 	CNOP 0,4
 sprfo_rgb8_color_table

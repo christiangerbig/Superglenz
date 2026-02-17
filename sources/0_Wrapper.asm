@@ -1,3 +1,12 @@
+; Requirements
+; 68020+
+; AGA PAL
+; 3.0+
+
+
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 	MC68040
 
 
@@ -333,7 +342,7 @@ init_main
 	bsr	pt_InitFtuPeriodTableStarts
 	bsr	init_colors
 	bsr	init_CIA_timers
-	bsr	init_first_copperlist
+	bsr	cl1_init_copperlist
 	rts
 
 
@@ -386,7 +395,7 @@ init_CIA_timers
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0
 	bsr.s	cl1_init_playfield_props
 	COP_LISTEND
