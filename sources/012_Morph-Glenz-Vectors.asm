@@ -406,7 +406,7 @@ cl2_extension3_entry		RS.B cl2_extension3_size
 
 cl2_end				RS.L 1
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
@@ -414,8 +414,8 @@ cl1_size2			EQU 0
 cl1_size3			EQU 0
 
 cl2_size1			EQU 0
-cl2_size2			EQU copperlist2_size
-cl2_size3			EQU copperlist2_size
+cl2_size2			EQU cl2_copperlist_size
+cl2_size3			EQU cl2_copperlist_size
 
 
 spr0_x_size1			EQU spr_x_size1
@@ -626,24 +626,23 @@ cl2_init_copperlist
 	move.l	cl2_construction2(a3),a0
 	bsr.s	cl2_init_playfield_props
 	bsr	cl2_init_colors
-	bsr	cl2_init_bitplane_pointers
+	bsr	cl2_init_plane_pointers
 	bsr	cl2_init_line_blits_steady
 	bsr	cl2_init_line_blits
 	bsr	cl2_init_fill_blit
 	COP_LISTEND
 	move.l	a0,cl_end(a3)
 	bsr	get_wrapper_view_values
-	bsr	cl2_set_bitplane_pointers
-	bsr	copy_second_copperlist
+	bsr	cl2_set_plane_pointers
+	bsr	cl2_copy_copperlist
 
-	bsr	swap_second_copperlist
 	bsr	mgv_fill_playfield1
 	bsr	mgv_draw_lines
-	bsr	mgv_set_second_copperlist
-	bsr	swap_second_copperlist
+	bsr	mgv_cl2_set_copperlist
+	bsr	cl2_swap_copperlist
 	bsr	mgv_fill_playfield1
 	bsr	mgv_draw_lines
-	bsr	mgv_set_second_copperlist
+	bsr	mgv_cl2_set_copperlist
 	rts
 
 
@@ -665,8 +664,8 @@ cl2_init_colors
 	CNOP 0,4
 cl2_init_line_blits_steady
 	COP_WAITBLIT
-	COP_MOVEQ -1,BLTAFWM
-	COP_MOVEQ -1,BLTALWM
+	COP_MOVEQ -1,BLTAFWM		; no mask
+	COP_MOVEQ -1,BLTALWM		; no mask
 	COP_MOVEQ 0,BLTCPTH
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ pf1_plane_width*pf1_depth3,BLTCMOD ; moduli interleaved bitmaps
@@ -735,9 +734,9 @@ main
 	CNOP 0,4
 beam_routines
 	bsr	wait_beam_position
-	bsr.s	swap_second_copperlist
-	bsr.s	set_second_copperlist
-	bsr.s	pf1_swap_playfields
+	bsr.s	cl2_swap_copperlist
+	bsr.s	cl2_set_copperlist
+	bsr.s	pf1_swap_playfield
 	bsr	pf1_set_playfield
 	bsr	effects_handler
 	bsr	mgv_clear_playfield1
@@ -746,7 +745,7 @@ beam_routines
 	bsr	mgv_morph_object
 	bsr	mgv_draw_lines
 	bsr	mgv_fill_playfield1
-	bsr	mgv_set_second_copperlist
+	bsr	mgv_cl2_set_copperlist
 	bsr	scroll_pf_bottom_in
 	bsr	scroll_pf_bottom_out
 	jsr	mouse_handler
@@ -820,7 +819,7 @@ mgv_clear_playfield1
 	moveq	#7-1,d7			; number of runs
 mgv_clear_playfield1_loop
 	REPT ((pf1_plane_width*visible_lines_number*pf1_depth3)/56)/7
-		movem.l d0-d6/a0-a6,-(a7) ; clear 56 bytes
+	movem.l d0-d6/a0-a6,-(a7) ; clear 56 bytes
 	ENDR
 	dbf	d7,mgv_clear_playfield1_loop
 	movem.l d0-d6/a0-a6,-(a7)	; clear remaining 272 bytes
@@ -1080,7 +1079,7 @@ mgv_fill_playfield1
 
 
 	CNOP 0,4
-mgv_set_second_copperlist
+mgv_cl2_set_copperlist
 	move.l	cl2_construction2(a3),a0 
 	move.l	a0,d0
 	ADDF.L	cl2_extension3_entry,d0
@@ -1088,9 +1087,9 @@ mgv_set_second_copperlist
 	move.w	mgv_lines_counter(a3),d1
 	IFEQ mgv_count_lines_enabled
 		cmp.w	$1a0000,d1
-		blt.s	mgv_set_second_copperlist_skip
+		blt.s	mgv_cl2_set_copperlist_skip
 		move.w	d1,$1a0000
-mgv_set_second_copperlist_skip
+mgv_cl2_set_copperlist_skip
 	ENDC
 	MULUF.W cl2_extension2_size,d1,d2
 	sub.l	d1,d0
@@ -1201,18 +1200,19 @@ effects_handler_quit
 	CNOP 0,4
 eh_start_scroll_pf_bottom_in
 	clr.w	spbi_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_morphing
 	clr.w	mgv_morph_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_scroll_pf_bottom_out
 	clr.w	spbo_active(a3)
-	rts
+	bra.s	effects_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server
@@ -1228,7 +1228,7 @@ nmi_interrupt_server
 	CNOP 0,4
 pf1_rgb8_color_table
 	REPT pf1_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
@@ -1579,89 +1579,3 @@ mgv_morph_shapes_table
 	INCLUDE "error-texts.i"
 
 	END
-
-; 100 %
-	DC.W 0,-(90*8),0		; P0
-	DC.W -(28*8),-(90*8),-(66*8)	; P1
-	DC.W 28*8,-(90*8),-(66*8)	; P2
-	DC.W 66*8,-(90*8),-(28*8)	; P3
-	DC.W 66*8,-(90*8),28*8		; P4
-	DC.W 28*8,-(90*8),66*8		; P5
-	DC.W -(28*8),-(90*8),66*8	; P6
-	DC.W -(66*8),-(90*8),28*8	; P7
-	DC.W -(66*8),-(90*8),-28*8	; P8
-	DC.W 0,-(40*8),-(89*8)		; P9
-	DC.W 61*8,-(40*8),-(61*8)	; P10
-	DC.W 89*8,-(40*8),0		; P11
-	DC.W 61*8,-(40*8),61*8		; P12
-	DC.W 0,-(40*8),89*8		; P13
-	DC.W -(61*8),-(40*8),61*8	; P14
-	DC.W -(89*8),-(40*8),0		; P15
-	DC.W -(61*8),-(40*8),-(61*8)	; P16
-	DC.W -(36*8),-(40*8),-(89*8)	; P17
-	DC.W 36*8,-(40*8),-(89*8)	; P18
-	DC.W 89*8,-(40*8),-(36*8)	; P19
-	DC.W 89*8,-(40*8),36*8		; P20
-	DC.W 36*8,-(40*8),89*8		; P23
-	DC.W -(36*8),-(40*8),89*8	; P22
-	DC.W -(89*8),-(40*8),36*8	; P23
-	DC.W -(89*8),-(40*8),-(36*8)	; P24
-	DC.W 0,37*8,0			; P25
-
-
-
-; Polygon 100%
-	DC.W 0,-(85*8),0		; P0
-	DC.W -(40*8),-26*8,-(98*8)	; P1
-	DC.W 40*8,-(26*8),-(98*8)	; P2
-	DC.W 98*8,-(26*8),-(40*8)	; P3
-	DC.W 98*8,-(26*8),40*8		; P4
-	DC.W 40*8,-(26*8),98*8		; P5
-	DC.W -(40*8),-(26*8),98*8	; P6
-	DC.W -(98*8),-26*8,40*8		; P7
-	DC.W -(98*8),-(26*8),-(40*8)	; P8
-	DC.W 0,26*8,-(98*8)		; P9
-	DC.W 68*8,26*8,-(68*8)		; P10
-	DC.W 98*8,26*8,0		; P11
-	DC.W 68*8,26*8,68*8		; P12
-	DC.W 0,26*8,98*8		; P13
-	DC.W -(68*8),26*8,68*8		; P14
-	DC.W -(98*8),26*8,0		; P15
-	DC.W -(68*8),26*8,-68*8		; P16
-	DC.W -(40*8),26*8,-(98*8)	; P17
-	DC.W 40*8,26*8,-(98*8)		; P18
-	DC.W 98*8,26*8,-(40*8)		; P19
-	DC.W 98*8,26*8,40*8		; P33
-	DC.W 40*8,26*8,98*8		; P21
-	DC.W -(40*8),26*8,98*8		; P22
-	DC.W -(98*8),26*8,40*8		; P23
-	DC.W -(98*8),26*8,-(40*8)	; P24
-	DC.W 0,85*8,0			; P25
-
-; Polygon 80 %
-	DC.W 0,-(68*8),0		; P0
-	DC.W -(32*8),-21*8,-(78*8)	; P1
-	DC.W 32*8,-(21*8),-(78*8)	; P2
-	DC.W 78*8,-(21*8),-(32*8)	; P3
-	DC.W 78*8,-(21*8),32*8		; P4
-	DC.W 32*8,-(21*8),78*8		; P5
-	DC.W -(32*8),-(21*8),78*8	; P6
-	DC.W -(78*8),-21*8,32*8		; P7
-	DC.W -(78*8),-(21*8),-(32*8)	; P8
-	DC.W 0,21*8,-(78*8)		; P9
-	DC.W 55*8,21*8,-(55*8)		; P10
-	DC.W 78*8,21*8,0		; P11
-	DC.W 55*8,21*8,55*8		; P12
-	DC.W 0,21*8,78*8		; P13
-	DC.W -(55*8),21*8,55*8		; P14
-	DC.W -(78*8),21*8,0		; P15
-	DC.W -(55*8),21*8,-55*8		; P16
-	DC.W -(32*8),21*8,-(78*8)	; P17
-	DC.W 32*8,21*8,-(78*8)		; P18
-	DC.W 78*8,21*8,-(32*8)		; P19
-	DC.W 78*8,21*8,32*8		; P33
-	DC.W 32*8,21*8,78*8		; P21
-	DC.W -(32*8),21*8,78*8		; P22
-	DC.W -(78*8),21*8,32*8		; P23
-	DC.W -(78*8),21*8,-(32*8)	; P24
-	DC.W 0,68*8,0			; P25

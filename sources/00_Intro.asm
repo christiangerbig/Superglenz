@@ -391,7 +391,7 @@ cl1_INTREQ			RS.L 1
 
 cl1_end				RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 	RSRESET
 
@@ -464,16 +464,16 @@ cl2_begin			RS.B 0
 cl2_extension1_entry		RS.B cl2_extension1_size
 cl2_extension2_entry		RS.B cl2_extension2_size
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
 cl2_size1			EQU 0
 cl2_size2			EQU 0
-cl2_size3			EQU copperlist2_size
+cl2_size3			EQU cl2_copperlist_size
 
 
 ; Sprite0 additional structure
@@ -992,7 +992,7 @@ cl1_init_copperlist
 	move.l	cl1_display(a3),a0
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_sprite_pointers
-	bsr	cl1_init_bitplane_pointers
+	bsr	cl1_init_plane_pointers
 	bsr	cl1_init_branches_pointers1
 	bsr	cl1_init_branches_pointers2
 	bsr	cl1_reset_pointer
@@ -1000,7 +1000,7 @@ cl1_init_copperlist
 	COP_LISTEND
 	move.l	a0,cl_end(a3)		; store pointer to CWAIT end of copperlist
 	bsr	cl1_set_sprite_pointers
-	bsr	cl1_set_bitplane_pointers
+	bsr	cl1_set_plane_pointers
 	rts
 
 
@@ -1018,7 +1018,7 @@ cl1_init_branches_pointers1
 	move.l	#(((cl1_vstart1<<24)|(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d0 ; CWAIT
 	move.l	cl1_display(a3),d1
 	ADDF.L	cl1_extension1_entry+cl1_ext1_subextension1_entry+cl1_subextension1_size,d1
-	move.l	#$01000000,d2
+	move.l	#1<<24,d2		; next rasterline
 	move.l	cl2_display(a3),d4
 	swap	d4
 	move.w	#COP2LCH,(a0)+
@@ -1032,7 +1032,7 @@ cl1_init_branches_pointers1_loop
 	move.l	d0,(a0)+		; CWAIT
 	swap	d1
 	move.w	#COP1LCH,(a0)+
-	add.l	d2,d0			; next scanline
+	add.l	d2,d0			; next rasterline
 	move.w	d1,(a0)+
 	swap	d1		
 	move.w	#COP1LCL,(a0)+
@@ -1048,7 +1048,7 @@ cl1_init_branches_pointers2
 	move.l	#(((cl1_vstart2<<24)|(((cl1_hstart2/4)*2)<<16))|$10000)|$fffe,d0 ; CWAIT
 	move.l	cl1_display(a3),d1
 	ADDF.L	cl1_extension2_entry+cl1_ext2_subextension1_entry+cl1_subextension1_size,d1
-	move.l	#$01000000,d2
+	move.l	#1<<24,d2		; next rasterline
 	move.l	cl2_display(a3),d4
 	ADDF.L	cl2_extension2_entry,d4
 	swap	d4
@@ -1063,7 +1063,7 @@ cl1_init_branches_pointers2_loop
 	move.l	d0,(a0)+		; CWAIT
 	swap	d1
 	move.w	#COP1LCH,(a0)+
-	add.l	d2,d0			; next scanline
+	add.l	d2,d0			; next rasterline
 	move.w	d1,(a0)+
 	swap	d1		
 	move.w	#COP1LCL,(a0)+
@@ -1140,7 +1140,7 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_copint
-	bsr.s	pf1_swap_playfields
+	bsr.s	pf1_swap_playfield
 	bsr	pf1_set_playfield
 	bsr	effects_handler
 	bsr	horiz_fader_in1
@@ -1197,7 +1197,7 @@ gv_clear_playfield1
 	moveq	#4-1,d7			; number of runs
 gv_clear_playfield1_loop
 	REPT ((pf1_plane_width*pf1_y_size3*pf1_depth3)/56)/4
-		movem.l d0-d6/a0-a6,-(a7) ; clear 56 bytes
+	movem.l d0-d6/a0-a6,-(a7) ; clear 56 bytes
 	ENDR
 	dbf	d7,gv_clear_playfield1_loop
 	movem.l d0-d6/a0-a6,-(a7)	; clear remaining 160 bytes
@@ -1334,7 +1334,7 @@ gv_draw_lines_init
 	WAITBLIT
 	move.l	#$ffff8000,BLTBDAT-DMACONR(a6) ; low word: line texture starts with MSB,  high word: line texture
 	moveq	#-1,d0
-	move.l	d0,BLTAFWM-DMACONR(a6)
+	move.l	d0,BLTAFWM-DMACONR(a6)	; no mask
 	moveq	#pf1_plane_width*pf1_depth3,d0 ; moduli interleaved bitmaps
 	move.w	d0,BLTCMOD-DMACONR(a6)
 	move.w	d0,BLTDMOD-DMACONR(a6)
@@ -1582,25 +1582,25 @@ effects_handler_quit
 	CNOP 0,4
 eh_start_scroll_pf_bottom_in
 	clr.w	spbi_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_horiz_fader_in1
 	clr.w	hfi1_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_horiz_fader_in2
 	clr.w	hfi2_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_horiz_fader_out
 	moveq	#TRUE,d0
 	move.w	d0,hfo1_active(a3)
 	move.w	d0,hfo2_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_scroll_pf_bottom_out
 	clr.w	spbo_active(a3)
-	rts
+	bra.s	effects_handler_quit
 
 
 	CNOP 0,4
@@ -1608,14 +1608,16 @@ mouse_handler
 	btst	#CIAB_GAMEPORT0,CIAPRA(a4) ; LMB pressed ?
 	beq.s	mouse_handler_skip
 	moveq	#RETURN_OK,d0
+mouse_handler_quit
 	rts
 	CNOP 0,4
 mouse_handler_skip
 	moveq	#RETURN_WARN,d0		; exit
-	rts
+	bra.s	mouse_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server
@@ -1631,84 +1633,84 @@ nmi_interrupt_server
 	CNOP 0,4
 pf1_rgb8_color_table
 	REPT 8			; pf1_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
 	CNOP 0,4
 spr_rgb8_color_table
 	REPT hf_colors_per_colorbank
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	INCLUDE "Superglenz:colorpalettes/192x39x4-Title.ct"
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
@@ -2033,7 +2035,7 @@ gv_xy_coordinates
 hf_bplam_table
 ; from dark to bright
 	REPT cl2_display_width1
-		DC.B 256-(hf_colors_per_colorbank*15)
+	DC.B 256-(hf_colors_per_colorbank*15)
 	ENDR
 	DC.B 256-(hf_colors_per_colorbank*14)
 	DC.B 256-(hf_colors_per_colorbank*13)
@@ -2049,7 +2051,7 @@ hf_bplam_table
 	DC.B 256-(hf_colors_per_colorbank*3)
 	DC.B 256-(hf_colors_per_colorbank*2)
 	REPT cl2_display_width1
-		DC.B 256-(hf_colors_per_colorbank*1)
+	DC.B 256-(hf_colors_per_colorbank*1)
 	ENDR
 
 

@@ -350,7 +350,7 @@ cl1_begin			RS.B 0
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 
 
@@ -434,16 +434,16 @@ cl2_extension4_entry		RS.B cl2_extension4_size
 
 cl2_end				RS.L 1
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
 cl2_size1			EQU 0
-cl2_size2			EQU copperlist2_size
-cl2_size3			EQU copperlist2_size
+cl2_size2			EQU cl2_copperlist_size
+cl2_size3			EQU cl2_copperlist_size
 
 
 ; Sprite0 additional structure
@@ -810,10 +810,10 @@ cl1_init_copperlist
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_sprite_pointers
 	bsr	cl1_init_colors
-	bsr	cl1_init_bitplane_pointers
+	bsr	cl1_init_plane_pointers
 	COP_MOVEQ 0,COPJMP2
 	bsr	cl1_set_sprite_pointers
-	bsr	cl1_set_bitplane_pointers
+	bsr	cl1_set_plane_pointers
 	rts
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -835,26 +835,26 @@ cl1_init_colors
 
 
 	CNOP 0,4
-cl1_set_bitplane_pointers
+cl1_set_plane_pointers
 	move.l	cl1_display(a3),a0
 	ADDF.W	cl1_BPL1PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
 	moveq	#pf1_depth3-1,d7
-cl1_set_bitplane_pointers_loop1
+cl1_set_plane_pointers_loop1
 	move.w	(a1)+,(a0)		; BPLxPTH
 	ADDF.W	QUADWORD_SIZE*2,a0
 	move.w	(a1)+,LONGWORD_SIZE-(QUADWORD_SIZE*2)(a0) ; BPLxPTL
-	dbf	d7,cl1_set_bitplane_pointers_loop1
+	dbf	d7,cl1_set_plane_pointers_loop1
 
 	move.l	cl1_display(a3),a0
 	ADDF.W	cl1_BPL2PTH+WORD_SIZE,a0
 	move.l	pf1_display(a3),a1
 	moveq	#pf2_depth3-1,d7
-cl1_set_bitplane_pointers_loop2
+cl1_set_plane_pointers_loop2
 	move.w	(a1)+,(a0)		; BPLxPTH
 	ADDF.W	QUADWORD_SIZE*2,a0
 	move.w	(a1)+,LONGWORD_SIZE-(QUADWORD_SIZE*2)(a0) ; BPLxPTL
-	dbf	d7,cl1_set_bitplane_pointers_loop2
+	dbf	d7,cl1_set_plane_pointers_loop2
 	rts
 
 
@@ -867,18 +867,17 @@ cl2_init_copperlist
 	bsr	cl2_init_fill_blit
 	COP_LISTEND
 	move.l	a0,cl_end(a3)
-	bsr	copy_second_copperlist
+	bsr	cl2_copy_copperlist
 
-	bsr	swap_second_copperlist
 	bsr	mgv_clear_extra_playfield
 	bsr	mgv_draw_lines
 	bsr	mgv_fill_extra_playfield
-	bsr	mgv_set_second_copperlist
-	bsr	swap_second_copperlist
+	bsr	mgv_cl2_set_copperlist
+	bsr	cl2_swap_copperlist
 	bsr	mgv_clear_extra_playfield
 	bsr	mgv_draw_lines
 	bsr	mgv_fill_extra_playfield
-	bsr	mgv_set_second_copperlist
+	bsr	mgv_cl2_set_copperlist
 	rts
 
 
@@ -897,8 +896,8 @@ cl2_init_clear_blit
 	CNOP 0,4
 cl2_init_line_blits_steady
 	COP_WAITBLIT
-	COP_MOVEQ -1,BLTAFWM
-	COP_MOVEQ -1,BLTALWM
+	COP_MOVEQ -1,BLTAFWM		; no mask
+	COP_MOVEQ -1,BLTALWM		; no mask
 	COP_MOVEQ 0,BLTCPTH
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ extra_pf1_plane_width*extra_pf1_depth,BLTCMOD ; moduli interleaved bitmaps
@@ -962,11 +961,11 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_beam_position
-	bsr.s	swap_second_copperlist
-	bsr	set_second_copperlist
+	bsr.s	cl2_swap_copperlist
+	bsr	cl2_set_copperlist
 	bsr	swap_sprite_structures
 	bsr	set_sprite_pointers
-	bsr	pf1_swap_playfields
+	bsr	pf1_swap_playfield
 	bsr	pf1_set_playfield
 	bsr	pf2_set_playfield
 	bsr	swap_extra_playfield
@@ -977,7 +976,7 @@ beam_routines
 	bsr	mgv_morph_object
 	bsr	mgv_draw_lines
 	bsr	mgv_fill_extra_playfield
-	bsr	mgv_set_second_copperlist
+	bsr	mgv_cl2_set_copperlist
 	bsr	mgv_copy_extra_playfield
 	bsr	vert_text_scroll
 	bsr	colors_fader_cross
@@ -1118,6 +1117,7 @@ vts_check_control_codes
 	beq.s	vts_stop_vert_text_scroll
 	cmp.b	#ASCII_CTRL_F,d0
 	beq.s	vts_stop_colors_fader_cross
+vts_check_control_codes_quit
 	rts
 	CNOP 0,4
 vts_enable_music_fader
@@ -1126,12 +1126,12 @@ vts_enable_music_fader
 	clr.w	(a0)
 	move.l	d0,a0
 	moveq	#RETURN_OK,d0
-	rts
+	bra.s	vts_check_control_codes_quit
 	CNOP 0,4
 vts_stop_vert_text_scroll
 	clr.w	vts_variable_vert_scroll_speed(a3) ; speed = 0
 	moveq	#RETURN_OK,d0
-	rts
+	bra.s	vts_check_control_codes_quit
 	CNOP 0,4
 vts_stop_colors_fader_cross
 	move.w	#-1,cfc_rgb8_color_table_start(a3) ; fade to background color
@@ -1140,7 +1140,7 @@ vts_stop_colors_fader_cross
 	move.w	#1,cfc_rgb8_fader_delay_counter(a3) ; activate counter
 vts_stop_colors_fader_cross_quit
 	moveq	#RETURN_OK,d0
-	rts
+	bra.s	vts_check_control_codes_quit
 
 
 	CNOP 0,4
@@ -1390,7 +1390,7 @@ mgv_copy_extra_playfield_loop
 
 
 	CNOP 0,4
-mgv_set_second_copperlist
+mgv_cl2_set_copperlist
 	move.l	cl2_construction2(a3),a0 
 	move.l	a0,d0
 	ADDF.L	cl2_extension4_entry,d0
@@ -1398,9 +1398,9 @@ mgv_set_second_copperlist
 	move.w	mgv_lines_counter(a3),d1
 	IFEQ mgv_count_lines_enabled
 		cmp.w	$1b0000,d1
-		blt.s	mgv_set_second_copperlist_skip
+		blt.s	mgv_cl2_set_copperlist_skip
 		move.w	d1,$1b0000
-mgv_set_second_copperlist_skip
+mgv_cl2_set_copperlist_skip
 	ENDC
 	MULUF.W cl2_extension3_size,d1,d2
 	sub.l	d1,d0
@@ -1532,6 +1532,7 @@ cfc_rgb8_copy_color_table_quit
 
 	CNOP 0,4
 control_counters
+
 ; Morphing-Glenz-Vectors
 	move.w	mgv_morph_delay_counter(a3),d0
 	bmi.s	control_counters_skip2
@@ -1541,6 +1542,7 @@ control_counters
 control_counters_skip1
 	move.w	d0,mgv_morph_delay_counter(a3) 
 control_counters_skip2
+
 ; Color-Fader-Cross
 	move.w	cfc_rgb8_fader_delay_counter(a3),d0
 	bmi.s	control_counters_skip4
@@ -1578,14 +1580,15 @@ eh_start_colors_fader_cross
 	clr.w	cfc_rgb8_active(a3)
 	move.w	#cfc_rgb8_colors_number*3,cfc_rgb8_colors_counter(a3)
 	clr.w	cfc_rgb8_copy_colors_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_vert_text_scroll
 	move.w	#vts_vert_scroll_speed,vts_variable_vert_scroll_speed(a3)
-	rts
+	bra.s	effects_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server
@@ -1611,7 +1614,7 @@ pf2_rgb8_color_table
 	CNOP 0,4
 spr_rgb8_color_table
 	REPT spr_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
@@ -1888,31 +1891,31 @@ mgv_morph_shapes_table
 	CNOP 0,4
 cfc_rgb8_color_table_fade_out
 	REPT 8
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 cfc_rgb8_color_table
 	REPT 2
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:Colortables/1xGlenz-Colorgradient1.ct"
+	INCLUDE "Superglenz:colorpalettes/1xGlenz-Colorgradient1.ct"
 	REPT 2
-		DC.L color00_bits
-	ENDR
-
-	REPT 2
-		DC.L color00_bits
-	ENDR
-	INCLUDE "Superglenz:Colortables/1xGlenz-Colorgradient5.ct"
-	REPT 2
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 	REPT 2
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
-	INCLUDE "Superglenz:Colortables/1xGlenz-Colorgradient4.ct"
+	INCLUDE "Superglenz:colorpalettes/1xGlenz-Colorgradient5.ct"
 	REPT 2
-		DC.L color00_bits
+	DC.L color00_bits
+	ENDR
+
+	REPT 2
+	DC.L color00_bits
+	ENDR
+	INCLUDE "Superglenz:colorpalettes/1xGlenz-Colorgradient4.ct"
+	REPT 2
+	DC.L color00_bits
 	ENDR
 
 
@@ -1928,7 +1931,7 @@ cfc_rgb8_color_table
 ; Vert-Textscroll
 vts_text
 	REPT vts_text_chars_per_column*vts_text_chars_per_line
-		DC.B " "
+	DC.B " "
 	ENDR
 	DC.B "# SUPERGLENZ #      "
 	DC.B "                    "

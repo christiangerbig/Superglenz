@@ -13,7 +13,7 @@
 ; Imports
 	XREF color00_bits
 	XREF start_10_credits
-	XREF sc_start
+	XREF decrunch_data
 
 ; Exports
 	XDEF start_1_pt_replay
@@ -221,7 +221,7 @@ cl1_begin			RS.B 0
 
 cl1_end				RS.L 1
 
-copperlist1_size	RS.B 0
+cl1_copperlist_size	RS.B 0
 
 
 	RSRESET
@@ -230,12 +230,12 @@ cl2_begin			RS.B 0
 
 cl2_end				RS.L 1
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
 cl2_size1			EQU 0
 cl2_size2			EQU 0
@@ -368,14 +368,14 @@ pt_decrunch_audio_data
 	move.l	cme_memory_pointer(a2),a1 ; destination: decrunched data
 	move.l	a1,pt_Song(a3)
 	movem.l a2-a6,-(a7)
-	jsr	sc_start
+	jsr	decrunch_data
 	movem.l (a7)+,a2-a6
 	ADDF.W	custom_memory_entry_size,a2 ; next custom memory block
 	lea	pt_audsmps,a0
 	move.l	cme_memory_pointer(a2),a1
 	move.l	a1,pt_Samples(a3)
 	movem.l a2-a6,-(a7)
-	jsr	sc_start
+	jsr	decrunch_data
 	movem.l (a7)+,a2-a6
 	rts
 
@@ -452,7 +452,7 @@ alloc_custom_memory_quit
 alloc_custom_memory_fail
 	move.w	#CUSTOM_MEMORY_NO_MEMORY,custom_error_code(a3)
 	moveq	#RETURN_ERROR,d0
-	rts
+	bra.s	alloc_custom_memory_quit
 
 
 	CNOP 0,4
@@ -490,6 +490,7 @@ free_custom_memory_skip
 
 	INCLUDE "int-autovectors-handlers.i"
 
+
 	IFEQ pt_ciatiming_enabled
 		CNOP 0,4
 ciab_ta_interrupt_server
@@ -522,13 +523,16 @@ pt_SetSoftInterrupt
 	move.w	#INTF_SOFTINT|INTF_SETCLR,_CUSTOM+INTREQ
 	rts
 
+
 	CNOP 0,4
 ciab_tb_interrupt_server
 	PT_TIMER_INTERRUPT_SERVER
 
+
 	CNOP 0,4
 exter_interrupt_server
 	rts
+
 
 	CNOP 0,4
 nmi_interrupt_server

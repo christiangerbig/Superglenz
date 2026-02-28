@@ -206,7 +206,7 @@ cl1_begin			RS.B 0
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 
 	RSRESET
@@ -215,16 +215,16 @@ cl2_begin			RS.B 0
 
 cl2_end				RS.L 1
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
 cl2_size1			EQU 0
 cl2_size2			EQU 0
-cl2_size3			EQU copperlist2_size
+cl2_size3			EQU cl2_copperlist_size
 
 
 ; Sprite0 additional structure
@@ -560,7 +560,7 @@ main
 	bsr	start_012_morph_glenz_vectors
 	movem.l (a7)+,a0/a3-a6
 	tst.l	d0
-	bne.s	beam_routines_exit2
+	bne	beam_routines_exit2
 
 	movem.l a0/a3-a6,-(a7)
 	bsr	start_013_morph_glenz_vectors
@@ -697,6 +697,7 @@ sprite_fader_out_quit
 
 	INCLUDE "int-autovectors-handlers.i"
 
+
 	CNOP 0,4
 nmi_interrupt_server
 	rts
@@ -711,7 +712,7 @@ nmi_interrupt_server
 	CNOP 0,4
 spr_rgb8_color_table
 	REPT spr_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
@@ -728,7 +729,7 @@ sprfi_rgb8_color_table
 	CNOP 0,4
 sprfo_rgb8_color_table
 	REPT spr_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
