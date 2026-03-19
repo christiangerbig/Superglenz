@@ -971,7 +971,7 @@ beam_routines
 	bsr	swap_extra_playfield
 	bsr	effects_handler
 	bsr	mgv_clear_extra_playfield
-	bsr	mgv_calculate_y_speed
+	bsr	mgv_calc_y_speed
 	bsr	mgv_rotation
 	bsr	mgv_morph_object
 	bsr	mgv_draw_lines
@@ -1157,7 +1157,7 @@ mgv_clear_extra_playfield
 
 
 	CNOP 0,4
-mgv_calculate_y_speed
+mgv_calc_y_speed
 	move.w	mgv_y_anglespeed_angle(a3),d2
 	lea	sine_table,a0
 	move.w	(a0,d2.w*2),d0		; sin(w)
