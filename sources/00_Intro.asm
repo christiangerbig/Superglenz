@@ -706,9 +706,9 @@ init_main_variables
 
 ; Glenz-Vectors
 	moveq	#TRUE,d0
-	move.w	d0,gv_x_angle(a3)
-	move.w	d0,gv_y_angle(a3)
-	move.w	d0,gv_z_angle(a3)
+	move.w	d0,gv_x_angle(a3)	; 0°
+	move.w	d0,gv_y_angle(a3)	; 0°
+	move.w	d0,gv_z_angle(a3)	; 0°
 
 ; Scroll-Playfield-Bottom-In
 	moveq	#FALSE,d1
@@ -1248,7 +1248,7 @@ gv_rotation_skip2
 	moveq	#gv_object_edge_points_number-1,d7
 gv_rotation_loop
 	move.w	(a0)+,d0		; x
-	move.l	d7,a2		
+	move.l	d7,a2			; store loop counter
 	move.w	(a0)+,d1		; y
 	move.w	(a0)+,d2		; z
 	ROTATE_Y_AXIS
@@ -1260,7 +1260,7 @@ gv_rotation_loop
 	add.w	a5,d0			; x' + x center
 	move.w	d0,(a1)+		; x position
 	divs.w	d2,d1			; y' = (y*d)/(z+d)
-	move.l	a2,d7			; loop counter
+	move.l	a2,d7			; restore loop counter
 	add.w	a5,d1			; y' + y center
 	move.w	d1,(a1)+		; y position
 	dbf	d7,gv_rotation_loop
@@ -1735,32 +1735,32 @@ gv_rgb8_color_table
 
 	CNOP 0,2
 gv_object_coordinates
-	DC.W 0,-(36*8),0		; P0
-	DC.W -(19*8),-(36*8),-(48*8)	; P1
-	DC.W 19*8,-(36*8),-(48*8)	; P2
-	DC.W 48*8,-(36*8),-(19*8)	; P3
-	DC.W 48*8,-(36*8),19*8		; P4
-	DC.W 19*8,-(36*8),48*8		; P5
-	DC.W -(19*8),-(36*8),48*8	; P6
-	DC.W -(48*8),-(36*8),19*8	; P7
-	DC.W -(48*8),-(36*8),-(19*8)	; P8
-	DC.W 0,-(24*8),-(58*8)		; P9
-	DC.W 40*8,-(24*8),-(40*8)	; P10
-	DC.W 58*8,-(24*8),0		; P11
-	DC.W 40*8,-(24*8),40*8		; P12
-	DC.W 0,-(24*8),58*8		; P13
-	DC.W -(40*8),-(24*8),40*8	; P14
-	DC.W -(58*8),-(24*8),0		; P15
-	DC.W -(40*8),-(24*8),-(40*8)	; P16
-	DC.W -(27*8),-(12*8),-(68*8)	; P17
-	DC.W 27*8,-(12*8),-(68*8)	; P18
-	DC.W 68*8,-(12*8),-(27*8)	; P19
-	DC.W 68*8,-(12*8),27*8		; P20
-	DC.W 27*8,-(12*8),68*8		; P21
-	DC.W -(27*8),-(12*8),68*8	; P22
-	DC.W -(68*8),-(12*8),27*8	; P23
-	DC.W -(68*8),-(12*8),-(27*8)	; P24
-	DC.W 0,48*8,0			; P25
+	DC.W 0,-(36*8),0		; p0
+	DC.W -(19*8),-(36*8),-(48*8)	; p1
+	DC.W 19*8,-(36*8),-(48*8)	; p2
+	DC.W 48*8,-(36*8),-(19*8)	; p3
+	DC.W 48*8,-(36*8),19*8		; p4
+	DC.W 19*8,-(36*8),48*8		; p5
+	DC.W -(19*8),-(36*8),48*8	; p6
+	DC.W -(48*8),-(36*8),19*8	; p7
+	DC.W -(48*8),-(36*8),-(19*8)	; p8
+	DC.W 0,-(24*8),-(58*8)		; p9
+	DC.W 40*8,-(24*8),-(40*8)	; p10
+	DC.W 58*8,-(24*8),0		; p11
+	DC.W 40*8,-(24*8),40*8		; p12
+	DC.W 0,-(24*8),58*8		; p13
+	DC.W -(40*8),-(24*8),40*8	; p14
+	DC.W -(58*8),-(24*8),0		; p15
+	DC.W -(40*8),-(24*8),-(40*8)	; p16
+	DC.W -(27*8),-(12*8),-(68*8)	; p17
+	DC.W 27*8,-(12*8),-(68*8)	; p18
+	DC.W 68*8,-(12*8),-(27*8)	; p19
+	DC.W 68*8,-(12*8),27*8		; p20
+	DC.W 27*8,-(12*8),68*8		; p21
+	DC.W -(27*8),-(12*8),68*8	; p22
+	DC.W -(68*8),-(12*8),27*8	; p23
+	DC.W -(68*8),-(12*8),-(27*8)	; p24
+	DC.W 0,48*8,0			; p25
 
 	CNOP 0,4
 gv_object_info

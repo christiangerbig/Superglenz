@@ -449,11 +449,11 @@ mgv_x_angle			RS.W 1
 mgv_y_angle			RS.W 1
 mgv_z_angle			RS.W 1
 
-mgv_variable_x_speed		RS.W 1
+mgv_x_speed		RS.W 1
 mgv_x_anglespeed_angle		RS.W 1
-mgv_variable_y_speed		RS.W 1
+mgv_y_speed		RS.W 1
 mgv_y_anglespeed_angle		RS.W 1
-mgv_variable_z_speed		RS.W 1
+mgv_z_speed		RS.W 1
 mgv_z_anglespeed_angle		RS.W 1
 
 mgv_lines_counter		RS.W 1
@@ -494,15 +494,15 @@ init_main_variables
 
 ; Morphing-Glenz-Vectors
 	moveq	#TRUE,d0
-	move.w	d0,mgv_x_angle(a3)
-	move.w	d0,mgv_y_angle(a3)
-	move.w	d0,mgv_z_angle(a3)
+	move.w	d0,mgv_x_angle(a3)	; 0°
+	move.w	d0,mgv_y_angle(a3)	; 0°
+	move.w	d0,mgv_z_angle(a3)	; 0°
 
-	move.w	d0,mgv_variable_x_speed(a3)
+	move.w	d0,mgv_x_speed(a3)
 	move.w	d0,mgv_x_anglespeed_angle(a3)
-	move.w	d0,mgv_variable_y_speed(a3)
+	move.w	d0,mgv_y_speed(a3)
 	move.w	d0,mgv_y_anglespeed_angle(a3)
-	move.w	d0,mgv_variable_z_speed(a3)
+	move.w	d0,mgv_z_speed(a3)
 	move.w	d0,mgv_z_anglespeed_angle(a3)
 
 	move.w	d0,mgv_lines_counter(a3)
@@ -820,7 +820,7 @@ mgv_calc_xyz_speed
 	swap	d0
 	MOVEF.W sine_table_length-1,d3
 	add.w	#mgv_x_anglespeed_center,d0
-	move.w	d0,mgv_variable_x_speed(a3)
+	move.w	d0,mgv_x_speed(a3)
 	add.w	#mgv_x_anglespeed_speed,d2
 	and.w	d3,d2			; remove overflow
 	move.w	d2,mgv_x_anglespeed_angle(a3)
@@ -830,7 +830,7 @@ mgv_calc_xyz_speed
 	MULSF.W mgv_y_anglespeed_radius*2,d0,d1 ; y speed = (r*sin(w))/2^15
 	swap	d0
 	add.w	#mgv_y_anglespeed_center,d0
-	move.w	d0,mgv_variable_y_speed(a3)
+	move.w	d0,mgv_y_speed(a3)
 	add.w	#mgv_y_anglespeed_speed,d2
 	and.w	d3,d2			; remove overflow
 	move.w	d2,mgv_y_anglespeed_angle(a3)
@@ -840,7 +840,7 @@ mgv_calc_xyz_speed
 	MULSF.W mgv_z_anglespeed_radius*2,d0,d1 ; z speed = (r*sin(w))/2^15
 	swap	d0
 	add.w	#mgv_z_anglespeed_center,d0
-	move.w	d0,mgv_variable_z_speed(a3)
+	move.w	d0,mgv_z_speed(a3)
 	add.w	#mgv_z_anglespeed_speed,d2
 	and.w	d3,d2			; remove overflow
 	move.w	d2,mgv_z_anglespeed_angle(a3)
@@ -860,7 +860,7 @@ mgv_rotation
 	swap	d4 			; high word: sin(a)
 	and.w	d3,d0			; remove overflow
 	move.w	(a2,d0.w*2),d4	 	; low word: cos(a)
-	add.w	mgv_variable_x_speed(a3),d1
+	add.w	mgv_x_speed(a3),d1
 	and.w	d3,d1			; remove overflow
 	move.w	d1,mgv_x_angle(a3) 
 	move.w	mgv_y_angle(a3),d1
@@ -870,7 +870,7 @@ mgv_rotation
 	swap	d5 			; high word: sin(b)
 	and.w	d3,d0			; remove overflow
 	move.w	(a2,d0.w*2),d5	 	; low word: cos(b)
-	add.w	mgv_variable_y_speed(a3),d1
+	add.w	mgv_y_speed(a3),d1
 	and.w	d3,d1			; remove overflow
 	move.w	d1,mgv_y_angle(a3) 
 	move.w	mgv_z_angle(a3),d1
@@ -880,7 +880,7 @@ mgv_rotation
 	swap	d6 			; high word: sin(c)
 	and.w	d3,d0			; remove overflow
 	move.w	(a2,d0.w*2),d6	 	; low word: cos(c)
-	add.w	mgv_variable_z_speed(a3),d1
+	add.w	mgv_z_speed(a3),d1
 	and.w	d3,d1			; remove overflow
 	move.w	d1,mgv_z_angle(a3) 
 	lea	mgv_object_coordinates(pc),a0
@@ -890,7 +890,7 @@ mgv_rotation
 	moveq	#mgv_object_edge_points_number-1,d7
 mgv_rotation_loop
 	move.w	(a0)+,d0		; x
-	move.l	d7,a2		
+	move.l	d7,a2			; store loop counter
 	move.w	(a0)+,d1		; y
 	move.w	(a0)+,d2		; z
 	ROTATE_X_AXIS
@@ -904,7 +904,7 @@ mgv_rotation_loop
 	add.w	a5,d0			; x' + x center
 	move.w	d0,(a1)+		; x position
 	divs.w	d2,d1			; y'= (y*d)/(z+d)
-	move.l	a2,d7			; loop counter
+	move.l	a2,d7			; restore loop counter
 	add.w	a5,d1			; y' + y center
 	move.w	d1,(a1)+		; y position
 	dbf	d7,mgv_rotation_loop
@@ -1225,77 +1225,77 @@ mgv_object_coordinates
 ; Shape 1
 	CNOP 0,2
 mgv_object_shape1_coordinates
-; Polygon
-	DC.W 0,-(79*8),-(26*8)		; P0
-	DC.W 26*8,-(26*8),-(26*8)	; P1
-	DC.W 52*8,26*8,-(26*8)		; P2
-	DC.W 79*8,79*8,-(26*8)		; P3
-	DC.W 26*8,79*8,-(26*8)		; P4
-	DC.W -(26*8),79*8,-(26*8)	; P5
-	DC.W -(79*8),79*8,-(26*8)	; P6
-	DC.W -(52*8),26*8,-(26*8)	; P7
-	DC.W -(26*8),-(26*8),-(26*8)	; P8
-	DC.W 0,26*8,-(26*8)		; P9
-	DC.W 0,-(79*8),26*8		; P10
-	DC.W 26*8,-(26*8),26*8		; P11
-	DC.W 52*8,26*8,26*8		; P12
-	DC.W 79*8,79*8,26*8		; P13
-	DC.W 26*8,79*8,26*8		; P14
-	DC.W -(26*8),79*8,26*8		; P15
-	DC.W -(79*8),79*8,26*8		; P16
-	DC.W -(52*8),26*8,26*8		; P17
-	DC.W -(26*8),-(26*8),26*8	; P18
-	DC.W 0,26*8,26*8		; P19
+; polygon
+	DC.W 0,-(79*8),-(26*8)		; p0
+	DC.W 26*8,-(26*8),-(26*8)	; p1
+	DC.W 52*8,26*8,-(26*8)		; p2
+	DC.W 79*8,79*8,-(26*8)		; p3
+	DC.W 26*8,79*8,-(26*8)		; p4
+	DC.W -(26*8),79*8,-(26*8)	; p5
+	DC.W -(79*8),79*8,-(26*8)	; p6
+	DC.W -(52*8),26*8,-(26*8)	; p7
+	DC.W -(26*8),-(26*8),-(26*8)	; p8
+	DC.W 0,26*8,-(26*8)		; p9
+	DC.W 0,-(79*8),26*8		; p10
+	DC.W 26*8,-(26*8),26*8		; p11
+	DC.W 52*8,26*8,26*8		; p12
+	DC.W 79*8,79*8,26*8		; p13
+	DC.W 26*8,79*8,26*8		; p14
+	DC.W -(26*8),79*8,26*8		; p15
+	DC.W -(79*8),79*8,26*8		; p16
+	DC.W -(52*8),26*8,26*8		; p17
+	DC.W -(26*8),-(26*8),26*8	; p18
+	DC.W 0,26*8,26*8		; p19
 
 ; Shape 2
 	CNOP 0,2
 mgv_object_shape2_coordinates
-; Pyramide
-	DC.W 0,-(67*8),-(12*8)		; P0
-	DC.W 22*8,-(22*8),-(31*8)	; P1
-	DC.W 44*8,22*8,-(50*8)		; P2
-	DC.W 67*8,67*8,-(67*8)		; P3
-	DC.W 22*8,67*8,-(67*8)		; P4
-	DC.W -(22*8),67*8,-(67*8)	; P5
-	DC.W -(67*8),67*8,-(67*8)	; P6
-	DC.W -(44*8),22*8,-(50*8)	; P7
-	DC.W -(22*8),-(22*8),-(31*8)	; P8
-	DC.W 0,22*8,-(50*8)		; P9
-	DC.W 0,-(67*8),12*8		; P10
-	DC.W 22*8,-(22*8),31*8		; P11
-	DC.W 44*8,22*8,50*8		; P10
-	DC.W 67*8,67*8,67*8		; P13
-	DC.W 22*8,67*8,67*8		; P10
-	DC.W -(22*8),67*8,67*8		; P15
-	DC.W -(67*8),67*8,67*8		; P16
-	DC.W -(44*8),22*8,50*8		; P17
-	DC.W -(22*8),-(22*8),31*8	; P18
-	DC.W 0,22*8,50*8		; P19
+; pyramide
+	DC.W 0,-(67*8),-(12*8)		; p0
+	DC.W 22*8,-(22*8),-(31*8)	; p1
+	DC.W 44*8,22*8,-(50*8)		; p2
+	DC.W 67*8,67*8,-(67*8)		; p3
+	DC.W 22*8,67*8,-(67*8)		; p4
+	DC.W -(22*8),67*8,-(67*8)	; p5
+	DC.W -(67*8),67*8,-(67*8)	; p6
+	DC.W -(44*8),22*8,-(50*8)	; p7
+	DC.W -(22*8),-(22*8),-(31*8)	; p8
+	DC.W 0,22*8,-(50*8)		; p9
+	DC.W 0,-(67*8),12*8		; p10
+	DC.W 22*8,-(22*8),31*8		; p11
+	DC.W 44*8,22*8,50*8		; p10
+	DC.W 67*8,67*8,67*8		; p13
+	DC.W 22*8,67*8,67*8		; p10
+	DC.W -(22*8),67*8,67*8		; p15
+	DC.W -(67*8),67*8,67*8		; p16
+	DC.W -(44*8),22*8,50*8		; p17
+	DC.W -(22*8),-(22*8),31*8	; p18
+	DC.W 0,22*8,50*8		; p19
 
 ; Shape 3
 	CNOP 0,2
 mgv_object_shape3_coordinates
 ; Wedge
-	DC.W 0,-(64*8),-(64*8)		; P0
-	DC.W 20*8,-(20*8),-(64*8)	; P1
-	DC.W 42*8,20*8,-(64*8)		; P2
-	DC.W 64*8,64*8,-(64*8)		; P3
-	DC.W 20*8,64*8,-(64*8)		; P4
-	DC.W -(20*8),64*8,-(64*8)	; P5
-	DC.W -(64*8),64*8,-(64*8)	; P6
-	DC.W -(42*8),20*8,-(64*8)	; P7
-	DC.W -(20*8),-(20*8),-(64*8)	; P8
-	DC.W 0,20*8,-(64*8)		; P9
-	DC.W 0,-(64*8),64*8		; P10
-	DC.W 20*8,-(20*8),64*8		; P11
-	DC.W 42*8,20*8,64*8		; P12
-	DC.W 64*8,64*8,64*8		; P13
-	DC.W 20*8,64*8,64*8		; P12
-	DC.W -(20*8),64*8,64*8		; P15
-	DC.W -(64*8),64*8,64*8		; P16
-	DC.W -(42*8),20*8,64*8		; P17
-	DC.W -(20*8),-(20*8),64*8	; P18
-	DC.W 0,20*8,64*8		; P19
+	DC.W 0,-(64*8),-(64*8)		; p0
+	DC.W 20*8,-(20*8),-(64*8)	; p1
+	DC.W 42*8,20*8,-(64*8)		; p2
+	DC.W 64*8,64*8,-(64*8)		; p3
+	DC.W 20*8,64*8,-(64*8)		; p4
+	DC.W -(20*8),64*8,-(64*8)	; p5
+	DC.W -(64*8),64*8,-(64*8)	; p6
+	DC.W -(42*8),20*8,-(64*8)	; p7
+	DC.W -(20*8),-(20*8),-(64*8)	; p8
+	DC.W 0,20*8,-(64*8)		; p9
+	DC.W 0,-(64*8),64*8		; p10
+	DC.W 20*8,-(20*8),64*8		; p11
+	DC.W 42*8,20*8,64*8		; p12
+	DC.W 64*8,64*8,64*8		; p13
+	DC.W 20*8,64*8,64*8		; p12
+	DC.W -(20*8),64*8,64*8		; p15
+	DC.W -(64*8),64*8,64*8		; p16
+	DC.W -(42*8),20*8,64*8		; p17
+	DC.W -(20*8),-(20*8),64*8	; p18
+	DC.W 0,20*8,64*8		; p19
 
 	CNOP 0,4
 mgv_object_info

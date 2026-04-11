@@ -199,7 +199,7 @@ vts_text_char_width		EQU vts_text_char_x_size/8
 vts_text_char_y_size		EQU vts_origin_char_y_size+1
 vts_text_char_depth		EQU vts_image_depth
 
-vts_vert_scroll_speed		EQU 1
+vts_vert_scroll_speed1		EQU 1
 
 vts_text_char_y_restart		EQU visible_lines_number+vts_text_char_y_size
 vts_text_chars_per_line		EQU (pixel_per_line-32)/vts_text_char_x_size
@@ -586,12 +586,12 @@ save_a7				RS.L 1
 
 ; Vert-Text-Scroll
 vts_image			RS.L 1
-vts_variable_vert_scroll_speed	RS.W 1
+vts_vert_scroll_speed		RS.W 1
 vts_text_table_start		RS.W 1
 
 ; Morph-Glenz-Vectors
 mgv_y_angle			RS.W 1
-mgv_variable_y_speed		RS.W 1
+mgv_y_speed		RS.W 1
 mgv_y_anglespeed_angle		RS.W 1
 
 mgv_lines_counter		RS.W 1
@@ -634,12 +634,12 @@ init_main_variables
 	lea	vts_image_data,a0
 	move.l	a0,vts_image(a3)
 	moveq	#TRUE,d0
-	move.w	d0,vts_variable_vert_scroll_speed(a3)
+	move.w	d0,vts_vert_scroll_speed(a3)
 	move.w	d0,vts_text_table_start(a3)
 
 ; Morphing-Glenz-Vectors
 	move.w	d0,mgv_y_angle(a3)
-	move.w	d0,mgv_variable_y_speed(a3)
+	move.w	d0,mgv_y_speed(a3)
 	move.w	d0,mgv_y_anglespeed_angle(a3)
 
 	move.w	d0,mgv_lines_counter(a3)
@@ -1086,7 +1086,7 @@ vert_text_scroll_loop2
 	move.b	vts_image_plane_width*6(a5),pf1_plane_width*6(a6)
 	move.b	vts_image_plane_width*7(a5),pf1_plane_width*7(a6)
 	dbf	d6,vert_text_scroll_loop2
-	sub.w	vts_variable_vert_scroll_speed(a3),d2 ; decrease x position
+	sub.w	vts_vert_scroll_speed(a3),d2 ; decrease x position
 	bpl.s	vert_text_scroll_skip
 	sub.l	d3,a2			; restart pointer
 	moveq	#vts_text_chars_per_line-1,d5
@@ -1129,7 +1129,7 @@ vts_enable_music_fader
 	bra.s	vts_check_control_codes_quit
 	CNOP 0,4
 vts_stop_vert_text_scroll
-	clr.w	vts_variable_vert_scroll_speed(a3) ; speed = 0
+	clr.w	vts_vert_scroll_speed(a3) ; speed = 0
 	moveq	#RETURN_OK,d0
 	bra.s	vts_check_control_codes_quit
 	CNOP 0,4
@@ -1163,7 +1163,7 @@ mgv_calc_y_speed
 	move.w	(a0,d2.w*2),d0		; sin(w)
 	MULSF.W mgv_y_anglespeed_radius*2,d0,d1 ; y_speed = (r*sin(w))/2^15
 	swap	d0
-	move.w	d0,mgv_variable_y_speed(a3)
+	move.w	d0,mgv_y_speed(a3)
 	addq.w	#mgv_y_anglespeed_speed,d2
 	and.w	#sine_table_length-1,d2 ; remove overflow
 	move.w	d2,mgv_y_anglespeed_angle(a3)
@@ -1183,7 +1183,7 @@ mgv_rotation
 	swap	d5 			; high word: sin(b)
 	and.w	d3,d0			; remove overflow
 	move.w	(a2,d0.w*2),d5		; low word: cos(b)
-	add.w	mgv_variable_y_speed(a3),d1
+	add.w	mgv_y_speed(a3),d1
 	and.w	d3,d1			; remove overflow
 	move.w	d1,mgv_y_angle(a3) 
 	lea	mgv_object_coordinates(pc),a0
@@ -1583,7 +1583,7 @@ eh_start_colors_fader_cross
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_vert_text_scroll
-	move.w	#vts_vert_scroll_speed,vts_variable_vert_scroll_speed(a3)
+	move.w	#vts_vert_scroll_speed1,vts_vert_scroll_speed(a3)
 	bra.s	effects_handler_quit
 
 
