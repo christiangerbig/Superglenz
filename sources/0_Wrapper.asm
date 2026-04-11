@@ -529,9 +529,10 @@ nmi_interrupt_server
 
 ; Stone-Cracker
 ; Input
-; a0.l	crunched data
-; a1.l	decrunched data
+; a0.l	Crunched data
+; a1.l	Decrunched data
 ; Result
+; no return value
 	CNOP 0,4
 decrunch_data
 	addq.w	#QUADWORD_SIZE,a0	; skip ID string & security length

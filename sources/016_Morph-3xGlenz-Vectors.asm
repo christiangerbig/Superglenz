@@ -715,9 +715,10 @@ mgv_init_objects_info
 
 ; Input
 ; d7.w	Number of faces
-; a0.l	Object info table
-; a1.l	Edge table
+; a0.l	Pointer structure object info
+; a1.l	Pointer structure object edges
 ; Result
+; no return value
 	CNOP 0,4
 mgv_init_objects_info_loop
 	move.w	object_info_lines_number(a0),d0
@@ -1163,9 +1164,9 @@ mgv_init_color_table
 	rts
 
 ; Input
-; d6.w	1st source color number
-; d7.w	2nd source color number
-; a0.l		color table
+; d6.w	1st source colour number
+; d7.w	2nd source colour number
+; a0.l	Pointer table RGB8 colours
 	CNOP 0,4
 mgv_get_colorvalues_average
 ; Result
@@ -1464,11 +1465,12 @@ mgv_prerotation_objects_quit
 
 ; Input
 ; d7.w	Number of points
-; a0.l	Object coordinates table
-; a1.l	Destination coordinates table
-; a5.l	Variable x_angle
-; a6.l	Variable x_speed
+; a0.l	Pointer table object x,y,z coordinates
+; a1.l	Pointer table destination x,y,z coordinates after rotation
+; a5.l	Pointer variable x angle
+; a6.l	Pointer variable x speed
 ; Result
+; no return value
 	CNOP 0,4
 mgv_prerotation
 	move.w	(a5),d1			; x angle
@@ -1659,9 +1661,10 @@ mgv_morph_objects_quit
 
 ; Input
 ; d7.w	Number of coordinates
-; a0.l	Current coordinates table
-; a1.l	Destination coordinatws table
+; a0.l	Pointer table current x,y,z coordinates
+; a1.l	Pointer table destination x,y,z coordinates
 ; Result
+; no return value
 	CNOP 0,4
 mgv_morph_objects_loop
 	move.w	(a0),d0			; current coordinate
@@ -1880,6 +1883,7 @@ scroll_pf_bottom_out_quit
 ; d0.w	y offset
 ; d3.w y max
 ; Result
+; no return value
 	CNOP 0,4
 spb_set_display_window
 	move.l	cl2_construction2(a3),a1

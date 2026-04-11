@@ -728,11 +728,12 @@ mgv_init_xy_coordinates
 
 
 ; Input
-; d0.w	x
-; d1.w	y
-; a0.l		1st sprite structure
-; a1.l		2nd sprite structure
+; d0.w	X
+; d1.w	Y
+; a0.l	Pointer structure 1st sprite data
+; a1.l	Pointer structure 2nd sprite data
 ; Result
+; no return value
 	CNOP 0,4
 mgv_init_sprite_header
 	MOVEF.W visible_lines_number,d2 ; height

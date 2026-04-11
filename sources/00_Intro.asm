@@ -835,10 +835,11 @@ init_sprites_cluster
 ; d1.w	Y position
 ; d2.w	Height
 ; d7.w	Height of single sprite
-; a0.l	Sprite structure
-; a2.l	 bitplane 1
-; a4.l	 bitplane 2
+; a0.l	Pointer structure sprite data
+; a2.l	Bitplane 1
+; a4.l	Bitplane 2
 ; Result
+; no return value
 	CNOP 0,4
 copy_sprite_planes
 	add.w	d1,d2			; VSTOP
@@ -1410,6 +1411,7 @@ scroll_pf_bottom_out_quit
 ; d0.w	y offset
 ; d3.w	y max
 ; Result
+; no return value
 	CNOP 0,4
 spb_set_display_window
 	move.l	cl1_display(a3),a1

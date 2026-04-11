@@ -1095,6 +1095,7 @@ scroll_pf_bottom_out_quit
 ; d0.w	y offset
 ; d3.w	y max
 ; Result
+; no return value
 	CNOP 0,4
 spb_set_display_window
 	move.l	cl2_construction2(a3),a1
