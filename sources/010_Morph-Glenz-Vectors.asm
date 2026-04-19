@@ -417,11 +417,11 @@ mgv_x_angle			RS.W 1
 mgv_y_angle			RS.W 1
 mgv_z_angle			RS.W 1
 
-mgv_x_speed		RS.W 1
+mgv_x_speed			RS.W 1
 mgv_x_anglespeed_angle		RS.W 1
-mgv_y_speed		RS.W 1
+mgv_y_speed			RS.W 1
 mgv_y_anglespeed_angle		RS.W 1
-mgv_z_speed		RS.W 1
+mgv_z_speed			RS.W 1
 mgv_z_anglespeed_angle		RS.W 1
 
 mgv_lines_counter		RS.W 1

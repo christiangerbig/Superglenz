@@ -353,7 +353,6 @@ cl1_COPJMP2			RS.L 1
 cl1_copperlist_size		RS.B 0
 
 
-
 	RSRESET
 
 cl2_extension1			RS.B 0

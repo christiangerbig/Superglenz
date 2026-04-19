@@ -494,9 +494,7 @@ init_sprites
 	bsr.s	bg_init_attached_sprites_cluster
 	rts
 
-
 	INIT_SPRITE_POINTERS_TABLE
-
 
 	INIT_ATTACHED_SPRITES_CLUSTER bg,spr_pointers_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
 
@@ -514,7 +512,6 @@ cl1_init_copperlist
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANKSPR
 
 	COP_INIT_SPRITE_POINTERS cl1
-
 
 	CNOP 0,4
 cl1_init_colors

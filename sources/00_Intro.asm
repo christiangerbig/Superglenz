@@ -359,6 +359,7 @@ cl1_subext1_COP1LCL		RS.L 1
 cl1_subext1_COPJMP2		RS.L 1
 cl1_subextension1_size		RS.B 0
 
+
 	RSRESET
 
 cl1_extension1			RS.B 0
@@ -367,6 +368,7 @@ cl1_ext1_COP2LCL		RS.L 1
 cl1_ext1_subextension1_entry	RS.B cl1_subextension1_size*cl1_display_y_size1
 cl1_extension1_size		RS.B 0
 
+
 	RSRESET
 
 cl1_extension2			RS.B 0
@@ -374,6 +376,7 @@ cl1_ext2_COP2LCH		RS.L 1
 cl1_ext2_COP2LCL		RS.L 1
 cl1_ext2_subextension1_entry	RS.B cl1_subextension1_size*cl1_display_y_size2
 cl1_extension2_size		RS.B 0
+
 
 	RSRESET
 
@@ -392,6 +395,7 @@ cl1_INTREQ			RS.L 1
 cl1_end				RS.L 1
 
 cl1_copperlist_size		RS.B 0
+
 
 	RSRESET
 
@@ -425,6 +429,7 @@ cl2_ext1_COPJMP1		RS.L 1
 
 cl2_extension1_size		RS.B 0
 
+
 	RSRESET
 
 cl2_extension2			RS.B 0
@@ -456,6 +461,7 @@ cl2_ext2_BPLCON4_24		RS.L 1
 cl2_ext2_COPJMP1		RS.L 1
 
 cl2_extension2_size		RS.B 0
+
 
 	RSRESET
 

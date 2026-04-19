@@ -351,7 +351,8 @@ main
 	rts
 	CNOP 0,4
 main_skip
-	jmp	start_1_pt_replay
+	jsr	start_1_pt_replay
+	rts
 
 
 	INCLUDE "int-autovectors-handlers.i"
