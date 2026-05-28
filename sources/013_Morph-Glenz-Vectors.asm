@@ -657,10 +657,10 @@ cl2_init_copperlist
 
 	CNOP 0,4
 cl2_init_colors
-	COP_INIT_COLOR_HIGH COLOR00,8,pf1_rgb8_color_table
+	COP_LOAD_COLORMAP_HIGH COLOR00,8,pf1_rgb8_color_table
 
 	COP_SELECT_COLOR_LOW_BANK 0,v_bplcon3_bits2
-	COP_INIT_COLOR_LOW COLOR00,8,pf1_rgb8_color_table
+	COP_LOAD_COLORMAP_LOW COLOR00,8,pf1_rgb8_color_table
 	rts
 
 	COP_INIT_BITPLANE_POINTERS cl2
@@ -714,7 +714,7 @@ cl2_init_fill_blit
 get_wrapper_view_values
 	move.l	cl2_construction2(a3),a0
 	or.w	#v_bplcon0_bits,cl2_BPLCON0+WORD_SIZE(a0)
-	or.w	#v_bplcon3_bits1,cl2_BPLCON3_1+WORD_SIZE(a0)
+	or.w	#v_bplcon3_bits1,cl2_BPLCON3_colormap_high+WORD_SIZE(a0)
 	or.w	#v_bplcon4_bits,cl2_BPLCON4+WORD_SIZE(a0)
 	or.w	#v_fmode_bits,cl2_FMODE+WORD_SIZE(a0)
 	rts

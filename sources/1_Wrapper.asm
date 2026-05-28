@@ -397,10 +397,10 @@ pt_decrunch_audio_data
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
-	CPU_INIT_COLOR_HIGH COLOR00,1,pf1_rgb8_color_table
+	CPU_LOAD_COLORMAP_HIGH COLOR00,1,pf1_rgb8_color_table
 
 	CPU_SELECT_COLOR_LOW_BANK 0
-	CPU_INIT_COLOR_LOW COLOR00,1,pf1_rgb8_color_table
+	CPU_LOAD_COLORMAP_LOW COLOR00,1,pf1_rgb8_color_table
 	rts
 
 

@@ -516,10 +516,10 @@ cl1_init_copperlist
 	CNOP 0,4
 cl1_init_colors
 	COP_SELECT_COLOR_HIGH_BANK 4
-	COP_INIT_COLOR_HIGH COLOR00,16,spr_rgb8_color_table
+	COP_LOAD_COLORMAP_HIGH COLOR00,16,spr_rgb8_color_table
 
 	COP_SELECT_COLOR_LOW_BANK 4
-	COP_INIT_COLOR_LOW COLOR00,16,spr_rgb8_color_table
+	COP_LOAD_COLORMAP_LOW COLOR00,16,spr_rgb8_color_table
 	rts
 
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number

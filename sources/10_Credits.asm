@@ -696,12 +696,12 @@ init_main
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
-	CPU_INIT_COLOR_HIGH COLOR00,2,pf1_rgb8_color_table
-	CPU_INIT_COLOR_HIGH COLOR02,2,pf2_rgb8_color_table
+	CPU_LOAD_COLORMAP_HIGH COLOR00,2,pf1_rgb8_color_table
+	CPU_LOAD_COLORMAP_HIGH COLOR02,2,pf2_rgb8_color_table
 
 	CPU_SELECT_COLOR_LOW_BANK 0
-	CPU_INIT_COLOR_LOW COLOR00,2,pf1_rgb8_color_table
-	CPU_INIT_COLOR_LOW COLOR02,2,pf2_rgb8_color_table
+	CPU_LOAD_COLORMAP_LOW COLOR00,2,pf1_rgb8_color_table
+	CPU_LOAD_COLORMAP_LOW COLOR02,2,pf2_rgb8_color_table
 	rts
 
 
@@ -824,10 +824,10 @@ cl1_init_copperlist
 
 	CNOP 0,4
 cl1_init_colors
-	COP_INIT_COLOR_HIGH COLOR16,16,spr_rgb8_color_table
+	COP_LOAD_COLORMAP_HIGH COLOR16,16,spr_rgb8_color_table
 
 	COP_SELECT_COLOR_LOW_BANK 0
-	COP_INIT_COLOR_LOW COLOR16,16,spr_rgb8_color_table
+	COP_LOAD_COLORMAP_LOW COLOR16,16,spr_rgb8_color_table
 	rts
 
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
