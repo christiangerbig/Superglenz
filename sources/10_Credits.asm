@@ -597,12 +597,12 @@ mgv_lines_counter		RS.W 1
 
 mgv_morph_active		RS.W 1
 mgv_morph_shapes_table_start	RS.W 1
-mgv_morph_delay_counter		RS.W 1
+mgv_morph_counter		RS.W 1
 
 ; Colors-Fader-Cross
 cfc_rgb8_active			RS.W 1
 cfc_rgb8_fader_angle		RS.W 1
-cfc_rgb8_fader_delay_counter	RS.W 1
+cfc_rgb8_fader_counter	RS.W 1
 cfc_rgb8_color_table_start	RS.W 1
 cfc_rgb8_colors_counter		RS.W 1
 cfc_rgb8_copy_colors_active	RS.W 1
@@ -651,9 +651,9 @@ init_main_variables
 	ENDC
 	move.w	d0,mgv_morph_shapes_table_start(a3)
 	IFEQ mgv_premorph_enabled
-		move.w	d1,mgv_morph_delay_counter(a3) ; deactivate counter
+		move.w	d1,mgv_morph_counter(a3) ; deactivate counter
 	ELSE
-		move.w	#1,mgv_morph_delay_counter(a3) ; activate counter
+		move.w	#1,mgv_morph_counter(a3) ; activate counter
 	ENDC
 
 ; Colors-Fader-Cross
@@ -667,7 +667,7 @@ init_main_variables
 		move.w	d1,cfc_rgb8_copy_colors_active(a3)
 	ENDC
 	move.w	#sine_table_length/4,cfc_rgb8_fader_angle(a3) ; 90°
-	move.w	#1,cfc_rgb8_fader_delay_counter(a3) ; activate counter
+	move.w	#1,cfc_rgb8_fader_counter(a3) ; activate counter
 	move.w	d0,cfc_rgb8_color_table_start(a3)
 
 ; Effects-Handler
@@ -1131,7 +1131,7 @@ vts_stop_colors_fader_cross
 	move.w	#-1,cfc_rgb8_color_table_start(a3) ; fade to background color
 	tst.w	cfc_rgb8_active(a3)
 	beq.s	vts_stop_colors_fader_cross_quit
-	move.w	#1,cfc_rgb8_fader_delay_counter(a3) ; activate counter
+	move.w	#1,cfc_rgb8_fader_counter(a3) ; activate counter
 vts_stop_colors_fader_cross_quit
 	moveq	#RETURN_OK,d0
 	bra.s	vts_check_control_codes_quit
@@ -1246,7 +1246,7 @@ mgv_morph_object_skip4
 		beq.s	mgv_morph_object_skip5
 	ENDC
 	move.w	d1,mgv_morph_shapes_table_start(a3) 
-	move.w	#mgv_morph_delay,mgv_morph_delay_counter(a3)
+	move.w	#mgv_morph_delay,mgv_morph_counter(a3)
 mgv_morph_object_skip5
 	move.w	#FALSE,mgv_morph_active(a3)
 mgv_morph_object_quit
@@ -1508,7 +1508,7 @@ cfc_rgb8_copy_color_table_skip1
 	tst.w	cfc_rgb8_colors_counter(a3)
 	bne.s	cfc_rgb8_copy_color_table_quit
 	move.w	#FALSE,cfc_rgb8_copy_colors_active(a3) ; copying finished
-	move.w	#cfc_rgb8_fader_delay,cfc_rgb8_fader_delay_counter(a3)
+	move.w	#cfc_rgb8_fader_delay,cfc_rgb8_fader_counter(a3)
 	move.w	cfc_rgb8_color_table_start(a3),d0
 	bmi.s	cfc_rgb8_copy_color_table_quit
 	addq.w  #1,d0			; next color table
@@ -1528,17 +1528,17 @@ cfc_rgb8_copy_color_table_quit
 control_counters
 
 ; Morphing-Glenz-Vectors
-	move.w	mgv_morph_delay_counter(a3),d0
+	move.w	mgv_morph_counter(a3),d0
 	bmi.s	control_counters_skip2
 	subq.w	#1,d0
 	bpl.s	control_counters_skip1
 	clr.w	mgv_morph_active(a3)
 control_counters_skip1
-	move.w	d0,mgv_morph_delay_counter(a3) 
+	move.w	d0,mgv_morph_counter(a3) 
 control_counters_skip2
 
 ; Color-Fader-Cross
-	move.w	cfc_rgb8_fader_delay_counter(a3),d0
+	move.w	cfc_rgb8_fader_counter(a3),d0
 	bmi.s	control_counters_skip4
 	subq.w	#1,d0
 	bpl.s	control_counters_skip3
@@ -1547,7 +1547,7 @@ control_counters_skip2
 	move.w	#sine_table_length/4,cfc_rgb8_fader_angle(a3) ; 90°
 	clr.w	cfc_rgb8_copy_colors_active(a3)
 control_counters_skip3
-	move.w	d0,cfc_rgb8_fader_delay_counter(a3) 
+	move.w	d0,cfc_rgb8_fader_counter(a3) 
 control_counters_skip4
 	rts
 

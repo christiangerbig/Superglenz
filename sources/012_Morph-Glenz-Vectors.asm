@@ -475,7 +475,7 @@ mgv_lines_counter		RS.W 1
 
 mgv_morph_active		RS.W 1
 mgv_morph_shapes_start		RS.W 1
-mgv_morph_delay_counter		RS.W 1
+mgv_morph_counter		RS.W 1
 
 ; Scroll-Playfield-Bottom-In
 spbi_active			RS.W 1
@@ -531,9 +531,9 @@ init_main_variables
 	ENDC
 	move.w	d0,mgv_morph_shapes_start(a3)
 	IFEQ mgv_premorph_enabled
-		move.w	d1,mgv_morph_delay_counter(a3) ; Delay-Counter aktivieren
+		move.w	d1,mgv_morph_counter(a3) ; Delay-Counter aktivieren
 	ELSE
-		move.w	#1,mgv_morph_delay_counter(a3) ; Delay-Counter aktivieren
+		move.w	#1,mgv_morph_counter(a3) ; Delay-Counter aktivieren
 	ENDC
 
 ; Scroll-Playfield-Bottom-In

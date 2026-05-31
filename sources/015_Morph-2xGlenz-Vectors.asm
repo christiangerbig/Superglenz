@@ -566,7 +566,7 @@ mgv_lines_counter		RS.W 1
 
 mgv_morph_active		RS.W 1
 mgv_morph_shapes_start		RS.W 1
-mgv_morph_delay_counter		RS.W 1
+mgv_morph_counter		RS.W 1
 
 ; Scroll-Playfield-Bottom-In
 spbi_active			RS.W 1
