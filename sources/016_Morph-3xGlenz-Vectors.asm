@@ -1605,7 +1605,7 @@ mgv_morph_objects
 	beq	mgv_morph_objects_skip2
 	moveq	#0,d3
 	move.w	d1,d3			; start
-	MULUF.W morph_shape_size,d3,d0,d2
+	MULUF.W morph_shape_size,d3,d0
 	moveq	#0,d2			; coordinates counter
 	lea	mgv_morph_shapes(pc),a2
 	add.l	d3,a2			; offset in morph shapes table

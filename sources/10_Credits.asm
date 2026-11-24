@@ -1062,7 +1062,7 @@ vert_text_scroll
 vert_text_scroll_loop1
 	move.w	(a1),d1			; y
 	move.w	d1,d2
-	MULUF.W pf1_plane_width*pf1_depth3,d1,d0 ; y offset in playfield
+	MULUF.W pf1_plane_width*pf1_depth3,d1 ; y offset in playfield
 	lea	vts_chars_x_positions(pc),a0
 	moveq	#vts_text_chars_per_line-1,d6
 vert_text_scroll_loop2
